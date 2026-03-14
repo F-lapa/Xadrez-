@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xadrez - Modo Fernando</title>
+    <!-- MUDANÇA: Firestore em vez de Realtime Database -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -517,7 +518,7 @@
     </div>
 
     <script>
-        // Firebase Configuration
+        // Firebase Configuration - MESMA CONFIGURAÇÃO
         const firebaseConfig = {
             apiKey: "AIzaSyDCjrg7g-E_sxQz3cUZyg_W_75ZKsqpaYw",
             authDomain: "xadrez-3a4af.firebaseapp.com",
@@ -530,7 +531,19 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        
+        // MUDANÇA: Usar Firestore em vez de Realtime Database
+        const db = firebase.firestore();
+        
+        // IMPORTANTE: Configurar persistência offline (opcional mas recomendado)
+        db.enablePersistence({ synchronizeTabs: true })
+            .catch((err) => {
+                if (err.code === 'failed-precondition') {
+                    console.log('Persistência só pode ser ativada em uma aba por vez');
+                } else if (err.code === 'unimplemented') {
+                    console.log('Navegador não suporta persistência offline');
+                }
+            });
 
         // Game State
         const PIECES = {
@@ -558,6 +571,7 @@
         };
 
         let gameRef = null;
+        let unsubscribe = null; // Para parar de ouvir mudanças
 
         // Generate or get Game ID
         function getGameId() {
@@ -565,9 +579,7 @@
             let gameId = params.get('game');
             
             if (!gameId) {
-                // Create new game ID
                 gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
-                // Update URL without reloading
                 window.history.replaceState({}, '', `?game=${gameId}`);
             }
             
@@ -587,7 +599,6 @@
                 return;
             }
 
-            // Disable button
             const btn = document.getElementById('joinBtn');
             btn.disabled = true;
             btn.textContent = 'Conectando...';
@@ -598,43 +609,44 @@
 
             console.log('Tentando conectar ao jogo:', gameState.gameId);
 
-            // Connect to Firebase
             connectToGame();
         }
 
         function connectToGame() {
-            const gameRefPath = database.ref(`games/${gameState.gameId}`);
+            // MUDANÇA: Usar Firestore document reference
+            gameRef = db.collection('games').doc(gameState.gameId);
             
-            // First, check current game state
-            gameRefPath.once('value').then(snapshot => {
-                const game = snapshot.val();
-                console.log('Estado do jogo:', game);
-
-                if (!game) {
-                    // No game exists - Create as Player 1 (White)
+            // MUDANÇA: Firestore usa get() em vez de once('value')
+            gameRef.get().then(doc => {
+                if (!doc.exists) {
+                    // Criar novo jogo como Player 1
                     console.log('Criando novo jogo como Jogador 1 (Brancas)');
                     gameState.amPlayer1 = true;
                     gameState.myColor = 'white';
-                    createNewGame(gameRefPath);
-                } else if (!game.players || !game.players.black) {
-                    // Game exists but no black player - Join as Player 2 (Black)
-                    console.log('Entrando como Jogador 2 (Pretas)');
-                    gameState.amPlayer1 = false;
-                    gameState.myColor = 'black';
-                    joinExistingGame(gameRefPath, game);
+                    createNewGame();
                 } else {
-                    // Game is full
-                    showStatus('Jogo já está cheio! Crie um novo jogo.', 'error');
-                    document.getElementById('joinBtn').disabled = false;
-                    document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
+                    const game = doc.data();
+                    console.log('Estado do jogo existente:', game);
                     
-                    // Generate new game ID option
-                    setTimeout(() => {
-                        if (confirm('Jogo cheio. Criar novo jogo?')) {
-                            window.location.search = '';
-                            location.reload();
-                        }
-                    }, 100);
+                    if (!game.players || !game.players.black) {
+                        // Entrar como Player 2
+                        console.log('Entrando como Jogador 2 (Pretas)');
+                        gameState.amPlayer1 = false;
+                        gameState.myColor = 'black';
+                        joinExistingGame(game);
+                    } else {
+                        // Jogo cheio
+                        showStatus('Jogo já está cheio! Crie um novo jogo.', 'error');
+                        document.getElementById('joinBtn').disabled = false;
+                        document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
+                        
+                        setTimeout(() => {
+                            if (confirm('Jogo cheio. Criar novo jogo?')) {
+                                window.location.search = '';
+                                location.reload();
+                            }
+                        }, 100);
+                    }
                 }
             }).catch(error => {
                 console.error('Erro ao conectar:', error);
@@ -644,8 +656,7 @@
             });
         }
 
-        function createNewGame(ref) {
-            // Initialize board
+        function createNewGame() {
             const initialBoard = [
                 ['r','n','b','q','k','b','n','r'],
                 ['p','p','p','p','p','p','p','p'],
@@ -681,18 +692,15 @@
                     black: {row: 0, col: 4} 
                 },
                 moveHistory: [],
-                createdAt: firebase.database.ServerValue.TIMESTAMP
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            ref.set(gameData).then(() => {
+            // MUDANÇA: Firestore usa set() em vez de set() do Realtime Database
+            gameRef.set(gameData).then(() => {
                 console.log('Jogo criado com sucesso');
-                gameRef = ref;
                 setupGameListener();
                 
-                // Show waiting message
                 showStatus(`Aguardando adversário...\n\nCompartilhe este link:\n${window.location.href}`, 'waiting');
-                
-                // Update display
                 updatePlayerDisplay();
             }).catch(error => {
                 console.error('Erro ao criar jogo:', error);
@@ -702,35 +710,33 @@
             });
         }
 
-        function joinExistingGame(ref, existingGame) {
-            // Verify white player exists
-            if (!existingGame.players || !existingGame.players.white) {
+        function joinExistingGame(game) {
+            if (!game.players || !game.players.white) {
                 showStatus('Erro: Jogo inválido', 'error');
                 return;
             }
 
-            // Join as black
             const updates = {
-                'players/black': { 
+                'players.black': { 
                     name: gameState.myName, 
                     isFernando: gameState.isFernando,
                     connected: true 
                 },
-                'status': 'playing'
+                status: 'playing'
             };
 
-            ref.update(updates).then(() => {
+            // MUDANÇA: Firestore usa update() para atualizar campos específicos
+            gameRef.update(updates).then(() => {
                 console.log('Entrou no jogo com sucesso');
-                gameRef = ref;
                 
-                // Copy game state
-                gameState.board = existingGame.board || [];
-                gameState.currentPlayer = existingGame.currentPlayer || 'white';
-                gameState.castlingRights = existingGame.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
-                gameState.capturedPieces = existingGame.capturedPieces || { white: [], black: [] };
-                gameState.kingPositions = existingGame.kingPositions || { white: {row: 7, col: 4}, black: {row: 0, col: 4} };
+                // Copiar estado do jogo
+                gameState.board = game.board || [];
+                gameState.currentPlayer = game.currentPlayer || 'white';
+                gameState.castlingRights = game.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
+                gameState.capturedPieces = game.capturedPieces || { white: [], black: [] };
+                gameState.kingPositions = game.kingPositions || { white: {row: 7, col: 4}, black: {row: 0, col: 4} };
                 gameState.players = {
-                    white: existingGame.players.white,
+                    white: game.players.white,
                     black: { name: gameState.myName, isFernando: gameState.isFernando }
                 };
                 
@@ -747,13 +753,16 @@
         function setupGameListener() {
             if (!gameRef) return;
 
-            gameRef.on('value', snapshot => {
-                const data = snapshot.val();
+            // MUDANÇA: Firestore usa onSnapshot() em vez de on('value')
+            unsubscribe = gameRef.onSnapshot(doc => {
+                if (!doc.exists) return;
+                
+                const data = doc.data();
                 if (!data) return;
 
-                console.log('Dados recebidos:', data);
+                console.log('Dados recebidos do Firestore:', data);
 
-                // Update local state
+                // Atualizar estado local
                 gameState.board = data.board || gameState.board;
                 gameState.currentPlayer = data.currentPlayer || 'white';
                 gameState.players = data.players || gameState.players;
@@ -764,21 +773,22 @@
                 gameState.kingPositions = data.kingPositions || gameState.kingPositions;
                 gameState.status = data.status || 'waiting';
 
-                // Check if game started (black joined)
+                // Verificar se jogo começou
                 if (data.status === 'playing' && gameState.amPlayer1 && 
                     document.getElementById('loginScreen').style.display !== 'none') {
-                    // Player 1: game started!
                     document.getElementById('statusMessage').style.display = 'none';
                     startGame();
                 }
 
-                // Check game end
+                // Verificar fim de jogo
                 if (data.status === 'ended' && data.winner) {
                     showGameOver(data.winner);
                 }
 
                 renderBoard();
                 updateTurnIndicator();
+            }, error => {
+                console.error('Erro no listener:', error);
             });
         }
 
@@ -826,16 +836,13 @@
             const isMyTurn = gameState.currentPlayer === gameState.myColor;
             const shouldShowHints = gameState.isFernando && isMyTurn && gameState.status === 'playing';
 
-            // Generate hints if I'm Fernando and it's my turn
             let hints = [];
             if (shouldShowHints) {
                 hints = generateHints(gameState.myColor);
             }
 
-            // Render from my perspective
             for (let displayRow = 0; displayRow < 8; displayRow++) {
                 for (let displayCol = 0; displayCol < 8; displayCol++) {
-                    // Convert display coordinates to actual board coordinates
                     const actualRow = gameState.myColor === 'white' ? displayRow : 7 - displayRow;
                     const actualCol = gameState.myColor === 'white' ? displayCol : 7 - displayCol;
 
@@ -849,7 +856,6 @@
                         square.textContent = PIECES[piece];
                     }
 
-                    // Last move highlight
                     if (gameState.lastMove) {
                         if ((gameState.lastMove.from.row === actualRow && gameState.lastMove.from.col === actualCol) ||
                             (gameState.lastMove.to.row === actualRow && gameState.lastMove.to.col === actualCol)) {
@@ -857,7 +863,6 @@
                         }
                     }
 
-                    // Check indicator
                     if (piece && piece.toLowerCase() === 'k') {
                         const color = piece === piece.toUpperCase() ? 'white' : 'black';
                         if (isInCheck(color)) {
@@ -865,7 +870,6 @@
                         }
                     }
 
-                    // Selection and valid moves
                     if (isMyTurn && gameState.selectedSquare) {
                         if (gameState.selectedSquare.row === actualRow && gameState.selectedSquare.col === actualCol) {
                             square.classList.add('selected');
@@ -877,21 +881,18 @@
                         }
                     }
 
-                    // VISUAL HINTS - ONLY FOR FERNANDO
                     if (shouldShowHints) {
                         hints.forEach((hint, idx) => {
-                            if (idx > 2) return; // Max 3 hints
+                            if (idx > 2) return;
 
                             const isFrom = hint.from && hint.from.row === actualRow && hint.from.col === actualCol;
                             const isTo = hint.to && hint.to.row === actualRow && hint.to.col === actualCol;
 
                             if (isFrom) {
-                                // Glow on piece to move
                                 const glow = document.createElement('div');
                                 glow.className = hint.type === 'danger' ? 'danger-glow' : 'hint-glow';
                                 square.appendChild(glow);
 
-                                // Direction arrow
                                 if (hint.to && hint.type !== 'danger') {
                                     const arrow = document.createElement('div');
                                     const dir = getDirection(hint.from, hint.to);
@@ -901,14 +902,12 @@
                             }
 
                             if (isTo && hint.type !== 'danger') {
-                                // Target indicator
                                 const target = document.createElement('div');
                                 target.className = 'hint-target';
                                 square.appendChild(target);
                             }
 
                             if (isTo && hint.type === 'capture') {
-                                // Capture circle (red)
                                 const circle = document.createElement('div');
                                 circle.className = 'hint-circle';
                                 circle.style.borderColor = '#ff0000';
@@ -918,7 +917,6 @@
                         });
                     }
 
-                    // Click handler
                     if (isMyTurn && gameState.status === 'playing') {
                         square.addEventListener('click', () => handleSquareClick(actualRow, actualCol));
                     }
@@ -927,7 +925,6 @@
                 }
             }
 
-            // Draw trails for hints
             if (shouldShowHints) {
                 hints.forEach(hint => {
                     if (hint.from && hint.to && hint.type !== 'danger') {
@@ -936,7 +933,6 @@
                 });
             }
 
-            // Update captured pieces display
             updateCapturedDisplay();
         }
 
@@ -981,7 +977,6 @@
             const isWhite = color === 'white';
             const backRank = isWhite ? 7 : 0;
 
-            // 1. Check - highest priority
             if (isInCheck(color)) {
                 for (let r = 0; r < 8; r++) {
                     for (let c = 0; c < 8; c++) {
@@ -1007,13 +1002,12 @@
                 }
             }
 
-            // 2. Center control (early game)
-            const moveCount = gameState.lastMove ? 1 : 0; // Simplified
+            const moveCount = gameState.lastMove ? 1 : 0;
             if (moveCount < 10) {
                 const pawnRow = isWhite ? 6 : 1;
                 const targetRow = isWhite ? 4 : 3;
                 
-                for (let col of [3, 4]) { // d and e files
+                for (let col of [3, 4]) {
                     if (gameState.board[pawnRow] && gameState.board[pawnRow][col] && 
                         (isWhite ? gameState.board[pawnRow][col] === 'P' : gameState.board[pawnRow][col] === 'p')) {
                         const moves = getValidMoves(pawnRow, col);
@@ -1025,7 +1019,6 @@
                 }
             }
 
-            // 3. Development
             const knightSquares = [[backRank, 1], [backRank, 6]];
             for (let [r, c] of knightSquares) {
                 if (gameState.board[r] && gameState.board[r][c] && 
@@ -1041,7 +1034,6 @@
                 }
             }
 
-            // 4. Castling
             if (!isInCheck(color)) {
                 if (gameState.castlingRights[color].kingSide) {
                     hints.push({ 
@@ -1060,7 +1052,6 @@
                 }
             }
 
-            // 5. Captures
             const values = {p: 1, n: 3, b: 3, r: 5, q: 9};
             let bestCapture = null;
             let bestValue = 0;
@@ -1269,7 +1260,6 @@
             const atkColor = defColor === 'white' ? 'black' : 'white';
             const pawnDir = defColor === 'white' ? -1 : 1;
             
-            // Pawns
             for (let dc of [-1, 1]) {
                 const r = row - pawnDir, c = col + dc;
                 if (isValid(r, c)) {
@@ -1280,7 +1270,6 @@
                 }
             }
             
-            // Knights
             const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
             for (let [dr, dc] of nm) {
                 const r = row + dr, c = col + dc;
@@ -1292,7 +1281,6 @@
                 }
             }
             
-            // Rooks/Queen straight
             for (let [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
                 let r = row + dr, c = col + dc;
                 while (isValid(r, c)) {
@@ -1308,7 +1296,6 @@
                 }
             }
             
-            // Bishops/Queen diagonal
             for (let [dr, dc] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
                 let r = row + dr, c = col + dc;
                 while (isValid(r, c)) {
@@ -1324,7 +1311,6 @@
                 }
             }
             
-            // King
             for (let [dr, dc] of [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]) {
                 const r = row + dr, c = col + dc;
                 if (isValid(r, c)) {
@@ -1343,16 +1329,13 @@
             const piece = gameState.board[from.row][from.col];
             const color = piece === piece.toUpperCase() ? 'white' : 'black';
             
-            // Handle capture
             if (move.enPassant) {
                 gameState.board[from.row][to.col] = null;
             }
             
-            // Update board
             gameState.board[to.row][to.col] = piece;
             gameState.board[from.row][from.col] = null;
             
-            // Update king position
             if (piece.toLowerCase() === 'k') {
                 gameState.kingPositions[color] = {row: to.row, col: to.col};
                 
@@ -1370,41 +1353,33 @@
                 gameState.castlingRights[color] = {kingSide: false, queenSide: false};
             }
             
-            // Update rook castling rights
             if (piece.toLowerCase() === 'r') {
                 const row = color === 'white' ? 7 : 0;
                 if (from.row === row && from.col === 0) gameState.castlingRights[color].queenSide = false;
                 if (from.row === row && from.col === 7) gameState.castlingRights[color].kingSide = false;
             }
             
-            // Handle promotion
             if (move.promotion) {
                 showPromotion(to, color, from);
                 return;
             }
             
-            // En passant target
             if (move.isDoublePush) {
                 gameState.enPassantTarget = {row: (from.row + to.row) / 2, col: from.col};
             } else {
                 gameState.enPassantTarget = null;
             }
             
-            // Update captured pieces
             const captured = gameState.board[to.row][to.col];
             if (captured && isEnemy(piece, captured)) {
                 gameState.capturedPieces[color].push(captured);
             }
             
-            // Update last move
             gameState.lastMove = {from, to};
-            
-            // Switch player
             gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
             gameState.selectedSquare = null;
             gameState.validMoves = [];
             
-            // Check game end
             const nextColor = gameState.currentPlayer;
             if (isCheckmate(nextColor)) {
                 gameState.status = 'ended';
@@ -1416,23 +1391,28 @@
                 showGameOver('draw');
             }
             
-            // Save to Firebase
             saveGameState();
         }
 
         function saveGameState() {
             if (!gameRef) return;
             
-            gameRef.update({
+            // MUDANÇA: Firestore usa update() para atualizar campos
+            // Importante: Firestore não aceita undefined, então filtramos
+            const updates = {
                 board: gameState.board,
                 currentPlayer: gameState.currentPlayer,
                 castlingRights: gameState.castlingRights,
-                enPassantTarget: gameState.enPassantTarget,
-                lastMove: gameState.lastMove,
+                enPassantTarget: gameState.enPassantTarget || null,
+                lastMove: gameState.lastMove || null,
                 kingPositions: gameState.kingPositions,
                 capturedPieces: gameState.capturedPieces,
                 status: gameState.status,
                 winner: gameState.winner || null
+            };
+            
+            gameRef.update(updates).catch(error => {
+                console.error('Erro ao salvar:', error);
             });
         }
 
@@ -1507,9 +1487,20 @@
             }
             
             modal.classList.add('show');
+            
+            // Parar de ouvir mudanças quando jogo acaba
+            if (unsubscribe) {
+                unsubscribe();
+            }
         }
 
-        // Initialize
+        // Limpar listener quando sair da página
+        window.onbeforeunload = () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+
         window.onload = () => {
             const params = new URLSearchParams(window.location.search);
             const gameId = params.get('game');
