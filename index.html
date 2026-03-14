@@ -545,34 +545,8 @@
         let gameRef = null;
         let unsubscribe = null;
 
-        // FUNÇÃO PARA LIMPAR DADOS ANTES DE ENVIAR AO FIRESTORE
-        // Remove campos undefined e converte arrays aninhados se necessário
-        function cleanDataForFirestore(obj) {
-            if (obj === null || obj === undefined) return null;
-            if (typeof obj !== 'object') return obj;
-            
-            // Se for array, mapear cada elemento
-            if (Array.isArray(obj)) {
-                return obj.map(item => cleanDataForFirestore(item));
-            }
-            
-            // Se for objeto, limpar cada propriedade
-            const cleaned = {};
-            for (const key in obj) {
-                if (obj.hasOwnProperty(key)) {
-                    const value = obj[key];
-                    // Ignorar undefined
-                    if (value === undefined) {
-                        cleaned[key] = null;
-                    } else {
-                        cleaned[key] = cleanDataForFirestore(value);
-                    }
-                }
-            }
-            return cleaned;
-        }
-
-        // Converte matriz 2D para objeto compatível com Firestore
+        // FUNÇÕES DE CONVERSÃO DO TABULEIRO
+        
         function boardToFirestore(board2D) {
             const boardObj = {};
             for (let r = 0; r < 8; r++) {
@@ -586,7 +560,6 @@
             return boardObj;
         }
 
-        // Converte objeto do Firestore de volta para matriz 2D
         function boardFromFirestore(boardObj) {
             const board = Array(8).fill(null).map(() => Array(8).fill(null));
             if (!boardObj || typeof boardObj !== 'object') return board;
@@ -602,7 +575,6 @@
             return board;
         }
 
-        // Converte capturedPieces para formato Firestore (objeto com strings)
         function capturedPiecesToFirestore(captured) {
             return {
                 white: captured.white ? captured.white.join(',') : '',
@@ -610,7 +582,6 @@
             };
         }
 
-        // Converte capturedPieces de volta do Firestore
         function capturedPiecesFromFirestore(captured) {
             return {
                 white: captured.white ? captured.white.split(',').filter(p => p) : [],
@@ -621,10 +592,16 @@
         function getGameId() {
             const params = new URLSearchParams(window.location.search);
             let gameId = params.get('game');
+            
+            console.log('URL atual:', window.location.href);
+            console.log('Game ID da URL:', gameId);
+            
             if (!gameId) {
                 gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
                 window.history.replaceState({}, '', `?game=${gameId}`);
+                console.log('Novo Game ID gerado:', gameId);
             }
+            
             return gameId;
         }
 
@@ -650,33 +627,66 @@
         }
 
         function connectToGame() {
+            console.log('Tentando conectar ao jogo:', gameState.gameId);
             gameRef = db.collection('games').doc(gameState.gameId);
+            
             gameRef.get().then(doc => {
+                console.log('Documento existe?', doc.exists);
+                
                 if (!doc.exists) {
+                    // Criar novo jogo como Player 1
+                    console.log('Documento não existe - Criando como Player 1 (Brancas)');
                     gameState.amPlayer1 = true;
                     gameState.myColor = 'white';
                     createNewGame();
                 } else {
+                    // Jogo existe - verificar se pode entrar
                     const game = doc.data();
-                    if (!game.players || !game.players.black) {
+                    console.log('Dados do jogo existente:', game);
+                    
+                    // Verificar se já tem 2 jogadores
+                    const hasWhite = game.players && game.players.white;
+                    const hasBlack = game.players && game.players.black;
+                    
+                    console.log('Tem jogador branco?', hasWhite);
+                    console.log('Tem jogador preto?', hasBlack);
+                    
+                    if (hasWhite && !hasBlack) {
+                        // Entrar como jogador preto
+                        console.log('Entrando como Player 2 (Pretas)');
                         gameState.amPlayer1 = false;
                         gameState.myColor = 'black';
                         joinExistingGame(game);
-                    } else {
+                    } else if (!hasWhite && hasBlack) {
+                        // Caso raro: só tem preto, entrar como branco
+                        console.log('Entrando como Player 1 (Brancas) - jogo incompleto');
+                        gameState.amPlayer1 = true;
+                        gameState.myColor = 'white';
+                        joinAsWhitePlayer(game);
+                    } else if (hasWhite && hasBlack) {
+                        // Jogo cheio
+                        console.log('Jogo já cheio!');
                         showStatus('Jogo já está cheio! Crie um novo jogo.', 'error');
                         document.getElementById('joinBtn').disabled = false;
                         document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
+                        
                         setTimeout(() => {
                             if (confirm('Jogo cheio. Criar novo jogo?')) {
                                 window.location.search = '';
                                 location.reload();
                             }
                         }, 100);
+                    } else {
+                        // Não tem nenhum jogador (dados corrompidos?)
+                        console.log('Jogo existente mas sem jogadores - assumindo controle');
+                        gameState.amPlayer1 = true;
+                        gameState.myColor = 'white';
+                        createNewGame();
                     }
                 }
             }).catch(error => {
                 console.error('Erro ao conectar:', error);
-                showStatus('Erro de conexão. Tente novamente.', 'error');
+                showStatus('Erro de conexão: ' + error.message, 'error');
                 document.getElementById('joinBtn').disabled = false;
                 document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
             });
@@ -697,14 +707,15 @@
             const boardObj = boardToFirestore(initialBoard);
             const capturedObj = capturedPiecesToFirestore({ white: [], black: [] });
 
-            const gameData = cleanDataForFirestore({
+            const gameData = {
                 board: boardObj,
                 currentPlayer: 'white',
                 players: {
                     white: { 
                         name: gameState.myName, 
                         isFernando: gameState.isFernando,
-                        connected: true 
+                        connected: true,
+                        joinedAt: firebase.firestore.FieldValue.serverTimestamp()
                     },
                     black: null
                 },
@@ -720,15 +731,15 @@
                     white: {row: 7, col: 4}, 
                     black: {row: 0, col: 4} 
                 },
-                moveHistory: [],
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            };
 
-            console.log('Criando jogo com dados:', JSON.stringify(gameData, null, 2));
+            console.log('Criando jogo com dados:', gameData);
 
             gameRef.set(gameData).then(() => {
+                console.log('Jogo criado com sucesso!');
                 setupGameListener();
-                showStatus(`Aguardando adversário...\n\nCompartilhe este link:\n${window.location.href}`, 'waiting');
+                showStatus(`✅ Jogo criado!\n\nAguardando adversário...\n\n🔗 COMPARTILHE ESTE LINK:\n${window.location.href}`, 'waiting');
                 updatePlayerDisplay();
             }).catch(error => {
                 console.error('Erro ao criar jogo:', error);
@@ -740,20 +751,27 @@
 
         function joinExistingGame(game) {
             if (!game.players || !game.players.white) {
-                showStatus('Erro: Jogo inválido', 'error');
+                showStatus('Erro: Jogo inválido (sem jogador branco)', 'error');
                 return;
             }
 
-            const updates = cleanDataForFirestore({
+            const updates = {
                 'players.black': { 
                     name: gameState.myName, 
                     isFernando: gameState.isFernando,
-                    connected: true 
+                    connected: true,
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp()
                 },
-                status: 'playing'
-            });
+                status: 'playing',
+                startedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            console.log('Atualizando jogo para entrar:', updates);
 
             gameRef.update(updates).then(() => {
+                console.log('Entrou no jogo com sucesso!');
+                
+                // Copiar estado do jogo
                 gameState.board = boardFromFirestore(game.board);
                 gameState.currentPlayer = game.currentPlayer || 'white';
                 gameState.castlingRights = game.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
@@ -763,6 +781,40 @@
                     white: game.players.white,
                     black: { name: gameState.myName, isFernando: gameState.isFernando }
                 };
+                
+                setupGameListener();
+                startGame();
+            }).catch(error => {
+                console.error('Erro ao entrar:', error);
+                showStatus('Erro ao entrar no jogo: ' + error.message, 'error');
+                document.getElementById('joinBtn').disabled = false;
+                document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
+            });
+        }
+
+        function joinAsWhitePlayer(game) {
+            // Caso raro onde o jogo existe mas não tem jogador branco
+            const updates = {
+                'players.white': { 
+                    name: gameState.myName, 
+                    isFernando: gameState.isFernando,
+                    connected: true,
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+                },
+                status: 'playing'
+            };
+
+            gameRef.update(updates).then(() => {
+                gameState.board = boardFromFirestore(game.board);
+                gameState.currentPlayer = game.currentPlayer || 'white';
+                gameState.castlingRights = game.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
+                gameState.capturedPieces = capturedPiecesFromFirestore(game.capturedPieces || { white: '', black: '' });
+                gameState.kingPositions = game.kingPositions || { white: {row: 7, col: 4}, black: {row: 0, col: 4} };
+                gameState.players = {
+                    white: { name: gameState.myName, isFernando: gameState.isFernando },
+                    black: game.players.black
+                };
+                
                 setupGameListener();
                 startGame();
             }).catch(error => {
@@ -775,10 +827,19 @@
 
         function setupGameListener() {
             if (!gameRef) return;
+            
+            console.log('Iniciando listener do jogo...');
+            
             unsubscribe = gameRef.onSnapshot(doc => {
-                if (!doc.exists) return;
-                const data = doc.data();
+                if (!doc.exists) {
+                    console.log('Documento não existe mais');
+                    return;
+                }
                 
+                const data = doc.data();
+                console.log('Dados recebidos:', data);
+                
+                // Atualizar estado local
                 gameState.board = boardFromFirestore(data.board);
                 gameState.currentPlayer = data.currentPlayer || 'white';
                 gameState.players = data.players || gameState.players;
@@ -789,12 +850,15 @@
                 gameState.kingPositions = data.kingPositions || gameState.kingPositions;
                 gameState.status = data.status || 'waiting';
 
+                // Se sou o criador (Player 1) e o status mudou para 'playing', iniciar jogo
                 if (data.status === 'playing' && gameState.amPlayer1 && 
                     document.getElementById('loginScreen').style.display !== 'none') {
+                    console.log('Jogo iniciado! Segundo jogador entrou.');
                     document.getElementById('statusMessage').style.display = 'none';
                     startGame();
                 }
 
+                // Verificar fim de jogo
                 if (data.status === 'ended' && data.winner) {
                     showGameOver(data.winner);
                 }
@@ -1332,7 +1396,7 @@
             const boardObj = boardToFirestore(gameState.board);
             const capturedObj = capturedPiecesToFirestore(gameState.capturedPieces);
             
-            const updates = cleanDataForFirestore({
+            const updates = {
                 board: boardObj,
                 currentPlayer: gameState.currentPlayer,
                 castlingRights: gameState.castlingRights,
@@ -1342,7 +1406,7 @@
                 capturedPieces: capturedObj,
                 status: gameState.status,
                 winner: gameState.winner || null
-            });
+            };
             
             gameRef.update(updates).catch(error => {
                 console.error('Erro ao salvar:', error);
@@ -1425,7 +1489,10 @@
         window.onload = () => {
             const params = new URLSearchParams(window.location.search);
             const gameId = params.get('game');
-            if (gameId) console.log('Game ID encontrado:', gameId);
+            console.log('Página carregada. Game ID:', gameId);
+            if (gameId) {
+                console.log('URL completa:', window.location.href);
+            }
         };
     </script>
 </body>
