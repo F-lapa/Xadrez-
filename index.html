@@ -904,14 +904,19 @@
             return board;
         }
 
+        // CORREÇÃO: Funções corrigidas para converter capturedPieces
         function capturedPiecesToFirestore(captured) {
+            // Garante que capturedPieces seja sempre um objeto com strings
             return {
-                white: captured.white ? captured.white.join(',') : '',
-                black: captured.black ? captured.black.split(',').filter(p => p) : []
+                white: Array.isArray(captured.white) ? captured.white.join(',') : (captured.white || ''),
+                black: Array.isArray(captured.black) ? captured.black.join(',') : (captured.black || '')
             };
         }
 
         function capturedPiecesFromFirestore(captured) {
+            // Garante que capturedPieces seja sempre um objeto com arrays
+            if (!captured) return { white: [], black: [] };
+            
             return {
                 white: captured.white ? captured.white.split(',').filter(p => p) : [],
                 black: captured.black ? captured.black.split(',').filter(p => p) : []
@@ -1010,6 +1015,7 @@
             ];
 
             const boardObj = boardToFirestore(initialBoard);
+            // CORREÇÃO: Passar arrays vazios, a função capturedPiecesToFirestore vai converter para strings
             const capturedObj = capturedPiecesToFirestore({ white: [], black: [] });
 
             const gameData = {
@@ -1073,7 +1079,8 @@
                 gameState.board = boardFromFirestore(game.board);
                 gameState.currentPlayer = game.currentPlayer || 'white';
                 gameState.castlingRights = game.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
-                gameState.capturedPieces = capturedPiecesFromFirestore(game.capturedPieces || { white: '', black: '' });
+                // CORREÇÃO: Usar função corrigida para converter capturedPieces
+                gameState.capturedPieces = capturedPiecesFromFirestore(game.capturedPieces);
                 gameState.kingPositions = game.kingPositions || { white: {row: 7, col: 4}, black: {row: 0, col: 4} };
                 gameState.moveHistory = game.moveHistory || [];
                 gameState.players = {
@@ -1106,7 +1113,8 @@
                 gameState.board = boardFromFirestore(game.board);
                 gameState.currentPlayer = game.currentPlayer || 'white';
                 gameState.castlingRights = game.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
-                gameState.capturedPieces = capturedPiecesFromFirestore(game.capturedPieces || { white: '', black: '' });
+                // CORREÇÃO: Usar função corrigida para converter capturedPieces
+                gameState.capturedPieces = capturedPiecesFromFirestore(game.capturedPieces);
                 gameState.kingPositions = game.kingPositions || { white: {row: 7, col: 4}, black: {row: 0, col: 4} };
                 gameState.moveHistory = game.moveHistory || [];
                 gameState.players = {
@@ -1167,7 +1175,8 @@
                 gameState.castlingRights = data.castlingRights || gameState.castlingRights;
                 gameState.enPassantTarget = data.enPassantTarget;
                 gameState.lastMove = data.lastMove;
-                gameState.capturedPieces = capturedPiecesFromFirestore(data.capturedPieces || { white: '', black: '' });
+                // CORREÇÃO: Usar função corrigida para converter capturedPieces
+                gameState.capturedPieces = capturedPiecesFromFirestore(data.capturedPieces);
                 gameState.kingPositions = data.kingPositions || gameState.kingPositions;
                 gameState.status = data.status || 'waiting';
                 gameState.moveHistory = data.moveHistory || [];
@@ -1719,9 +1728,9 @@
                 }
             }
             
-            const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+            const nm = [[-2,-1],[-2,1],                [-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
             for (let [dr, dc] of nm) {
-                                const r = row + dr, c = col + dc;
+                const r = row + dr, c = col + dc;
                 if (isValid(r, c)) {
                     const p = testBoard[r] && testBoard[r][c];
                     if (p && p.toLowerCase() === 'n' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
@@ -1878,7 +1887,7 @@
                 if (piece === 'n' || piece === 'b') {
                     const centerDist = Math.abs(3.5 - analysis.bestMove.to.col) + Math.abs(3.5 - analysis.bestMove.to.row);
                     if (centerDist < 4) {
-                        reasoning += `• B controle do centro<br>`;
+                        reasoning += `• Bom controle do centro<br>`;
                     }
                 }
 
@@ -2412,6 +2421,7 @@
             if (!gameRef) return;
             
             const boardObj = boardToFirestore(gameState.board);
+            // CORREÇÃO: Usar função corrigida para converter capturedPieces
             const capturedObj = capturedPiecesToFirestore(gameState.capturedPieces);
             
             const updates = {
