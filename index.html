@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xadrez - Modo Fernando</title>
-    <!-- MUDANÇA: Firestore em vez de Realtime Database -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <style>
@@ -25,7 +24,6 @@
             overflow-x: hidden;
         }
 
-        /* Tela de Entrada */
         .login-screen {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             padding: 50px;
@@ -103,6 +101,7 @@
             border-radius: 10px;
             display: none;
             font-weight: bold;
+            white-space: pre-line;
         }
 
         .status-message.waiting {
@@ -125,7 +124,6 @@
             50% { opacity: 0.7; }
         }
 
-        /* Tela do Jogo */
         .game-screen {
             display: none;
             flex-direction: column;
@@ -180,7 +178,6 @@
             50% { box-shadow: 0 0 40px rgba(255,215,0,0.8); }
         }
 
-        /* Tabuleiro */
         .board-container {
             position: relative;
             margin: 20px 0;
@@ -244,7 +241,6 @@
             50% { box-shadow: inset 0 0 40px rgba(255,0,0,1); }
         }
 
-        /* DICAS VISUAIS - APENAS PARA FERNANDO */
         .hint-glow {
             position: absolute;
             width: 100%;
@@ -385,7 +381,6 @@
             50% { opacity: 0.3; }
         }
 
-        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -465,44 +460,34 @@
     </style>
 </head>
 <body>
-
-    <!-- Tela de Login -->
     <div class="login-screen" id="loginScreen">
         <h1>♔ Xadrez ♚</h1>
         <p>Digite seu nome para começar</p>
-        
         <div class="input-group">
             <input type="text" id="playerName" placeholder="Seu nome" maxlength="20" autocomplete="off">
         </div>
-
         <button class="btn" id="joinBtn" onclick="joinGame()">Entrar no Jogo</button>
-        
         <div class="status-message" id="statusMessage"></div>
     </div>
 
-    <!-- Tela do Jogo -->
     <div class="game-screen" id="gameScreen">
         <div class="game-header">
             <h2 id="playerNameDisplay">Jogador</h2>
             <span class="player-badge" id="playerBadge">Aguardando...</span>
             <div class="turn-indicator" id="turnIndicator">Aguardando início...</div>
         </div>
-
         <div class="board-container">
             <div id="chessboard"></div>
         </div>
-
         <div class="coordinates">
             <span>a</span><span>b</span><span>c</span><span>d</span>
             <span>e</span><span>f</span><span>g</span><span>h</span>
         </div>
-
         <div class="game-info">
             <div>Peças capturadas: <span id="capturedPieces" class="captured-pieces"></span></div>
         </div>
     </div>
 
-    <!-- Modals -->
     <div class="modal-overlay" id="gameOverModal">
         <div class="modal-content">
             <h2 id="gameOverText">Fim de Jogo!</h2>
@@ -518,7 +503,7 @@
     </div>
 
     <script>
-        // Firebase Configuration - MESMA CONFIGURAÇÃO
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDCjrg7g-E_sxQz3cUZyg_W_75ZKsqpaYw",
             authDomain: "xadrez-3a4af.firebaseapp.com",
@@ -529,21 +514,8 @@
             measurementId: "G-7T8GW789VC"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
-        
-        // MUDANÇA: Usar Firestore em vez de Realtime Database
         const db = firebase.firestore();
-        
-        // IMPORTANTE: Configurar persistência offline (opcional mas recomendado)
-        db.enablePersistence({ synchronizeTabs: true })
-            .catch((err) => {
-                if (err.code === 'failed-precondition') {
-                    console.log('Persistência só pode ser ativada em uma aba por vez');
-                } else if (err.code === 'unimplemented') {
-                    console.log('Navegador não suporta persistência offline');
-                }
-            });
 
         // Game State
         const PIECES = {
@@ -571,18 +543,88 @@
         };
 
         let gameRef = null;
-        let unsubscribe = null; // Para parar de ouvir mudanças
+        let unsubscribe = null;
 
-        // Generate or get Game ID
+        // FUNÇÃO PARA LIMPAR DADOS ANTES DE ENVIAR AO FIRESTORE
+        // Remove campos undefined e converte arrays aninhados se necessário
+        function cleanDataForFirestore(obj) {
+            if (obj === null || obj === undefined) return null;
+            if (typeof obj !== 'object') return obj;
+            
+            // Se for array, mapear cada elemento
+            if (Array.isArray(obj)) {
+                return obj.map(item => cleanDataForFirestore(item));
+            }
+            
+            // Se for objeto, limpar cada propriedade
+            const cleaned = {};
+            for (const key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const value = obj[key];
+                    // Ignorar undefined
+                    if (value === undefined) {
+                        cleaned[key] = null;
+                    } else {
+                        cleaned[key] = cleanDataForFirestore(value);
+                    }
+                }
+            }
+            return cleaned;
+        }
+
+        // Converte matriz 2D para objeto compatível com Firestore
+        function boardToFirestore(board2D) {
+            const boardObj = {};
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board2D[r] && board2D[r][c];
+                    if (piece) {
+                        boardObj[`${r}-${c}`] = piece;
+                    }
+                }
+            }
+            return boardObj;
+        }
+
+        // Converte objeto do Firestore de volta para matriz 2D
+        function boardFromFirestore(boardObj) {
+            const board = Array(8).fill(null).map(() => Array(8).fill(null));
+            if (!boardObj || typeof boardObj !== 'object') return board;
+            
+            for (let key in boardObj) {
+                if (boardObj.hasOwnProperty(key)) {
+                    const [r, c] = key.split('-').map(Number);
+                    if (r >= 0 && r < 8 && c >= 0 && c < 8) {
+                        board[r][c] = boardObj[key];
+                    }
+                }
+            }
+            return board;
+        }
+
+        // Converte capturedPieces para formato Firestore (objeto com strings)
+        function capturedPiecesToFirestore(captured) {
+            return {
+                white: captured.white ? captured.white.join(',') : '',
+                black: captured.black ? captured.black.join(',') : ''
+            };
+        }
+
+        // Converte capturedPieces de volta do Firestore
+        function capturedPiecesFromFirestore(captured) {
+            return {
+                white: captured.white ? captured.white.split(',').filter(p => p) : [],
+                black: captured.black ? captured.black.split(',').filter(p => p) : []
+            };
+        }
+
         function getGameId() {
             const params = new URLSearchParams(window.location.search);
             let gameId = params.get('game');
-            
             if (!gameId) {
                 gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
                 window.history.replaceState({}, '', `?game=${gameId}`);
             }
-            
             return gameId;
         }
 
@@ -598,48 +640,32 @@
                 showStatus('Digite seu nome!', 'error');
                 return;
             }
-
             const btn = document.getElementById('joinBtn');
             btn.disabled = true;
             btn.textContent = 'Conectando...';
-
             gameState.myName = name;
             gameState.isFernando = name.toLowerCase() === 'fernando';
             gameState.gameId = getGameId();
-
-            console.log('Tentando conectar ao jogo:', gameState.gameId);
-
             connectToGame();
         }
 
         function connectToGame() {
-            // MUDANÇA: Usar Firestore document reference
             gameRef = db.collection('games').doc(gameState.gameId);
-            
-            // MUDANÇA: Firestore usa get() em vez de once('value')
             gameRef.get().then(doc => {
                 if (!doc.exists) {
-                    // Criar novo jogo como Player 1
-                    console.log('Criando novo jogo como Jogador 1 (Brancas)');
                     gameState.amPlayer1 = true;
                     gameState.myColor = 'white';
                     createNewGame();
                 } else {
                     const game = doc.data();
-                    console.log('Estado do jogo existente:', game);
-                    
                     if (!game.players || !game.players.black) {
-                        // Entrar como Player 2
-                        console.log('Entrando como Jogador 2 (Pretas)');
                         gameState.amPlayer1 = false;
                         gameState.myColor = 'black';
                         joinExistingGame(game);
                     } else {
-                        // Jogo cheio
                         showStatus('Jogo já está cheio! Crie um novo jogo.', 'error');
                         document.getElementById('joinBtn').disabled = false;
                         document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
-                        
                         setTimeout(() => {
                             if (confirm('Jogo cheio. Criar novo jogo?')) {
                                 window.location.search = '';
@@ -668,8 +694,11 @@
                 ['R','N','B','Q','K','B','N','R']
             ];
 
-            const gameData = {
-                board: initialBoard,
+            const boardObj = boardToFirestore(initialBoard);
+            const capturedObj = capturedPiecesToFirestore({ white: [], black: [] });
+
+            const gameData = cleanDataForFirestore({
+                board: boardObj,
                 currentPlayer: 'white',
                 players: {
                     white: { 
@@ -686,25 +715,24 @@
                 },
                 enPassantTarget: null,
                 lastMove: null,
-                capturedPieces: { white: [], black: [] },
+                capturedPieces: capturedObj,
                 kingPositions: { 
                     white: {row: 7, col: 4}, 
                     black: {row: 0, col: 4} 
                 },
                 moveHistory: [],
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
+            });
 
-            // MUDANÇA: Firestore usa set() em vez de set() do Realtime Database
+            console.log('Criando jogo com dados:', JSON.stringify(gameData, null, 2));
+
             gameRef.set(gameData).then(() => {
-                console.log('Jogo criado com sucesso');
                 setupGameListener();
-                
                 showStatus(`Aguardando adversário...\n\nCompartilhe este link:\n${window.location.href}`, 'waiting');
                 updatePlayerDisplay();
             }).catch(error => {
                 console.error('Erro ao criar jogo:', error);
-                showStatus('Erro ao criar jogo. Tente novamente.', 'error');
+                showStatus('Erro ao criar jogo: ' + error.message, 'error');
                 document.getElementById('joinBtn').disabled = false;
                 document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
             });
@@ -716,35 +744,30 @@
                 return;
             }
 
-            const updates = {
+            const updates = cleanDataForFirestore({
                 'players.black': { 
                     name: gameState.myName, 
                     isFernando: gameState.isFernando,
                     connected: true 
                 },
                 status: 'playing'
-            };
+            });
 
-            // MUDANÇA: Firestore usa update() para atualizar campos específicos
             gameRef.update(updates).then(() => {
-                console.log('Entrou no jogo com sucesso');
-                
-                // Copiar estado do jogo
-                gameState.board = game.board || [];
+                gameState.board = boardFromFirestore(game.board);
                 gameState.currentPlayer = game.currentPlayer || 'white';
                 gameState.castlingRights = game.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
-                gameState.capturedPieces = game.capturedPieces || { white: [], black: [] };
+                gameState.capturedPieces = capturedPiecesFromFirestore(game.capturedPieces || { white: '', black: '' });
                 gameState.kingPositions = game.kingPositions || { white: {row: 7, col: 4}, black: {row: 0, col: 4} };
                 gameState.players = {
                     white: game.players.white,
                     black: { name: gameState.myName, isFernando: gameState.isFernando }
                 };
-                
                 setupGameListener();
                 startGame();
             }).catch(error => {
                 console.error('Erro ao entrar:', error);
-                showStatus('Erro ao entrar no jogo.', 'error');
+                showStatus('Erro ao entrar no jogo: ' + error.message, 'error');
                 document.getElementById('joinBtn').disabled = false;
                 document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
             });
@@ -752,35 +775,26 @@
 
         function setupGameListener() {
             if (!gameRef) return;
-
-            // MUDANÇA: Firestore usa onSnapshot() em vez de on('value')
             unsubscribe = gameRef.onSnapshot(doc => {
                 if (!doc.exists) return;
-                
                 const data = doc.data();
-                if (!data) return;
-
-                console.log('Dados recebidos do Firestore:', data);
-
-                // Atualizar estado local
-                gameState.board = data.board || gameState.board;
+                
+                gameState.board = boardFromFirestore(data.board);
                 gameState.currentPlayer = data.currentPlayer || 'white';
                 gameState.players = data.players || gameState.players;
                 gameState.castlingRights = data.castlingRights || gameState.castlingRights;
                 gameState.enPassantTarget = data.enPassantTarget;
                 gameState.lastMove = data.lastMove;
-                gameState.capturedPieces = data.capturedPieces || { white: [], black: [] };
+                gameState.capturedPieces = capturedPiecesFromFirestore(data.capturedPieces || { white: '', black: '' });
                 gameState.kingPositions = data.kingPositions || gameState.kingPositions;
                 gameState.status = data.status || 'waiting';
 
-                // Verificar se jogo começou
                 if (data.status === 'playing' && gameState.amPlayer1 && 
                     document.getElementById('loginScreen').style.display !== 'none') {
                     document.getElementById('statusMessage').style.display = 'none';
                     startGame();
                 }
 
-                // Verificar fim de jogo
                 if (data.status === 'ended' && data.winner) {
                     showGameOver(data.winner);
                 }
@@ -802,9 +816,7 @@
         function updatePlayerDisplay() {
             const badge = document.getElementById('playerBadge');
             const nameDisplay = document.getElementById('playerNameDisplay');
-            
             nameDisplay.textContent = gameState.myName;
-            
             if (gameState.isFernando) {
                 badge.textContent = '♔ MODO DICA ATIVO ♔';
                 badge.classList.add('fernando');
@@ -816,7 +828,6 @@
         function updateTurnIndicator() {
             const indicator = document.getElementById('turnIndicator');
             const isMyTurn = gameState.currentPlayer === gameState.myColor;
-            
             if (gameState.status === 'waiting') {
                 indicator.textContent = 'Aguardando adversário...';
                 indicator.classList.remove('your-turn');
@@ -832,29 +843,21 @@
         function renderBoard() {
             const boardEl = document.getElementById('chessboard');
             boardEl.innerHTML = '';
-
             const isMyTurn = gameState.currentPlayer === gameState.myColor;
             const shouldShowHints = gameState.isFernando && isMyTurn && gameState.status === 'playing';
-
             let hints = [];
-            if (shouldShowHints) {
-                hints = generateHints(gameState.myColor);
-            }
+            if (shouldShowHints) hints = generateHints(gameState.myColor);
 
             for (let displayRow = 0; displayRow < 8; displayRow++) {
                 for (let displayCol = 0; displayCol < 8; displayCol++) {
                     const actualRow = gameState.myColor === 'white' ? displayRow : 7 - displayRow;
                     const actualCol = gameState.myColor === 'white' ? displayCol : 7 - displayCol;
-
                     const square = document.createElement('div');
                     square.className = `square ${(displayRow + displayCol) % 2 === 0 ? 'light' : 'dark'}`;
                     square.dataset.row = actualRow;
                     square.dataset.col = actualCol;
-
                     const piece = gameState.board[actualRow] ? gameState.board[actualRow][actualCol] : null;
-                    if (piece) {
-                        square.textContent = PIECES[piece];
-                    }
+                    if (piece) square.textContent = PIECES[piece];
 
                     if (gameState.lastMove) {
                         if ((gameState.lastMove.from.row === actualRow && gameState.lastMove.from.col === actualCol) ||
@@ -865,9 +868,7 @@
 
                     if (piece && piece.toLowerCase() === 'k') {
                         const color = piece === piece.toUpperCase() ? 'white' : 'black';
-                        if (isInCheck(color)) {
-                            square.classList.add('check');
-                        }
+                        if (isInCheck(color)) square.classList.add('check');
                     }
 
                     if (isMyTurn && gameState.selectedSquare) {
@@ -884,15 +885,12 @@
                     if (shouldShowHints) {
                         hints.forEach((hint, idx) => {
                             if (idx > 2) return;
-
                             const isFrom = hint.from && hint.from.row === actualRow && hint.from.col === actualCol;
                             const isTo = hint.to && hint.to.row === actualRow && hint.to.col === actualCol;
-
                             if (isFrom) {
                                 const glow = document.createElement('div');
                                 glow.className = hint.type === 'danger' ? 'danger-glow' : 'hint-glow';
                                 square.appendChild(glow);
-
                                 if (hint.to && hint.type !== 'danger') {
                                     const arrow = document.createElement('div');
                                     const dir = getDirection(hint.from, hint.to);
@@ -900,13 +898,11 @@
                                     square.appendChild(arrow);
                                 }
                             }
-
                             if (isTo && hint.type !== 'danger') {
                                 const target = document.createElement('div');
                                 target.className = 'hint-target';
                                 square.appendChild(target);
                             }
-
                             if (isTo && hint.type === 'capture') {
                                 const circle = document.createElement('div');
                                 circle.className = 'hint-circle';
@@ -920,7 +916,6 @@
                     if (isMyTurn && gameState.status === 'playing') {
                         square.addEventListener('click', () => handleSquareClick(actualRow, actualCol));
                     }
-
                     boardEl.appendChild(square);
                 }
             }
@@ -932,7 +927,6 @@
                     }
                 });
             }
-
             updateCapturedDisplay();
         }
 
@@ -948,27 +942,22 @@
 
         function drawTrail(boardEl, from, to) {
             const squareSize = boardEl.firstChild ? boardEl.firstChild.offsetWidth : 80;
-            
             const fromDisplayRow = gameState.myColor === 'white' ? from.row : 7 - from.row;
             const fromDisplayCol = gameState.myColor === 'white' ? from.col : 7 - from.col;
             const toDisplayRow = gameState.myColor === 'white' ? to.row : 7 - to.row;
             const toDisplayCol = gameState.myColor === 'white' ? to.col : 7 - to.col;
-
             const fromX = fromDisplayCol * squareSize + squareSize / 2;
             const fromY = fromDisplayRow * squareSize + squareSize / 2;
             const toX = toDisplayCol * squareSize + squareSize / 2;
             const toY = toDisplayRow * squareSize + squareSize / 2;
-
             const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
             const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
-
             const trail = document.createElement('div');
             trail.className = 'hint-trail';
             trail.style.width = length + 'px';
             trail.style.left = fromX + 'px';
             trail.style.top = fromY + 'px';
             trail.style.transform = `rotate(${angle}deg)`;
-
             boardEl.appendChild(trail);
         }
 
@@ -976,7 +965,6 @@
             const hints = [];
             const isWhite = color === 'white';
             const backRank = isWhite ? 7 : 0;
-
             if (isInCheck(color)) {
                 for (let r = 0; r < 8; r++) {
                     for (let c = 0; c < 8; c++) {
@@ -1001,24 +989,19 @@
                     }
                 }
             }
-
             const moveCount = gameState.lastMove ? 1 : 0;
             if (moveCount < 10) {
                 const pawnRow = isWhite ? 6 : 1;
                 const targetRow = isWhite ? 4 : 3;
-                
                 for (let col of [3, 4]) {
                     if (gameState.board[pawnRow] && gameState.board[pawnRow][col] && 
                         (isWhite ? gameState.board[pawnRow][col] === 'P' : gameState.board[pawnRow][col] === 'p')) {
                         const moves = getValidMoves(pawnRow, col);
                         const centerMove = moves.find(m => m.row === targetRow);
-                        if (centerMove) {
-                            hints.push({ type: 'center', from: {row: pawnRow, col}, to: centerMove, priority: 90 });
-                        }
+                        if (centerMove) hints.push({ type: 'center', from: {row: pawnRow, col}, to: centerMove, priority: 90 });
                     }
                 }
             }
-
             const knightSquares = [[backRank, 1], [backRank, 6]];
             for (let [r, c] of knightSquares) {
                 if (gameState.board[r] && gameState.board[r][c] && 
@@ -1028,34 +1011,19 @@
                         (isWhite && m.row === 5 && (m.col === 2 || m.col === 5)) ||
                         (!isWhite && m.row === 2 && (m.col === 2 || m.col === 5))
                     );
-                    if (goodMove) {
-                        hints.push({ type: 'develop', from: {row: r, col: c}, to: goodMove, priority: 80 });
-                    }
+                    if (goodMove) hints.push({ type: 'develop', from: {row: r, col: c}, to: goodMove, priority: 80 });
                 }
             }
-
             if (!isInCheck(color)) {
                 if (gameState.castlingRights[color].kingSide) {
-                    hints.push({ 
-                        type: 'castle', 
-                        from: {row: backRank, col: 4}, 
-                        to: {row: backRank, col: 6}, 
-                        priority: 70 
-                    });
+                    hints.push({ type: 'castle', from: {row: backRank, col: 4}, to: {row: backRank, col: 6}, priority: 70 });
                 } else if (gameState.castlingRights[color].queenSide) {
-                    hints.push({ 
-                        type: 'castle', 
-                        from: {row: backRank, col: 4}, 
-                        to: {row: backRank, col: 2}, 
-                        priority: 70 
-                    });
+                    hints.push({ type: 'castle', from: {row: backRank, col: 4}, to: {row: backRank, col: 2}, priority: 70 });
                 }
             }
-
             const values = {p: 1, n: 3, b: 3, r: 5, q: 9};
             let bestCapture = null;
             let bestValue = 0;
-
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = gameState.board[r] && gameState.board[r][c];
@@ -1076,25 +1044,21 @@
                     }
                 }
             }
-
             if (bestCapture && bestValue >= 3) {
                 hints.push({ type: 'capture', from: bestCapture.from, to: bestCapture.to, priority: 95 });
             }
-
             hints.sort((a, b) => b.priority - a.priority);
             return hints.slice(0, 3);
         }
 
         function handleSquareClick(row, col) {
             const piece = gameState.board[row] && gameState.board[row][col];
-            
             if (piece && isMyPiece(piece) && !gameState.selectedSquare) {
                 gameState.selectedSquare = {row, col};
                 gameState.validMoves = getValidMoves(row, col);
                 renderBoard();
                 return;
             }
-
             if (gameState.selectedSquare) {
                 const move = gameState.validMoves.find(m => m.row === row && m.col === col);
                 if (move) {
@@ -1118,23 +1082,19 @@
         function getValidMoves(row, col) {
             const piece = gameState.board[row] && gameState.board[row][col];
             if (!piece) return [];
-            
             const moves = [];
             const color = piece === piece.toUpperCase() ? 'white' : 'black';
             const type = piece.toLowerCase();
-
             switch(type) {
                 case 'p':
                     const dir = color === 'white' ? -1 : 1;
                     const start = color === 'white' ? 6 : 1;
-                    
                     if (isValid(row + dir, col) && !gameState.board[row + dir][col]) {
                         moves.push({row: row + dir, col: col, promotion: (row + dir === 0 || row + dir === 7)});
                         if (row === start && !gameState.board[row + 2*dir][col]) {
                             moves.push({row: row + 2*dir, col: col, isDoublePush: true});
                         }
                     }
-                    
                     for (let dc of [-1, 1]) {
                         const nr = row + dir, nc = col + dc;
                         if (isValid(nr, nc)) {
@@ -1150,7 +1110,6 @@
                         }
                     }
                     break;
-
                 case 'n':
                     const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
                     for (let [dr, dc] of nm) {
@@ -1163,19 +1122,15 @@
                         }
                     }
                     break;
-
                 case 'b':
                     moves.push(...slideMoves(row, col, piece, [[-1,-1],[-1,1],[1,-1],[1,1]]));
                     break;
-
                 case 'r':
                     moves.push(...slideMoves(row, col, piece, [[-1,0],[1,0],[0,-1],[0,1]]));
                     break;
-
                 case 'q':
                     moves.push(...slideMoves(row, col, piece, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
                     break;
-
                 case 'k':
                     const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
                     for (let [dr, dc] of km) {
@@ -1187,12 +1142,10 @@
                             }
                         }
                     }
-                    
                     if (canCastle(color, 'kingSide')) moves.push({row, col: col+2, castling: 'kingSide'});
                     if (canCastle(color, 'queenSide')) moves.push({row, col: col-2, castling: 'queenSide'});
                     break;
             }
-
             return moves.filter(m => {
                 const test = copyBoard(gameState.board);
                 test[m.row][m.col] = test[row][col];
@@ -1239,10 +1192,8 @@
             if (side === 'kingSide' && !rights.kingSide) return false;
             if (side === 'queenSide' && !rights.queenSide) return false;
             if (isInCheck(color)) return false;
-            
             const row = color === 'white' ? 7 : 0;
             const dir = side === 'kingSide' ? 1 : -1;
-            
             for (let i = 1; i <= (side === 'kingSide' ? 2 : 3); i++) {
                 const col = 4 + (dir * i);
                 if (gameState.board[row] && gameState.board[row][col]) return false;
@@ -1259,7 +1210,6 @@
         function isSquareAttacked(row, col, defColor, testBoard) {
             const atkColor = defColor === 'white' ? 'black' : 'white';
             const pawnDir = defColor === 'white' ? -1 : 1;
-            
             for (let dc of [-1, 1]) {
                 const r = row - pawnDir, c = col + dc;
                 if (isValid(r, c)) {
@@ -1269,7 +1219,6 @@
                     }
                 }
             }
-            
             const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
             for (let [dr, dc] of nm) {
                 const r = row + dr, c = col + dc;
@@ -1280,7 +1229,6 @@
                     }
                 }
             }
-            
             for (let [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
                 let r = row + dr, c = col + dc;
                 while (isValid(r, c)) {
@@ -1295,7 +1243,6 @@
                     r += dr; c += dc;
                 }
             }
-            
             for (let [dr, dc] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
                 let r = row + dr, c = col + dc;
                 while (isValid(r, c)) {
@@ -1310,7 +1257,6 @@
                     r += dr; c += dc;
                 }
             }
-            
             for (let [dr, dc] of [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]) {
                 const r = row + dr, c = col + dc;
                 if (isValid(r, c)) {
@@ -1321,24 +1267,19 @@
                     }
                 }
             }
-            
             return false;
         }
 
         function executeMove(from, to, move) {
             const piece = gameState.board[from.row][from.col];
             const color = piece === piece.toUpperCase() ? 'white' : 'black';
-            
             if (move.enPassant) {
                 gameState.board[from.row][to.col] = null;
             }
-            
             gameState.board[to.row][to.col] = piece;
             gameState.board[from.row][from.col] = null;
-            
             if (piece.toLowerCase() === 'k') {
                 gameState.kingPositions[color] = {row: to.row, col: to.col};
-                
                 if (move.castling) {
                     const row = from.row;
                     if (move.castling === 'kingSide') {
@@ -1349,37 +1290,30 @@
                         gameState.board[row][0] = null;
                     }
                 }
-                
                 gameState.castlingRights[color] = {kingSide: false, queenSide: false};
             }
-            
             if (piece.toLowerCase() === 'r') {
                 const row = color === 'white' ? 7 : 0;
                 if (from.row === row && from.col === 0) gameState.castlingRights[color].queenSide = false;
                 if (from.row === row && from.col === 7) gameState.castlingRights[color].kingSide = false;
             }
-            
             if (move.promotion) {
                 showPromotion(to, color, from);
                 return;
             }
-            
             if (move.isDoublePush) {
                 gameState.enPassantTarget = {row: (from.row + to.row) / 2, col: from.col};
             } else {
                 gameState.enPassantTarget = null;
             }
-            
             const captured = gameState.board[to.row][to.col];
             if (captured && isEnemy(piece, captured)) {
                 gameState.capturedPieces[color].push(captured);
             }
-            
             gameState.lastMove = {from, to};
             gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
             gameState.selectedSquare = null;
             gameState.validMoves = [];
-            
             const nextColor = gameState.currentPlayer;
             if (isCheckmate(nextColor)) {
                 gameState.status = 'ended';
@@ -1390,26 +1324,25 @@
                 gameState.winner = 'draw';
                 showGameOver('draw');
             }
-            
             saveGameState();
         }
 
         function saveGameState() {
             if (!gameRef) return;
+            const boardObj = boardToFirestore(gameState.board);
+            const capturedObj = capturedPiecesToFirestore(gameState.capturedPieces);
             
-            // MUDANÇA: Firestore usa update() para atualizar campos
-            // Importante: Firestore não aceita undefined, então filtramos
-            const updates = {
-                board: gameState.board,
+            const updates = cleanDataForFirestore({
+                board: boardObj,
                 currentPlayer: gameState.currentPlayer,
                 castlingRights: gameState.castlingRights,
-                enPassantTarget: gameState.enPassantTarget || null,
-                lastMove: gameState.lastMove || null,
+                enPassantTarget: gameState.enPassantTarget,
+                lastMove: gameState.lastMove,
                 kingPositions: gameState.kingPositions,
-                capturedPieces: gameState.capturedPieces,
+                capturedPieces: capturedObj,
                 status: gameState.status,
                 winner: gameState.winner || null
-            };
+            });
             
             gameRef.update(updates).catch(error => {
                 console.error('Erro ao salvar:', error);
@@ -1420,9 +1353,7 @@
             const modal = document.getElementById('promotionModal');
             const opts = document.getElementById('promotionOptions');
             opts.innerHTML = '';
-            
             const pieces = color === 'white' ? ['Q','R','B','N'] : ['q','r','b','n'];
-            
             pieces.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'promotion-piece';
@@ -1437,7 +1368,6 @@
                 };
                 opts.appendChild(div);
             });
-            
             modal.classList.add('show');
         }
 
@@ -1476,7 +1406,6 @@
         function showGameOver(winner) {
             const modal = document.getElementById('gameOverModal');
             const text = document.getElementById('gameOverText');
-            
             if (winner === 'draw') {
                 text.textContent = 'Empate!';
             } else {
@@ -1485,29 +1414,18 @@
                     (gameState.players.black ? gameState.players.black.name : 'Pretas');
                 text.textContent = `${winnerName} venceu!`;
             }
-            
             modal.classList.add('show');
-            
-            // Parar de ouvir mudanças quando jogo acaba
-            if (unsubscribe) {
-                unsubscribe();
-            }
+            if (unsubscribe) unsubscribe();
         }
 
-        // Limpar listener quando sair da página
         window.onbeforeunload = () => {
-            if (unsubscribe) {
-                unsubscribe();
-            }
+            if (unsubscribe) unsubscribe();
         };
 
         window.onload = () => {
             const params = new URLSearchParams(window.location.search);
             const gameId = params.get('game');
-            
-            if (gameId) {
-                console.log('Game ID encontrado:', gameId);
-            }
+            if (gameId) console.log('Game ID encontrado:', gameId);
         };
     </script>
 </body>
