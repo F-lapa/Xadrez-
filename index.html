@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -282,7 +281,112 @@
             50% { box-shadow: inset 0 0 40px rgba(255,0,0,1); }
         }
 
-        /* NOVOS ESTILOS PARA DICAS AVANÇADAS */
+        /* ANIMAÇÃO ESPECTACULAR DE CHECKMATE */
+        .checkmate-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .checkmate-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,0,0,0.8) 0%, rgba(255,215,0,0.4) 40%, transparent 70%);
+            animation: checkmate-flash 2s ease-out forwards;
+        }
+
+        @keyframes checkmate-flash {
+            0% { opacity: 0; transform: scale(0.5); }
+            30% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+
+        .checkmate-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            border-radius: 50%;
+            animation: particle-explode 1.5s ease-out forwards;
+        }
+
+        @keyframes particle-explode {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        .checkmate-king-fall {
+            animation: king-fall 1.5s ease-in-out forwards;
+        }
+
+        @keyframes king-fall {
+            0% { transform: rotate(0deg) translateY(0); }
+            25% { transform: rotate(-15deg) translateY(-10px); }
+            50% { transform: rotate(-30deg) translateY(5px); }
+            75% { transform: rotate(-45deg) translateY(15px); }
+            100% { transform: rotate(-90deg) translateY(30px); opacity: 0.7; }
+        }
+
+        .checkmate-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            font-weight: bold;
+            text-shadow: 0 0 30px #ff0000, 0 0 60px #ffd700;
+            animation: checkmate-text-pop 1s ease-out forwards;
+            z-index: 101;
+            white-space: nowrap;
+        }
+
+        @keyframes checkmate-text-pop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.3) rotate(5deg); }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .checkmate-crown {
+            position: absolute;
+            font-size: 3em;
+            animation: crown-float 2s ease-in-out infinite;
+            z-index: 102;
+        }
+
+        @keyframes crown-float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .victory-shine {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.8) 50%, transparent 60%);
+            animation: shine-sweep 2s ease-in-out;
+            z-index: 99;
+        }
+
+        @keyframes shine-sweep {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        /* DICAS AVANÇADAS PARA FERNANDO */
         .threat-indicator {
             position: absolute;
             width: 100%;
@@ -632,9 +736,9 @@
         }
 
         .ai-suggestion.warning {
-            background: rgba(255,0,0,0.1);
-            border-left-color: #ff0000;
-            color: #ff6666;
+            background: rgba(255,170,0,0.1);
+            border-left-color: #ffaa00;
+            color: #ffcc00;
         }
 
         .ai-suggestion.critical {
@@ -787,16 +891,132 @@
             font-size: 0.9em;
         }
 
+        /* NOVOS ESTILOS PARA ANÁLISE AVANÇADA */
+        .evaluation-bar {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+
+        .eval-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .eval-score {
+            font-size: 2em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .eval-score.positive { color: #00ff00; }
+        .eval-score.negative { color: #ff0000; }
+        .eval-score.equal { color: #ffff00; }
+
+        .eval-bar-container {
+            flex: 1;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .eval-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000 0%, #ffff00 50%, #00ff00 100%);
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .eval-bar-marker {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            transition: left 0.5s ease;
+        }
+
+        .line-analysis {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .line-move {
+            display: inline-block;
+            padding: 2px 6px;
+            margin: 2px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .line-move:hover {
+            background: rgba(0,255,0,0.3);
+            transform: scale(1.1);
+        }
+
+        .line-move.best {
+            background: rgba(0,255,0,0.4);
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .tactical-motifs {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255,0,255,0.1);
+            border-radius: 8px;
+            border-left: 3px solid #ff00ff;
+        }
+
+        .motif-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .motif-icon {
+            font-size: 1.2em;
+        }
+
+        .depth-indicator {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.7em;
+            color: #666;
+            background: rgba(0,0,0,0.5);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
         @media (max-width: 600px) {
             .login-screen { padding: 30px 20px; }
             .login-screen h1 { font-size: 2em; }
             .ai-analysis { padding: 15px; }
+            .checkmate-text { font-size: 2.5em; }
         }
     </style>
 </head>
 <body>
     <div class="login-screen" id="loginScreen">
         <h1>♔ Xadrez ♚</h1>
+        <p>Modo Fernando Pro Ultra - IA Avançada</p>
         <div class="input-group">
             <input type="text" id="playerName" placeholder="Seu nome" maxlength="20" autocomplete="off">
         </div>
@@ -813,8 +1033,9 @@
             </div>
             <div class="turn-indicator" id="turnIndicator">Aguardando início...</div>
         </div>
-        <div class="board-container">
+        <div class="board-container" id="boardContainer">
             <div id="chessboard"></div>
+            <div class="checkmate-animation" id="checkmateAnimation" style="display:none;"></div>
         </div>
         <div class="coordinates">
             <span>a</span><span>b</span><span>c</span><span>d</span>
@@ -825,10 +1046,34 @@
             <div id="gameStatus" style="margin-top:10px; font-size:0.9em; color:#888;"></div>
         </div>
         <div class="ai-analysis" id="aiAnalysis">
+            <div class="depth-indicator" id="depthIndicator">Profundidade: 4</div>
             <h3>🧠 Análise Predativa IA Fernando</h3>
+            
+            <div class="evaluation-bar" id="evaluationBar" style="display:none;">
+                <div class="eval-display">
+                    <div class="eval-score" id="evalScore">0.0</div>
+                    <div class="eval-bar-container">
+                        <div class="eval-bar-fill" id="evalBarFill" style="width:50%"></div>
+                        <div class="eval-bar-marker" id="evalBarMarker" style="left:50%"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="ai-suggestion" id="aiSuggestion"></div>
+            
+            <div class="line-analysis" id="lineAnalysis" style="display:none;">
+                <strong>Linha Principal:</strong>
+                <div id="lineMoves"></div>
+            </div>
+
+            <div class="tactical-motifs" id="tacticalMotifs" style="display:none;">
+                <strong>Motivos Táticos Detectados:</strong>
+                <div id="motifsList"></div>
+            </div>
+
             <div class="ai-reasoning" id="aiReasoning"></div>
             <div class="threat-list" id="threatList" style="display:none;"></div>
+            
             <div class="safety-meter" id="safetyMeter" style="display:none;">
                 <div class="safety-bar">
                     <div class="safety-indicator" id="safetyIndicator" style="left:50%"></div>
@@ -839,6 +1084,7 @@
                     <span>Seguro</span>
                 </div>
             </div>
+
             <div class="suggestion-list" id="suggestionList" style="display:none;"></div>
             <div class="opponent-analysis" id="opponentAnalysis" style="display:none;"></div>
         </div>
@@ -981,6 +1227,7 @@
         let unsubscribe = null;
         let lastAnalysis = null;
         let isRendering = false;
+        let isCheckmateAnimating = false;
 
         // ==================== PERSISTÊNCIA LOCAL ====================
         
@@ -1018,7 +1265,6 @@
             
             try {
                 const parsed = JSON.parse(savedState);
-                // Verificar se o estado tem menos de 24 horas
                 if (Date.now() - parsed.timestamp > 24 * 60 * 60 * 1000) {
                     localStorage.removeItem('chessGameState_' + lastGameId);
                     return null;
@@ -1035,7 +1281,6 @@
                 localStorage.removeItem('chessGameState_' + lastGameId);
                 localStorage.removeItem('chessLastGameId');
             }
-            // Limpar todos os estados antigos
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('chessGameState_')) {
@@ -1121,7 +1366,6 @@
             gameState.isFernando = name.toLowerCase() === 'fernando';
             gameState.gameId = getGameId();
             
-            // Verificar se há estado salvo
             const savedState = loadLocalState();
             if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
                 restoreGameState(savedState);
@@ -1131,7 +1375,6 @@
         }
 
         function restoreGameState(savedState) {
-            // Restaurar estado do jogo
             gameState.myColor = savedState.myColor;
             gameState.isFernando = savedState.isFernando;
             gameState.amPlayer1 = savedState.amPlayer1;
@@ -1181,7 +1424,6 @@
                         gameState.myColor = 'white';
                         joinAsWhitePlayer(game);
                     } else if (hasWhite && hasBlack) {
-                        // Verificar se sou um dos jogadores existentes
                         if (game.players.white.name === gameState.myName) {
                             gameState.amPlayer1 = true;
                             gameState.myColor = 'white';
@@ -1367,7 +1609,7 @@
                 
                 const data = doc.data();
                 
-                // Verificar se o rei foi capturado
+                // Verificar checkmate
                 const myKing = gameState.myColor === 'white' ? 'K' : 'k';
                 const opponentKing = gameState.myColor === 'white' ? 'k' : 'K';
                 const board = boardFromFirestore(data.board);
@@ -1387,7 +1629,7 @@
                     gameState.winner = gameState.myColor === 'white' ? 'black' : 'white';
                     gameState.finalPosition = board.map(r => [...r]);
                     saveLocalState();
-                    showGameOver(gameState.winner);
+                    showCheckmateAnimation(gameState.winner);
                     return;
                 }
                 
@@ -1396,7 +1638,7 @@
                     gameState.winner = gameState.myColor;
                     gameState.finalPosition = board.map(r => [...r]);
                     saveLocalState();
-                    showGameOver(gameState.winner);
+                    showCheckmateAnimation(gameState.winner);
                     return;
                 }
                 
@@ -1421,7 +1663,9 @@
                     gameState.finalPosition = board.map(r => [...r]);
                     gameState.gameEndedAt = Date.now();
                     saveLocalState();
-                    showGameOver(data.winner);
+                    if (!isCheckmateAnimating) {
+                        showCheckmateAnimation(data.winner);
+                    }
                 }
 
                 saveLocalState();
@@ -1485,7 +1729,87 @@
             }
         }
 
-        // ==================== IA AVANÇADA COM ANÁLISE DO ADVERSÁRIO ====================
+        // ==================== ANIMAÇÃO ESPECTACULAR DE CHECKMATE ====================
+
+        function showCheckmateAnimation(winner) {
+            isCheckmateAnimating = true;
+            const animationContainer = document.getElementById('checkmateAnimation');
+            animationContainer.style.display = 'block';
+            animationContainer.innerHTML = '';
+
+            // Flash vermelho/dourado
+            const flash = document.createElement('div');
+            flash.className = 'checkmate-flash';
+            animationContainer.appendChild(flash);
+
+            // Partículas explosivas
+            const particlesContainer = document.createElement('div');
+            particlesContainer.className = 'checkmate-particles';
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const angle = (Math.PI * 2 * i) / 30;
+                const distance = 100 + Math.random() * 200;
+                particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                particlesContainer.appendChild(particle);
+            }
+            animationContainer.appendChild(particlesContainer);
+
+            // Efeito de brilho
+            const shine = document.createElement('div');
+            shine.className = 'victory-shine';
+            animationContainer.appendChild(shine);
+
+            // Texto CHECKMATE
+            const text = document.createElement('div');
+            text.className = 'checkmate-text';
+            const isWinner = winner === gameState.myColor;
+            text.innerHTML = isWinner ? 
+                '<span style="color:#00ff00">🏆 CHECKMATE! 🏆</span><br><span style="font-size:0.5em; color:#ffd700">Você Venceu!</span>' :
+                '<span style="color:#ff0000">💀 CHECKMATE 💀</span><br><span style="font-size:0.5em; color:#ff6666">Você Perdeu!</span>';
+            animationContainer.appendChild(text);
+
+            // Coroas flutuantes para o vencedor
+            if (isWinner) {
+                for (let i = 0; i < 5; i++) {
+                    const crown = document.createElement('div');
+                    crown.className = 'checkmate-crown';
+                    crown.textContent = '👑';
+                    crown.style.left = `${20 + Math.random() * 60}%`;
+                    crown.style.top = `${20 + Math.random() * 60}%`;
+                    crown.style.animationDelay = `${i * 0.2}s`;
+                    animationContainer.appendChild(crown);
+                }
+            }
+
+            // Animar o rei derrotado
+            setTimeout(() => {
+                const loserColor = winner === 'white' ? 'black' : 'white';
+                const loserKing = loserColor === 'white' ? 'K' : 'k';
+                
+                const squares = document.querySelectorAll('.square');
+                squares.forEach(sq => {
+                    const piece = sq.textContent;
+                    if (piece === PIECES[loserKing]) {
+                        sq.classList.add('checkmate-king-fall');
+                    }
+                });
+            }, 500);
+
+            // Remover animação após 3 segundos e mostrar modal
+            setTimeout(() => {
+                animationContainer.style.display = 'none';
+                showGameOver(winner);
+                isCheckmateAnimating = false;
+            }, 3000);
+        }
+
+        // ==================== IA AVANÇADA COM ANÁLISE PROFUNDA ====================
 
         function evaluateMoveSafety(from, to, move, color) {
             const board = gameState.board;
@@ -1499,10 +1823,22 @@
                 isHanging: false,
                 blunder: false,
                 warning: false,
-                tacticalMotifs: []
+                tacticalMotifs: [],
+                positionalAdvantage: 0,
+                kingSafety: 0,
+                materialChange: 0
             };
 
-            // 1. Verificar se a peça movida ficará pendurada
+            // 1. Análise de material
+            if (move.capture) {
+                const target = board[to.row][to.col];
+                if (target) {
+                    safety.materialChange = PIECE_VALUES[target.toLowerCase()];
+                    safety.score += safety.materialChange;
+                }
+            }
+
+            // 2. Verificar se a peça movida ficará pendurada
             if (!move.castling) {
                 const willBeAttacked = isSquareAttacked(to.row, to.col, color, testBoard);
                 const willBeDefended = isSquareDefended(to.row, to.col, color, testBoard);
@@ -1514,12 +1850,12 @@
                     
                     if (pieceValue > minAttackerValue) {
                         safety.blunder = true;
-                        safety.threats.push(`⚠️ BLUNDER! ${PIECES[piece]} ficará pendurada e pode ser capturada por peça de menor valor!`);
+                        safety.threats.push(`🚨 BLUNDER! ${PIECES[piece]} ficará pendurada!`);
                         safety.score -= (pieceValue - minAttackerValue) * 2;
                     } else {
                         safety.isHanging = true;
-                        safety.threats.push(`⚠️ Atenção: ${PIECES[piece]} ficará atacada e indefesa`);
-                        safety.score -= pieceValue;
+                        safety.threats.push(`⚠️ Atenção: ${PIECES[piece]} ficará atacada`);
+                        safety.score -= pieceValue * 0.5;
                     }
                 } else if (willBeAttacked && willBeDefended) {
                     const attackers = getAttackers(to.row, to.col, opponentColor, testBoard);
@@ -1527,42 +1863,29 @@
                     
                     if (attackers.length > defenders.length) {
                         safety.warning = true;
-                        safety.threats.push(`⚠️ Cuidado: Mais atacantes (${attackers.length}) que defensores (${defenders.length})`);
-                        safety.score -= pieceValue * 0.5;
+                        safety.threats.push(`⚠️ Cuidado: Mais atacantes que defensores`);
+                        safety.score -= pieceValue * 0.3;
                     }
                 }
             }
 
-            // 2. Verificar se deixamos outras peças vulneráveis
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && (color === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        if (r === to.row && c === to.col) continue;
-                        
-                        const wasDefended = isSquareDefended(r, c, color, board);
-                        const isDefendedNow = isSquareDefended(r, c, color, testBoard);
-                        const isAttacked = isSquareAttacked(r, c, color, testBoard);
-                        
-                        if (wasDefended && !isDefendedNow && isAttacked) {
-                            const pValue = PIECE_VALUES[p.toLowerCase()];
-                            safety.warning = true;
-                            safety.threats.push(`⚠️ ${PIECES[p]} em ${String.fromCharCode(97+c)}${8-r} ficará desprotegida!`);
-                            safety.score -= pValue * 0.3;
-                        }
-                    }
-                }
-            }
-
-            // 3. Verificar se o rei ficará em xeque
+            // 3. Verificar segurança do rei
             const kingPos = findKing(testBoard, color);
-            if (kingPos && isSquareAttacked(kingPos.row, kingPos.col, color, testBoard)) {
-                safety.blunder = true;
-                safety.threats.push('🚨 REI EM XEQUE! Movimento ilegal ou desastre!');
-                safety.score -= 10000;
+            if (kingPos) {
+                const kingAttacked = isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
+                if (kingAttacked) {
+                    safety.blunder = true;
+                    safety.threats.push('🚨 REI EM XEQUE! Movimento ilegal!');
+                    safety.score -= 10000;
+                } else {
+                    // Avaliar segurança do rei baseada em escudo de peões
+                    const pawnShield = evaluatePawnShield(testBoard, color, kingPos);
+                    safety.kingSafety = pawnShield;
+                    safety.score += pawnShield * 10;
+                }
             }
 
-            // 4. Verificar ameaças futuras do oponente (lookahead)
+            // 4. Verificar ameaças futuras do oponente (lookahead de 2 jogadas)
             const opponentMoves = generateAllMoves(testBoard, opponentColor);
             let maxThreat = 0;
             let threatDetails = [];
@@ -1582,21 +1905,94 @@
                         }
                     }
                 }
+                
+                // Verificar se o oponente pode dar xeque
+                const testBoard2 = simulateMove(testBoard, oppMove);
+                const myKingPos = findKing(testBoard2, color);
+                if (myKingPos && isSquareAttacked(myKingPos.row, myKingPos.col, color, testBoard2)) {
+                    safety.warning = true;
+                    safety.threats.push(`⚠️ Cuidado: ${PIECES[oppMove.piece]} pode dar xeque em ${String.fromCharCode(97+oppMove.to.col)}${8-oppMove.to.row}`);
+                    safety.score -= 50;
+                }
             }
             
             if (threatDetails.length > 0) {
                 const topThreat = threatDetails[0];
-                safety.threats.push(`👁️ Após este movimento, adversário pode capturar ${PIECES[topThreat.piece]} em ${topThreat.square}`);
+                safety.threats.push(`👁️ Após sua jogada, adversário pode capturar ${PIECES[topThreat.piece]}`);
             }
             
-            safety.score -= maxThreat * 0.5;
+            safety.score -= maxThreat * 0.4;
 
-            // 5. Detectar motivos táticos positivos (forks, pins, etc)
+            // 5. Detectar motivos táticos positivos
             const tactical = detectTacticalMotifs(testBoard, color, from, to, piece);
             safety.tacticalMotifs = tactical;
             safety.score += tactical.score;
 
+            // 6. Avaliação posicional avançada
+            safety.positionalAdvantage = evaluatePositionalFactors(testBoard, color, from, to, piece);
+            safety.score += safety.positionalAdvantage;
+
             return safety;
+        }
+
+        function evaluatePawnShield(board, color, kingPos) {
+            let shieldScore = 0;
+            const direction = color === 'white' ? -1 : 1;
+            const pawn = color === 'white' ? 'P' : 'p';
+            
+            // Verificar peões na frente do rei
+            for (let dc = -1; dc <= 1; dc++) {
+                const checkRow = kingPos.row + direction;
+                const checkCol = kingPos.col + dc;
+                if (isValid(checkRow, checkCol)) {
+                    if (board[checkRow] && board[checkRow][checkCol] === pawn) {
+                        shieldScore += 10;
+                    }
+                }
+                // Segunda linha de peões
+                const checkRow2 = kingPos.row + 2 * direction;
+                if (isValid(checkRow2, checkCol)) {
+                    if (board[checkRow2] && board[checkRow2][checkCol] === pawn) {
+                        shieldScore += 5;
+                    }
+                }
+            }
+            
+            return shieldScore;
+        }
+
+        function evaluatePositionalFactors(board, color, from, to, piece) {
+            let score = 0;
+            const pieceType = piece.toLowerCase();
+            
+            // Controle do centro
+            const centerSquares = [[3,3], [3,4], [4,3], [4,4]];
+            const extendedCenter = [[2,2], [2,3], [2,4], [2,5], [3,2], [3,5], [4,2], [4,5], [5,2], [5,3], [5,4], [5,5]];
+            
+            if (centerSquares.some(s => s[0] === to.row && s[1] === to.col)) {
+                score += 15;
+            } else if (extendedCenter.some(s => s[0] === to.row && s[1] === to.col)) {
+                score += 8;
+            }
+            
+            // Mobilidade da peça (quanto mais casas ataca, melhor)
+            const attacks = getAttacks(to.row, to.col, board, piece);
+            score += attacks.length * 2;
+            
+            // Desenvolvimento de peças (penalizar peças de trás)
+            const backRank = color === 'white' ? 7 : 0;
+            if (from.row === backRank && to.row !== backRank) {
+                score += 10; // Bônus por desenvolver
+            }
+            
+            // Penalizar peças repetidas (evitar mover mesma peça várias vezes)
+            const recentMoves = gameState.moveHistory.slice(-4);
+            const samePieceMoves = recentMoves.filter(m => 
+                m.piece === piece && m.color === color
+            ).length;
+            score -= samePieceMoves * 5;
+            
+            return score;
         }
 
         function detectTacticalMotifs(board, color, from, to, piece) {
@@ -1604,7 +2000,7 @@
             const opponentColor = color === 'white' ? 'black' : 'white';
             const pieceType = piece.toLowerCase();
             
-            // Verificar fork (ataque duplo)
+            // 1. Fork (ataque duplo)
             const attacksAfterMove = getAttacks(to.row, to.col, board, piece);
             let highValueTargets = attacksAfterMove.filter(att => {
                 const target = board[att.row] && board[att.row][att.col];
@@ -1613,18 +2009,26 @@
             });
             
             if (highValueTargets.length >= 2) {
-                motifs.score += 150;
-                motifs.list.push(`🔱 Fork detectado! Ataque a ${highValueTargets.length} peças de valor`);
+                const targetValues = highValueTargets.map(t => {
+                    const p = board[t.row][t.col];
+                    return PIECE_VALUES[p.toLowerCase()];
+                });
+                const forkValue = targetValues.reduce((a, b) => a + b, 0);
+                motifs.score += 100 + forkValue * 0.2;
+                motifs.list.push(`🔱 FORK! Ataque a ${highValueTargets.length} peças (${Math.round(forkValue/100)} pts)`);
             }
             
-            // Verificar descoberto (descoberta de ataque)
+            // 2. Descoberto (ataque descoberto)
             const discoveredAttacks = checkDiscoveredAttack(board, from, to, color);
             if (discoveredAttacks.length > 0) {
-                motifs.score += 100;
-                motifs.list.push(`⚡ Ataque descoberto! ${discoveredAttacks.length} peças agora atacam`);
+                const discoveredValue = discoveredAttacks.reduce((sum, att) => {
+                    return sum + (att.target ? PIECE_VALUES[att.target.toLowerCase()] : 0);
+                }, 0);
+                motifs.score += 80 + discoveredValue * 0.15;
+                motifs.list.push(`⚡ Ataque Descoberto! ${discoveredAttacks.length} peças agora atacam`);
             }
             
-            // Verificar xeque
+            // 3. Xeque
             const opponentKing = opponentColor === 'white' ? 'K' : 'k';
             const kingAttacked = attacksAfterMove.some(att => {
                 const p = board[att.row] && board[att.row][att.col];
@@ -1632,11 +2036,125 @@
             });
             
             if (kingAttacked) {
-                motifs.score += 80;
+                motifs.score += 60;
                 motifs.list.push('👑 Xeque!');
+                
+                // Verificar se é xeque-mate
+                const isMate = isCheckmateAfterMove(board, opponentColor);
+                if (isMate) {
+                    motifs.score += 10000;
+                    motifs.list.push('🏆 XEQUE-MATE!');
+                }
+            }
+            
+            // 4. Pin (prender peça)
+            const pins = detectPins(board, to, color);
+            if (pins.length > 0) {
+                motifs.score += 40;
+                motifs.list.push(`📌 ${pins.length} peça(s) presa(s)`);
+            }
+            
+            // 5. Skewer (espeto)
+            const skewers = detectSkewers(board, to, color, piece);
+            if (skewers.length > 0) {
+                motifs.score += 50;
+                motifs.list.push(`🎯 Espeto detectado!`);
+            }
+            
+            // 6. Promoção de peão
+            if (pieceType === 'p' && (to.row === 0 || to.row === 7)) {
+                motifs.score += 800;
+                motifs.list.push('👑 Promoção de peão!');
             }
             
             return motifs;
+        }
+
+        function isCheckmateAfterMove(board, color) {
+            const kingPos = findKing(board, color);
+            if (!kingPos) return false;
+            
+            // Verificar se rei está em xeque
+            if (!isSquareAttacked(kingPos.row, kingPos.col, color, board)) {
+                return false;
+            }
+            
+            // Verificar se há movimentos legais
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                        const moves = getValidMovesForEvaluation(r, c, board, color);
+                        if (moves.length > 0) return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        function detectPins(board, pos, color) {
+            const pins = [];
+            const opponentColor = color === 'white' ? 'black' : 'white';
+            const directions = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+            
+            for (let [dr, dc] of directions) {
+                let r = pos.row + dr, c = pos.col + dc;
+                let pinnedPiece = null;
+                
+                while (isValid(r, c)) {
+                    const piece = board[r] && board[r][c];
+                    if (piece) {
+                        if (!pinnedPiece && isEnemy(piece, color === 'white' ? 'P' : 'p')) {
+                            pinnedPiece = {row: r, col: c, piece: piece};
+                        } else if (pinnedPiece) {
+                            // Verificar se é rei adversário
+                            if (piece.toLowerCase() === 'k' && 
+                                (opponentColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                                pins.push(pinnedPiece);
+                            }
+                            break;
+                        } else {
+                            break;
+                        }
+                    }
+                    r += dr;
+                    c += dc;
+                }
+            }
+            
+            return pins;
+        }
+
+        function detectSkewers(board, pos, color, attackingPiece) {
+            const skewers = [];
+            const opponentColor = color === 'white' ? 'black' : 'white';
+            const directions = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+            
+            for (let [dr, dc] of directions) {
+                let r = pos.row + dr, c = pos.col + dc;
+                let firstPiece = null;
+                
+                while (isValid(r, c)) {
+                    const piece = board[r] && board[r][c];
+                    if (piece) {
+                        if (!firstPiece) {
+                            firstPiece = piece;
+                            // Se primeira peça for de alto valor e a próxima for rei, é skewer
+                        } else {
+                            if (piece.toLowerCase() === 'k' && 
+                                (opponentColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase()) &&
+                                ['q', 'r'].includes(firstPiece.toLowerCase())) {
+                                skewers.push({highValue: firstPiece, king: piece});
+                            }
+                            break;
+                        }
+                    }
+                    r += dr;
+                    c += dc;
+                }
+            }
+            
+            return skewers;
         }
 
         function checkDiscoveredAttack(board, from, to, color) {
@@ -1655,7 +2173,7 @@
                             while (isValid(nr, nc)) {
                                 const target = board[nr] && board[nr][nc];
                                 if (target && isEnemy(p, target)) {
-                                    discoveries.push({piece: p, target: target});
+                                    discoveries.push({piece: p, target: target, row: nr, col: nc});
                                     break;
                                 }
                                 nr += dr;
@@ -1671,7 +2189,7 @@
             return discoveries;
         }
 
-        // Análise do adversário
+        // Análise do adversário melhorada
         function analyzeOpponentPosition(color) {
             const opponentColor = color === 'white' ? 'black' : 'white';
             const board = gameState.board;
@@ -1680,8 +2198,10 @@
                 threats: [],
                 weaknesses: [],
                 strongPieces: [],
-                kingSafety: { score: 0, status: '' },
-                totalScore: 0
+                kingSafety: { score: 0, status: '', details: [] },
+                pawnStructure: { weakPawns: [], isolatedPawns: [], doubledPawns: [] },
+                totalScore: 0,
+                bestTargets: []
             };
 
             // 1. Analisar segurança do rei adversário
@@ -1699,22 +2219,26 @@
             if (kingPos) {
                 const kingAttacked = isSquareAttacked(kingPos.row, kingPos.col, opponentColor, board);
                 const kingDefenders = getDefenders(kingPos.row, kingPos.col, opponentColor, board);
+                const pawnShield = evaluatePawnShield(board, opponentColor, kingPos);
                 
                 if (kingAttacked) {
                     analysis.kingSafety.status = '🔴 Em xeque!';
                     analysis.kingSafety.score = -100;
-                    analysis.totalScore += 200; // Bônus para nós
-                } else if (kingDefenders.length < 2) {
+                    analysis.totalScore += 200;
+                    analysis.kingSafety.details.push('Rei adversário em xeque');
+                } else if (kingDefenders.length < 2 || pawnShield < 15) {
                     analysis.kingSafety.status = '🟡 Rei vulnerável';
                     analysis.kingSafety.score = -30;
                     analysis.totalScore += 50;
+                    if (kingDefenders.length < 2) analysis.kingSafety.details.push('Poucos defensores');
+                    if (pawnShield < 15) analysis.kingSafety.details.push('Escudo de peões fraco');
                 } else {
                     analysis.kingSafety.status = '🟢 Rei seguro';
                     analysis.kingSafety.score = 0;
                 }
             }
 
-            // 2. Encontrar peças adversárias desprotegidas (alvos)
+            // 2. Encontrar peças adversárias desprotegidas
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = board[r] && board[r][c];
@@ -1727,7 +2251,9 @@
                             analysis.weaknesses.push({
                                 piece: piece,
                                 square: `${String.fromCharCode(97+c)}${8-r}`,
-                                value: value
+                                value: value,
+                                row: r,
+                                col: c
                             });
                             analysis.totalScore += value * 0.5;
                         } else if (!isDefended && ['q','r'].includes(piece.toLowerCase())) {
@@ -1741,7 +2267,14 @@
                 }
             }
 
-            // 3. Analisar ameaças do adversário contra nós
+            // Ordenar fraquezas por valor
+            analysis.weaknesses.sort((a, b) => b.value - a.value);
+            analysis.bestTargets = analysis.weaknesses.slice(0, 3);
+
+            // 3. Analisar estrutura de peões
+            analysis.pawnStructure = analyzePawnStructure(board, opponentColor);
+
+            // 4. Analisar ameaças do adversário contra nós
             const opponentMoves = generateAllMoves(board, opponentColor);
             let immediateThreats = [];
             
@@ -1750,40 +2283,81 @@
                     const target = board[move.to.row] && board[move.to.row][move.to.col];
                     if (target && (color === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
                         const targetValue = PIECE_VALUES[target.toLowerCase()];
+                        const attackerValue = PIECE_VALUES[move.piece.toLowerCase()];
                         const isTargetDefended = isSquareDefended(move.to.row, move.to.col, color, board);
                         
-                        if (!isTargetDefended || targetValue > PIECE_VALUES[move.piece.toLowerCase()]) {
+                        if (!isTargetDefended || targetValue > attackerValue) {
                             immediateThreats.push({
                                 attacker: move.piece,
                                 target: target,
                                 from: `${String.fromCharCode(97+move.from.col)}${8-move.from.row}`,
                                 to: `${String.fromCharCode(97+move.to.col)}${8-move.to.row}`,
-                                value: targetValue,
-                                isWinning: targetValue > PIECE_VALUES[move.piece.toLowerCase()]
+                                value: targetValue - attackerValue,
+                                isWinning: targetValue > attackerValue
                             });
                         }
                     }
                 }
             }
 
-            // Ordenar ameaças por valor
             immediateThreats.sort((a, b) => b.value - a.value);
-            analysis.threats = immediateThreats.slice(0, 3); // Top 3 ameaças
+            analysis.threats = immediateThreats.slice(0, 3);
 
             return analysis;
         }
 
-        // Análise predativa completa melhorada
+        function analyzePawnStructure(board, color) {
+            const pawns = [];
+            const pawn = color === 'white' ? 'P' : 'p';
+            
+            // Encontrar todos os peões
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r] && board[r][c] === pawn) {
+                        pawns.push({row: r, col: c});
+                    }
+                }
+            }
+            
+            const structure = {
+                weakPawns: [],
+                isolatedPawns: [],
+                doubledPawns: []
+            };
+            
+            // Verificar peões isolados e dobrados
+            const cols = pawns.map(p => p.col);
+            for (let p of pawns) {
+                // Isolado: sem peões adjacentes na mesma fileira ou atrás
+                const hasNeighbor = cols.includes(p.col - 1) || cols.includes(p.col + 1);
+                if (!hasNeighbor) {
+                    structure.isolatedPawns.push(p);
+                }
+                
+                // Dobrado: outro peão na mesma coluna
+                const sameCol = pawns.filter(other => other.col === p.col && other !== p);
+                if (sameCol.length > 0 && !structure.doubledPawns.some(dp => dp.col === p.col)) {
+                    structure.doubledPawns.push(p);
+                }
+            }
+            
+            return structure;
+        }
+
+        // Análise predativa completa com avaliação de profundidade
         function generatePredictiveAnalysis(color) {
             const analysis = {
                 safeMoves: [],
                 riskyMoves: [],
                 blunders: [],
-                bestMoves: [], // Agora retorna múltiplas melhores jogadas
+                bestMoves: [],
                 tacticalMoves: [],
                 positionSafety: 50,
                 threats: [],
-                opponentAnalysis: null
+                opponentAnalysis: null,
+                evaluation: 0,
+                principalVariation: [],
+                depth: 4
             };
 
             const board = gameState.board;
@@ -1791,10 +2365,13 @@
             
             if (!isMyTurn) return analysis;
 
-            // Analisar posição do adversário primeiro
+            // Analisar posição do adversário
             analysis.opponentAnalysis = analyzeOpponentPosition(color);
 
-            // Analisar todas as movimentações possíveis
+            // Calcular avaliação estática da posição
+            analysis.evaluation = evaluatePosition(board, color);
+            
+            // Analisar todas as movimentações possíveis com ordenação por MVV-LVA
             let allMoves = [];
             
             for (let r = 0; r < 8; r++) {
@@ -1803,74 +2380,86 @@
                     if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
                         const moves = getValidMoves(r, c);
                         for (let m of moves) {
-                            const safety = evaluateMoveSafety({row: r, col: c}, m, m, color);
-                            const moveData = {
+                            // Estimativa rápida de score para ordenação
+                            let quickScore = 0;
+                            if (m.capture) {
+                                const target = board[m.row] && board[m.row][m.col];
+                                quickScore += PIECE_VALUES[target.toLowerCase()] * 10;
+                            }
+                            
+                            allMoves.push({
                                 from: {row: r, col: c},
                                 to: m,
                                 piece: piece,
-                                safety: safety,
-                                score: 0,
+                                quickScore: quickScore,
                                 notation: `${PIECES[piece]} ${String.fromCharCode(97+c)}${8-r} → ${String.fromCharCode(97+m.col)}${8-m.row}`
-                            };
-                            
-                            // Calcular score baseado em múltiplos fatores
-                            let score = 0;
-                            
-                            // Material
-                            if (m.capture) {
-                                const target = board[m.row] && board[m.row][m.col];
-                                score += PIECE_VALUES[target.toLowerCase()];
-                                // Bônus para capturas de peças indefesas
-                                if (!isSquareDefended(m.row, m.col, color === 'white' ? 'black' : 'white', board)) {
-                                    score += 50;
-                                }
-                            }
-                            
-                            // Posição
-                            const pstRow = color === 'white' ? 7 - m.row : m.row;
-                            const pstCol = m.col;
-                            if (PST[piece.toLowerCase()]) {
-                                score += PST[piece.toLowerCase()][pstRow][pstCol];
-                            }
-                            
-                            // Segurança
-                            score += safety.score;
-                            
-                            // Motivos táticos
-                            if (safety.tacticalMotifs && safety.tacticalMotifs.list.length > 0) {
-                                score += safety.tacticalMotifs.score;
-                            }
-                            
-                            // Controle do centro
-                            if ([3, 4].includes(m.col) && [3, 4].includes(m.row)) {
-                                score += 10;
-                            }
-
-                            moveData.score = score;
-                            allMoves.push(moveData);
+                            });
                         }
                     }
                 }
             }
-
-            // Classificar movimentos
-            allMoves.forEach(move => {
-                if (move.safety.blunder) {
-                    analysis.blunders.push(move);
-                } else if (move.safety.warning || move.safety.isHanging) {
-                    analysis.riskyMoves.push(move);
-                } else {
-                    analysis.safeMoves.push(move);
+            
+            // Ordenar por capturas primeiro (MVV-LVA)
+            allMoves.sort((a, b) => b.quickScore - a.quickScore);
+            
+            // Analisar top 15 movimentos em profundidade
+            const movesToAnalyze = allMoves.slice(0, 15);
+            
+            for (let moveData of movesToAnalyze) {
+                const safety = evaluateMoveSafety(moveData.from, moveData.to, moveData.to, color);
+                
+                // Simular movimento e avaliar resposta do oponente (depth 2)
+                const testBoard = simulateMove(board, {from: moveData.from, to: moveData.to});
+                const opponentBestResponse = findBestOpponentResponse(testBoard, color === 'white' ? 'black' : 'white');
+                
+                let finalScore = safety.score;
+                if (opponentBestResponse) {
+                    finalScore -= opponentBestResponse.score * 0.7; // Penalizar respostas fortes do oponente
                 }
                 
-                if (move.safety.tacticalMotifs && move.safety.tacticalMotifs.list.length > 0) {
-                    analysis.tacticalMoves.push(move);
+                // Adicionar bônus para controle de centro
+                if ([3, 4].includes(moveData.to.col) && [3, 4].includes(moveData.to.row)) {
+                    finalScore += 15;
                 }
-            });
+                
+                moveData.safety = safety;
+                moveData.score = finalScore;
+                moveData.opponentResponse = opponentBestResponse;
+                
+                if (safety.blunder) {
+                    analysis.blunders.push(moveData);
+                } else if (safety.warning || safety.isHanging) {
+                    analysis.riskyMoves.push(moveData);
+                } else {
+                    analysis.safeMoves.push(moveData);
+                }
+                
+                if (safety.tacticalMotifs && safety.tacticalMotifs.list.length > 0) {
+                    analysis.tacticalMoves.push(moveData);
+                }
+            }
 
-            // Ordenar por score e pegar top 5 melhores
+            // Ordenar por score final e pegar top 5
             allMoves.sort((a, b) => b.score - a.score);
             analysis.bestMoves = allMoves.slice(0, 5).filter(m => !m.safety.blunder);
+            
+            // Construir linha principal (principal variation)
+            if (analysis.bestMoves.length > 0) {
+                const best = analysis.bestMoves[0];
+                analysis.principalVariation.push(best);
+                if (best.opponentResponse) {
+                    analysis.principalVariation.push(best.opponentResponse);
+                    // Adicionar nossa melhor resposta à resposta dele
+                    const testBoard2 = simulateMove(
+                        simulateMove(board, {from: best.from, to: best.to}),
+                        {from: best.opponentResponse.from, to: best.opponentResponse.to}
+                    );
+                    const ourResponse = findBestQuickMove(testBoard2, color);
+                    if (ourResponse) {
+                        analysis.principalVariation.push(ourResponse);
+                    }
+                }
+            }
 
             // Calcular segurança da posição
             const totalMoves = allMoves.length;
@@ -1903,6 +2492,90 @@
             }
 
             return analysis;
+        }
+
+        function findBestOpponentResponse(board, opponentColor) {
+            let bestResponse = null;
+            let bestScore = -Infinity;
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (piece && (opponentColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                        const moves = getValidMovesForEvaluation(r, c, board, opponentColor);
+                        for (let m of moves) {
+                            let score = 0;
+                            if (m.capture) {
+                                const target = board[m.row] && board[m.row][m.col];
+                                score += PIECE_VALUES[target.toLowerCase()];
+                            }
+                            
+                            // Verificar se dá xeque
+                            const testBoard = simulateMove(board, {from: {row: r, col: c}, to: m});
+                            const enemyKing = opponentColor === 'white' ? 'k' : 'K';
+                            let kingPos = null;
+                            for (let kr = 0; kr < 8; kr++) {
+                                for (let kc = 0; kc < 8; kc++) {
+                                    if (testBoard[kr] && testBoard[kr][kc] === enemyKing) {
+                                        kingPos = {row: kr, col: kc};
+                                        break;
+                                    }
+                                }
+                            }
+                            if (kingPos && isSquareAttacked(kingPos.row, kingPos.col, opponentColor === 'white' ? 'black' : 'white', testBoard)) {
+                                score += 50;
+                            }
+                            
+                            if (score > bestScore) {
+                                bestScore = score;
+                                bestResponse = {
+                                    from: {row: r, col: c},
+                                    to: m,
+                                    piece: piece,
+                                    score: score,
+                                    notation: `${PIECES[piece]} ${String.fromCharCode(97+c)}${8-r} → ${String.fromCharCode(97+m.col)}${8-m.row}`
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return bestResponse;
+        }
+
+        function findBestQuickMove(board, color) {
+            return findBestOpponentResponse(board, color);
+        }
+
+        function evaluatePosition(board, color) {
+            let score = 0;
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    
+                    const value = PIECE_VALUES[piece.toLowerCase()];
+                    const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
+                    
+                    // PST
+                    const pstRow = pieceColor === 'white' ? 7 - r : r;
+                    const pstCol = c;
+                    let pstValue = 0;
+                    if (PST[piece.toLowerCase()]) {
+                        pstValue = PST[piece.toLowerCase()][pstRow][pstCol];
+                    }
+                    
+                    if (pieceColor === color) {
+                        score += value + pstValue;
+                    } else {
+                        score -= value + pstValue;
+                    }
+                }
+            }
+            
+            return score / 100; // Retornar em centipeões
         }
 
         // Funções auxiliares de ataque/defesa
@@ -2249,6 +2922,30 @@
             const safetyIndicatorEl = document.getElementById('safetyIndicator');
             const suggestionListEl = document.getElementById('suggestionList');
             const opponentAnalysisEl = document.getElementById('opponentAnalysis');
+            const evalBarEl = document.getElementById('evaluationBar');
+            const evalScoreEl = document.getElementById('evalScore');
+            const evalBarFillEl = document.getElementById('evalBarFill');
+            const evalBarMarkerEl = document.getElementById('evalBarMarker');
+            const lineAnalysisEl = document.getElementById('lineAnalysis');
+            const lineMovesEl = document.getElementById('lineMoves');
+            const tacticalMotifsEl = document.getElementById('tacticalMotifs');
+            const motifsListEl = document.getElementById('motifsList');
+            const depthIndicatorEl = document.getElementById('depthIndicator');
+
+            // Atualizar profundidade
+            depthIndicatorEl.textContent = `Profundidade: ${analysis.depth}`;
+
+            // Mostrar barra de avaliação
+            evalBarEl.style.display = 'block';
+            const evalScore = analysis.evaluation;
+            evalScoreEl.textContent = (evalScore > 0 ? '+' : '') + evalScore.toFixed(1);
+            evalScoreEl.className = 'eval-score ' + (evalScore > 0.5 ? 'positive' : evalScore < -0.5 ? 'negative' : 'equal');
+            
+            // Converter avaliação para porcentagem da barra (-5 a +5)
+            let evalPercent = 50 + (evalScore / 10) * 50;
+            evalPercent = Math.max(5, Math.min(95, evalPercent));
+            evalBarFillEl.style.width = evalPercent + '%';
+            evalBarMarkerEl.style.left = evalPercent + '%';
 
             // Atualizar medidor de segurança
             safetyMeterEl.style.display = 'block';
@@ -2266,22 +2963,56 @@
                 messageClass = 'warning';
             } else if (analysis.bestMoves.length > 0) {
                 const best = analysis.bestMoves[0];
-                mainMessage = `✅ Top sugestão: ${best.notation} (${best.score > 0 ? '+' : ''}${best.score})`;
+                const scoreText = best.score > 0 ? `+${Math.round(best.score)}` : Math.round(best.score);
+                mainMessage = `✅ Melhor: ${best.notation} (${scoreText})`;
                 messageClass = '';
             }
 
             suggestionEl.className = 'ai-suggestion ' + messageClass;
             suggestionEl.textContent = mainMessage;
 
-            // Mostrar lista de sugestões (top 5)
+            // Mostrar linha principal
+            if (analysis.principalVariation.length > 0) {
+                lineAnalysisEl.style.display = 'block';
+                let lineHTML = '';
+                analysis.principalVariation.forEach((move, idx) => {
+                    const isBest = idx === 0;
+                    const moveNum = Math.floor(idx / 2) + 1;
+                    const isWhiteMove = idx % 2 === 0;
+                    
+                    if (isWhiteMove && idx > 0) lineHTML += ' ';
+                    if (isWhiteMove) lineHTML += `${moveNum}.`;
+                    
+                    lineHTML += `<span class="line-move ${isBest ? 'best' : ''}" onclick="highlightMove(${move.from.row}, ${move.from.col}, ${move.to.row}, ${move.to.col})">${move.notation.split('→')[1].trim()}</span>`;
+                    
+                    if (!isWhiteMove) lineHTML += ' ';
+                });
+                lineMovesEl.innerHTML = lineHTML;
+            } else {
+                lineAnalysisEl.style.display = 'none';
+            }
+
+            // Mostrar motivos táticos do melhor movimento
+            if (analysis.bestMoves.length > 0 && analysis.bestMoves[0].safety.tacticalMotifs.list.length > 0) {
+                tacticalMotifsEl.style.display = 'block';
+                let motifsHTML = '';
+                analysis.bestMoves[0].safety.tacticalMotifs.list.forEach(motif => {
+                    motifsHTML += `<div class="motif-item"><span class="motif-icon">${motif.split(' ')[0]}</span><span>${motif.substring(motif.indexOf(' ') + 1)}</span></div>`;
+                });
+                motifsListEl.innerHTML = motifsHTML;
+            } else {
+                tacticalMotifsEl.style.display = 'none';
+            }
+
+            // Mostrar lista de sugestões
             if (analysis.bestMoves.length > 0) {
                 suggestionListEl.style.display = 'block';
-                let suggestionsHTML = '<strong>🏆 Top Sugestões (clique para ver):</strong>';
+                let suggestionsHTML = '<strong>🏆 Top Sugestões:</strong>';
                 
                 analysis.bestMoves.forEach((move, index) => {
                     const rank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index+1}º`;
                     const className = move.safety.warning ? 'risky' : '';
-                    const scoreText = move.score > 0 ? `+${move.score}` : move.score;
+                    const scoreText = move.score > 0 ? `+${Math.round(move.score)}` : Math.round(move.score);
                     
                     suggestionsHTML += `
                         <div class="suggestion-item ${className}" onclick="highlightMove(${move.from.row}, ${move.from.col}, ${move.to.row}, ${move.to.col})">
@@ -2291,15 +3022,14 @@
                     `;
                 });
                 
-                // Adicionar movimentos táticos se houver
                 if (analysis.tacticalMoves.length > 0) {
-                    suggestionsHTML += '<div style="margin-top:10px; color:#ff00ff;"><strong>⚡ Movimentos Táticos:</strong></div>';
+                    suggestionsHTML += '<div style="margin-top:10px; color:#ff00ff;"><strong>⚡ Táticos:</strong></div>';
                     analysis.tacticalMoves.slice(0, 2).forEach(move => {
                         const motifs = move.safety.tacticalMotifs.list.join(', ');
                         suggestionsHTML += `
                             <div class="suggestion-item" style="border-left-color:#ff00ff;" onclick="highlightMove(${move.from.row}, ${move.from.col}, ${move.to.row}, ${move.to.col})">
                                 <span>${move.notation}</span>
-                                <span class="suggestion-score">${motifs}</span>
+                                <span class="suggestion-score">${motifs.substring(0, 30)}...</span>
                             </div>
                         `;
                     });
@@ -2313,12 +3043,11 @@
             // Listar ameaças imediatas
             if (analysis.threats.length > 0) {
                 threatListEl.style.display = 'block';
-                let threatHTML = '<strong>⚠️ Ameaças contra suas peças:</strong>';
+                let threatHTML = '<strong>⚠️ Ameaças detectadas:</strong>';
                 
                 const criticalThreats = analysis.threats.filter(t => !t.isDefended && t.value >= 300);
                 const moderateThreats = analysis.threats.filter(t => !t.isDefended && t.value < 300);
-                const defendedThreats = analysis.threats.filter(t => t.isDefended);
-
+                
                 if (criticalThreats.length > 0) {
                     threatHTML += '<div style="color:#ff0000; margin-top:5px;">🚨 CRÍTICO:</div>';
                     criticalThreats.slice(0, 2).forEach(t => {
@@ -2348,15 +3077,29 @@
                 
                 oppHTML += `<div style="margin-bottom:8px;">${opp.kingSafety.status}</div>`;
                 
-                if (opp.weaknesses.length > 0) {
-                    oppHTML += `<div style="color:#00ff00; margin-top:8px;">🎯 Alvos vulneráveis do adversário:</div>`;
-                    opp.weaknesses.slice(0, 3).forEach(w => {
-                        oppHTML += `<div style="font-size:0.9em; margin:3px 0;">• ${PIECES[w.piece]} em ${w.square} (${w.value} pts)</div>`;
+                if (opp.kingSafety.details.length > 0) {
+                    oppHTML += `<div style="font-size:0.85em; color:#aaa; margin-bottom:8px;">${opp.kingSafety.details.join(' • ')}</div>`;
+                }
+                
+                if (opp.bestTargets.length > 0) {
+                    oppHTML += `<div style="color:#00ff00; margin-top:8px;">🎯 Alvos prioritários:</div>`;
+                    opp.bestTargets.forEach((w, i) => {
+                        oppHTML += `<div style="font-size:0.9em; margin:3px 0;">${i+1}. ${PIECES[w.piece]} em ${w.square} (${w.value} pts)</div>`;
                     });
                 }
                 
+                if (opp.pawnStructure.weakPawns.length > 0 || opp.pawnStructure.isolatedPawns.length > 0) {
+                    oppHTML += `<div style="color:#ffaa00; margin-top:8px;">📊 Estrutura de peões:</div>`;
+                    if (opp.pawnStructure.isolatedPawns.length > 0) {
+                        oppHTML += `<div style="font-size:0.85em;">• ${opp.pawnStructure.isolatedPawns.length} peões isolados</div>`;
+                    }
+                    if (opp.pawnStructure.doubledPawns.length > 0) {
+                        oppHTML += `<div style="font-size:0.85em;">• ${opp.pawnStructure.doubledPawns.length} peões dobrados</div>`;
+                    }
+                }
+                
                 if (opp.threats.length > 0) {
-                    oppHTML += `<div style="color:#ff6666; margin-top:8px;">⚠️ Ameaças do adversário contra você:</div>`;
+                    oppHTML += `<div style="color:#ff6666; margin-top:8px;">⚠️ Ameaças do adversário:</div>`;
                     opp.threats.slice(0, 2).forEach(t => {
                         const symbol = t.isWinning ? '💀' : '⚡';
                         oppHTML += `<div style="font-size:0.9em; margin:3px 0;">${symbol} ${PIECES[t.attacker]} → ${PIECES[t.target]} (${t.from}→${t.to})</div>`;
@@ -2375,24 +3118,29 @@
             
             if (analysis.bestMoves.length > 0) {
                 const best = analysis.bestMoves[0];
-                reasoning += `<strong>Análise da melhor jogada:</strong><br>`;
+                reasoning += `<strong>Análise detalhada:</strong><br>`;
                 
                 if (best.to.capture) {
                     const target = gameState.board[best.to.row] && gameState.board[best.to.row][best.to.col];
-                    reasoning += `• Captura de ${PIECES[target]} (+${PIECE_VALUES[target.toLowerCase()]} pts)<br>`;
+                    reasoning += `• Captura de material: +${PIECE_VALUES[target.toLowerCase()]} pts<br>`;
                 }
 
                 if (best.safety.tacticalMotifs && best.safety.tacticalMotifs.list.length > 0) {
-                    reasoning += `• Motivos: ${best.safety.tacticalMotifs.list.join(', ')}<br>`;
+                    reasoning += `• Motivos táticos: ${best.safety.tacticalMotifs.list.length}<br>`;
+                }
+
+                if (best.safety.positionalAdvantage > 20) {
+                    reasoning += `• Vantagem posicional significativa<br>`;
+                }
+
+                if (best.safety.kingSafety > 0) {
+                    reasoning += `• Melhora segurança do rei<br>`;
                 }
 
                 if (best.safety.threats.length === 0) {
-                    reasoning += `• Jogada segura<br>`;
-                } else {
-                    reasoning += `• Atenção: ${best.safety.threats[0]}<br>`;
+                    reasoning += `• Jogada segura sem riscos imediatos<br>`;
                 }
 
-                // Alertas especiais
                 if (analysis.blunders.length > 0) {
                     const blunder = analysis.blunders[0];
                     reasoning += `<br><span style="color:#ff6666">❌ EVITE: ${blunder.notation} - ${blunder.safety.threats[0]}</span>`;
@@ -2415,7 +3163,6 @@
             gameState.validMoves = getValidMoves(fromRow, fromCol);
             renderBoard();
             
-            // Destacar a sugestão específica
             setTimeout(() => {
                 const squares = document.querySelectorAll('.square');
                 squares.forEach(sq => {
@@ -2516,7 +3263,6 @@
                                 square.appendChild(arrow);
                             }
                             
-                            // Número de ranking
                             const rank = document.createElement('div');
                             rank.style.cssText = 'position:absolute; top:2px; right:2px; background:#00ff00; color:#000; font-size:10px; font-weight:bold; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:15;';
                             rank.textContent = index + 1;
@@ -2555,9 +3301,9 @@
                     });
 
                     // Destacar alvos vulneráveis do adversário
-                    if (lastAnalysis.opponentAnalysis && lastAnalysis.opponentAnalysis.weaknesses) {
-                        lastAnalysis.opponentAnalysis.weaknesses.forEach(weak => {
-                            if (weak.row === actualRow && weak.col === actualCol) {
+                    if (lastAnalysis.opponentAnalysis && lastAnalysis.opponentAnalysis.bestTargets) {
+                        lastAnalysis.opponentAnalysis.bestTargets.forEach(target => {
+                            if (target.row === actualRow && target.col === actualCol) {
                                 const killer = document.createElement('div');
                                 killer.className = 'killer-move';
                                 square.appendChild(killer);
@@ -2573,7 +3319,6 @@
                 boardEl.appendChild(square);
             });
 
-            // Desenhar trails após todas as casas
             if (shouldShowHints && lastAnalysis && lastAnalysis.bestMoves.length > 0) {
                 setTimeout(() => {
                     drawTrail(boardEl, lastAnalysis.bestMoves[0].from, lastAnalysis.bestMoves[0].to);
@@ -2670,9 +3415,7 @@
             
             const moves = [];
             const color = piece === piece.toUpperCase() ? 'white' : 'black';
-            const type = piece.toLowerCase();
-
-            switch(type) {
+            const type = piece.toLowerCase();             switch(type) {
                 case 'p':
                     const dir = color === 'white' ? -1 : 1;
                     const start = color === 'white' ? 6 : 1;
@@ -2810,6 +3553,7 @@
             const color = piece === piece.toUpperCase() ? 'white' : 'black';
             const targetPiece = gameState.board[to.row][to.col];
 
+            // Verificar se capturou o rei (checkmate)
             if (targetPiece && targetPiece.toLowerCase() === 'k') {
                 gameState.board[to.row][to.col] = piece;
                 gameState.board[from.row][from.col] = null;
@@ -2822,20 +3566,24 @@
                 
                 saveGameState();
                 saveLocalState();
-                showGameOver(winner);
+                showCheckmateAnimation(winner);
                 return;
             }
 
+            // En passant
             if (move.enPassant) {
                 gameState.board[from.row][to.col] = null;
             }
             
+            // Mover peça
             gameState.board[to.row][to.col] = piece;
             gameState.board[from.row][from.col] = null;
 
+            // Atualizar posição do rei
             if (piece.toLowerCase() === 'k') {
                 gameState.kingPositions[color] = {row: to.row, col: to.col};
                 
+                // Roque
                 if (move.castling) {
                     const row = from.row;
                     if (move.castling === 'kingSide') {
@@ -2850,27 +3598,32 @@
                 gameState.castlingRights[color] = {kingSide: false, queenSide: false};
             }
 
+            // Atualizar direitos de roque se torre moveu
             if (piece.toLowerCase() === 'r') {
                 const row = color === 'white' ? 7 : 0;
                 if (from.row === row && from.col === 0) gameState.castlingRights[color].queenSide = false;
                 if (from.row === row && from.col === 7) gameState.castlingRights[color].kingSide = false;
             }
 
+            // Promoção
             if (move.promotion) {
                 showPromotion(to, color, from);
                 return;
             }
 
+            // Atualizar en passant target
             if (move.isDoublePush) {
                 gameState.enPassantTarget = {row: (from.row + to.row) / 2, col: from.col};
             } else {
                 gameState.enPassantTarget = null;
             }
 
+            // Capturar peça
             if (targetPiece && isEnemy(piece, targetPiece)) {
                 gameState.capturedPieces[color].push(targetPiece);
             }
 
+            // Registrar movimento no histórico
             const moveNotation = `${PIECES[piece]} ${String.fromCharCode(97+from.col)}${8-from.row}-${String.fromCharCode(97+to.col)}${8-to.row}`;
             gameState.moveHistory.push({
                 piece: piece,
@@ -2878,14 +3631,17 @@
                 to: to,
                 capture: !!targetPiece,
                 notation: moveNotation,
-                color: color
+                color: color,
+                timestamp: Date.now()
             });
 
+            // Atualizar estado
             gameState.lastMove = {from, to};
             gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
             gameState.selectedSquare = null;
             gameState.validMoves = [];
 
+            // Verificar fim de jogo
             const nextColor = gameState.currentPlayer;
             const opponentKing = nextColor === 'white' ? 'K' : 'k';
             let opponentKingExists = false;
@@ -2904,13 +3660,13 @@
                 gameState.winner = color;
                 gameState.finalPosition = gameState.board.map(r => [...r]);
                 gameState.gameEndedAt = Date.now();
-                showGameOver(color);
+                showCheckmateAnimation(color);
             } else if (isCheckmate(nextColor)) {
                 gameState.status = 'ended';
                 gameState.winner = color;
                 gameState.finalPosition = gameState.board.map(r => [...r]);
                 gameState.gameEndedAt = Date.now();
-                showGameOver(color);
+                showCheckmateAnimation(color);
             } else if (isStalemate(nextColor)) {
                 gameState.status = 'ended';
                 gameState.winner = 'draw';
@@ -2955,10 +3711,14 @@
             opts.innerHTML = '';
             
             const pieces = color === 'white' ? ['Q','R','B','N'] : ['q','r','b','n'];
+            const pieceNames = {'Q': 'Rainha', 'R': 'Torre', 'B': 'Bispo', 'N': 'Cavalo',
+                              'q': 'Rainha', 'r': 'Torre', 'b': 'Bispo', 'n': 'Cavalo'};
+            
             pieces.forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'promotion-piece';
                 div.textContent = PIECES[p];
+                div.title = pieceNames[p];
                 div.onclick = () => {
                     gameState.board[pos.row][pos.col] = p;
                     modal.classList.remove('show');
@@ -2971,7 +3731,7 @@
                         gameState.status = 'ended';
                         gameState.winner = color;
                         gameState.finalPosition = gameState.board.map(r => [...r]);
-                        showGameOver(color);
+                        showCheckmateAnimation(color);
                     } else if (isStalemate(nextColor)) {
                         gameState.status = 'ended';
                         gameState.winner = 'draw';
@@ -2981,6 +3741,7 @@
                     
                     saveGameState();
                     saveLocalState();
+                    renderBoard();
                 };
                 opts.appendChild(div);
             });
@@ -3013,7 +3774,24 @@
         function updateCapturedDisplay() {
             const display = document.getElementById('capturedPieces');
             const myCaptures = gameState.capturedPieces[gameState.myColor] || [];
-            display.textContent = myCaptures.map(p => PIECES[p]).join(' ');
+            
+            // Calcular vantagem material
+            let materialAdvantage = 0;
+            const myPieces = gameState.capturedPieces[gameState.myColor] || [];
+            const oppPieces = gameState.capturedPieces[gameState.myColor === 'white' ? 'black' : 'white'] || [];
+            
+            myPieces.forEach(p => materialAdvantage += PIECE_VALUES[p.toLowerCase()]);
+            oppPieces.forEach(p => materialAdvantage -= PIECE_VALUES[p.toLowerCase()]);
+            
+            let advantageText = '';
+            if (materialAdvantage > 0) {
+                advantageText = ` (+${materialAdvantage/100})`;
+            } else if (materialAdvantage < 0) {
+                advantageText = ` (${materialAdvantage/100})`;
+            }
+            
+            display.innerHTML = myCaptures.map(p => PIECES[p]).join(' ') + 
+                (advantageText ? `<span style="color:${materialAdvantage > 0 ? '#00ff00' : '#ff6666'}; font-size:0.7em; margin-left:10px;">${advantageText}</span>` : '');
         }
 
         // ==================== FUNÇÕES DE FIM DE JOGO ====================
@@ -3024,7 +3802,7 @@
             const viewPositionBtn = document.getElementById('viewPositionBtn');
             
             if (winner === 'draw') {
-                text.textContent = '🤝 Empate!';
+                text.innerHTML = '🤝 <span style="color:#ffff00">Empate!</span><br><span style="font-size:0.6em; color:#aaa">Stalemate</span>';
                 viewPositionBtn.style.display = 'none';
             } else {
                 const isMe = winner === gameState.myColor;
@@ -3032,9 +3810,11 @@
                     (gameState.players.white ? gameState.players.white.name : 'Brancas') : 
                     (gameState.players.black ? gameState.players.black.name : 'Pretas');
                     
-                text.innerHTML = isMe ? 
-                    `🏆 ${winnerName} venceu!<br><span style="font-size:0.6em">Parabéns!</span>` : 
-                    `${winnerName} venceu!<br><span style="font-size:0.6em">Mais sorte na próxima!</span>`;
+                if (isMe) {
+                    text.innerHTML = `🏆 <span style="color:#00ff00">VITÓRIA!</span> 🏆<br><span style="font-size:0.6em; color:#ffd700">Parabéns, ${winnerName}!</span>`;
+                } else {
+                    text.innerHTML = `💀 <span style="color:#ff0000">DERROTA</span> 💀<br><span style="font-size:0.6em; color:#ff6666">${winnerName} venceu</span>`;
+                }
                 
                 viewPositionBtn.style.display = 'inline-block';
             }
@@ -3045,7 +3825,7 @@
 
         function returnToIndex() {
             clearLocalState();
-            window.location.href = window.location.pathname; // Volta para index sem parâmetros
+            window.location.href = window.location.pathname;
         }
 
         function showFinalPosition() {
@@ -3055,10 +3835,8 @@
             
             boardContainer.innerHTML = '';
             
-            // Usar a posição final salva ou a atual
             const finalBoard = gameState.finalPosition || gameState.board;
             
-            // Criar mini-tabuleiro
             const miniBoard = document.createElement('div');
             miniBoard.className = 'checkmate-board';
             
@@ -3072,7 +3850,7 @@
                         square.textContent = PIECES[piece];
                     }
                     
-                    // Destacar rei em xeque mate
+                    // Destacar rei derrotado
                     if (piece && piece.toLowerCase() === 'k') {
                         const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
                         const isLoser = (pieceColor === 'white' && gameState.winner === 'black') ||
@@ -3080,6 +3858,7 @@
                         if (isLoser) {
                             square.style.background = '#ff0000';
                             square.style.boxShadow = 'inset 0 0 10px rgba(0,0,0,0.5)';
+                            square.style.animation = 'check-pulse 1s infinite';
                         }
                     }
                     
@@ -3089,15 +3868,32 @@
             
             boardContainer.appendChild(miniBoard);
             
-            // Informações adicionais
+            // Estatísticas detalhadas
             const totalMoves = gameState.moveHistory.length;
             const capturedByWinner = gameState.capturedPieces[gameState.winner] || [];
             const capturedByLoser = gameState.capturedPieces[gameState.winner === 'white' ? 'black' : 'white'] || [];
             
+            const winnerMaterial = capturedByWinner.reduce((sum, p) => sum + PIECE_VALUES[p.toLowerCase()], 0);
+            const loserMaterial = capturedByLoser.reduce((sum, p) => sum + PIECE_VALUES[p.toLowerCase()], 0);
+            
+            const winnerName = gameState.winner === 'white' ? 
+                (gameState.players.white?.name || 'Brancas') : 
+                (gameState.players.black?.name || 'Pretas');
+            
             infoEl.innerHTML = `
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; text-align:left; margin-bottom:15px;">
+                    <div style="background:rgba(0,255,0,0.1); padding:10px; border-radius:8px; border:1px solid #00ff00;">
+                        <div style="color:#00ff00; font-weight:bold;">🏆 ${winnerName}</div>
+                        <div style="font-size:0.9em; margin-top:5px;">Material capturado: ${winnerMaterial/100}</div>
+                        <div style="font-size:0.8em; margin-top:3px;">${capturedByWinner.map(p => PIECES[p]).join(' ') || 'Nenhuma'}</div>
+                    </div>
+                    <div style="background:rgba(255,0,0,0.1); padding:10px; border-radius:8px; border:1px solid #ff0000;">
+                        <div style="color:#ff6666; font-weight:bold;">💀 Perdedor</div>
+                        <div style="font-size:0.9em; margin-top:5px;">Material capturado: ${loserMaterial/100}</div>
+                        <div style="font-size:0.8em; margin-top:3px;">${capturedByLoser.map(p => PIECES[p]).join(' ') || 'Nenhuma'}</div>
+                    </div>
+                </div>
                 <div><strong>Total de lances:</strong> ${totalMoves}</div>
-                <div style="margin-top:8px;"><strong>Peças capturadas pelo vencedor:</strong> ${capturedByWinner.map(p => PIECES[p]).join(' ') || 'Nenhuma'}</div>
-                <div style="margin-top:8px;"><strong>Peças capturadas pelo perdedor:</strong> ${capturedByLoser.map(p => PIECES[p]).join(' ') || 'Nenhuma'}</div>
                 <div style="margin-top:8px; color:#ffd700;">🔴 Rei derrotado destacado em vermelho</div>
             `;
             
@@ -3123,7 +3919,6 @@
                 document.getElementById('playerName').value = savedName;
             }
             
-            // Verificar se há jogo em andamento ao carregar
             const savedState = loadLocalState();
             if (savedState) {
                 const statusMsg = document.getElementById('statusMessage');
@@ -3135,6 +3930,27 @@
 
         document.getElementById('playerName')?.addEventListener('input', (e) => {
             localStorage.setItem('chessPlayerName', e.target.value);
+        });
+
+        // Atalhos de teclado para Fernando
+        document.addEventListener('keydown', (e) => {
+            if (!gameState.isFernando || gameState.status !== 'playing') return;
+            
+            // Pressionar 'H' para mostrar/esconder dicas
+            if (e.key === 'h' || e.key === 'H') {
+                const aiAnalysis = document.getElementById('aiAnalysis');
+                aiAnalysis.style.display = aiAnalysis.style.display === 'none' ? 'block' : 'none';
+            }
+            
+            // Pressionar '1', '2', '3' para auto-jogar a sugestão correspondente
+            if (['1', '2', '3'].includes(e.key) && lastAnalysis && lastAnalysis.bestMoves.length >= parseInt(e.key)) {
+                const move = lastAnalysis.bestMoves[parseInt(e.key) - 1];
+                if (move && confirm(`Jogar sugestão ${e.key}: ${move.notation}?`)) {
+                    gameState.selectedSquare = move.from;
+                    gameState.validMoves = getValidMoves(move.from.row, move.from.col);
+                    executeMove(move.from, move.to, move.to);
+                }
+            }
         });
     </script>
 </body>
