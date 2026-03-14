@@ -281,249 +281,196 @@
             50% { box-shadow: inset 0 0 40px rgba(255,0,0,1); }
         }
 
-        /* NOVOS ESTILOS PARA DICAS AVANÇADAS - FOCO EM SEGURANÇA */
-        .safety-glow {
+        /* ESTILOS DIDÁTICOS DO FERNANDO */
+        .attack-hint {
             position: absolute;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(0,255,255,0.6) 0%, rgba(0,255,255,0.2) 50%, transparent 70%);
-            animation: safety-pulse 2s infinite;
-            z-index: 10;
-            pointer-events: none;
-            border-radius: 50%;
-        }
-
-        @keyframes safety-pulse {
-            0%, 100% { transform: scale(0.9); opacity: 0.8; }
-            50% { transform: scale(1.1); opacity: 0.5; }
-        }
-
-        .ultra-safe {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 4px solid #00ffff;
-            border-radius: 50%;
-            animation: ultra-safe-pulse 1.5s infinite;
-            z-index: 11;
-            pointer-events: none;
-            box-shadow: 0 0 20px #00ffff, inset 0 0 20px rgba(0,255,255,0.3);
-        }
-
-        @keyframes ultra-safe-pulse {
-            0%, 100% { transform: scale(1); opacity: 1; box-shadow: 0 0 20px #00ffff; }
-            50% { transform: scale(1.15); opacity: 0.7; box-shadow: 0 0 40px #00ffff; }
-        }
-
-        .defended-indicator {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            width: 12px;
-            height: 12px;
-            background: #00ff00;
-            border-radius: 50%;
-            border: 2px solid white;
-            z-index: 15;
-            box-shadow: 0 0 5px #00ff00;
-        }
-
-        .threat-indicator {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,0,0,0.7) 0%, rgba(255,0,0,0.3) 50%, transparent 70%);
-            animation: threat-flash 0.8s infinite;
+            background: radial-gradient(circle, rgba(0,255,0,0.7) 0%, rgba(0,255,0,0.3) 50%, transparent 70%);
+            animation: attack-pulse 1.5s infinite;
             z-index: 10;
             pointer-events: none;
         }
 
-        @keyframes threat-flash {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.1); }
+        @keyframes attack-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.2); opacity: 0.6; }
         }
 
-        .danger-zone {
+        .safe-attack {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                45deg,
-                rgba(255,0,0,0.1),
-                rgba(255,0,0,0.1) 10px,
-                rgba(255,0,0,0.2) 10px,
-                rgba(255,0,0,0.2) 20px
-            );
-            animation: danger-zone-pulse 2s infinite;
-            z-index: 5;
-            pointer-events: none;
-        }
-
-        @keyframes danger-zone-pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
-        }
-
-        .blunder-warning {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255,0,0,0.9);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 20;
-            pointer-events: none;
-            white-space: nowrap;
-            animation: blunder-bounce 1s infinite;
-        }
-
-        @keyframes blunder-bounce {
-            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
-            50% { transform: translate(-50%, -50%) translateY(-5px); }
-        }
-
-        .hint-glow {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(0,255,0,0.6) 0%, rgba(0,255,0,0.2) 50%, transparent 70%);
-            animation: hint-pulse 2s infinite;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        @keyframes hint-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.3); opacity: 0.4; }
-        }
-
-        .hint-circle {
-            position: absolute;
-            width: 80%;
-            height: 80%;
+            width: 90%;
+            height: 90%;
             border: 4px solid #00ff00;
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            animation: circle-pulse 1.5s infinite;
+            animation: safe-attack-pulse 1s infinite;
             z-index: 11;
             pointer-events: none;
-            box-shadow: 0 0 20px #00ff00, inset 0 0 20px rgba(0,255,0,0.3);
+            box-shadow: 0 0 20px #00ff00, inset 0 0 20px rgba(0,255,0,0.5);
         }
 
-        @keyframes circle-pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+        @keyframes safe-attack-pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
         }
 
-        .hint-arrow {
+        .danger-warning {
             position: absolute;
-            width: 0;
-            height: 0;
-            z-index: 12;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,0,0,0.95);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 20;
             pointer-events: none;
-            filter: drop-shadow(0 0 10px #00ff00);
+            white-space: nowrap;
+            animation: danger-bounce 0.8s infinite;
+            border: 2px solid #ffaa00;
         }
 
-        .arrow-up {
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-bottom: 20px solid #00ff00;
-            top: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: arrow-bounce 1s infinite;
+        @keyframes danger-bounce {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-5px); }
         }
 
-        .arrow-down {
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-top: 20px solid #00ff00;
-            bottom: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: arrow-bounce 1s infinite;
+        .free-piece {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(255,215,0,0.1),
+                rgba(255,215,0,0.1) 10px,
+                rgba(255,215,0,0.3) 10px,
+                rgba(255,215,0,0.3) 20px
+            );
+            animation: free-pulse 2s infinite;
+            z-index: 5;
+            pointer-events: none;
         }
 
-        .arrow-left {
-            border-top: 12px solid transparent;
-            border-bottom: 12px solid transparent;
-            border-right: 20px solid #00ff00;
-            left: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            animation: arrow-bounce-h 1s infinite;
+        @keyframes free-pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
         }
 
-        .arrow-right {
-            border-top: 12px solid transparent;
-            border-bottom: 12px solid transparent;
-            border-left: 20px solid #00ff00;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            animation: arrow-bounce-h 1s infinite;
-        }
-
-        @keyframes arrow-bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-8px); }
-        }
-
-        @keyframes arrow-bounce-h {
-            0%, 100% { transform: translateY(-50%) translateX(0); }
-            50% { transform: translateY(-50%) translateX(-8px); }
-        }
-
-        .hint-target {
+        .target-indicator {
             position: absolute;
             width: 70%;
             height: 70%;
-            border: 3px dashed #00ff00;
+            border: 3px dashed #ffd700;
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            animation: rotate 3s linear infinite;
-            z-index: 11;
+            animation: target-rotate 3s linear infinite;
+            z-index: 12;
             pointer-events: none;
         }
 
-        @keyframes rotate {
+        @keyframes target-rotate {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
-        .hint-trail {
+        .arrow-hint {
             position: absolute;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #00ff00, transparent);
+            width: 0;
+            height: 0;
+            z-index: 15;
+            pointer-events: none;
+            filter: drop-shadow(0 0 8px #00ff00);
+        }
+
+        .arrow-hint.up {
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 18px solid #00ff00;
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: arrow-bob 0.8s infinite;
+        }
+
+        .arrow-hint.down {
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 18px solid #00ff00;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: arrow-bob 0.8s infinite;
+        }
+
+        .arrow-hint.left {
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 18px solid #00ff00;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: arrow-bob-h 0.8s infinite;
+        }
+
+        .arrow-hint.right {
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 18px solid #00ff00;
+            right: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: arrow-bob-h 0.8s infinite;
+        }
+
+        @keyframes arrow-bob {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-6px); }
+        }
+
+        @keyframes arrow-bob-h {
+            0%, 100% { transform: translateY(-50%) translateX(0); }
+            50% { transform: translateY(-50%) translateX(-6px); }
+        }
+
+        .value-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #ffd700;
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 15;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .threat-line {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #ff0000, transparent);
             transform-origin: left center;
-            z-index: 9;
+            z-index: 8;
             pointer-events: none;
-            box-shadow: 0 0 10px #00ff00;
-            border-radius: 2px;
-            opacity: 0.8;
+            opacity: 0.7;
+            animation: threat-flow 1.5s linear infinite;
         }
 
-        .killer-move {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(255,0,255,0.7) 0%, rgba(255,0,255,0.3) 50%, transparent 70%);
-            animation: killer-pulse 1s infinite;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        @keyframes killer-pulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.2); opacity: 1; }
+        @keyframes threat-flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
         .modal-overlay {
@@ -634,181 +581,99 @@
             text-shadow: 0 0 10px rgba(0,255,0,0.3);
         }
 
-        .ai-suggestion {
-            font-size: 1.1em;
-            margin-bottom: 10px;
+        .strategy-box {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
             padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #ffd700;
+        }
+
+        .strategy-title {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .strategy-item {
+            padding: 8px;
+            margin: 5px 0;
             background: rgba(0,255,0,0.1);
-            border-radius: 8px;
-            border-left: 4px solid #00ff00;
-            transition: all 0.3s;
-        }
-
-        .ai-suggestion.warning {
-            background: rgba(255,170,0,0.1);
-            border-left-color: #ffaa00;
-            color: #ffcc66;
-        }
-
-        .ai-suggestion.critical {
-            background: rgba(255,0,0,0.2);
-            border-left-color: #ff0000;
-            color: #ff0000;
-            animation: critical-pulse 1s infinite;
-        }
-
-        .ai-suggestion.safe {
-            background: rgba(0,255,255,0.1);
-            border-left-color: #00ffff;
-            color: #00ffff;
-        }
-
-        @keyframes critical-pulse {
-            0%, 100% { box-shadow: 0 0 10px rgba(255,0,0,0.3); }
-            50% { box-shadow: 0 0 20px rgba(255,0,0,0.6); }
-        }
-
-        .ai-reasoning {
+            border-radius: 5px;
+            border-left: 3px solid #00ff00;
             font-size: 0.95em;
-            color: #aaa;
-            line-height: 1.6;
-            margin-top: 10px;
-        }
-
-        .threat-list {
-            margin-top: 10px;
-            padding: 10px;
-            background: rgba(255,0,0,0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(255,0,0,0.2);
-        }
-
-        .threat-item {
-            color: #ff6666;
-            margin: 5px 0;
-            font-size: 0.9em;
-        }
-
-        .safety-meter {
-            margin-top: 15px;
-            padding: 10px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-        }
-
-        .safety-bar {
-            height: 20px;
-            background: linear-gradient(90deg, #ff0000 0%, #ffff00 50%, #00ff00 100%);
-            border-radius: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .safety-indicator {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: white;
-            box-shadow: 0 0 10px rgba(255,255,255,0.8);
-            transition: left 0.5s ease;
-        }
-
-        .safety-label {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-            font-size: 0.8em;
-            color: #888;
-        }
-
-        .suggestion-list {
-            margin-top: 15px;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .suggestion-item {
-            padding: 12px;
-            margin: 5px 0;
-            background: rgba(0,255,255,0.05);
-            border-radius: 8px;
-            border-left: 3px solid #00ffff;
             cursor: pointer;
             transition: all 0.3s;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .suggestion-item:hover {
-            background: rgba(0,255,255,0.15);
+        .strategy-item:hover {
+            background: rgba(0,255,0,0.2);
             transform: translateX(5px);
         }
 
-        .suggestion-item.safe-option {
-            border-left-color: #00ff00;
-            background: rgba(0,255,0,0.08);
-        }
-
-        .suggestion-item.safe-option:hover {
-            background: rgba(0,255,0,0.15);
-        }
-
-        .suggestion-item.risky {
-            border-left-color: #ffaa00;
-            background: rgba(255,170,0,0.05);
-        }
-
-        .suggestion-item.blunder {
+        .strategy-item.warning {
+            background: rgba(255,0,0,0.1);
             border-left-color: #ff0000;
-            background: rgba(255,0,0,0.05);
-            opacity: 0.7;
         }
 
-        .suggestion-score {
-            font-size: 0.8em;
-            color: #888;
-        }
-
-        .safety-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.7em;
-            font-weight: bold;
-            margin-left: 8px;
-        }
-
-        .safety-badge.ultra {
-            background: #00ffff;
-            color: #000;
-        }
-
-        .safety-badge.safe {
-            background: #00ff00;
-            color: #000;
-        }
-
-        .safety-badge.risky {
-            background: #ffaa00;
-            color: #000;
-        }
-
-        .opponent-analysis {
-            margin-top: 15px;
+        .danger-points {
+            background: rgba(255,0,0,0.1);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
             padding: 15px;
-            background: rgba(255,0,0,0.05);
-            border-radius: 8px;
-            border: 1px solid rgba(255,0,0,0.2);
+            margin: 10px 0;
         }
 
-        .opponent-analysis h4 {
+        .danger-points h4 {
             color: #ff6666;
             margin-bottom: 10px;
         }
 
-        /* ANIMAÇÃO ESPECTACULAR DO CHECKMATE */
+        .danger-item {
+            color: #ff9999;
+            padding: 5px 0;
+            font-size: 0.9em;
+        }
+
+        .instruction-box {
+            background: linear-gradient(135deg, #001a00, #003300);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .instruction-box h4 {
+            color: #00ff00;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .instruction-step {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 5px;
+        }
+
+        .instruction-step .number {
+            background: #00ff00;
+            color: #000;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
         .checkmate-animation-container {
             position: relative;
             padding: 30px;
@@ -875,20 +740,6 @@
         @keyframes winner-pulse {
             0%, 100% { box-shadow: inset 0 0 20px #00ff00; transform: scale(1); }
             50% { box-shadow: inset 0 0 40px #00ff00; transform: scale(1.05); }
-        }
-
-        .checkmate-arrow {
-            position: absolute;
-            stroke: #ff0000;
-            stroke-width: 4;
-            fill: none;
-            filter: drop-shadow(0 0 10px #ff0000);
-            animation: arrow-draw 2s ease-out forwards;
-        }
-
-        @keyframes arrow-draw {
-            from { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
-            to { stroke-dasharray: 1000; stroke-dashoffset: 0; }
         }
 
         .final-move-text {
@@ -983,7 +834,7 @@
 <body>
     <div class="login-screen" id="loginScreen">
         <h1>♔ Xadrez ♚</h1>
-        <p>Modo Fernando Pro Ultra - IA de Segurança Máxima</p>
+        <p>Modo Fernando Pro Ultra - Ataque Inteligente & Seguro</p>
         <div class="input-group">
             <input type="text" id="playerName" placeholder="Seu nome" maxlength="20" autocomplete="off">
         </div>
@@ -1012,22 +863,22 @@
             <div id="gameStatus" style="margin-top:10px; font-size:0.9em; color:#888;"></div>
         </div>
         <div class="ai-analysis" id="aiAnalysis">
-            <h3>🛡️ IA Fernando - Modo Segurança Máxima</h3>
-            <div class="ai-suggestion" id="aiSuggestion"></div>
-            <div class="ai-reasoning" id="aiReasoning"></div>
-            <div class="threat-list" id="threatList" style="display:none;"></div>
-            <div class="safety-meter" id="safetyMeter" style="display:none;">
-                <div class="safety-bar">
-                    <div class="safety-indicator" id="safetyIndicator" style="left:50%"></div>
-                </div>
-                <div class="safety-label">
-                    <span>Perigoso</span>
-                    <span>Equilibrado</span>
-                    <span>Seguro</span>
-                </div>
+            <h3>🎯 IA Fernando - Ataque Seguro</h3>
+            
+            <div class="instruction-box" id="instructionBox" style="display:none;">
+                <h4>📋 O QUE FAZER AGORA:</h4>
+                <div id="instructionSteps"></div>
             </div>
-            <div class="suggestion-list" id="suggestionList" style="display:none;"></div>
-            <div class="opponent-analysis" id="opponentAnalysis" style="display:none;"></div>
+            
+            <div class="strategy-box" id="strategyBox" style="display:none;">
+                <div class="strategy-title" id="strategyTitle"></div>
+                <div id="strategyList"></div>
+            </div>
+            
+            <div class="danger-points" id="dangerPoints" style="display:none;">
+                <h4>⚠️ PONTOS DE PERIGO (Evite!)</h4>
+                <div id="dangerList"></div>
+            </div>
         </div>
     </div>
 
@@ -1081,70 +932,6 @@
         };
 
         const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
-        
-        // Enhanced Piece-Square Tables
-        const PST = {
-            p: [
-                [0,  0,  0,  0,  0,  0,  0,  0],
-                [50, 50, 50, 50, 50, 50, 50, 50],
-                [10, 10, 20, 30, 30, 20, 10, 10],
-                [5,  5, 10, 25, 25, 10,  5,  5],
-                [0,  0,  0, 20, 20,  0,  0,  0],
-                [5, -5,-10,  0,  0,-10, -5,  5],
-                [5, 10, 10,-20,-20, 10, 10,  5],
-                [0,  0,  0,  0,  0,  0,  0,  0]
-            ],
-            n: [
-                [-50,-40,-30,-30,-30,-30,-40,-50],
-                [-40,-20,  0,  0,  0,  0,-20,-40],
-                [-30,  0, 10, 15, 15, 10,  0,-30],
-                [-30,  5, 15, 20, 20, 15,  5,-30],
-                [-30,  0, 15, 20, 20, 15,  0,-30],
-                [-30,  5, 10, 15, 15, 10,  5,-30],
-                [-40,-20,  0,  5,  5,  0,-20,-40],
-                [-50,-40,-30,-30,-30,-30,-40,-50]
-            ],
-            b: [
-                [-20,-10,-10,-10,-10,-10,-10,-20],
-                [-10,  0,  0,  0,  0,  0,  0,-10],
-                [-10,  0,  5, 10, 10,  5,  0,-10],
-                [-10,  5,  5, 10, 10,  5,  5,-10],
-                [-10,  0, 10, 10, 10, 10,  0,-10],
-                [-10, 10, 10, 10, 10, 10, 10,-10],
-                [-10,  5,  0,  0,  0,  0,  5,-10],
-                [-20,-10,-10,-10,-10,-10,-10,-20]
-            ],
-            r: [
-                [0,  0,  0,  0,  0,  0,  0,  0],
-                [5, 10, 10, 10, 10, 10, 10,  5],
-                [-5,  0,  0,  0,  0,  0,  0, -5],
-                [-5,  0,  0,  0,  0,  0,  0, -5],
-                [-5,  0,  0,  0,  0,  0,  0, -5],
-                [-5,  0,  0,  0,  0,  0,  0, -5],
-                [-5,  0,  0,  0,  0,  0,  0, -5],
-                [0,  0,  0,  5,  5,  0,  0,  0]
-            ],
-            q: [
-                [-20,-10,-10, -5, -5,-10,-10,-20],
-                [-10,  0,  0,  0,  0,  0,  0,-10],
-                [-10,  0,  5,  5,  5,  5,  0,-10],
-                [-5,  0,  5,  5,  5,  5,  0, -5],
-                [0,  0,  5,  5,  5,  5,  0, -5],
-                [-10,  5,  5,  5,  5,  5,  0,-10],
-                [-10,  0,  5,  0,  0,  0,  0,-10],
-                [-20,-10,-10, -5, -5,-10,-10,-20]
-            ],
-            k: [
-                [-30,-40,-40,-50,-50,-40,-40,-30],
-                [-30,-40,-40,-50,-50,-40,-40,-30],
-                [-30,-40,-40,-50,-50,-40,-40,-30],
-                [-30,-40,-40,-50,-50,-40,-40,-30],
-                [-20,-30,-30,-40,-40,-30,-30,-20],
-                [-10,-20,-20,-20,-20,-20,-20,-10],
-                [20, 20,  0,  0,  0,  0, 20, 20],
-                [20, 30, 10,  0,  0, 10, 30, 20]
-            ]
-        };
 
         let gameState = {
             board: [],
@@ -1645,7 +1432,7 @@
             const nameDisplay = document.getElementById('playerNameDisplay');
             nameDisplay.textContent = gameState.myName;
             if (gameState.isFernando) {
-                badge.textContent = '🛡️ MODO FERNANDO - SEGURANÇA MÁXIMA 🛡️';
+                badge.textContent = '🎯 MODO FERNANDO - ATAQUE SEGURO';
                 badge.classList.add('fernando');
                 document.getElementById('aiAnalysis').classList.add('show');
             } else {
@@ -1669,7 +1456,7 @@
                 indicator.textContent = 'Aguardando adversário...';
                 indicator.classList.remove('your-turn');
             } else if (isMyTurn) {
-                indicator.textContent = '⚡ SUA VEZ ⚡';
+                indicator.textContent = '⚡ SUA VEZ - ATAQUE! ⚡';
                 indicator.classList.add('your-turn');
             } else {
                 indicator.textContent = '⏳ Vez do adversário...';
@@ -1677,856 +1464,225 @@
             }
         }
 
-        // ==================== IA DE SEGURANÇA MÁXIMA ====================
+        // ==================== IA FERNANDO - ATAQUE INTELIGENTE & SEGURO ====================
 
-        function evaluateMoveSafety(from, to, move, color) {
+        function analyzePositionForFernando(color) {
             const board = gameState.board;
-            const piece = board[from.row][from.col];
-            const testBoard = simulateMove(board, {from, to: {...to, ...move}});
             const opponentColor = color === 'white' ? 'black' : 'white';
-            
-            let safety = {
-                score: 0,
-                safetyLevel: 'safe', // 'ultra-safe', 'safe', 'risky', 'blunder'
-                threats: [],
-                willBeAttacked: false,
-                willBeDefended: false,
-                blunder: false,
-                warning: false,
-                tacticalMotifs: [],
-                kingSafety: 0,
-                pieceValue: PIECE_VALUES[piece.toLowerCase()]
-            };
-
-            // 1. Verificar se a peça ficará atacada
-            if (!move.castling) {
-                safety.willBeAttacked = isSquareAttacked(to.row, to.col, color, testBoard);
-                safety.willBeDefended = isSquareDefended(to.row, to.col, color, testBoard);
-                
-                if (safety.willBeAttacked && !safety.willBeDefended) {
-                    const attackers = getAttackers(to.row, to.col, opponentColor, testBoard);
-                    const minAttackerValue = Math.min(...attackers.map(a => PIECE_VALUES[a.piece.toLowerCase()]));
-                    
-                    if (safety.pieceValue > minAttackerValue) {
-                        safety.blunder = true;
-                        safety.safetyLevel = 'blunder';
-                        safety.threats.push(`🚫 BLUNDER! ${PIECES[piece]} ficará pendurada!`);
-                        safety.score -= 1000;
-                    } else {
-                        safety.safetyLevel = 'risky';
-                        safety.threats.push(`⚠️ ${PIECES[piece]} ficará atacada e indefesa`);
-                        safety.score -= 300;
-                    }
-                } else if (safety.willBeAttacked && safety.willBeDefended) {
-                    const attackers = getAttackers(to.row, to.col, opponentColor, testBoard);
-                    const defenders = getDefenders(to.row, to.col, color, testBoard);
-                    
-                    if (attackers.length > defenders.length) {
-                        safety.safetyLevel = 'risky';
-                        safety.threats.push(`⚠️ Mais atacantes (${attackers.length}) que defensores (${defenders.length})`);
-                        safety.score -= 150;
-                    } else {
-                        safety.safetyLevel = 'safe';
-                        safety.score += 20; // Bônus por estar defendida
-                    }
-                } else if (!safety.willBeAttacked) {
-                    // Não está atacada - ultra seguro!
-                    safety.safetyLevel = 'ultra-safe';
-                    safety.score += 50;
-                }
-            } else {
-                // Roque é sempre seguro se permitido
-                safety.safetyLevel = 'ultra-safe';
-                safety.score += 100;
-            }
-
-            // 2. Verificar se deixamos outras peças vulneráveis (efeito colateral)
-            let hangingPieces = [];
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && (color === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        if (r === to.row && c === to.col) continue;
-                        
-                        const wasDefended = isSquareDefended(r, c, color, board);
-                        const isDefendedNow = isSquareDefended(r, c, color, testBoard);
-                        const isAttacked = isSquareAttacked(r, c, color, testBoard);
-                        
-                        if (wasDefended && !isDefendedNow && isAttacked) {
-                            const pValue = PIECE_VALUES[p.toLowerCase()];
-                            hangingPieces.push({piece: p, square: `${String.fromCharCode(97+c)}${8-r}`, value: pValue});
-                            safety.score -= pValue * 0.5;
-                        }
-                    }
-                }
-            }
-            
-            if (hangingPieces.length > 0) {
-                safety.warning = true;
-                safety.threats.push(`⚠️ ${hangingPieces.length} peça(s) ficarão desprotegida(s)!`);
-            }
-
-            // 3. Verificar segurança do rei APÓS o movimento
-            const kingPos = findKing(testBoard, color);
-            if (kingPos) {
-                const kingAttacked = isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
-                if (kingAttacked) {
-                    safety.blunder = true;
-                    safety.safetyLevel = 'blunder';
-                                        safety.threats.push('🚨 REI EM XEQUE! Movimento ilegal!');
-                    safety.score -= 10000;
-                    safety.kingSafety = -100;
-                } else {
-                    // Verificar se o rei ficou mais seguro
-                    const wasAttacked = isSquareAttacked(kingPos.row, kingPos.col, color, board);
-                    if (wasAttacked && !kingAttacked) {
-                        safety.kingSafety = 50;
-                        safety.score += 100; // Saiu do xeque
-                    }
-                }
-            }
-
-            // 4. Análise profunda: ameaças futuras do oponente (lookahead 2 níveis)
-            const opponentMoves = generateAllMoves(testBoard, opponentColor);
-            let futureThreats = [];
-            let maxFutureLoss = 0;
-            
-            for (let oppMove of opponentMoves) {
-                // Simular jogada do oponente
-                const afterOppBoard = simulateMove(testBoard, {
-                    from: {row: oppMove.from.row, col: oppMove.from.col},
-                    to: oppMove.to
-                });
-                
-                // Verificar o que o oponente ganha
-                if (oppMove.capture) {
-                    const capturedValue = PIECE_VALUES[oppMove.capture.toLowerCase()];
-                    // Verificar se a peça capturada está realmente lá
-                    const targetPiece = testBoard[oppMove.to.row] && testBoard[oppMove.to.row][oppMove.to.col];
-                    if (targetPiece && (color === 'white' ? targetPiece === targetPiece.toUpperCase() : targetPiece === targetPiece.toLowerCase())) {
-                        const isDefended = isSquareDefended(oppMove.to.row, oppMove.to.col, color, testBoard);
-                        if (!isDefended || capturedValue > PIECE_VALUES[oppMove.piece.toLowerCase()]) {
-                            if (capturedValue > maxFutureLoss) {
-                                maxFutureLoss = capturedValue;
-                                futureThreats.push({
-                                    piece: targetPiece,
-                                    square: `${String.fromCharCode(97+oppMove.to.col)}${8-oppMove.to.row}`,
-                                    by: PIECES[oppMove.piece],
-                                    value: capturedValue
-                                });
-                            }
-                        }
-                    }
-                }
-                
-                // Verificar xeque mate em 1
-                const ourKingPos = findKing(afterOppBoard, color);
-                if (ourKingPos && isSquareAttacked(ourKingPos.row, ourKingPos.col, color, afterOppBoard)) {
-                    // Verificar se é xeque mate
-                    const canEscape = hasAnyMove(color, afterOppBoard);
-                    if (!canEscape) {
-                        safety.blunder = true;
-                        safety.safetyLevel = 'blunder';
-                        safety.threats.push(`💀 XEQUE MATE em 1! ${PIECES[oppMove.piece]} → ${String.fromCharCode(97+oppMove.to.col)}${8-oppMove.to.row}`);
-                        safety.score -= 10000;
-                    } else {
-                        safety.warning = true;
-                        safety.threats.push(`⚠️ Xeque em 1: ${PIECES[oppMove.piece]} pode dar xeque`);
-                        safety.score -= 200;
-                    }
-                }
-            }
-            
-            if (futureThreats.length > 0 && maxFutureLoss > 0) {
-                const topThreat = futureThreats[0];
-                safety.threats.push(`🔮 Após jogar: adversário pode capturar ${PIECES[topThreat.piece]} (${topThreat.value} pts)`);
-                safety.score -= maxFutureLoss * 0.7;
-            }
-
-            // 5. Verificar se estamos capturando algo valioso de forma segura
-            if (move.capture) {
-                const target = board[to.row] && board[to.row][to.col];
-                if (target) {
-                    const targetValue = PIECE_VALUES[target.toLowerCase()];
-                    const isTargetDefended = isSquareDefended(to.row, to.col, opponentColor, board);
-                    
-                    if (!isTargetDefended) {
-                        // Captura segura de peça indefesa
-                        safety.score += targetValue;
-                        safety.tacticalMotifs.push(`✅ Captura segura: +${targetValue}`);
-                    } else {
-                        // Trocas - só fazer se for favorável
-                        const ourValue = safety.pieceValue;
-                        if (targetValue > ourValue) {
-                            safety.score += (targetValue - ourValue);
-                            safety.tacticalMotifs.push(`⚖️ Troca favorável: +${targetValue - ourValue}`);
-                        } else if (targetValue === ourValue) {
-                            safety.score += 10; // Troca equivalente, posição conta
-                        } else {
-                            safety.score -= (ourValue - targetValue) * 0.5;
-                            safety.tacticalMotifs.push(`⚠️ Troca desfavorável: -${ourValue - targetValue}`);
-                        }
-                    }
-                }
-            }
-
-            // 6. Bônus para desenvolvimento seguro no início
-            if (['n', 'b'].includes(piece.toLowerCase())) {
-                const startRow = color === 'white' ? 7 : 0;
-                if (from.row === startRow) {
-                    // Sair do canto é bom
-                    safety.score += 15;
-                }
-            }
-
-            // 7. Penalidade por mover peças próximas ao rei sem necessidade
-            if (piece.toLowerCase() !== 'k' && piece.toLowerCase() !== 'p') {
-                const kingPos = findKing(board, color);
-                const distToKing = Math.abs(from.row - kingPos.row) + Math.abs(from.col - kingPos.col);
-                if (distToKing <= 2) {
-                    // Estávamos protegendo o rei
-                    const newDistToKing = Math.abs(to.row - kingPos.row) + Math.abs(to.col - kingPos.col);
-                    if (newDistToKing > 2) {
-                        // Afastamos do rei - verificar se é seguro
-                        const kingDefendersBefore = getDefenders(kingPos.row, kingPos.col, color, board).length;
-                        if (kingDefendersBefore <= 2) {
-                            safety.score -= 30;
-                            safety.threats.push(`⚠️ Afastando proteção do rei`);
-                        }
-                    }
-                }
-            }
-
-            return safety;
-        }
-
-        // Verificar se há movimentos disponíveis para um dado tabuleiro
-        function hasAnyMove(color, testBoard = gameState.board) {
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && (color === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        const moves = getValidMovesForEvaluation(r, c, testBoard, color);
-                        if (moves.length > 0) return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        // Análise do adversário
-        function analyzeOpponentPosition(color) {
-            const opponentColor = color === 'white' ? 'black' : 'white';
-            const board = gameState.board;
             
             let analysis = {
-                threats: [],
-                weaknesses: [],
-                kingSafety: { score: 0, status: '', position: null },
-                totalScore: 0,
-                bestTargets: []
+                // Oportunidades de ataque seguro
+                freeCaptures: [],      // Peças adversárias completamente indefesas
+                safeAttacks: [],       // Ataques onde nossa peça ficará segura
+                discoveredAttacks: [], // Ataques descobertos
+                checks: [],            // Xeques seguros
+                
+                // Riscos a evitar
+                hangingPieces: [],     // Nossas peças penduradas
+                threatenedPieces: [],  // Nossas peças atacadas
+                futureBlunders: [],    // Jogadas que permitem contra-ataque forte
+                
+                // Situação geral
+                kingSafety: { ours: 100, theirs: 100 },
+                material: 0,
+                positionScore: 0
             };
 
-            // 1. Encontrar rei adversário
-            const oppKing = opponentColor === 'white' ? 'K' : 'k';
-            let kingPos = null;
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    if (board[r] && board[r][c] === oppKing) {
-                        kingPos = {row: r, col: c};
-                        break;
-                    }
-                }
-            }
-
-            if (kingPos) {
-                analysis.kingSafety.position = kingPos;
-                const kingAttacked = isSquareAttacked(kingPos.row, kingPos.col, opponentColor, board);
-                const kingDefenders = getDefenders(kingPos.row, kingPos.col, opponentColor, board);
-                const kingAttackers = getAttackers(kingPos.row, kingPos.col, opponentColor, board);
-                
-                if (kingAttacked) {
-                    analysis.kingSafety.status = '🔴 Em xeque!';
-                    analysis.kingSafety.score = -80;
-                    analysis.totalScore += 150; // Grande vantagem
-                } else if (kingDefenders.length < 2) {
-                    analysis.kingSafety.status = '🟡 Rei vulnerável';
-                    analysis.kingSafety.score = -30;
-                    analysis.totalScore += 50;
-                } else if (kingAttackers.length > kingDefenders.length) {
-                    analysis.kingSafety.status = '🟠 Rei sob pressão';
-                    analysis.kingSafety.score = -20;
-                    analysis.totalScore += 30;
-                } else {
-                    analysis.kingSafety.status = '🟢 Rei seguro';
-                    analysis.kingSafety.score = 0;
-                }
-            }
-
-            // 2. Encontrar peças adversárias desprotegidas
+            // 1. Encontrar TODAS as peças e suas situações
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = board[r] && board[r][c];
-                    if (piece && (opponentColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const isAttacked = isSquareAttacked(r, c, opponentColor, board);
-                        const isDefended = isSquareDefended(r, c, opponentColor, board);
-                        
+                    if (!piece) continue;
+                    
+                    const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
+                    const isMine = pieceColor === color;
+                    
+                    const isAttacked = isSquareAttacked(r, c, pieceColor, board);
+                    const isDefended = isSquareDefended(r, c, pieceColor, board);
+                    const attackers = isAttacked ? getAttackers(r, c, pieceColor === 'white' ? 'black' : 'white', board) : [];
+                    const defenders = isDefended ? getDefenders(r, c, pieceColor, board) : [];
+                    
+                    // NOSSAS PEÇAS - verificar riscos
+                    if (isMine) {
                         if (isAttacked && !isDefended) {
-                            const value = PIECE_VALUES[piece.toLowerCase()];
-                            analysis.weaknesses.push({
-                                piece: piece,
-                                row: r,
-                                col: c,
-                                square: `${String.fromCharCode(97+c)}${8-r}`,
-                                value: value,
-                                canCapture: true
-                            });
-                            analysis.totalScore += value * 0.8;
-                        } else if (!isDefended && ['q','r'].includes(piece.toLowerCase())) {
-                            analysis.weaknesses.push({
-                                piece: piece,
-                                row: r,
-                                col: c,
-                                square: `${String.fromCharCode(97+c)}${8-r}`,
+                            // Pendurada! URGENTE
+                            analysis.hangingPieces.push({
+                                piece, row: r, col: c,
                                 value: PIECE_VALUES[piece.toLowerCase()],
-                                canCapture: false, // Precisa verificar se podemos atacar
-                                note: 'Peça valiosa indefesa'
+                                square: `${String.fromCharCode(97+c)}${8-r}`,
+                                attackers: attackers.length
+                            });
+                        } else if (isAttacked && defenders.length < attackers.length) {
+                            // Superada
+                            analysis.threatenedPieces.push({
+                                piece, row: r, col: c,
+                                value: PIECE_VALUES[piece.toLowerCase()],
+                                square: `${String.fromCharCode(97+c)}${8-r}`,
+                                danger: 'superada'
                             });
                         }
                     }
+                    // PEÇAS ADVERSÁRIAS - verificar oportunidades
+                    else {
+                        if (!isDefended) {
+                            // Peça adversária indefesa! ALVO PRIME
+                            const myAttackers = getAttackers(r, c, color, board);
+                            
+                            myAttackers.forEach(attacker => {
+                                const myPiece = board[attacker.row][attacker.col];
+                                const myValue = PIECE_VALUES[myPiece.toLowerCase()];
+                                const targetValue = PIECE_VALUES[piece.toLowerCase()];
+                                
+                                // Simular captura para verificar segurança
+                                const testBoard = simulateMove(board, {
+                                    from: {row: attacker.row, col: attacker.col},
+                                    to: {row: r, col: c, capture: true}
+                                });
+                                
+                                const willBeAttacked = isSquareAttacked(r, c, color, testBoard);
+                                const willBeDefended = isSquareDefended(r, c, color, testBoard);
+                                
+                                if (!willBeAttacked || willBeDefended || targetValue > myValue * 2) {
+                                    // Captura segura ou muito lucrativa
+                                    analysis.freeCaptures.push({
+                                        from: {row: attacker.row, col: attacker.col},
+                                        to: {row: r, col: c},
+                                        attacker: myPiece,
+                                        target: piece,
+                                        attackerValue: myValue,
+                                        targetValue: targetValue,
+                                        profit: targetValue - (willBeAttacked && !willBeDefended ? myValue : 0),
+                                        square: `${String.fromCharCode(97+c)}${8-r}`,
+                                        safety: willBeAttacked && !willBeDefended ? 'arriscado' : 'seguro'
+                                    });
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            // 2. Analisar todos os movimentos possíveis para ataques seguros
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece || (piece === piece.toUpperCase() ? 'white' : 'black') !== color) continue;
+                    
+                    const moves = getValidMoves(r, c);
+                    
+                    moves.forEach(move => {
+                        const testBoard = simulateMove(board, {
+                            from: {row: r, col: c},
+                            to: move
+                        });
+                        
+                        const willBeAttacked = isSquareAttacked(move.row, move.col, color, testBoard);
+                        const willBeDefended = isSquareDefended(move.row, move.col, color, testBoard);
+                        
+                        // Verificar se dá xeque
+                        const oppKingPos = findKing(testBoard, opponentColor);
+                        const givesCheck = oppKingPos && isSquareAttacked(oppKingPos.row, oppKingPos.col, opponentColor, testBoard);
+                        
+                        // Verificar se descobre ataque
+                        const discovered = checkDiscoveredAttack(board, {row: r, col: c}, move, color);
+                        
+                        // Classificar segurança
+                        let safety = 'ultra-safe';
+                        if (willBeAttacked && !willBeDefended) safety = 'perigoso';
+                        else if (willBeAttacked) safety = 'safe';
+                        
+                        const moveData = {
+                            from: {row: r, col: c},
+                            to: move,
+                            piece: piece,
+                            notation: `${PIECES[piece]} ${String.fromCharCode(97+c)}${8-r}→${String.fromCharCode(97+move.col)}${8-move.row}`,
+                            safety: safety,
+                            givesCheck: givesCheck,
+                            discovered: discovered.length > 0,
+                            value: 0
+                        };
+                        
+                        // Calcular valor do movimento
+                        if (move.capture) {
+                            const target = board[move.row] && board[move.row][move.col];
+                            if (target) {
+                                moveData.value = PIECE_VALUES[target.toLowerCase()];
+                            }
+                        }
+                        
+                        if (givesCheck) moveData.value += 50;
+                        if (discovered.length > 0) moveData.value += 30;
+                        
+                        // Só incluir se for seguro ou muito lucrativo
+                        if (safety === 'ultra-safe' || (safety === 'safe' && moveData.value > 0) || moveData.value > 200) {
+                            if (givesCheck) {
+                                analysis.checks.push(moveData);
+                            } else if (discovered.length > 0) {
+                                analysis.discoveredAttacks.push(moveData);
+                            } else if (!move.capture) {
+                                analysis.safeAttacks.push(moveData);
+                            }
+                        }
+                    });
                 }
             }
 
             // Ordenar por valor
-            analysis.weaknesses.sort((a, b) => b.value - a.value);
-            analysis.bestTargets = analysis.weaknesses.slice(0, 3);
+            const byValue = (a, b) => b.value - a.value;
+            analysis.freeCaptures.sort(byValue);
+            analysis.checks.sort(byValue);
+            analysis.discoveredAttacks.sort(byValue);
+            analysis.safeAttacks.sort(byValue);
+            analysis.hangingPieces.sort(byValue);
+            analysis.threatenedPieces.sort(byValue);
 
-            // 3. Ameaças do adversário contra nós
-            const opponentMoves = generateAllMoves(board, opponentColor);
-            let immediateThreats = [];
-            
-            for (let move of opponentMoves) {
-                if (move.capture) {
-                    const target = board[move.to.row] && board[move.to.row][move.to.col];
-                    if (target && (color === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
-                        const targetValue = PIECE_VALUES[target.toLowerCase()];
-                        const isTargetDefended = isSquareDefended(move.to.row, move.to.col, color, board);
-                        const attackerValue = PIECE_VALUES[move.piece.toLowerCase()];
-                        
-                        // Só considerar ameaças reais
-                        if (!isTargetDefended || targetValue > attackerValue) {
-                            immediateThreats.push({
-                                attacker: move.piece,
-                                target: target,
-                                from: `${String.fromCharCode(97+move.from.col)}${8-move.from.row}`,
-                                to: `${String.fromCharCode(97+move.to.col)}${8-move.to.row}`,
-                                value: targetValue,
-                                isWinning: targetValue > attackerValue,
-                                isEqual: targetValue === attackerValue
-                            });
-                        }
-                    }
-                }
-            }
-
-            immediateThreats.sort((a, b) => b.value - a.value);
-            analysis.threats = immediateThreats.slice(0, 3);
-
-            // Ajustar score baseado em ameaças
-            analysis.threats.forEach(t => {
-                if (t.isWinning) analysis.totalScore -= t.value * 0.5;
-            });
+            // Calcular scores
+            analysis.material = analysis.freeCaptures.reduce((sum, c) => sum + c.targetValue, 0) 
+                              - analysis.hangingPieces.reduce((sum, h) => sum + h.value, 0);
 
             return analysis;
         }
 
-        // Análise predativa completa - FOCO EM SEGURANÇA
-        function generatePredictiveAnalysis(color) {
-            const analysis = {
-                ultraSafeMoves: [], // Não ficam atacadas
-                safeMoves: [],      // Ficam defendidas
-                riskyMoves: [],     // Ficam atacadas mas defendidas
-                blunders: [],       // Ficam penduradas
-                bestMoves: [],      // Top moves ordenados por segurança + valor
-                positionSafety: 50,
-                threatsAgainstUs: [],
-                opponentAnalysis: null
-            };
-
-            const board = gameState.board;
-            const isMyTurn = gameState.currentPlayer === color;
+        function checkDiscoveredAttack(board, from, to, color) {
+            const discoveries = [];
+            const piece = board[from.row][from.col];
             
-            if (!isMyTurn) return analysis;
-
-            // Analisar posição do adversário
-            analysis.opponentAnalysis = analyzeOpponentPosition(color);
-
-            // Coletar TODOS os movimentos com análise de segurança
-            let allMoves = [];
+            // Verificar se estávamos bloqueando alguma linha de ataque
+            const directions = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
             
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const moves = getValidMoves(r, c);
-                        for (let m of moves) {
-                            const safety = evaluateMoveSafety({row: r, col: c}, m, m, color);
-                            
-                            const moveData = {
-                                from: {row: r, col: c},
-                                to: m,
-                                piece: piece,
-                                safety: safety,
-                                score: safety.score,
-                                notation: `${PIECES[piece]} ${String.fromCharCode(97+c)}${8-r} → ${String.fromCharCode(97+m.col)}${8-m.row}`,
-                                safetyLevel: safety.safetyLevel
-                            };
-                            
-                            // Calcular score final balanceado
-                            // PRIORIDADE MÁXIMA: Segurança
-                            let finalScore = 0;
-                            
-                            // Base: segurança do movimento
-                            switch(safety.safetyLevel) {
-                                case 'ultra-safe':
-                                    finalScore += 500;
+            for (let [dr, dc] of directions) {
+                // Verificar se há uma peça nossa atrás de nós na mesma linha
+                let behindR = from.row - dr, behindC = from.col - dc;
+                while (isValid(behindR, behindC)) {
+                    const behindPiece = board[behindR] && board[behindR][behindC];
+                    if (behindPiece) {
+                        if ((color === 'white' ? behindPiece === behindPiece.toUpperCase() : behindPiece === behindPiece.toLowerCase()) &&
+                            ['q','r','b'].includes(behindPiece.toLowerCase())) {
+                            // Estávamos bloqueando esta peça! Verificar o que ela ataca agora
+                            let checkR = from.row + dr, checkC = from.col + dc;
+                            while (isValid(checkR, checkC)) {
+                                const target = board[checkR] && board[checkR][checkC];
+                                if (target && isEnemy(behindPiece, target)) {
+                                    discoveries.push({
+                                        piece: behindPiece,
+                                        target: target,
+                                        targetSquare: `${String.fromCharCode(97+checkC)}${8-checkR}`
+                                    });
                                     break;
-                                case 'safe':
-                                    finalScore += 300;
-                                    break;
-                                case 'risky':
-                                    finalScore += 100;
-                                    break;
-                                case 'blunder':
-                                    finalScore -= 1000;
-                                    break;
-                            }
-                            
-                            // Adicionar valor tático
-                            finalScore += safety.score * 0.5;
-                            
-                            // Bônus para capturas seguras
-                            if (m.capture && safety.safetyLevel !== 'blunder') {
-                                const target = board[m.row] && board[m.row][m.col];
-                                if (target) {
-                                    finalScore += PIECE_VALUES[target.toLowerCase()];
                                 }
-                            }
-                            
-                            // Penalidade severa por deixar peças penduradas
-                            if (safety.threats.some(t => t.includes('desprotegida'))) {
-                                finalScore -= 200;
-                            }
-                            
-                            moveData.finalScore = finalScore;
-                            allMoves.push(moveData);
-                        }
-                    }
-                }
-            }
-
-            // Classificar por nível de segurança
-            allMoves.forEach(move => {
-                switch(move.safetyLevel) {
-                    case 'ultra-safe':
-                        analysis.ultraSafeMoves.push(move);
-                        break;
-                    case 'safe':
-                        analysis.safeMoves.push(move);
-                        break;
-                    case 'risky':
-                        analysis.riskyMoves.push(move);
-                        break;
-                    case 'blunder':
-                        analysis.blunders.push(move);
-                        break;
-                }
-            });
-
-            // Ordenar cada categoria por valor
-            const sortByScore = (a, b) => b.finalScore - a.finalScore;
-            analysis.ultraSafeMoves.sort(sortByScore);
-            analysis.safeMoves.sort(sortByScore);
-            analysis.riskyMoves.sort(sortByScore);
-            
-            // Montar lista de melhores jogadas: PRIORIDADE SEGURANÇA
-            // 1. Ultra-safe com valor
-            // 2. Safe com bom valor
-            // 3. Ultra-safe sem valor (movimentos posicionais)
-            // 4. Safe neutros
-            // 5. Risky só se tiverem valor excepcional
-            
-            analysis.bestMoves = [
-                ...analysis.ultraSafeMoves.slice(0, 3),
-                ...analysis.safeMoves.slice(0, 2)
-            ];
-            
-            // Só adicionar risky se não houver opções seguras e tiverem valor > 200
-            if (analysis.bestMoves.length < 3) {
-                const goodRisky = analysis.riskyMoves.filter(m => m.finalScore > 200);
-                analysis.bestMoves.push(...goodRisky.slice(0, 2));
-            }
-            
-            // Limitar a 5
-            analysis.bestMoves = analysis.bestMoves.slice(0, 5);
-
-            // Calcular segurança da posição
-            const totalMoves = allMoves.length;
-            const safeAndUltra = analysis.ultraSafeMoves.length + analysis.safeMoves.length;
-            analysis.positionSafety = totalMoves > 0 ? (safeAndUltra / totalMoves) * 100 : 50;
-
-            // Coletar ameaças contra nossas peças
-            const opponentColor = color === 'white' ? 'black' : 'white';
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (opponentColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const attacks = getAttacks(r, c, board, piece);
-                        for (let att of attacks) {
-                            const target = board[att.row] && board[att.row][att.col];
-                            if (target && (color === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
-                                const isDefended = isSquareDefended(att.row, att.col, color, board);
-                                analysis.threatsAgainstUs.push({
-                                    from: {row: r, col: c},
-                                    to: att,
-                                    attacker: piece,
-                                    target: target,
-                                    isDefended: isDefended,
-                                    value: PIECE_VALUES[target.toLowerCase()]
-                                });
+                                checkR += dr;
+                                checkC += dc;
                             }
                         }
-                    }
-                }
-            }
-
-            return analysis;
-        }
-
-        // Funções auxiliares
-        function getAttackers(row, col, byColor, board) {
-            const attackers = [];
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (byColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const attacks = getAttacks(r, c, board, piece);
-                        if (attacks.some(a => a.row === row && a.col === col)) {
-                            attackers.push({row: r, col: c, piece: piece});
-                        }
-                    }
-                }
-            }
-            return attackers;
-        }
-
-        function getDefenders(row, col, color, board) {
-            const defenders = [];
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        if (r === row && c === col) continue;
-                        const attacks = getAttacks(r, c, board, piece);
-                        if (attacks.some(a => a.row === row && a.col === col)) {
-                            defenders.push({row: r, col: c, piece: piece});
-                        }
-                    }
-                }
-            }
-            return defenders;
-        }
-
-        function isSquareDefended(row, col, color, board) {
-            return getDefenders(row, col, color, board).length > 0;
-        }
-
-        function getAttacks(row, col, board, piece) {
-            const attacks = [];
-            const type = piece.toLowerCase();
-            const color = piece === piece.toUpperCase() ? 'white' : 'black';
-            
-            switch(type) {
-                case 'p':
-                    const dir = color === 'white' ? -1 : 1;
-                    for (let dc of [-1, 1]) {
-                        if (isValid(row + dir, col + dc)) {
-                            attacks.push({row: row + dir, col: col + dc});
-                        }
-                    }
-                    break;
-                case 'n':
-                    const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                    for (let [dr, dc] of nm) {
-                        if (isValid(row + dr, col + dc)) {
-                            attacks.push({row: row + dr, col: col + dc});
-                        }
-                    }
-                    break;
-                case 'b':
-                    attacks.push(...slideAttacks(row, col, board, [[-1,-1],[-1,1],[1,-1],[1,1]]));
-                    break;
-                case 'r':
-                    attacks.push(...slideAttacks(row, col, board, [[-1,0],[1,0],[0,-1],[0,1]]));
-                    break;
-                case 'q':
-                    attacks.push(...slideAttacks(row, col, board, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
-                    break;
-                case 'k':
-                    const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-                    for (let [dr, dc] of km) {
-                        if (isValid(row + dr, col + dc)) {
-                            attacks.push({row: row + dr, col: col + dc});
-                        }
-                    }
-                    break;
-            }
-            return attacks;
-        }
-
-        function slideAttacks(row, col, board, dirs) {
-            const attacks = [];
-            for (let [dr, dc] of dirs) {
-                let nr = row + dr, nc = col + dc;
-                while (isValid(nr, nc)) {
-                    attacks.push({row: nr, col: nc});
-                    if (board[nr] && board[nr][nc]) break;
-                    nr += dr;
-                    nc += dc;
-                }
-            }
-            return attacks;
-        }
-
-        function generateAllMoves(board, color) {
-            const moves = [];
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const pieceMoves = getValidMovesForEvaluation(r, c, board, color);
-                        pieceMoves.forEach(m => {
-                            moves.push({
-                                from: {row: r, col: c},
-                                to: m,
-                                piece: piece,
-                                capture: m.capture
-                            });
-                        });
-                    }
-                }
-            }
-            return moves;
-        }
-
-        function getValidMovesForEvaluation(row, col, board, color) {
-            const piece = board[row] && board[row][col];
-            if (!piece) return [];
-            
-            const moves = [];
-            const type = piece.toLowerCase();
-            
-            switch(type) {
-                case 'p':
-                    const dir = color === 'white' ? -1 : 1;
-                    const start = color === 'white' ? 6 : 1;
-                    if (isValid(row + dir, col) && !board[row + dir][col]) {
-                        moves.push({row: row + dir, col: col, promotion: (row + dir === 0 || row + dir === 7)});
-                        if (row === start && !board[row + 2*dir][col]) {
-                            moves.push({row: row + 2*dir, col: col});
-                        }
-                    }
-                    for (let dc of [-1, 1]) {
-                        const nr = row + dir, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = board[nr] && board[nr][nc];
-                            if (target && isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: true, promotion: (nr === 0 || nr === 7)});
-                            }
-                        }
-                    }
-                    break;
-                case 'n':
-                    const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                    for (let [dr, dc] of nm) {
-                        const nr = row + dr, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = board[nr] && board[nr][nc];
-                            if (!target || isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: !!target});
-                            }
-                        }
-                    }
-                    break;
-                case 'b':
-                    moves.push(...slideMovesEval(row, col, piece, board, [[-1,-1],[-1,1],[1,-1],[1,1]]));
-                    break;
-                case 'r':
-                    moves.push(...slideMovesEval(row, col, piece, board, [[-1,0],[1,0],[0,-1],[0,1]]));
-                    break;
-                case 'q':
-                    moves.push(...slideMovesEval(row, col, piece, board, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
-                    break;
-                case 'k':
-                    const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-                    for (let [dr, dc] of km) {
-                        const nr = row + dr, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = board[nr] && board[nr][nc];
-                            if (!target || isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: !!target});
-                            }
-                        }
-                    }
-                    break;
-            }
-            
-            return moves.filter(m => {
-                const testBoard = simulateMove(board, {from: {row, col}, to: m});
-                const kingPos = findKing(testBoard, color);
-                return kingPos && !isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
-            });
-        }
-
-        function slideMovesEval(row, col, piece, board, dirs) {
-            const moves = [];
-            for (let [dr, dc] of dirs) {
-                let nr = row + dr, nc = col + dc;
-                while (isValid(nr, nc)) {
-                    const target = board[nr] && board[nr][nc];
-                    if (!target) {
-                        moves.push({row: nr, col: nc});
-                    } else {
-                        if (isEnemy(piece, target)) {
-                            moves.push({row: nr, col: nc, capture: true});
-                        }
                         break;
                     }
-                    nr += dr;
-                    nc += dc;
+                    behindR -= dr;
+                    behindC -= dc;
                 }
             }
-            return moves;
+            
+            return discoveries;
         }
-
-        function simulateMove(board, move) {
-            const newBoard = board.map(r => [...r]);
-            const piece = newBoard[move.from.row][move.from.col];
-            newBoard[move.to.row][move.to.col] = piece;
-            newBoard[move.from.row][move.from.col] = null;
-            
-            if (move.enPassant) {
-                newBoard[move.from.row][move.to.col] = null;
-            }
-            
-            if (move.castling) {
-                const row = move.from.row;
-                if (move.castling === 'kingSide') {
-                    newBoard[row][5] = newBoard[row][7];
-                    newBoard[row][7] = null;
-                } else {
-                    newBoard[row][3] = newBoard[row][0];
-                    newBoard[row][0] = null;
-                }
-            }
-            
-            if (move.promotion) {
-                const color = piece === piece.toUpperCase() ? 'white' : 'black';
-                newBoard[move.to.row][move.to.col] = color === 'white' ? 'Q' : 'q';
-            }
-            
-            return newBoard;
-        }
-
-        function findKing(board, color) {
-            const kingChar = color === 'white' ? 'K' : 'k';
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    if (board[r] && board[r][c] === kingChar) {
-                        return {row: r, col: c};
-                    }
-                }
-            }
-            return null;
-        }
-
-        function isSquareAttacked(row, col, defColor, testBoard) {
-            const atkColor = defColor === 'white' ? 'black' : 'white';
-            const pawnDir = defColor === 'white' ? -1 : 1;
-            
-            for (let dc of [-1, 1]) {
-                const r = row - pawnDir, c = col + dc;
-                if (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && p.toLowerCase() === 'p' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        return true;
-                    }
-                }
-            }
-            
-            const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-            for (let [dr, dc] of nm) {
-                const r = row + dr, c = col + dc;
-                if (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && p.toLowerCase() === 'n' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        return true;
-                    }
-                }
-            }
-            
-            for (let [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
-                let r = row + dr, c = col + dc;
-                while (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p) {
-                        if ((p.toLowerCase() === 'r' || p.toLowerCase() === 'q') && 
-                            (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                            return true;
-                        }
-                        break;
-                    }
-                    r += dr; c += dc;
-                }
-            }
-            
-            for (let [dr, dc] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
-                let r = row + dr, c = col + dc;
-                while (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p) {
-                        if ((p.toLowerCase() === 'b' || p.toLowerCase() === 'q') && 
-                            (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                            return true;
-                        }
-                        break;
-                    }
-                    r += dr; c += dc;
-                }
-            }
-            
-            for (let [dr, dc] of [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]) {
-                const r = row + dr, c = col + dc;
-                if (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && p.toLowerCase() === 'k' && 
-                        (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        function isEnemy(p1, p2) {
-            return (p1 === p1.toUpperCase()) !== (p2 === p2.toUpperCase());
-        }
-
-        function isValid(r, c) {
-            return r >= 0 && r < 8 && c >= 0 && c < 8;
-        }
-
-        // ==================== ATUALIZAÇÃO DA ANÁLISE DE IA ====================
 
         function updateAIAnalysis() {
             if (!gameState.isFernando || gameState.currentPlayer !== gameState.myColor) {
@@ -2535,1179 +1691,1315 @@
             }
 
             document.getElementById('aiAnalysis').style.display = 'block';
-            const analysis = generatePredictiveAnalysis(gameState.myColor);
-            
-            const suggestionEl = document.getElementById('aiSuggestion');
-            const reasoningEl = document.getElementById('aiReasoning');
-            const threatListEl = document.getElementById('threatList');
-            const safetyMeterEl = document.getElementById('safetyMeter');
-            const safetyIndicatorEl = document.getElementById('safetyIndicator');
-            const suggestionListEl = document.getElementById('suggestionList');
-            const opponentAnalysisEl = document.getElementById('opponentAnalysis');
-
-            // Atualizar medidor de segurança
-            safetyMeterEl.style.display = 'block';
-            safetyIndicatorEl.style.left = Math.min(100, Math.max(0, analysis.positionSafety)) + '%';
-
-            // Construir mensagem principal focada em segurança
-            let mainMessage = '';
-            let messageClass = '';
-
-            if (analysis.blunders.length > 0) {
-                mainMessage = `🚫 ${analysis.blunders.length} BLUNDER(S)! Evite estas jogadas!`;
-                messageClass = 'critical';
-            } else if (analysis.ultraSafeMoves.length > 0) {
-                const best = analysis.bestMoves[0];
-                if (best && best.safetyLevel === 'ultra-safe') {
-                    mainMessage = `✅ JOGADA ULTRA-SEGURA: ${best.notation}`;
-                    messageClass = 'safe';
-                } else {
-                    mainMessage = `🛡️ ${analysis.ultraSafeMoves.length} jogada(s) ultra-segura(s) disponível(is)`;
-                    messageClass = 'safe';
-                }
-            } else if (analysis.safeMoves.length > 0) {
-                mainMessage = `✓ ${analysis.safeMoves.length} jogada(s) segura(s). Evite as ${analysis.riskyMoves.length} arriscadas.`;
-                messageClass = '';
-            } else if (analysis.riskyMoves.length > 0) {
-                mainMessage = `⚠️ ATENÇÃO: Apenas jogadas arriscadas! ${analysis.riskyMoves.length} opções.`;
-                messageClass = 'warning';
-            } else {
-                mainMessage = `♟️ Apenas ${analysis.blunders.length > 0 ? 'blunders' : 'movimentos forçados'}`;
-                messageClass = analysis.blunders.length > 0 ? 'critical' : '';
-            }
-
-            suggestionEl.className = 'ai-suggestion ' + messageClass;
-            suggestionEl.textContent = mainMessage;
-
-            // Mostrar lista de sugestões priorizando segurança
-            if (analysis.bestMoves.length > 0) {
-                suggestionListEl.style.display = 'block';
-                let suggestionsHTML = '<strong>🛡️ Jogadas Recomendadas (Segurança Primeiro):</strong>';
-                
-                // Ultra-safe primeiro
-                if (analysis.ultraSafeMoves.length > 0) {
-                    suggestionsHTML += '<div style="color:#00ffff; margin:8px 0; font-size:0.9em;">⭐ ULTRA-SEGURAS (não ficam atacadas):</div>';
-                    analysis.ultraSafeMoves.slice(0, 3).forEach((move, index) => {
-                        const scoreText = move.finalScore > 0 ? `+${move.finalScore}` : move.finalScore;
-                        const captureBonus = move.to.capture ? ' (captura!)' : '';
-                        suggestionsHTML += `
-                            <div class="suggestion-item safe-option" onclick="highlightMove(${move.from.row}, ${move.from.col}, ${move.to.row}, ${move.to.col})">
-                                <span>${index + 1}. ${move.notation}${captureBonus}</span>
-                                <span style="display:flex; align-items:center;">
-                                    <span class="safety-badge ultra">ULTRA</span>
-                                    <span class="suggestion-score">${scoreText}</span>
-                                </span>
-                            </div>
-                        `;
-                    });
-                }
-                
-                // Safe depois
-                if (analysis.safeMoves.length > 0 && analysis.bestMoves.length > analysis.ultraSafeMoves.length) {
-                    suggestionsHTML += '<div style="color:#00ff00; margin:8px 0; font-size:0.9em;">✓ SEGURAS (bem defendidas):</div>';
-                    const safeShown = analysis.bestMoves.filter(m => m.safetyLevel === 'safe').slice(0, 2);
-                    safeShown.forEach((move, index) => {
-                        const scoreText = move.finalScore > 0 ? `+${move.finalScore}` : move.finalScore;
-                        suggestionsHTML += `
-                            <div class="suggestion-item safe-option" onclick="highlightMove(${move.from.row}, ${move.from.col}, ${move.to.row}, ${move.to.col})">
-                                <span>${analysis.ultraSafeMoves.length + index + 1}. ${move.notation}</span>
-                                <span style="display:flex; align-items:center;">
-                                    <span class="safety-badge safe">SAFE</span>
-                                    <span class="suggestion-score">${scoreText}</span>
-                                </span>
-                            </div>
-                        `;
-                    });
-                }
-                
-                // Risky só se necessário
-                const riskyInBest = analysis.bestMoves.filter(m => m.safetyLevel === 'risky');
-                if (riskyInBest.length > 0) {
-                    suggestionsHTML += '<div style="color:#ffaa00; margin:8px 0; font-size:0.9em;">⚠️ ARRISCADAS (só se não houver opção):</div>';
-                    riskyInBest.forEach((move, index) => {
-                        const scoreText = move.finalScore > 0 ? `+${move.finalScore}` : move.finalScore;
-                        suggestionsHTML += `
-                            <div class="suggestion-item risky" onclick="highlightMove(${move.from.row}, ${move.from.col}, ${move.to.row}, ${move.to.col})">
-                                <span>${move.notation}</span>
-                                <span style="display:flex; align-items:center;">
-                                    <span class="safety-badge risky">RISKY</span>
-                                    <span class="suggestion-score">${scoreText}</span>
-                                </span>
-                            </div>
-                        `;
-                    });
-                }
-                
-                // Blunders destacadas para evitar
-                if (analysis.blunders.length > 0) {
-                    suggestionsHTML += '<div style="color:#ff0000; margin:8px 0; font-size:0.9em;">🚫 EVITAR (blunders):</div>';
-                    analysis.blunders.slice(0, 2).forEach(move => {
-                        suggestionsHTML += `
-                            <div class="suggestion-item blunder">
-                                <span>${move.notation}</span>
-                                <span style="display:flex; align-items:center;">
-                                    <span class="safety-badge" style="background:#ff0000; color:white;">EVITAR</span>
-                                </span>
-                            </div>
-                        `;
-                    });
-                }
-                
-                suggestionListEl.innerHTML = suggestionsHTML;
-            } else {
-                suggestionListEl.style.display = 'none';
-            }
-
-            // Listar ameaças imediatas contra nós
-            const criticalThreats = analysis.threatsAgainstUs.filter(t => !t.isDefended && t.value >= 300);
-            if (criticalThreats.length > 0 || analysis.opponentAnalysis.threats.length > 0) {
-                threatListEl.style.display = 'block';
-                let threatHTML = '<strong>⚠️ Ameaças contra suas peças:</strong>';
-                
-                criticalThreats.slice(0, 3).forEach(t => {
-                    const sq = String.fromCharCode(97 + t.to.col) + (8 - t.to.row);
-                    threatHTML += `<div class="threat-item">🔴 ${PIECES[t.attacker]} pode capturar ${PIECES[t.target]} em ${sq} (${t.value} pts)</div>`;
-                });
-                
-                threatListEl.innerHTML = threatHTML;
-            } else {
-                threatListEl.style.display = 'none';
-            }
-
-            // Análise do adversário
-            if (analysis.opponentAnalysis) {
-                opponentAnalysisEl.style.display = 'block';
-                const opp = analysis.opponentAnalysis;
-                let oppHTML = `<h4>👁️ Análise do Adversário</h4>`;
-                
-                oppHTML += `<div style="margin-bottom:8px;">${opp.kingSafety.status}</div>`;
-                
-                if (opp.bestTargets.length > 0) {
-                    oppHTML += `<div style="color:#00ff00; margin-top:8px;">🎯 Alvos vulneráveis do adversário:</div>`;
-                    opp.bestTargets.forEach(t => {
-                        oppHTML += `<div style="font-size:0.9em; margin:3px 0;">• ${PIECES[t.piece]} em ${t.square} (${t.value} pts) ${t.canCapture ? '← CAPTURÁVEL!' : ''}</div>`;
-                    });
-                }
-                
-                if (opp.threats.length > 0) {
-                    oppHTML += `<div style="color:#ff6666; margin-top:8px;">⚠️ Ameaças do adversário:</div>`;
-                    opp.threats.slice(0, 2).forEach(t => {
-                        const symbol = t.isWinning ? '💀' : '⚡';
-                        oppHTML += `<div style="font-size:0.9em; margin:3px 0;">${symbol} ${PIECES[t.attacker]} → ${PIECES[t.target]} (${t.from}→${t.to})</div>`;
-                    });
-                }
-                
-                const evalText = opp.totalScore > 50 ? '🟢 Você tem vantagem' : 
-                                opp.totalScore > 0 ? '🟡 Posição equilibrada' : 
-                                opp.totalScore < -50 ? '🔴 Desvantagem' : '⚪ Posição complexa';
-                
-                oppHTML += `<div style="margin-top:10px; padding-top:10px; border-top:1px solid #444; font-size:0.9em;">
-                    <strong>Avaliação:</strong> ${evalText}
-                </div>`;
-                
-                opponentAnalysisEl.innerHTML = oppHTML;
-            }
-
-            // Raciocínio detalhado focado em segurança
-            let reasoning = '';
-            
-            if (analysis.bestMoves.length > 0) {
-                const best = analysis.bestMoves[0];
-                reasoning += `<strong>🛡️ Por que esta é a jogada mais segura:</strong><br>`;
-                
-                if (best.safetyLevel === 'ultra-safe') {
-                    reasoning += `• ✅ Peça NÃO ficará atacada após jogar<br>`;
-                } else if (best.safetyLevel === 'safe') {
-                    reasoning += `• ✅ Peça estará bem defendida<br>`;
-                }
-                
-                if (best.to.capture) {
-                    const target = gameState.board[best.to.row] && gameState.board[best.to.row][best.to.col];
-                    if (target) {
-                        reasoning += `• 💰 Captura segura de ${PIECES[target]}<br>`;
-                    }
-                }
-                
-                if (best.safety.tacticalMotifs && best.safety.tacticalMotifs.length > 0) {
-                    reasoning += `• ⚡ ${best.safety.tacticalMotifs[0]}<br>`;
-                }
-                
-                // Alertas
-                if (analysis.blunders.length > 0) {
-                    reasoning += `<br><span style="color:#ff6666">🚫 NÃO JOGUE: ${analysis.blunders[0].notation} - ${analysis.blunders[0].safety.threats[0]}</span>`;
-                }
-            }
-
-            reasoning += `<br><div style="margin-top:10px; padding-top:10px; border-top:1px solid #444; font-size:0.85em;">`;
-            reasoning += `<strong>Resumo de Segurança:</strong><br>`;
-            reasoning += `⭐ Ultra-seguras: ${analysis.ultraSafeMoves.length}<br>`;
-            reasoning += `✓ Seguras: ${analysis.safeMoves.length}<br>`;
-            reasoning += `⚠️ Arriscadas: ${analysis.riskyMoves.length}<br>`;
-            reasoning += `🚫 Blunders: ${analysis.blunders.length}</div>`;
-
-            reasoningEl.innerHTML = reasoning;
-
+            const analysis = analyzePositionForFernando(gameState.myColor);
             lastAnalysis = analysis;
+
+            // INSTRUÇÕES DIDÁTICAS - O QUE FAZER AGORA
+            const instructionBox = document.getElementById('instructionBox');
+            const instructionSteps = document.getElementById('instructionSteps');
+            
+            instructionBox.style.display = 'block';
+            
+            let steps = [];
+            let priority = '';
+            
+            // PRIORIDADE 1: Salvar peças penduradas
+            if (analysis.hangingPieces.length > 0) {
+                priority = 'URGENTE: Proteger peças!';
+                const piece = analysis.hangingPieces[0];
+                steps = [
+                    `🚨 SUA ${PIECES[piece.piece]} em ${piece.square} ESTÁ PENDURADA!`,
+                    `Clique nela para ver onde mover em segurança`,
+                    `Ou capture quem a está atacando`
+                ];
+            }
+            // PRIORIDADE 2: Capturas grátis
+            else if (analysis.freeCaptures.length > 0) {
+                const best = analysis.freeCaptures[0];
+                if (best.safety === 'seguro') {
+                    priority = 'ATAQUE LIVRE!';
+                    steps = [
+                        `🎯 Capture ${PIECES[best.target]} em ${best.square}`,
+                        `Clique em ${PIECES[best.attacker]} e depois no alvo`,
+                        `Ganho: +${best.targetValue} pontos sem risco!`
+                    ];
+                } else {
+                    priority = 'Captura lucrativa mas cuidadosa';
+                    steps = [
+                        `⚡ Pode capturar ${PIECES[best.target]} (+${best.targetValue})`,
+                        `Mas sua peça ficará atacada`,
+                        `Só faça se valer a pena (troca favorável)`
+                    ];
+                }
+            }
+            // PRIORIDADE 3: Xeque seguro
+            else if (analysis.checks.length > 0) {
+                priority = 'Dê XEQUE!';
+                const check = analysis.checks[0];
+                steps = [
+                    `👑 Dê xeque com ${PIECES[check.piece]} → ${check.notation.split('→')[1]}`,
+                    `O rei adversário será forçado a fugir`,
+                    `Mantenha a pressão sem arriscar peças`
+                ];
+            }
+            // PRIORIDADE 4: Desenvolvimento seguro
+            else if (analysis.safeAttacks.length > 0) {
+                priority = 'Melhore sua posição';
+                const move = analysis.safeAttacks[0];
+                steps = [
+                    `📈 Mova ${move.notation} - posição segura`,
+                    `Desenvolva peças para o centro`,
+                    `Prepare ataques futuros`
+                ];
+            }
+            // PRIORIDADE 5: Situação difícil
+            else {
+                priority = 'Situação complicada';
+                steps = [
+                    `⚠️ Não há ataques óbvios seguros`,
+                    `Considere trocar peças para simplificar`,
+                    `Proteja seu rei e espere erro do adversário`
+                ];
+            }
+            
+            instructionSteps.innerHTML = steps.map((step, i) => `
+                <div class="instruction-step">
+                    <div class="number">${i + 1}</div>
+                    <div>${step}</div>
+                </div>
+            `).join('');
+
+            // ESTRATÉGIAS ESPECÍFICAS
+            const strategyBox = document.getElementById('strategyBox');
+            const strategyTitle = document.getElementById('strategyTitle');
+            const strategyList = document.getElementById('strategyList');
+            
+            strategyBox.style.display = 'block';
+            strategyTitle.textContent = `🎯 ${priority}`;
+            
+            let strategies = [];
+            
+            // Listar capturas disponíveis
+            if (analysis.freeCaptures.length > 0) {
+                strategies.push(...analysis.freeCaptures.slice(0, 3).map(c => ({
+                    text: `💰 ${PIECES[c.attacker]} captura ${PIECES[c.target]} em ${c.square} = +${c.targetValue} pts ${c.safety === 'seguro' ? '✓' : '⚠️'}`,
+                    onclick: `highlightMove(${c.from.row},${c.from.col},${c.to.row},${c.to.col})`,
+                    warning: c.safety !== 'seguro'
+                })));
+            }
+            
+            // Listar xeques
+            if (analysis.checks.length > 0) {
+                strategies.push(...analysis.checks.slice(0, 2).map(ch => ({
+                    text: `👑 Xeque: ${ch.notation}`,
+                    onclick: `highlightMove(${ch.from.row},${ch.from.col},${ch.to.row},${ch.to.col})`,
+                    warning: false
+                })));
+            }
+            
+            // Listar ataques descobertos
+            if (analysis.discoveredAttacks.length > 0) {
+                strategies.push(...analysis.discoveredAttacks.slice(0, 2).map(d => ({
+                    text: `⚡ Ataque descoberto: ${d.notation}`,
+                    onclick: `highlightMove(${d.from.row},${d.from.col},${d.to.row},${d.to.col})`,
+                    warning: false
+                })));
+            }
+            
+            strategyList.innerHTML = strategies.map(s => `
+                <div class="strategy-item ${s.warning ? 'warning' : ''}" onclick="${s.onclick}">
+                    ${s.text}
+                </div>
+            `).join('') || '<div class="strategy-item">Nenhuma estratégia ofensiva imediata</div>';
+
+            // PONTOS DE PERIGO
+            const dangerPoints = document.getElementById('dangerPoints');
+            const dangerList = document.getElementById('dangerList');
+            
+            if (analysis.hangingPieces.length > 0 || analysis.threatenedPieces.length > 0) {
+                dangerPoints.style.display = 'block';
+                
+                const dangers = [
+                    ...analysis.hangingPieces.map(h => `🔴 ${PIECES[h.piece]} em ${h.square} - PENDURADA! (${h.attackers} atacantes)`),
+                    ...analysis.threatenedPieces.map(t => `🟠 ${PIECES[t.piece]} em ${t.square} - ${t.danger === 'superada' ? 'Superada' : 'Ameaçada'}`)
+]            dangerList.innerHTML = dangers.map(d => `<div class="danger-item">${d}</div>`).join('');
+        } else {
+            dangerPoints.style.display = 'none';
+        }
+    }
+
+    function highlightMove(fromRow, fromCol, toRow, toCol) {
+        gameState.selectedSquare = {row: fromRow, col: fromCol};
+        gameState.validMoves = getValidMoves(fromRow, fromCol);
+        renderBoard();
+        
+        setTimeout(() => {
+            const squares = document.querySelectorAll('.square');
+            squares.forEach(sq => {
+                const r = parseInt(sq.dataset.row);
+                const c = parseInt(sq.dataset.col);
+                if (r === toRow && c === toCol) {
+                    sq.style.boxShadow = 'inset 0 0 30px #00ff00';
+                    sq.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        sq.style.boxShadow = '';
+                        sq.style.transform = '';
+                    }, 1500);
+                }
+            });
+        }, 100);
+    }
+
+    // ==================== RENDERIZAÇÃO DO TABULEIRO ====================
+
+    function renderBoard() {
+        if (isRendering) return;
+        isRendering = true;
+
+        const boardEl = document.getElementById('chessboard');
+        
+        boardEl.innerHTML = '';
+        boardEl.style.display = 'grid';
+        boardEl.style.visibility = 'visible';
+        boardEl.style.opacity = '1';
+
+        const isMyTurn = gameState.currentPlayer === gameState.myColor;
+        const shouldShowHints = gameState.isFernando && isMyTurn && gameState.status === 'playing';
+        
+        const displayData = [];
+        for (let displayRow = 0; displayRow < 8; displayRow++) {
+            for (let displayCol = 0; displayCol < 8; displayCol++) {
+                const actualRow = gameState.myColor === 'white' ? displayRow : 7 - displayRow;
+                const actualCol = gameState.myColor === 'white' ? displayCol : 7 - displayCol;
+                displayData.push({displayRow, displayCol, actualRow, actualCol});
+            }
         }
 
-        function highlightMove(fromRow, fromCol, toRow, toCol) {
-            gameState.selectedSquare = {row: fromRow, col: fromCol};
-            gameState.validMoves = getValidMoves(fromRow, fromCol);
-            renderBoard();
-            
-            setTimeout(() => {
-                const squares = document.querySelectorAll('.square');
-                squares.forEach(sq => {
-                    const r = parseInt(sq.dataset.row);
-                    const c = parseInt(sq.dataset.col);
-                    if (r === toRow && c === toCol) {
-                        sq.style.boxShadow = 'inset 0 0 30px #00ffff';
-                        setTimeout(() => {
-                            sq.style.boxShadow = '';
-                        }, 2000);
-                    }
-                });
-            }, 100);
-        }
+        displayData.forEach(({displayRow, displayCol, actualRow, actualCol}) => {
+            const square = document.createElement('div');
+            square.className = `square ${(displayRow + displayCol) % 2 === 0 ? 'light' : 'dark'}`;
+            square.dataset.row = actualRow;
+            square.dataset.col = actualCol;
 
-        // ==================== RENDERIZAÇÃO DO TABULEIRO ====================
+            const piece = gameState.board[actualRow] ? gameState.board[actualRow][actualCol] : null;
+            if (piece) {
+                square.textContent = PIECES[piece];
+            }
 
-        function renderBoard() {
-            if (isRendering) return;
-            isRendering = true;
-
-            const boardEl = document.getElementById('chessboard');
-            
-            boardEl.innerHTML = '';
-            boardEl.style.display = 'grid';
-            boardEl.style.visibility = 'visible';
-            boardEl.style.opacity = '1';
-
-            const isMyTurn = gameState.currentPlayer === gameState.myColor;
-            const shouldShowHints = gameState.isFernando && isMyTurn && gameState.status === 'playing';
-            
-            const displayData = [];
-            for (let displayRow = 0; displayRow < 8; displayRow++) {
-                for (let displayCol = 0; displayCol < 8; displayCol++) {
-                    const actualRow = gameState.myColor === 'white' ? displayRow : 7 - displayRow;
-                    const actualCol = gameState.myColor === 'white' ? displayCol : 7 - displayCol;
-                    displayData.push({displayRow, displayCol, actualRow, actualCol});
+            if (gameState.lastMove) {
+                if ((gameState.lastMove.from.row === actualRow && gameState.lastMove.from.col === actualCol) ||
+                    (gameState.lastMove.to.row === actualRow && gameState.lastMove.to.col === actualCol)) {
+                    square.classList.add('last-move');
                 }
             }
 
-            displayData.forEach(({displayRow, displayCol, actualRow, actualCol}) => {
-                const square = document.createElement('div');
-                square.className = `square ${(displayRow + displayCol) % 2 === 0 ? 'light' : 'dark'}`;
-                square.dataset.row = actualRow;
-                square.dataset.col = actualCol;
-
-                const piece = gameState.board[actualRow] ? gameState.board[actualRow][actualCol] : null;
-                if (piece) {
-                    square.textContent = PIECES[piece];
+            if (piece && piece.toLowerCase() === 'k') {
+                const color = piece === piece.toUpperCase() ? 'white' : 'black';
+                if (isInCheck(color)) {
+                    square.classList.add('check');
                 }
+            }
 
-                if (gameState.lastMove) {
-                    if ((gameState.lastMove.from.row === actualRow && gameState.lastMove.from.col === actualCol) ||
-                        (gameState.lastMove.to.row === actualRow && gameState.lastMove.to.col === actualCol)) {
-                        square.classList.add('last-move');
+            if (isMyTurn && gameState.selectedSquare) {
+                if (gameState.selectedSquare.row === actualRow && gameState.selectedSquare.col === actualCol) {
+                    square.classList.add('selected');
+                }
+                
+                const move = gameState.validMoves.find(m => m.row === actualRow && m.col === actualCol);
+                if (move) {
+                    if (piece) {
+                        square.classList.add('valid-capture');
+                    } else {
+                        square.classList.add('valid-move');
+                    }
+                }
+            }
+
+            // DICAS VISUAIS DO FERNANDO - ATAQUE SEGURO
+            if (shouldShowHints && lastAnalysis) {
+                // 1. DESTACAR CAPTURAS GRÁTIS (prioridade máxima)
+                const freeCapture = lastAnalysis.freeCaptures.find(c => 
+                    c.to.row === actualRow && c.to.col === actualCol
+                );
+                if (freeCapture) {
+                    // Alvo verde pulsante
+                    const attackHint = document.createElement('div');
+                    attackHint.className = 'attack-hint';
+                    square.appendChild(attackHint);
+                    
+                    // Círculo de segurança
+                    const safeCircle = document.createElement('div');
+                    safeCircle.className = 'safe-attack';
+                    square.appendChild(safeCircle);
+                    
+                    // Valor da peça
+                    const valueBadge = document.createElement('div');
+                    valueBadge.className = 'value-badge';
+                    valueBadge.textContent = '+' + freeCapture.targetValue;
+                    square.appendChild(valueBadge);
+                    
+                    // Se é a melhor captura, adicionar seta
+                    if (freeCapture === lastAnalysis.freeCaptures[0]) {
+                        const arrow = document.createElement('div');
+                        const dir = getDirection(freeCapture.from, freeCapture.to);
+                        arrow.className = `arrow-hint ${dir}`;
+                        square.appendChild(arrow);
                     }
                 }
 
-                if (piece && piece.toLowerCase() === 'k') {
-                    const color = piece === piece.toUpperCase() ? 'white' : 'black';
-                    if (isInCheck(color)) {
-                        square.classList.add('check');
-                    }
+                // 2. DESTACAR NOSSAS PEÇAS QUE PODEM CAPTURAR
+                const canCapture = lastAnalysis.freeCaptures.find(c => 
+                    c.from.row === actualRow && c.from.col === actualCol
+                );
+                if (canCapture) {
+                    const glow = document.createElement('div');
+                    glow.className = 'attack-hint';
+                    glow.style.background = 'radial-gradient(circle, rgba(0,255,255,0.6) 0%, rgba(0,255,255,0.2) 50%, transparent 70%)';
+                    square.appendChild(glow);
+                    
+                    // Indicador de "clique aqui"
+                    const indicator = document.createElement('div');
+                    indicator.style.cssText = 'position:absolute; bottom:2px; left:50%; transform:translateX(-50%); font-size:10px; color:#00ffff; font-weight:bold;';
+                    indicator.textContent = 'CLIQUE';
+                    square.appendChild(indicator);
                 }
 
-                if (isMyTurn && gameState.selectedSquare) {
-                    if (gameState.selectedSquare.row === actualRow && gameState.selectedSquare.col === actualCol) {
-                        square.classList.add('selected');
+                // 3. DESTACAR PEÇAS PENDURADAS (PERIGO)
+                const hanging = lastAnalysis.hangingPieces.find(h => 
+                    h.row === actualRow && h.col === actualCol
+                );
+                if (hanging) {
+                    const danger = document.createElement('div');
+                    danger.className = 'danger-zone';
+                    danger.style.background = 'repeating-linear-gradient(45deg, rgba(255,0,0,0.3), rgba(255,0,0,0.3) 5px, rgba(255,0,0,0.5) 5px, rgba(255,0,0,0.5) 10px)';
+                    square.appendChild(danger);
+                    
+                    const warning = document.createElement('div');
+                    warning.className = 'danger-warning';
+                    warning.textContent = 'FUJA!';
+                    square.appendChild(warning);
+                }
+
+                // 4. DESTACAR XEQUES DISPONÍVEIS
+                const checkMove = lastAnalysis.checks.find(ch => 
+                    ch.to.row === actualRow && ch.to.col === actualCol
+                );
+                if (checkMove) {
+                    const target = document.createElement('div');
+                    target.className = 'target-indicator';
+                    square.appendChild(target);
+                    
+                    const badge = document.createElement('div');
+                    badge.style.cssText = 'position:absolute; top:2px; left:2px; background:#ff00ff; color:white; font-size:9px; padding:2px 5px; border-radius:3px; font-weight:bold;';
+                    badge.textContent = 'XEQUE';
+                    square.appendChild(badge);
+                }
+
+                // 5. DESTACAR PEÇAS ADVERSÁRIAS INDEFESAS (alvos dourados)
+                const isUndefendedEnemy = (() => {
+                    const p = gameState.board[actualRow] && gameState.board[actualRow][actualCol];
+                    if (!p) return false;
+                    const color = p === p.toUpperCase() ? 'white' : 'black';
+                    if (color === gameState.myColor) return false;
+                    return !isSquareDefended(actualRow, actualCol, color, gameState.board);
+                })();
+                
+                if (isUndefendedEnemy && !freeCapture) {
+                    const freePiece = document.createElement('div');
+                    freePiece.className = 'free-piece';
+                    square.appendChild(freePiece);
+                    
+                    const label = document.createElement('div');
+                    label.style.cssText = 'position:absolute; bottom:2px; right:2px; background:#ffd700; color:#000; font-size:8px; padding:1px 3px; border-radius:2px;';
+                    label.textContent = 'FREE';
+                    square.appendChild(label);
+                }
+            }
+
+            if (isMyTurn && gameState.status === 'playing') {
+                square.addEventListener('click', () => handleSquareClick(actualRow, actualCol));
+            }
+
+            boardEl.appendChild(square);
+        });
+
+        updateCapturedDisplay();
+        isRendering = false;
+    }
+
+    function getDirection(from, to) {
+        const dRow = to.row - from.row;
+        const dCol = to.col - from.col;
+        if (Math.abs(dRow) > Math.abs(dCol)) {
+            return dRow > 0 ? 'down' : 'up';
+        } else {
+            return dCol > 0 ? 'right' : 'left';
+        }
+    }
+
+    // ==================== LÓGICA DO JOGO ====================
+
+    function handleSquareClick(row, col) {
+        const piece = gameState.board[row] && gameState.board[row][col];
+        
+        // Selecionar peça
+        if (piece && isMyPiece(piece) && !gameState.selectedSquare) {
+            gameState.selectedSquare = {row, col};
+            gameState.validMoves = getValidMoves(row, col);
+            renderBoard();
+            return;
+        }
+
+        // Mover peça
+        if (gameState.selectedSquare) {
+            const move = gameState.validMoves.find(m => m.row === row && m.col === col);
+            
+            if (move) {
+                // Verificação de segurança para Fernando
+                if (gameState.isFernando && lastAnalysis) {
+                    // Verificar se é uma captura de peça pendurada (URGENTE)
+                    const isHanging = lastAnalysis.hangingPieces.some(h => 
+                        h.row === gameState.selectedSquare.row && h.col === gameState.selectedSquare.col
+                    );
+                    
+                    // Verificar se é captura grátis
+                    const isFreeCapture = lastAnalysis.freeCaptures.some(c => 
+                        c.from.row === gameState.selectedSquare.row && 
+                        c.from.col === gameState.selectedSquare.col &&
+                        c.to.row === row && c.to.col === col &&
+                        c.safety === 'seguro'
+                    );
+                    
+                    // Verificar se é jogada perigosa
+                    const testBoard = simulateMove(gameState.board, {
+                        from: gameState.selectedSquare,
+                        to: {...move, row, col}
+                    });
+                    const willBeAttacked = isSquareAttacked(row, col, gameState.myColor, testBoard);
+                    const willBeDefended = isSquareDefended(row, col, gameState.myColor, testBoard);
+                    
+                    // Alertas específicos
+                    if (isHanging && !move.capture) {
+                        // Estamos movendo peça pendurada sem capturar quem a ataca
+                        if (!confirm('⚠️ ATENÇÃO!\n\nVocê está movendo uma peça PENDURADA!\n\nIsso pode resultar em perda de material.\n\nDeseja continuar?')) {
+                            gameState.selectedSquare = null;
+                            gameState.validMoves = [];
+                            renderBoard();
+                            return;
+                        }
                     }
                     
-                    const move = gameState.validMoves.find(m => m.row === actualRow && m.col === actualCol);
-                    if (move) {
-                        if (piece) {
-                            square.classList.add('valid-capture');
-                        } else {
-                            square.classList.add('valid-move');
+                    if (willBeAttacked && !willBeDefended && !isFreeCapture) {
+                        // Jogada que deixa peça atacada e indefesa
+                        if (!confirm('🚫 CUIDADO!\n\nApós esta jogada, sua peça ficará:\n• ATACADA e INDEFESA\n• Poderá ser capturada gratuitamente\n\nTem certeza que deseja jogar aqui?')) {
+                            gameState.selectedSquare = null;
+                            gameState.validMoves = [];
+                            renderBoard();
+                            return;
                         }
                     }
                 }
-
-                // DICAS DE SEGURANÇA DO FERNANDO
-                if (shouldShowHints && lastAnalysis) {
-                    // Top 3 jogadas mais seguras
-                    lastAnalysis.bestMoves.slice(0, 3).forEach((best, index) => {
-                        const isFrom = best.from.row === actualRow && best.from.col === actualCol;
-                        const isTo = best.to.row === actualRow && best.to.col === actualCol;
-
-                        if (isFrom) {
-                            // Indicador visual baseado no nível de segurança
-                            if (best.safetyLevel === 'ultra-safe') {
-                                const ultra = document.createElement('div');
-                                ultra.className = 'ultra-safe';
-                                square.appendChild(ultra);
-                            } else if (best.safetyLevel === 'safe') {
-                                const glow = document.createElement('div');
-                                glow.className = 'safety-glow';
-                                square.appendChild(glow);
-                            } else {
-                                const glow = document.createElement('div');
-                                glow.className = 'hint-glow';
-                                glow.style.opacity = '0.5';
-                                square.appendChild(glow);
-                            }
-
-                            if (best.to.row !== best.from.row || best.to.col !== best.from.col) {
-                                const arrow = document.createElement('div');
-                                const dir = getDirection(best.from, best.to);
-                                arrow.className = `hint-arrow arrow-${dir}`;
-                                square.appendChild(arrow);
-                            }
-                            
-                            // Ranking
-                            const rank = document.createElement('div');
-                            rank.style.cssText = 'position:absolute; top:2px; right:2px; background:' + 
-                                (best.safetyLevel === 'ultra-safe' ? '#00ffff' : best.safetyLevel === 'safe' ? '#00ff00' : '#ffaa00') + 
-                                '; color:#000; font-size:10px; font-weight:bold; width:16px; height:16px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:15;';
-                            rank.textContent = index + 1;
-                            square.appendChild(rank);
-                        }
-
-                        if (isTo) {
-                            if (best.safetyLevel === 'ultra-safe') {
-                                const target = document.createElement('div');
-                                target.className = 'hint-target';
-                                target.style.borderColor = '#00ffff';
-                                square.appendChild(target);
-                            } else {
-                                const target = document.createElement('div');
-                                target.className = 'hint-target';
-                                square.appendChild(target);
-                            }
-                        }
-                    });
-
-                    // Blunders para evitar
-                    lastAnalysis.blunders.forEach(blunder => {
-                        if (blunder.to.row === actualRow && blunder.to.col === actualCol) {
-                            const danger = document.createElement('div');
-                            danger.className = 'danger-zone';
-                            square.appendChild(danger);
-
-                            const warning = document.createElement('div');
-                            warning.className = 'blunder-warning';
-                            warning.textContent = 'EVITAR!';
-                            square.appendChild(warning);
-                        }
-                    });
-
-                    // Ameaças contra nossas peças
-                    lastAnalysis.threatsAgainstUs.forEach(threat => {
-                        if (threat.to.row === actualRow && threat.to.col === actualCol && !threat.isDefended) {
-                            const threatInd = document.createElement('div');
-                            threatInd.className = 'threat-indicator';
-                            square.appendChild(threatInd);
-                        }
-                    });
-
-                    // Alvos vulneráveis do adversário (oportunidades)
-                    if (lastAnalysis.opponentAnalysis && lastAnalysis.opponentAnalysis.bestTargets) {
-                        lastAnalysis.opponentAnalysis.bestTargets.forEach(target => {
-                            if (target.row === actualRow && target.col === actualCol && target.canCapture) {
-                                const killer = document.createElement('div');
-                                killer.className = 'killer-move';
-                                square.appendChild(killer);
-                            }
-                        });
-                    }
-                }
-
-                if (isMyTurn && gameState.status === 'playing') {
-                    square.addEventListener('click', () => handleSquareClick(actualRow, actualCol));
-                }
-
-                boardEl.appendChild(square);
-            });
-
-            if (shouldShowHints && lastAnalysis && lastAnalysis.bestMoves.length > 0) {
-                setTimeout(() => {
-                    drawTrail(boardEl, lastAnalysis.bestMoves[0].from, lastAnalysis.bestMoves[0].to);
-                }, 0);
-            }
-
-            updateCapturedDisplay();
-            isRendering = false;
-        }
-
-        function getDirection(from, to) {
-            const dRow = to.row - from.row;
-            const dCol = to.col - from.col;
-            if (Math.abs(dRow) > Math.abs(dCol)) {
-                return dRow > 0 ? 'down' : 'up';
-            } else {
-                return dCol > 0 ? 'right' : 'left';
-            }
-        }
-
-        function drawTrail(boardEl, from, to) {
-            const squareSize = boardEl.firstChild ? boardEl.firstChild.offsetWidth : 80;
-            if (!squareSize || squareSize === 0) return;
-
-            const fromDisplayRow = gameState.myColor === 'white' ? from.row : 7 - from.row;
-            const fromDisplayCol = gameState.myColor === 'white' ? from.col : 7 - from.col;
-            const toDisplayRow = gameState.myColor === 'white' ? to.row : 7 - to.row;
-            const toDisplayCol = gameState.myColor === 'white' ? to.col : 7 - to.col;
-
-            const fromX = fromDisplayCol * squareSize + squareSize / 2;
-            const fromY = fromDisplayRow * squareSize + squareSize / 2;
-            const toX = toDisplayCol * squareSize + squareSize / 2;
-            const toY = toDisplayRow * squareSize + squareSize / 2;
-
-            const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
-            const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
-
-            const trail = document.createElement('div');
-            trail.className = 'hint-trail';
-            trail.style.width = length + 'px';
-            trail.style.left = fromX + 'px';
-            trail.style.top = fromY + 'px';
-            trail.style.transform = `rotate(${angle}deg)`;
-            
-            boardEl.appendChild(trail);
-        }
-
-        // ==================== LÓGICA DO JOGO ====================
-
-        function handleSquareClick(row, col) {
-            const piece = gameState.board[row] && gameState.board[row][col];
-            
-            if (piece && isMyPiece(piece) && !gameState.selectedSquare) {
+                
+                executeMove(gameState.selectedSquare, {row, col}, move);
+            } else if (piece && isMyPiece(piece)) {
+                // Trocar seleção
                 gameState.selectedSquare = {row, col};
                 gameState.validMoves = getValidMoves(row, col);
                 renderBoard();
-                return;
+            } else {
+                // Cancelar seleção
+                gameState.selectedSquare = null;
+                gameState.validMoves = [];
+                renderBoard();
             }
+        }
+    }
 
-            if (gameState.selectedSquare) {
-                const move = gameState.validMoves.find(m => m.row === row && m.col === col);
+    function isMyPiece(piece) {
+        return gameState.myColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase();
+    }
+
+    function getValidMoves(row, col) {
+        const piece = gameState.board[row] && gameState.board[row][col];
+        if (!piece) return [];
+        
+        const moves = [];
+        const color = piece === piece.toUpperCase() ? 'white' : 'black';
+        const type = piece.toLowerCase();
+
+        switch(type) {
+            case 'p':
+                const dir = color === 'white' ? -1 : 1;
+                const start = color === 'white' ? 6 : 1;
                 
-                if (move) {
-                    if (gameState.isFernando) {
-                        const safety = evaluateMoveSafety(gameState.selectedSquare, {row, col}, move, gameState.myColor);
-                        if (safety.blunder) {
-                            if (!confirm('🚫 ALERTA DE SEGURANÇA!\n\nEsta jogada é um BLUNDER que pode custar a partida!\n\nDeseja ignorar a advertência e jogar mesmo assim?')) {
-                                gameState.selectedSquare = null;
-                                gameState.validMoves = [];
-                                renderBoard();
-                                return;
-                            }
-                        } else if (safety.safetyLevel === 'risky' && lastAnalysis && lastAnalysis.ultraSafeMoves.length > 0) {
-                            if (!confirm('⚠️ JOGADA ARRISCADA!\n\nExistem jogadas mais seguras disponíveis.\n\nDeseja continuar com esta jogada arriscada?')) {
-                                gameState.selectedSquare = null;
-                                gameState.validMoves = [];
-                                renderBoard();
-                                return;
-                            }
+                if (isValid(row + dir, col) && !gameState.board[row + dir][col]) {
+                    moves.push({row: row + dir, col: col, promotion: (row + dir === 0 || row + dir === 7)});
+                    
+                    if (row === start && !gameState.board[row + 2*dir][col]) {
+                        moves.push({row: row + 2*dir, col: col, isDoublePush: true});
+                    }
+                }
+                
+                for (let dc of [-1, 1]) {
+                    const nr = row + dir, nc = col + dc;
+                    if (isValid(nr, nc)) {
+                        const target = gameState.board[nr] && gameState.board[nr][nc];
+                        if (target && isEnemy(piece, target)) {
+                            moves.push({row: nr, col: nc, capture: true, promotion: (nr === 0 || nr === 7)});
+                        }
+                        if (gameState.enPassantTarget && 
+                            gameState.enPassantTarget.row === nr && 
+                            gameState.enPassantTarget.col === nc) {
+                            moves.push({row: nr, col: nc, enPassant: true});
                         }
                     }
-                    
-                    executeMove(gameState.selectedSquare, {row, col}, move);
-                } else if (piece && isMyPiece(piece)) {
-                    gameState.selectedSquare = {row, col};
-                    gameState.validMoves = getValidMoves(row, col);
-                    renderBoard();
+                }
+                break;
+
+            case 'n':
+                const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                for (let [dr, dc] of nm) {
+                    const nr = row + dr, nc = col + dc;
+                    if (isValid(nr, nc)) {
+                        const target = gameState.board[nr] && gameState.board[nr][nc];
+                        if (!target || isEnemy(piece, target)) {
+                            moves.push({row: nr, col: nc, capture: !!target});
+                        }
+                    }
+                }
+                break;
+
+            case 'b':
+                moves.push(...slideMoves(row, col, piece, [[-1,-1],[-1,1],[1,-1],[1,1]]));
+                break;
+
+            case 'r':
+                moves.push(...slideMoves(row, col, piece, [[-1,0],[1,0],[0,-1],[0,1]]));
+                break;
+
+            case 'q':
+                moves.push(...slideMoves(row, col, piece, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
+                break;
+
+            case 'k':
+                const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+                for (let [dr, dc] of km) {
+                    const nr = row + dr, nc = col + dc;
+                    if (isValid(nr, nc)) {
+                        const target = gameState.board[nr] && gameState.board[nr][nc];
+                        if (!target || isEnemy(piece, target)) {
+                            moves.push({row: nr, col: nc, capture: !!target});
+                        }
+                    }
+                }
+                
+                if (canCastle(color, 'kingSide')) {
+                    moves.push({row, col: col+2, castling: 'kingSide'});
+                }
+                if (canCastle(color, 'queenSide')) {
+                    moves.push({row, col: col-2, castling: 'queenSide'});
+                }
+                break;
+        }
+
+        return moves.filter(m => {
+            const testBoard = copyBoard(gameState.board);
+            testBoard[m.row][m.col] = testBoard[row][col];
+            testBoard[row][col] = null;
+            
+            const kingPos = type === 'k' ? {row: m.row, col: m.col} : gameState.kingPositions[color];
+            
+            return !isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
+        });
+    }
+
+    function slideMoves(row, col, piece, dirs) {
+        const moves = [];
+        for (let [dr, dc] of dirs) {
+            let nr = row + dr, nc = col + dc;
+            while (isValid(nr, nc)) {
+                const target = gameState.board[nr] && gameState.board[nr][nc];
+                if (!target) {
+                    moves.push({row: nr, col: nc});
                 } else {
-                    gameState.selectedSquare = null;
-                    gameState.validMoves = [];
-                    renderBoard();
+                    if (isEnemy(piece, target)) {
+                        moves.push({row: nr, col: nc, capture: true});
+                    }
+                    break;
+                }
+                nr += dr;
+                nc += dc;
+            }
+        }
+        return moves;
+    }
+
+    function canCastle(color, side) {
+        const rights = gameState.castlingRights[color];
+        if (side === 'kingSide' && !rights.kingSide) return false;
+        if (side === 'queenSide' && !rights.queenSide) return false;
+        if (isInCheck(color)) return false;
+        
+        const row = color === 'white' ? 7 : 0;
+        const dir = side === 'kingSide' ? 1 : -1;
+        
+        for (let i = 1; i <= (side === 'kingSide' ? 2 : 3); i++) {
+            const col = 4 + (dir * i);
+            if (gameState.board[row] && gameState.board[row][col]) return false;
+            if (i <= 2 && isSquareAttacked(row, col, color, gameState.board)) return false;
+        }
+        return true;
+    }
+
+    function isInCheck(color, testBoard = gameState.board) {
+        const kp = gameState.kingPositions[color];
+        return isSquareAttacked(kp.row, kp.col, color, testBoard);
+    }
+
+    function copyBoard(b) {
+        return b.map(r => [...r]);
+    }
+
+    function executeMove(from, to, move) {
+        const piece = gameState.board[from.row][from.col];
+        const color = piece === piece.toUpperCase() ? 'white' : 'black';
+        const targetPiece = gameState.board[to.row][to.col];
+
+        if (targetPiece && targetPiece.toLowerCase() === 'k') {
+            gameState.board[to.row][to.col] = piece;
+            gameState.board[from.row][from.col] = null;
+            
+            const winner = color;
+            gameState.status = 'ended';
+            gameState.winner = winner;
+            gameState.finalPosition = gameState.board.map(r => [...r]);
+            gameState.checkmateMove = {from, to, piece, capture: targetPiece};
+            gameState.gameEndedAt = Date.now();
+            
+            saveGameState();
+            saveLocalState();
+            showGameOver(winner);
+            return;
+        }
+
+        if (move.enPassant) {
+            gameState.board[from.row][to.col] = null;
+        }
+        
+        gameState.board[to.row][to.col] = piece;
+        gameState.board[from.row][from.col] = null;
+
+        if (piece.toLowerCase() === 'k') {
+            gameState.kingPositions[color] = {row: to.row, col: to.col};
+            
+            if (move.castling) {
+                const row = from.row;
+                if (move.castling === 'kingSide') {
+                    gameState.board[row][5] = gameState.board[row][7];
+                    gameState.board[row][7] = null;
+                } else {
+                    gameState.board[row][3] = gameState.board[row][0];
+                    gameState.board[row][0] = null;
                 }
             }
-        }
-
-        function isMyPiece(piece) {
-            return gameState.myColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase();
-        }
-
-        function getValidMoves(row, col) {
-            const piece = gameState.board[row] && gameState.board[row][col];
-            if (!piece) return [];
             
-            const moves = [];
-            const color = piece === piece.toUpperCase() ? 'white' : 'black';
-            const type = piece.toLowerCase();
-
-            switch(type) {
-                case 'p':
-                    const dir = color === 'white' ? -1 : 1;
-                    const start = color === 'white' ? 6 : 1;
-                    
-                    if (isValid(row + dir, col) && !gameState.board[row + dir][col]) {
-                        moves.push({row: row + dir, col: col, promotion: (row + dir === 0 || row + dir === 7)});
-                        
-                        if (row === start && !gameState.board[row + 2*dir][col]) {
-                            moves.push({row: row + 2*dir, col: col, isDoublePush: true});
-                        }
-                    }
-                    
-                    for (let dc of [-1, 1]) {
-                        const nr = row + dir, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = gameState.board[nr] && gameState.board[nr][nc];
-                            if (target && isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: true, promotion: (nr === 0 || nr === 7)});
-                            }
-                            if (gameState.enPassantTarget && 
-                                gameState.enPassantTarget.row === nr && 
-                                gameState.enPassantTarget.col === nc) {
-                                moves.push({row: nr, col: nc, enPassant: true});
-                            }
-                        }
-                    }
-                    break;
-
-                case 'n':
-                    const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                    for (let [dr, dc] of nm) {
-                        const nr = row + dr, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = gameState.board[nr] && gameState.board[nr][nc];
-                            if (!target || isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: !!target});
-                            }
-                        }
-                    }
-                    break;
-
-                case 'b':
-                    moves.push(...slideMoves(row, col, piece, [[-1,-1],[-1,1],[1,-1],[1,1]]));
-                    break;
-
-                case 'r':
-                    moves.push(...slideMoves(row, col, piece, [[-1,0],[1,0],[0,-1],[0,1]]));
-                    break;
-
-                case 'q':
-                    moves.push(...slideMoves(row, col, piece, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
-                    break;
-
-                case 'k':
-                    const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-                    for (let [dr, dc] of km) {
-                        const nr = row + dr, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = gameState.board[nr] && gameState.board[nr][nc];
-                            if (!target || isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: !!target});
-                            }
-                        }
-                    }
-                    
-                    if (canCastle(color, 'kingSide')) {
-                        moves.push({row, col: col+2, castling: 'kingSide'});
-                    }
-                    if (canCastle(color, 'queenSide')) {
-                        moves.push({row, col: col-2, castling: 'queenSide'});
-                    }
-                    break;
-            }
-
-            return moves.filter(m => {
-                const testBoard = copyBoard(gameState.board);
-                testBoard[m.row][m.col] = testBoard[row][col];
-                testBoard[row][col] = null;
-                
-                const kingPos = type === 'k' ? {row: m.row, col: m.col} : gameState.kingPositions[color];
-                
-                return !isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
-            });
+            gameState.castlingRights[color] = {kingSide: false, queenSide: false};
         }
 
-        function slideMoves(row, col, piece, dirs) {
-            const moves = [];
-            for (let [dr, dc] of dirs) {
-                let nr = row + dr, nc = col + dc;
-                while (isValid(nr, nc)) {
-                    const target = gameState.board[nr] && gameState.board[nr][nc];
-                    if (!target) {
-                        moves.push({row: nr, col: nc});
-                    } else {
-                        if (isEnemy(piece, target)) {
-                            moves.push({row: nr, col: nc, capture: true});
-                        }
-                        break;
-                    }
-                    nr += dr;
-                    nc += dc;
-                }
-            }
-            return moves;
-        }
-
-        function canCastle(color, side) {
-            const rights = gameState.castlingRights[color];
-            if (side === 'kingSide' && !rights.kingSide) return false;
-            if (side === 'queenSide' && !rights.queenSide) return false;
-            if (isInCheck(color)) return false;
-            
+        if (piece.toLowerCase() === 'r') {
             const row = color === 'white' ? 7 : 0;
-            const dir = side === 'kingSide' ? 1 : -1;
-            
-            for (let i = 1; i <= (side === 'kingSide' ? 2 : 3); i++) {
-                const col = 4 + (dir * i);
-                if (gameState.board[row] && gameState.board[row][col]) return false;
-                if (i <= 2 && isSquareAttacked(row, col, color, gameState.board)) return false;
+            if (from.row === row && from.col === 0) gameState.castlingRights[color].queenSide = false;
+            if (from.row === row && from.col === 7) gameState.castlingRights[color].kingSide = false;
+        }
+
+        if (move.promotion) {
+            showPromotion(to, color, from);
+            return;
+        }
+
+        if (move.isDoublePush) {
+            gameState.enPassantTarget = {row: (from.row + to.row) / 2, col: from.col};
+        } else {
+            gameState.enPassantTarget = null;
+        }
+
+        if (targetPiece && isEnemy(piece, targetPiece)) {
+            gameState.capturedPieces[color].push(targetPiece);
+        }
+
+        const moveNotation = `${PIECES[piece]} ${String.fromCharCode(97+from.col)}${8-from.row} → ${String.fromCharCode(97+to.col)}${8-to.row}`;
+        gameState.moveHistory.push({
+            piece: piece,
+            from: from,
+            to: to,
+            capture: !!targetPiece,
+            notation: moveNotation,
+            color: color
+        });
+
+        gameState.lastMove = {from, to};
+        gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
+        gameState.selectedSquare = null;
+        gameState.validMoves = [];
+
+        const nextColor = gameState.currentPlayer;
+        const opponentKing = nextColor === 'white' ? 'K' : 'k';
+        let opponentKingExists = false;
+        
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                if (gameState.board[r] && gameState.board[r][c] === opponentKing) {
+                    opponentKingExists = true;
+                    break;
+                }
             }
-            return true;
         }
 
-        function isInCheck(color, testBoard = gameState.board) {
-            const kp = gameState.kingPositions[color];
-            return isSquareAttacked(kp.row, kp.col, color, testBoard);
+        if (!opponentKingExists) {
+            gameState.status = 'ended';
+            gameState.winner = color;
+            gameState.finalPosition = gameState.board.map(r => [...r]);
+            gameState.checkmateMove = {from, to, piece, capture: true};
+            gameState.gameEndedAt = Date.now();
+            showGameOver(color);
+        } else if (isCheckmate(nextColor)) {
+            gameState.status = 'ended';
+            gameState.winner = color;
+            gameState.finalPosition = gameState.board.map(r => [...r]);
+            gameState.checkmateMove = {from, to, piece};
+            gameState.gameEndedAt = Date.now();
+            showGameOver(color);
+        } else if (isStalemate(nextColor)) {
+            gameState.status = 'ended';
+            gameState.winner = 'draw';
+            gameState.finalPosition = gameState.board.map(r => [...r]);
+            gameState.gameEndedAt = Date.now();
+            showGameOver('draw');
         }
 
-        function copyBoard(b) {
-            return b.map(r => [...r]);
-        }
+        saveGameState();
+        saveLocalState();
+    }
 
-        function executeMove(from, to, move) {
-            const piece = gameState.board[from.row][from.col];
-            const color = piece === piece.toUpperCase() ? 'white' : 'black';
-            const targetPiece = gameState.board[to.row][to.col];
+    function saveGameState() {
+        if (!gameRef) return;
+        
+        const boardObj = boardToFirestore(gameState.board);
+        const capturedObj = capturedPiecesToFirestore(gameState.capturedPieces);
+        
+        const updates = {
+            board: boardObj,
+            currentPlayer: gameState.currentPlayer,
+            castlingRights: gameState.castlingRights,
+            enPassantTarget: gameState.enPassantTarget,
+            lastMove: gameState.lastMove,
+            kingPositions: gameState.kingPositions,
+            capturedPieces: capturedObj,
+            status: gameState.status,
+            winner: gameState.winner || null,
+            moveHistory: gameState.moveHistory,
+            finalPosition: gameState.finalPosition ? boardToFirestore(gameState.finalPosition) : null,
+            checkmateMove: gameState.checkmateMove,
+            gameEndedAt: gameState.gameEndedAt
+        };
+        
+        gameRef.update(updates).catch(error => {
+            console.error('Erro ao salvar:', error);
+        });
+    }
 
-            if (targetPiece && targetPiece.toLowerCase() === 'k') {
-                gameState.board[to.row][to.col] = piece;
-                gameState.board[from.row][from.col] = null;
+    function showPromotion(pos, color, from) {
+        const modal = document.getElementById('promotionModal');
+        const opts = document.getElementById('promotionOptions');
+        opts.innerHTML = '';
+        
+        const pieces = color === 'white' ? ['Q','R','B','N'] : ['q','r','b','n'];
+        pieces.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'promotion-piece';
+            div.textContent = PIECES[p];
+            div.onclick = () => {
+                gameState.board[pos.row][pos.col] = p;
+                modal.classList.remove('show');
+                gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
+                gameState.selectedSquare = null;
+                gameState.enPassantTarget = null;
                 
-                const winner = color;
-                gameState.status = 'ended';
-                gameState.winner = winner;
-                gameState.finalPosition = gameState.board.map(r => [...r]);
-                gameState.checkmateMove = {from, to, piece, capture: targetPiece};
-                gameState.gameEndedAt = Date.now();
+                const nextColor = gameState.currentPlayer;
+                if (isCheckmate(nextColor)) {
+                    gameState.status = 'ended';
+                    gameState.winner = color;
+                    gameState.finalPosition = gameState.board.map(r => [...r]);
+                    gameState.checkmateMove = {from, to: pos, piece: p};
+                    showGameOver(color);
+                } else if (isStalemate(nextColor)) {
+                    gameState.status = 'ended';
+                    gameState.winner = 'draw';
+                    gameState.finalPosition = gameState.board.map(r => [...r]);
+                    showGameOver('draw');
+                }
                 
                 saveGameState();
                 saveLocalState();
-                showGameOver(winner);
-                return;
-            }
-
-            if (move.enPassant) {
-                gameState.board[from.row][to.col] = null;
-            }
-            
-            gameState.board[to.row][to.col] = piece;
-            gameState.board[from.row][from.col] = null;
-
-            if (piece.toLowerCase() === 'k') {
-                gameState.kingPositions[color] = {row: to.row, col: to.col};
-                
-                if (move.castling) {
-                    const row = from.row;
-                    if (move.castling === 'kingSide') {
-                        gameState.board[row][5] = gameState.board[row][7];
-                        gameState.board[row][7] = null;
-                    } else {
-                        gameState.board[row][3] = gameState.board[row][0];
-                        gameState.board[row][0] = null;
-                    }
-                }
-                
-                gameState.castlingRights[color] = {kingSide: false, queenSide: false};
-            }
-
-            if (piece.toLowerCase() === 'r') {
-                const row = color === 'white' ? 7 : 0;
-                if (from.row === row && from.col === 0) gameState.castlingRights[color].queenSide = false;
-                if (from.row === row && from.col === 7) gameState.castlingRights[color].kingSide = false;
-            }
-
-            if (move.promotion) {
-                showPromotion(to, color, from);
-                return;
-            }
-
-            if (move.isDoublePush) {
-                gameState.enPassantTarget = {row: (from.row + to.row) / 2, col: from.col};
-            } else {
-                gameState.enPassantTarget = null;
-            }
-
-            if (targetPiece && isEnemy(piece, targetPiece)) {
-                gameState.capturedPieces[color].push(targetPiece);
-            }
-
-            const moveNotation = `${PIECES[piece]} ${String.fromCharCode(97+from.col)}${8-from.row} → ${String.fromCharCode(97+to.col)}${8-to.row}`;
-            gameState.moveHistory.push({
-                piece: piece,
-                from: from,
-                to: to,
-                capture: !!targetPiece,
-                notation: moveNotation,
-                color: color
-            });
-
-            gameState.lastMove = {from, to};
-            gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
-            gameState.selectedSquare = null;
-            gameState.validMoves = [];
-
-            const nextColor = gameState.currentPlayer;
-            const opponentKing = nextColor === 'white' ? 'K' : 'k';
-            let opponentKingExists = false;
-            
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    if (gameState.board[r] && gameState.board[r][c] === opponentKing) {
-                        opponentKingExists = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!opponentKingExists) {
-                gameState.status = 'ended';
-                gameState.winner = color;
-                gameState.finalPosition = gameState.board.map(r => [...r]);
-                gameState.checkmateMove = {from, to, piece, capture: true};
-                gameState.gameEndedAt = Date.now();
-                showGameOver(color);
-            } else if (isCheckmate(nextColor)) {
-                gameState.status = 'ended';
-                gameState.winner = color;
-                gameState.finalPosition = gameState.board.map(r => [...r]);
-                gameState.checkmateMove = {from, to, piece};
-                gameState.gameEndedAt = Date.now();
-                showGameOver(color);
-            } else if (isStalemate(nextColor)) {
-                gameState.status = 'ended';
-                gameState.winner = 'draw';
-                gameState.finalPosition = gameState.board.map(r => [...r]);
-                gameState.gameEndedAt = Date.now();
-                showGameOver('draw');
-            }
-
-            saveGameState();
-            saveLocalState();
-        }
-
-        function saveGameState() {
-            if (!gameRef) return;
-            
-            const boardObj = boardToFirestore(gameState.board);
-            const capturedObj = capturedPiecesToFirestore(gameState.capturedPieces);
-            
-            const updates = {
-                board: boardObj,
-                currentPlayer: gameState.currentPlayer,
-                castlingRights: gameState.castlingRights,
-                enPassantTarget: gameState.enPassantTarget,
-                lastMove: gameState.lastMove,
-                kingPositions: gameState.kingPositions,
-                capturedPieces: capturedObj,
-                status: gameState.status,
-                winner: gameState.winner || null,
-                moveHistory: gameState.moveHistory,
-                finalPosition: gameState.finalPosition ? boardToFirestore(gameState.finalPosition) : null,
-                checkmateMove: gameState.checkmateMove,
-                gameEndedAt: gameState.gameEndedAt
             };
-            
-            gameRef.update(updates).catch(error => {
-                console.error('Erro ao salvar:', error);
-            });
-        }
-
-        function showPromotion(pos, color, from) {
-            const modal = document.getElementById('promotionModal');
-            const opts = document.getElementById('promotionOptions');
-            opts.innerHTML = '';
-            
-            const pieces = color === 'white' ? ['Q','R','B','N'] : ['q','r','b','n'];
-            pieces.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'promotion-piece';
-                div.textContent = PIECES[p];
-                div.onclick = () => {
-                    gameState.board[pos.row][pos.col] = p;
-                    modal.classList.remove('show');
-                    gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
-                    gameState.selectedSquare = null;
-                    gameState.enPassantTarget = null;
-                    
-                    const nextColor = gameState.currentPlayer;
-                    if (isCheckmate(nextColor)) {
-                        gameState.status = 'ended';
-                        gameState.winner = color;
-                        gameState.finalPosition = gameState.board.map(r => [...r]);
-                        gameState.checkmateMove = {from, to: pos, piece: p};
-                        showGameOver(color);
-                    } else if (isStalemate(nextColor)) {
-                        gameState.status = 'ended';
-                        gameState.winner = 'draw';
-                        gameState.finalPosition = gameState.board.map(r => [...r]);
-                        showGameOver('draw');
-                    }
-                    
-                    saveGameState();
-                    saveLocalState();
-                };
-                opts.appendChild(div);
-            });
-            
-            modal.classList.add('show');
-        }
-
-        function isCheckmate(color) {
-            if (!isInCheck(color)) return false;
-            return !hasAnyMove(color, gameState.board);
-        }
-
-        function isStalemate(color) {
-            if (isInCheck(color)) return false;
-            return !hasAnyMove(color, gameState.board);
-        }
-
-        function updateCapturedDisplay() {
-            const display = document.getElementById('capturedPieces');
-            const myCaptures = gameState.capturedPieces[gameState.myColor] || [];
-            display.textContent = myCaptures.map(p => PIECES[p]).join(' ') || 'Nenhuma';
-        }
-
-        // ==================== ANIMAÇÃO ESPECTACULAR DO CHECKMATE ====================
-        function showGameOver(winner) {
-            const modal = document.getElementById('gameOverModal');
-            const text = document.getElementById('gameOverText');
-            const viewPositionBtn = document.getElementById('viewPositionBtn');
-            
-            if (winner === 'draw') {
-                text.textContent = '🤝 Empate!';
-                viewPositionBtn.style.display = 'none';
-            } else {
-                const isMe = winner === gameState.myColor;
-                const winnerName = winner === 'white' ? 
-                    (gameState.players.white ? gameState.players.white.name : 'Brancas') : 
-                    (gameState.players.black ? gameState.players.black.name : 'Pretas');
-                    
-                text.innerHTML = isMe ? 
-                    `🏆 ${winnerName} venceu!<br><span style="font-size:0.6em">Parabéns!</span>` : 
-                    `${winnerName} venceu!<br><span style="font-size:0.6em">Mais sorte na próxima!</span>`;
-                
-                viewPositionBtn.style.display = 'inline-block';
-            }
-            
-            modal.classList.add('show');
-            if (unsubscribe) unsubscribe();
-        }
-
-        function returnToIndex() {
-            clearLocalState();
-            window.location.href = window.location.pathname;
-        }
-
-        function showFinalPosition() {
-            const modal = document.getElementById('finalPositionModal');
-            const boardContainer = document.getElementById('finalPositionBoard');
-            const infoEl = document.getElementById('finalPositionInfo');
-            const finalMoveText = document.getElementById('finalMoveText');
-            const moveSequence = document.getElementById('moveSequence');
-            
-            boardContainer.innerHTML = '';
-            
-            const finalBoard = gameState.finalPosition || gameState.board;
-            const checkmateMove = gameState.checkmateMove || gameState.lastMove;
-            const winner = gameState.winner;
-            const loserColor = winner === 'white' ? 'black' : 'white';
-            const loserKing = loserColor === 'white' ? 'K' : 'k';
-            
-            // Encontrar posição do rei derrotado
-            let kingPos = null;
-            let kingElement = null;
-            
-            // Criar tabuleiro animado
-            const miniBoard = document.createElement('div');
-            miniBoard.className = 'checkmate-board';
-            miniBoard.id = 'animatedCheckmateBoard';
-            
-            const squares = [];
-            
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const square = document.createElement('div');
-                    square.className = `checkmate-square ${(r + c) % 2 === 0 ? 'light' : 'dark'}`;
-                    square.dataset.row = r;
-                    square.dataset.col = c;
-                    
-                    const piece = finalBoard[r] && finalBoard[r][c];
-                    if (piece) {
-                        square.textContent = PIECES[piece];
-                        
-                        // Detectar rei derrotado
-                        if (piece === loserKing) {
-                            kingPos = {row: r, col: c};
-                            square.id = 'fallenKing';
-                            square.classList.add('checkmate-glow');
-                        }
-                        
-                        // Detectar peça vencedora (a que deu checkmate)
-                        if (checkmateMove && checkmateMove.to.row === r && checkmateMove.to.col === c) {
-                            square.id = 'winningPiece';
-                            square.classList.add('winner-glow');
-                        }
-                    }
-                    
-                    // Destacar origem do movimento final
-                    if (checkmateMove && checkmateMove.from.row === r && checkmateMove.from.col === c) {
-                        square.style.background = '#ffd700';
-                        square.style.boxShadow = 'inset 0 0 20px #ffaa00';
-                    }
-                    
-                    miniBoard.appendChild(square);
-                    squares.push(square);
-                }
-            }
-            
-            boardContainer.appendChild(miniBoard);
-            
-            // Texto do movimento final
-            if (checkmateMove) {
-                const pieceName = PIECES[checkmateMove.piece];
-                const fromSq = `${String.fromCharCode(97+checkmateMove.from.col)}${8-checkmateMove.from.row}`;
-                const toSq = `${String.fromCharCode(97+checkmateMove.to.col)}${8-checkmateMove.to.row}`;
-                finalMoveText.textContent = `Xeque Mate! ${pieceName} ${fromSq} → ${toSq}`;
-            } else {
-                finalMoveText.textContent = 'Xeque Mate!';
-            }
-            
-            // Sequência de lances
-            let sequenceHTML = '<strong>📜 Sequência da Partida:</strong><br>';
-            const movesToShow = gameState.moveHistory.slice(-10); // Últimos 10 lances
-            
-            if (gameState.moveHistory.length > 10) {
-                sequenceHTML += `<div style="color:#888; font-size:0.8em;">... (${gameState.moveHistory.length - 10} lances anteriores) ...</div>`;
-            }
-            
-            movesToShow.forEach((move, index) => {
-                const isLast = index === movesToShow.length - 1;
-                const actualIndex = gameState.moveHistory.length - movesToShow.length + index + 1;
-                const moveNum = Math.ceil(actualIndex / 2);
-                const isWhiteMove = actualIndex % 2 === 1;
-                
-                const prefix = isWhiteMove ? `${moveNum}.` : '';
-                const style = isLast ? 'color:#ff0000; font-weight:bold; animation:last-move-pulse 1s infinite;' : '';
-                
-                sequenceHTML += `<div class="move-sequence-item" style="${style}">${prefix} ${move.notation}</div>`;
-            });
-            
-            moveSequence.innerHTML = sequenceHTML;
-            
-            // Informações adicionais
-            const totalMoves = gameState.moveHistory.length;
-            const capturedByWinner = gameState.capturedPieces[winner] || [];
-            const capturedByLoser = gameState.capturedPieces[winner === 'white' ? 'black' : 'white'] || [];
-            
-            infoEl.innerHTML = `
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; text-align:left; margin-top:15px;">
-                    <div style="background:rgba(0,255,0,0.1); padding:10px; border-radius:8px; border:1px solid #00ff00;">
-                        <strong style="color:#00ff00;">🏆 Vencedor (${winner})</strong><br>
-                        <small>Peças capturadas: ${capturedByWinner.map(p => PIECES[p]).join(' ') || 'Nenhuma'}</small>
-                    </div>
-                    <div style="background:rgba(255,0,0,0.1); padding:10px; border-radius:8px; border:1px solid #ff0000;">
-                        <strong style="color:#ff6666;">💀 Derrotado (${loserColor})</strong><br>
-                        <small>Peças capturadas: ${capturedByLoser.map(p => PIECES[p]).join(' ') || 'Nenhuma'}</small>
-                    </div>
-                </div>
-                <div style="margin-top:15px; font-size:0.9em; color:#ffd700;">
-                    ⏱️ Total de lances: ${totalMoves} | 
-                    👑 Rei ${loserColor === 'white' ? '♔' : '♚'} foi derrotado
-                </div>
-            `;
-            
-            // Iniciar animações após um pequeno delay
-            setTimeout(() => {
-                animateCheckmate(kingPos, checkmateMove);
-            }, 500);
-            
-            document.getElementById('gameOverModal').classList.remove('show');
-            modal.classList.add('show');
-        }
-
-        function animateCheckmate(kingPos, checkmateMove) {
-            const board = document.getElementById('animatedCheckmateBoard');
-            if (!board) return;
-            
-            const squares = board.querySelectorAll('.checkmate-square');
-            const fallenKing = document.getElementById('fallenKing');
-            const winningPiece = document.getElementById('winningPiece');
-            
-            // 1. Animação do movimento final (seta/tracejado)
-            if (checkmateMove && winningPiece) {
-                const fromSquare = Array.from(squares).find(sq => 
-                    parseInt(sq.dataset.row) === checkmateMove.from.row && 
-                    parseInt(sq.dataset.col) === checkmateMove.from.col
-                );
-                
-                if (fromSquare && winningPiece) {
-                    createArrow(fromSquare, winningPiece);
-                }
-            }
-            
-            // 2. Efeito de explosão no rei
-            if (fallenKing) {
-                setTimeout(() => {
-                    const explosion = document.createElement('div');
-                    explosion.className = 'explosion-effect';
-                    fallenKing.appendChild(explosion);
-                    
-                    // Som visual - treme o tabuleiro
-                    board.style.animation = 'board-shake 0.5s ease-in-out';
-                    
-                    setTimeout(() => {
-                        fallenKing.classList.add('king-fallen');
-                        
-                        // Adicionar coroa caindo no vencedor
-                        if (winningPiece) {
-                            const crown = document.createElement('div');
-                            crown.className = 'crown-effect';
-                            crown.textContent = '👑';
-                            winningPiece.appendChild(crown);
-                        }
-                    }, 300);
-                }, 1000);
-            }
-            
-            // 3. Destacar todas as peças atacando o rei
-            if (kingPos) {
-                setTimeout(() => {
-                    const attackingSquares = findAttackingPieces(kingPos.row, kingPos.col, gameState.winner);
-                    attackingSquares.forEach((pos, index) => {
-                        setTimeout(() => {
-                            const sq = Array.from(squares).find(s => 
-                                parseInt(s.dataset.row) === pos.row && 
-                                parseInt(s.dataset.col) === pos.col
-                            );
-                            if (sq) {
-                                sq.style.background = '#ff00ff';
-                                sq.style.boxShadow = '0 0 30px #ff00ff';
-                                sq.style.transform = 'scale(1.1)';
-                                sq.style.transition = 'all 0.3s';
-                                
-                                setTimeout(() => {
-                                    sq.style.background = '';
-                                    sq.style.boxShadow = '';
-                                    sq.style.transform = '';
-                                }, 1500);
-                            }
-                        }, index * 200);
-                    });
-                }, 2000);
-            }
-        }
-
-        function createArrow(fromElement, toElement) {
-            const board = document.getElementById('animatedCheckmateBoard');
-            const boardRect = board.getBoundingClientRect();
-            const fromRect = fromElement.getBoundingClientRect();
-            const toRect = toElement.getBoundingClientRect();
-            
-            // Calcular posições relativas ao tabuleiro
-            const fromX = fromRect.left - boardRect.left + fromRect.width / 2;
-            const fromY = fromRect.top - boardRect.top + fromRect.height / 2;
-            const toX = toRect.left - boardRect.left + toRect.width / 2;
-            const toY = toRect.top - boardRect.top + toRect.height / 2;
-            
-            // Criar SVG para a seta
-            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:100;';
-            
-            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            line.setAttribute('x1', fromX);
-            line.setAttribute('y1', fromY);
-            line.setAttribute('x2', toX);
-            line.setAttribute('y2', toY);
-            line.setAttribute('class', 'checkmate-arrow');
-            
-            // Adicionar marcador de seta
-            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-            const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
-            marker.setAttribute('id', 'arrowhead');
-            marker.setAttribute('markerWidth', '10');
-            marker.setAttribute('markerHeight', '7');
-            marker.setAttribute('refX', '9');
-            marker.setAttribute('refY', '3.5');
-            marker.setAttribute('orient', 'auto');
-            
-            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-            polygon.setAttribute('points', '0 0, 10 3.5, 0 7');
-            polygon.setAttribute('fill', '#ff0000');
-            
-            marker.appendChild(polygon);
-            defs.appendChild(marker);
-            svg.appendChild(defs);
-            
-            line.setAttribute('marker-end', 'url(#arrowhead)');
-            svg.appendChild(line);
-            
-            board.appendChild(svg);
-            
-            // Remover após animação
-            setTimeout(() => {
-                svg.remove();
-            }, 3000);
-        }
-
-        function findAttackingPieces(kingRow, kingCol, winnerColor) {
-            const loserColor = winnerColor === 'white' ? 'black' : 'white';
-            const board = gameState.finalPosition || gameState.board;
-            const attackers = [];
-            
-            // Verificar todas as peças do vencedor que atacam o rei
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (winnerColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const attacks = getAttacks(r, c, board, piece);
-                        if (attacks.some(a => a.row === kingRow && a.col === kingCol)) {
-                            attackers.push({row: r, col: c});
-                        }
-                    }
-                }
-            }
-            
-            return attackers;
-        }
-
-        function closeFinalPosition() {
-            document.getElementById('finalPositionModal').classList.remove('show');
-            document.getElementById('gameOverModal').classList.add('show');
-        }
-
-        // ==================== INICIALIZAÇÃO ====================
-
-        window.onbeforeunload = () => {
-            if (unsubscribe) unsubscribe();
-            saveLocalState();
-        };
-
-        window.onload = () => {
-            const savedName = localStorage.getItem('chessPlayerName');
-            if (savedName) {
-                document.getElementById('playerName').value = savedName;
-            }
-            
-            const savedState = loadLocalState();
-            if (savedState) {
-                const statusMsg = document.getElementById('statusMessage');
-                statusMsg.textContent = `🎮 Jogo anterior detectado (${savedState.gameId}) - Clique em Entrar para continuar`;
-                statusMsg.className = 'status-message waiting';
-                statusMsg.style.display = 'block';
-            }
-        };
-
-        document.getElementById('playerName')?.addEventListener('input', (e) => {
-            localStorage.setItem('chessPlayerName', e.target.value);
+            opts.appendChild(div);
         });
-    </script>
+        
+        modal.classList.add('show');
+    }
+
+    function isCheckmate(color) {
+        if (!isInCheck(color)) return false;
+        return !hasAnyMove(color, gameState.board);
+    }
+
+    function isStalemate(color) {
+        if (isInCheck(color)) return false;
+        return !hasAnyMove(color, gameState.board);
+    }
+
+    function hasAnyMove(color, testBoard) {
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const p = testBoard[r] && testBoard[r][c];
+                if (p && (color === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                    if (getValidMovesForEvaluation(r, c, testBoard, color).length > 0) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function getValidMovesForEvaluation(row, col, board, color) {
+        const piece = board[row] && board[row][col];
+        if (!piece) return [];
+        
+        const moves = [];
+        const type = piece.toLowerCase();
+        
+        switch(type) {
+            case 'p':
+                const dir = color === 'white' ? -1 : 1;
+                const start = color === 'white' ? 6 : 1;
+                if (isValid(row + dir, col) && !board[row + dir][col]) {
+                    moves.push({row: row + dir, col: col});
+                    if (row === start && !board[row + 2*dir][col]) {
+                        moves.push({row: row + 2*dir, col: col});
+                    }
+                }
+                for (let dc of [-1, 1]) {
+                    const nr = row + dir, nc = col + dc;
+                    if (isValid(nr, nc)) {
+                        const target = board[nr] && board[nr][nc];
+                        if (target && isEnemy(piece, target)) {
+                            moves.push({row: nr, col: nc, capture: true});
+                        }
+                    }
+                }
+                break;
+            case 'n':
+                const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                for (let [dr, dc] of nm) {
+                    const nr = row + dr, nc = col + dc;
+                    if (isValid(nr, nc)) {
+                        const target = board[nr] && board[nr][nc];
+                        if (!target || isEnemy(piece, target)) {
+                            moves.push({row: nr, col: nc, capture: !!target});
+                        }
+                    }
+                }
+                break;
+            case 'b':
+                moves.push(...slideMovesEval(row, col, piece, board, [[-1,-1],[-1,1],[1,-1],[1,1]]));
+                break;
+            case 'r':
+                moves.push(...slideMovesEval(row, col, piece, board, [[-1,0],[1,0],[0,-1],[0,1]]));
+                break;
+            case 'q':
+                moves.push(...slideMovesEval(row, col, piece, board, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
+                break;
+            case 'k':
+                const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+                for (let [dr, dc] of km) {
+                    const nr = row + dr, nc = col + dc;
+                    if (isValid(nr, nc)) {
+                        const target = board[nr] && board[nr][nc];
+                        if (!target || isEnemy(piece, target)) {
+                            moves.push({row: nr, col: nc, capture: !!target});
+                        }
+                    }
+                }
+                break;
+        }
+        
+        return moves.filter(m => {
+            const testBoard = simulateMove(board, {from: {row, col}, to: m});
+            const kingPos = findKing(testBoard, color);
+            return kingPos && !isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
+        });
+    }
+
+    function slideMovesEval(row, col, piece, board, dirs) {
+        const moves = [];
+        for (let [dr, dc] of dirs) {
+            let nr = row + dr, nc = col + dc;
+            while (isValid(nr, nc)) {
+                const target = board[nr] && board[nr][nc];
+                if (!target) {
+                    moves.push({row: nr, col: nc});
+                } else {
+                    if (isEnemy(piece, target)) {
+                        moves.push({row: nr, col: nc, capture: true});
+                    }
+                    break;
+                }
+                nr += dr;
+                nc += dc;
+            }
+        }
+        return moves;
+    }
+
+    function getAttackers(row, col, byColor, board) {
+        const attackers = [];
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const piece = board[r] && board[r][c];
+                if (piece && (byColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                    const attacks = getAttacks(r, c, board, piece);
+                    if (attacks.some(a => a.row === row && a.col === col)) {
+                        attackers.push({row: r, col: c, piece: piece});
+                    }
+                }
+            }
+        }
+        return attackers;
+    }
+
+    function getDefenders(row, col, color, board) {
+        const defenders = [];
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const piece = board[r] && board[r][c];
+                if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                    if (r === row && c === col) continue;
+                    const attacks = getAttacks(r, c, board, piece);
+                    if (attacks.some(a => a.row === row && a.col === col)) {
+                        defenders.push({row: r, col: c, piece: piece});
+                    }
+                }
+            }
+        }
+        return defenders;
+    }
+
+    function isSquareDefended(row, col, color, board) {
+        return getDefenders(row, col, color, board).length > 0;
+    }
+
+    function getAttacks(row, col, board, piece) {
+        const attacks = [];
+        const type = piece.toLowerCase();
+        const color = piece === piece.toUpperCase() ? 'white' : 'black';
+        
+        switch(type) {
+            case 'p':
+                const dir = color === 'white' ? -1 : 1;
+                for (let dc of [-1, 1]) {
+                    if (isValid(row + dir, col + dc)) {
+                        attacks.push({row: row + dir, col: col + dc});
+                    }
+                }
+                break;
+            case 'n':
+                const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                for (let [dr, dc] of nm) {
+                    if (isValid(row + dr, col + dc)) {
+                        attacks.push({row: row + dr, col: col + dc});
+                    }
+                }
+                break;
+            case 'b':
+                attacks.push(...slideAttacks(row, col, board, [[-1,-1],[-1,1],[1,-1],[1,1]]));
+                break;
+            case 'r':
+                attacks.push(...slideAttacks(row, col, board, [[-1,0],[1,0],[0,-1],[0,1]]));
+                break;
+            case 'q':
+                attacks.push(...slideAttacks(row, col, board, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
+                break;
+            case 'k':
+                const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+                for (let [dr, dc] of km) {
+                    if (isValid(row + dr, col + dc)) {
+                        attacks.push({row: row + dr, col: col + dc});
+                    }
+                }
+                break;
+        }
+        return attacks;
+    }
+
+    function slideAttacks(row, col, board, dirs) {
+        const attacks = [];
+        for (let [dr, dc] of dirs) {
+            let nr = row + dr, nc = col + dc;
+            while (isValid(nr, nc)) {
+                attacks.push({row: nr, col: nc});
+                if (board[nr] && board[nr][nc]) break;
+                nr += dr;
+                nc += dc;
+            }
+        }
+        return attacks;
+    }
+
+    function isSquareAttacked(row, col, defColor, testBoard) {
+        const atkColor = defColor === 'white' ? 'black' : 'white';
+        const pawnDir = defColor === 'white' ? -1 : 1;
+        
+        for (let dc of [-1, 1]) {
+            const r = row - pawnDir, c = col + dc;
+            if (isValid(r, c)) {
+                const p = testBoard[r] && testBoard[r][c];
+                if (p && p.toLowerCase() === 'p' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                    return true;
+                }
+            }
+        }
+        
+        const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+        for (let [dr, dc] of nm) {
+            const r = row + dr, c = col + dc;
+            if (isValid(r, c)) {
+                const p = testBoard[r] && testBoard[r][c];
+                if (p && p.toLowerCase() === 'n' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                    return true;
+                }
+            }
+        }
+        
+        for (let [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+            let r = row + dr, c = col + dc;
+            while (isValid(r, c)) {
+                const p = testBoard[r] && testBoard[r][c];
+                if (p) {
+                    if ((p.toLowerCase() === 'r' || p.toLowerCase() === 'q') && 
+                        (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                        return true;
+                    }
+                    break;
+                }
+                r += dr; c += dc;
+            }
+        }
+        
+        for (let [dr, dc] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
+            let r = row + dr, c = col + dc;
+            while (isValid(r, c)) {
+                const p = testBoard[r] && testBoard[r][c];
+                if (p) {
+                    if ((p.toLowerCase() === 'b' || p.toLowerCase() === 'q') && 
+                        (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                        return true;
+                    }
+                    break;
+                }
+                r += dr; c += dc;
+            }
+        }
+        
+        for (let [dr, dc] of [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]) {
+            const r = row + dr, c = col + dc;
+            if (isValid(r, c)) {
+                const p = testBoard[r] && testBoard[r][c];
+                if (p && p.toLowerCase() === 'k' && 
+                    (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function isEnemy(p1, p2) {
+        return (p1 === p1.toUpperCase()) !== (p2 === p2.toUpperCase());
+    }
+
+    function isValid(r, c) {
+        return r >= 0 && r < 8 && c >= 0 && c < 8;
+    }
+
+    function updateCapturedDisplay() {
+        const display = document.getElementById('capturedPieces');
+        const myCaptures = gameState.capturedPieces[gameState.myColor] || [];
+        display.textContent = myCaptures.map(p => PIECES[p]).join(' ') || 'Nenhuma';
+    }
+
+    // ==================== ANIMAÇÃO DO CHECKMATE ====================
+
+    function showGameOver(winner) {
+        const modal = document.getElementById('gameOverModal');
+        const text = document.getElementById('gameOverText');
+        const viewPositionBtn = document.getElementById('viewPositionBtn');
+        
+        if (winner === 'draw') {
+            text.textContent = '🤝 Empate!';
+            viewPositionBtn.style.display = 'none';
+        } else {
+            const isMe = winner === gameState.myColor;
+            const winnerName = winner === 'white' ? 
+                (gameState.players.white ? gameState.players.white.name : 'Brancas') : 
+                (gameState.players.black ? gameState.players.black.name : 'Pretas');
+                
+            text.innerHTML = isMe ? 
+                `🏆 ${winnerName} venceu!<br><span style="font-size:0.6em">Parabéns!</span>` : 
+                `${winnerName} venceu!<br><span style="font-size:0.6em">Mais sorte na próxima!</span>`;
+            
+            viewPositionBtn.style.display = 'inline-block';
+        }
+        
+        modal.classList.add('show');
+        if (unsubscribe) unsubscribe();
+    }
+
+    function returnToIndex() {
+        clearLocalState();
+        window.location.href = window.location.pathname;
+    }
+
+    function showFinalPosition() {
+        const modal = document.getElementById('finalPositionModal');
+        const boardContainer = document.getElementById('finalPositionBoard');
+        const infoEl = document.getElementById('finalPositionInfo');
+        const finalMoveText = document.getElementById('finalMoveText');
+        const moveSequence = document.getElementById('moveSequence');
+        
+        boardContainer.innerHTML = '';
+        
+        const finalBoard = gameState.finalPosition || gameState.board;
+        const checkmateMove = gameState.checkmateMove || gameState.lastMove;
+        const winner = gameState.winner;
+        const loserColor = winner === 'white' ? 'black' : 'white';
+        const loserKing = loserColor === 'white' ? 'K' : 'k';
+        
+        let kingPos = null;
+        
+        const miniBoard = document.createElement('div');
+        miniBoard.className = 'checkmate-board';
+        miniBoard.id = 'animatedCheckmateBoard';
+        
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const square = document.createElement('div');
+                square.className = `checkmate-square ${(r + c) % 2 === 0 ? 'light' : 'dark'}`;
+                square.dataset.row = r;
+                square.dataset.col = c;
+                
+                const piece = finalBoard[r] && finalBoard[r][c];
+                if (piece) {
+                    square.textContent = PIECES[piece];
+                    
+                    if (piece === loserKing) {
+                        kingPos = {row: r, col: c};
+                        square.id = 'fallenKing';
+                        square.classList.add('checkmate-glow');
+                    }
+                    
+                    if (checkmateMove && checkmateMove.to.row === r && checkmateMove.to.col === c) {
+                        square.id = 'winningPiece';
+                        square.classList.add('winner-glow');
+                    }
+                }
+                
+                if (checkmateMove && checkmateMove.from.row === r && checkmateMove.from.col === c) {
+                    square.style.background = '#ffd700';
+                    square.style.boxShadow = 'inset 0 0 20px #ffaa00';
+                }
+                
+                miniBoard.appendChild(square);
+            }
+        }
+        
+        boardContainer.appendChild(miniBoard);
+        
+        if (checkmateMove) {
+            const pieceName = PIECES[checkmateMove.piece];
+            const fromSq = `${String.fromCharCode(97+checkmateMove.from.col)}${8-checkmateMove.from.row}`;
+            const toSq = `${String.fromCharCode(97+checkmateMove.to.col)}${8-checkmateMove.to.row}`;
+            finalMoveText.textContent = `Xeque Mate! ${pieceName} ${fromSq} → ${toSq}`;
+        } else {
+            finalMoveText.textContent = 'Xeque Mate!';
+        }
+        
+        let sequenceHTML = '<strong>📜 Últimos lances:</strong><br>';
+        const movesToShow = gameState.moveHistory.slice(-10);
+        
+        if (gameState.moveHistory.length > 10) {
+            sequenceHTML += `<div style="color:#888; font-size:0.8em;">... (${gameState.moveHistory.length - 10} lances antes) ...</div>`;
+        }
+        
+        movesToShow.forEach((move, index) => {
+            const isLast = index === movesToShow.length - 1;
+            const actualIndex = gameState.moveHistory.length - movesToShow.length + index + 1;
+            const moveNum = Math.ceil(actualIndex / 2);
+            const isWhiteMove = actualIndex % 2 === 1;
+            
+            const prefix = isWhiteMove ? `${moveNum}.` : '';
+            const style = isLast ? 'color:#ff0000; font-weight:bold; animation:last-move-pulse 1s infinite;' : '';
+            
+            sequenceHTML += `<div class="move-sequence-item" style="${style}">${prefix} ${move.notation}</div>`;
+        });
+        
+        moveSequence.innerHTML = sequenceHTML;
+        
+        const totalMoves = gameState.moveHistory.length;
+        const capturedByWinner = gameState.capturedPieces[winner] || [];
+        const capturedByLoser = gameState.capturedPieces[winner === 'white' ? 'black' : 'white'] || [];
+        
+        infoEl.innerHTML = `
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; text-align:left; margin-top:15px;">
+                <div style="background:rgba(0,255,0,0.1); padding:10px; border-radius:8px; border:1px solid #00ff00;">
+                    <strong style="color:#00ff00;">🏆 Vencedor (${winner})</strong><br>
+                    <small>Capturou: ${capturedByWinner.map(p => PIECES[p]).join(' ') || 'Nada'}</small>
+                </div>
+                <div style="background:rgba(255,0,0,0.1); padding:10px; border-radius:8px; border:1px solid #ff0000;">
+                    <strong style="color:#ff6666;">💀 Derrotado (${loserColor})</strong><br>
+                    <small>Capturou: ${capturedByLoser.map(p => PIECES[p]).join(' ') || 'Nada'}</small>
+                </div>
+            </div>
+            <div style="margin-top:15px; font-size:0.9em; color:#ffd700;">
+                ⏱️ ${totalMoves} lances totais | Rei ${loserColor === 'white' ? '♔' : '♚'} checkmateado
+            </div>
+        `;
+        
+        setTimeout(() => {
+            animateCheckmate(kingPos, checkmateMove);
+        }, 500);
+        
+        document.getElementById('gameOverModal').classList.remove('show');
+        modal.classList.add('show');
+    }
+
+    function animateCheckmate(kingPos, checkmateMove) {
+        const board = document.getElementById('animatedCheckmateBoard');
+        if (!board) return;
+        
+        const squares = board.querySelectorAll('.checkmate-square');
+        const fallenKing = document.getElementById('fallenKing');
+        const winningPiece = document.getElementById('winningPiece');
+        
+        if (checkmateMove && winningPiece) {
+            const fromSquare = Array.from(squares).find(sq => 
+                parseInt(sq.dataset.row) === checkmateMove.from.row && 
+                parseInt(sq.dataset.col) === checkmateMove.from.col
+            );
+            
+            if (fromSquare) {
+                createArrow(fromSquare, winningPiece);
+            }
+        }
+        
+        if (fallenKing) {
+            setTimeout(() => {
+                const explosion = document.createElement('div');
+                explosion.className = 'explosion-effect';
+                fallenKing.appendChild(explosion);
+                
+                board.style.animation = 'board-shake 0.5s ease-in-out';
+                
+                setTimeout(() => {
+                    fallenKing.classList.add('king-fallen');
+                    
+                    if (winningPiece) {
+                        const crown = document.createElement('div');
+                        crown.className = 'crown-effect';
+                        crown.textContent = '👑';
+                        winningPiece.appendChild(crown);
+                    }
+                }, 300);
+            }, 1000);
+        }
+    }
+
+    function createArrow(fromElement, toElement) {
+        const board = document.getElementById('animatedCheckmateBoard');
+        const boardRect = board.getBoundingClientRect();
+        const fromRect = fromElement.getBoundingClientRect();
+        const toRect = toElement.getBoundingClientRect();
+        
+        const fromX = fromRect.left - boardRect.left + fromRect.width / 2;
+        const fromY = fromRect.top - boardRect.top + fromRect.height / 2;
+        const toX = toRect.left - boardRect.left + toRect.width / 2;
+        const toY = toRect.top - boardRect.top + toRect.height / 2;
+        
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:100;';
+        
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', fromX);
+        line.setAttribute('y1', fromY);
+        line.setAttribute('x2', toX);
+        line.setAttribute('y2', toY);
+        line.setAttribute('stroke', '#ff0000');
+        line.setAttribute('stroke-width', '4');
+        line.setAttribute('marker-end', 'url(#arrowhead)');
+        
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+        marker.setAttribute('id', 'arrowhead');
+        marker.setAttribute('markerWidth', '10');
+        marker.setAttribute('markerHeight', '7');
+        marker.setAttribute('refX', '9');
+        marker.setAttribute('refY', '3.5');
+        marker.setAttribute('orient', 'auto');
+        
+        const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+        polygon.setAttribute('points', '0 0, 10 3.5, 0 7');
+        polygon.setAttribute('fill', '#ff0000');
+        
+        marker.appendChild(polygon);
+        defs.appendChild(marker);
+        svg.appendChild(defs);
+        svg.appendChild(line);
+        
+        board.appendChild(svg);
+        
+        setTimeout(() => {
+            svg.remove();
+        }, 3000);
+    }
+
+    function closeFinalPosition() {
+        document.getElementById('finalPositionModal').classList.remove('show');
+        document.getElementById('gameOverModal').classList.add('show');
+    }
+
+    // ==================== INICIALIZAÇÃO ====================
+
+    window.onbeforeunload = () => {
+        if (unsubscribe) unsubscribe();
+        saveLocalState();
+    };
+
+    window.onload = () => {
+        const savedName = localStorage.getItem('chessPlayerName');
+        if (savedName) {
+            document.getElementById('playerName').value = savedName;
+        }
+        
+        const savedState = loadLocalState();
+        if (savedState) {
+            const statusMsg = document.getElementById('statusMessage');
+            statusMsg.textContent = `🎮 Jogo salvo encontrado (${savedState.gameId})`;
+            statusMsg.className = 'status-message waiting';
+            statusMsg.style.display = 'block';
+        }
+    };
+
+    document.getElementById('playerName')?.addEventListener('input', (e) => {
+        localStorage.setItem('chessPlayerName', e.target.value);
+    });
+</script>
 </body>
 </html>
