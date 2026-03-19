@@ -722,7 +722,7 @@
             }
         }
 
-        /* Sistema de Análise do Adversário */
+        /* Sistema de Análise do Adversário - NOVO */
         .opponent-analysis-panel {
             display: none;
             background: var(--glass-bg);
@@ -759,26 +759,43 @@
             letter-spacing: 2px;
         }
 
-        .prediction-list {
+        .intention-list {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
         }
 
-        .prediction-item {
+        .intention-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .intention-list::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.3);
+            border-radius: 3px;
+        }
+
+        .intention-list::-webkit-scrollbar-thumb {
+            background: var(--red);
+            border-radius: 3px;
+        }
+
+        .intention-item {
             background: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 15px;
             display: flex;
-            align-items: center;
-            gap: 15px;
+            flex-direction: column;
+            gap: 10px;
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
 
-        .prediction-item::before {
+        .intention-item::before {
             content: '';
             position: absolute;
             left: 0;
@@ -790,51 +807,111 @@
             transition: opacity 0.3s;
         }
 
-        .prediction-item:hover::before {
+        .intention-item:hover::before {
             opacity: 1;
         }
 
-        .prediction-item:hover {
-            transform: translateX(10px);
+        .intention-item:hover {
+            transform: translateX(8px);
             border-color: var(--red);
             box-shadow: 0 10px 30px rgba(239, 68, 68, 0.2);
         }
 
-        .prediction-probability {
-            font-size: 2em;
-            font-weight: bold;
-            color: var(--gold);
-            min-width: 80px;
-            text-align: center;
-            font-family: 'Orbitron', sans-serif;
+        .intention-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .prediction-details {
-            flex: 1;
-        }
-
-        .prediction-move {
-            font-size: 1.3em;
+        .intention-type {
+            font-size: 1.1em;
             color: white;
             font-weight: bold;
-            margin-bottom: 5px;
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .intention-probability {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--gold);
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .intention-details {
+            font-size: 0.9em;
+            color: #aaa;
+            line-height: 1.5;
+            padding-left: 28px;
+        }
+
+        .intention-moves {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            padding-left: 28px;
+        }
+
+        .intention-move {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #ff9999;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .intention-move:hover {
+            background: rgba(239, 68, 68, 0.4);
+            transform: scale(1.05);
+        }
+
+        .psychology-profile {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 0, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 0, 255, 0.3);
+        }
+
+        .psychology-title {
+            font-size: 1.1em;
+            color: #ff00ff;
+            font-weight: bold;
+            margin-bottom: 15px;
             font-family: 'Orbitron', sans-serif;
         }
 
-        .prediction-reason {
-            font-size: 0.9em;
+        .psychology-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .psychology-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-size: 0.85em;
+        }
+
+        .psychology-label {
             color: #aaa;
         }
 
-        .danger-indicator {
-            display: inline-block;
-            padding: 5px 15px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid var(--red);
-            border-radius: 20px;
-            font-size: 0.8em;
-            color: var(--red);
-            margin-top: 5px;
+        .psychology-value {
+            color: var(--gold);
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
         }
 
         /* Danger Zones - Onde não pode jogar */
@@ -1470,6 +1547,8 @@
             .toast-container { left: 10px; right: 10px; max-width: none; }
             .modal-content { padding: 30px 20px; }
             .promotion-piece { font-size: 50px; padding: 20px; }
+            .psychology-grid { grid-template-columns: 1fr; }
+            .intention-header { flex-direction: column; gap: 5px; }
         }
 
         /* Special Effects */
@@ -1607,10 +1686,353 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* ==================== SISTEMA DE CHAT ==================== */
+        .chat-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            max-height: 500px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .chat-container.minimized {
+            max-height: 60px;
+            width: 200px;
+        }
+
+        .chat-container.minimized .chat-messages,
+        .chat-container.minimized .chat-input-area {
+            display: none;
+        }
+
+        .chat-header {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(139, 92, 246, 0.2));
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .chat-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95em;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-title::before {
+            content: '💬';
+        }
+
+        .chat-header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.1em;
+            padding: 5px;
+            border-radius: 5px;
+            transition: all 0.2s;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            max-height: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 3px;
+        }
+
+        .chat-message {
+            padding: 12px 15px;
+            border-radius: 15px;
+            max-width: 85%;
+            font-size: 0.9em;
+            line-height: 1.4;
+            word-wrap: break-word;
+            animation: messageIn 0.3s ease;
+        }
+
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.own {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3));
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            color: #fff;
+        }
+
+        .chat-message.opponent {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ddd;
+        }
+
+        .chat-message.system {
+            align-self: center;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: var(--gold);
+            font-size: 0.8em;
+            font-style: italic;
+            max-width: 95%;
+            text-align: center;
+        }
+
+        .chat-sender {
+            font-size: 0.75em;
+            font-weight: bold;
+            margin-bottom: 4px;
+            opacity: 0.8;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .chat-time {
+            font-size: 0.7em;
+            opacity: 0.6;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            border-radius:
+                        border-radius: 25px;
+            font-size: 0.9em;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+
+        .chat-send-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border: none;
+            border-radius: 25px;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px 15px;
+            font-size: 0.8em;
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        /* Mobile Chat Adjustments */
+        @media (max-width: 768px) {
+            .chat-container {
+                width: calc(100% - 40px);
+                max-width: 350px;
+                bottom: 10px;
+                right: 10px;
+            }
+        }
+
+        /* Nova Intenção Badge */
+        .new-intention-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff0000;
+            color: white;
+            font-size: 0.7em;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 10px;
+            animation: badgePulse 1s infinite;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Intention Detail Modal */
+        .intention-detail-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 2px solid rgba(255, 0, 255, 0.5);
+            border-radius: 25px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            z-index: 3000;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+        }
+
+        .intention-detail-modal.show {
+            display: block;
+            animation: modalPop 0.4s ease;
+        }
+
+        @keyframes modalPop {
+            from { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .intention-detail-title {
+            font-size: 1.5em;
+            color: #ff00ff;
+            margin-bottom: 20px;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+        }
+
+        .intention-detail-content {
+            color: #ddd;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .intention-detail-close {
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .overlay-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2500;
+            backdrop-filter: blur(5px);
+        }
+
+        .overlay-backdrop.show {
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Sistema de Chat -->
+    <div class="chat-container minimized" id="chatContainer">
+        <div class="chat-header" onclick="toggleChat()">
+            <div class="chat-title">
+                Chat da Partida
+                <span class="new-intention-badge" id="newMessageBadge" style="display:none;">NOVO</span>
+            </div>
+            <div class="chat-header-buttons">
+                <button class="chat-btn" onclick="event.stopPropagation(); toggleChat()" title="Minimizar/Maximizar">−</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="typing-indicator" id="typingIndicator">Adversário está digitando...</div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua mensagem..." maxlength="200" onkeypress="handleChatKeypress(event)">
+            <button class="chat-send-btn" id="chatSendBtn" onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+
+    <!-- Intention Detail Modal -->
+    <div class="overlay-backdrop" id="intentionBackdrop" onclick="closeIntentionDetail()"></div>
+    <div class="intention-detail-modal" id="intentionDetailModal">
+        <div class="intention-detail-title" id="intentionDetailTitle">Detalhe da Intenção</div>
+        <div class="intention-detail-content" id="intentionDetailContent"></div>
+        <button class="intention-detail-close" onclick="closeIntentionDetail()">Fechar</button>
+    </div>
 
     <div class="login-screen" id="loginScreen">
         <h1>♔ XADREZ ♚</h1>
@@ -1632,14 +2054,23 @@
             <div class="turn-indicator" id="turnIndicator">Aguardando início...</div>
         </div>
 
-        <!-- PAINEL DE ANÁLISE DO ADVERSÁRIO -->
+        <!-- PAINEL DE ANÁLISE AVANÇADA DE INTENÇÕES DO ADVERSÁRIO -->
         <div class="opponent-analysis-panel" id="opponentAnalysisPanel">
-            <div class="opponent-title">👁️ ANÁLISE DO ADVERSÁRIO</div>
-            <div class="prediction-list" id="opponentPredictions">
+            <div class="opponent-title">🧠 ANÁLISE DE INTENÇÕES DO ADVERSÁRIO</div>
+            <div class="intention-list" id="intentionList">
                 <!-- Preenchido dinamicamente -->
             </div>
+            
+            <!-- Perfil Psicológico do Adversário -->
+            <div class="psychology-profile" id="psychologyProfile">
+                <div class="psychology-title">📊 Perfil Psicológico do Adversário</div>
+                <div class="psychology-grid" id="psychologyGrid">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+            
             <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px; font-size: 0.9em; color: #aaa;">
-                <strong>💡 Dica:</strong> As porcentagens indicam a probabilidade de cada jogada baseada no padrão do adversário.
+                <strong>💡 Dica:</strong> Clique em qualquer intenção para ver detalhes completos e contramedidas sugeridas.
             </div>
         </div>
 
@@ -1659,7 +2090,7 @@
                     <div class="god-stat-label">Avaliação</div>
                 </div>
                 <div class="god-stat">
-                    <div class="god-stat-value" id="godDepth">4</div>
+                    <div class="god-stat-value" id="godDepth">6</div>
                     <div class="god-stat-label">Profundidade</div>
                 </div>
                 <div class="god-stat">
@@ -1686,7 +2117,7 @@
             <div id="gameStatus" style="margin-top:15px; font-size:0.95em; color:#888; font-family: 'Orbitron', sans-serif;"></div>
         </div>
         <div class="ai-analysis" id="aiAnalysis">
-            <div style="position: absolute; top: 10px; right: 15px; font-size: 0.75em; color: #666; background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 15px; font-family: 'Orbitron', sans-serif;" id="depthIndicator">Profundidade: 4</div>
+            <div style="position: absolute; top: 10px; right: 15px; font-size: 0.75em; color: #666; background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 15px; font-family: 'Orbitron', sans-serif;" id="depthIndicator">Profundidade: 6</div>
             <h3>🧠 ANÁLISE PREDATIVA IA FERNANDO</h3>
             
             <div class="evaluation-bar" id="evaluationBar" style="display:none;">
@@ -1715,8 +2146,6 @@
             
             <div style="margin-top: 15px; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px; border: 1px solid rgba(239,68,68,0.3); display: none;" id="threatList"></div>
             
-                        <div style="margin-top: 15px; padding: 15px; background: rgba(239,68,68,0.1); border-radius: 10px; border: 1px solid rgba(239,68,68,0.3); display: none;" id="threatList"></div>
-            
             <div style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px; display: none;" id="safetyMeter">
                 <div style="height: 25px; background: linear-gradient(90deg, var(--red) 0%, var(--gold) 50%, var(--green) 100%); border-radius: 15px; position: relative; overflow: hidden;">
                     <div style="position: absolute; top: 0; bottom: 0; width: 6px; background: white; box-shadow: 0 0 15px rgba(255,255,255,0.9); transition: left 0.5s ease; left: 50%;" id="safetyIndicator"></div>
@@ -1729,8 +2158,6 @@
             </div>
 
             <div class="suggestion-list" id="suggestionList" style="display:none;"></div>
-            
-            <div style="margin-top: 15px; padding: 15px; background: rgba(239,68,68,0.05); border-radius: 10px; border: 1px solid rgba(239,68,68,0.2); display: none;" id="opponentAnalysis"></div>
         </div>
     </div>
 
@@ -1866,19 +2293,1413 @@
             moveHistory: [],
             finalPosition: null,
             gameEndedAt: null,
-            opponentMoveHistory: [], // Histórico de jogadas do adversário para análise de padrões
-            dangerZones: [], // Zonas perigosas calculadas
-            opponentPredictions: [] // Previsões de jogadas do adversário
+            opponentMoveHistory: [],
+            dangerZones: [],
+            opponentPredictions: [],
+            opponentIntentions: [], // NOVO: Intenções calculadas do adversário
+            opponentPsychology: null // NOVO: Perfil psicológico do adversário
         };
 
         let gameRef = null;
         let unsubscribe = null;
+        let chatUnsubscribe = null;
         let lastAnalysis = null;
         let isRendering = false;
         let isCheckmateAnimating = false;
         let currentGodMove = null;
         let lastOpponentMoveTime = 0;
-        let opponentPatternAnalysis = null; // Análise de padrões do adversário
+        let opponentPatternAnalysis = null;
+        let hasNewMessage = false;
+
+        // ==================== SISTEMA DE CHAT ====================
+
+        function toggleChat() {
+            const container = document.getElementById('chatContainer');
+            container.classList.toggle('minimized');
+            
+            if (!container.classList.contains('minimized')) {
+                document.getElementById('newMessageBadge').style.display = 'none';
+                hasNewMessage = false;
+                scrollToBottom();
+            }
+        }
+
+        function handleChatKeypress(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            
+            if (!text || !gameRef) return;
+            
+            const message = {
+                text: text,
+                sender: gameState.myName,
+                senderColor: gameState.myColor,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                gameId: gameState.gameId
+            };
+            
+            gameRef.collection('chat').add(message).then(() => {
+                input.value = '';
+            }).catch(error => {
+                console.error('Erro ao enviar mensagem:', error);
+                showToast('Erro', 'Não foi possível enviar a mensagem', 'error');
+            });
+        }
+
+        function setupChatListener() {
+            if (!gameRef) return;
+            
+            chatUnsubscribe = gameRef.collection('chat')
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            const msg = change.doc.data();
+                            displayMessage(msg);
+                            
+                            // Notificar se for mensagem do adversário e chat estiver minimizado
+                            if (msg.senderColor !== gameState.myColor) {
+                                const container = document.getElementById('chatContainer');
+                                if (container.classList.contains('minimized')) {
+                                    hasNewMessage = true;
+                                    document.getElementById('newMessageBadge').style.display = 'block';
+                                    showToast('💬 Nova mensagem', `${msg.sender}: ${msg.text.substring(0, 50)}${msg.text.length > 50 ? '...' : ''}`, 'normal', 3000);
+                                }
+                            }
+                        }
+                    });
+                });
+        }
+
+        function displayMessage(msg) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            
+            const isOwn = msg.senderColor === gameState.myColor;
+            const isSystem = msg.sender === 'Sistema';
+            
+            div.className = `chat-message ${isSystem ? 'system' : isOwn ? 'own' : 'opponent'}`;
+            
+            const time = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'}) : '';
+            
+            div.innerHTML = `
+                ${!isSystem ? `<div class="chat-sender">${msg.sender}</div>` : ''}
+                <div>${escapeHtml(msg.text)}</div>
+                ${time ? `<div class="chat-time">${time}</div>` : ''}
+            `;
+            
+            container.appendChild(div);
+            scrollToBottom();
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chatMessages');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addSystemMessage(text) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'chat-message system';
+            div.innerHTML = `<div>${text}</div>`;
+            container.appendChild(div);
+            scrollToBottom();
+        }
+
+        // ==================== ANÁLISE AVANÇADA DE INTENÇÕES DO ADVERSÁRIO ====================
+
+        const INTENTION_TYPES = {
+            AGGRESSIVE_ATTACK: {
+                icon: '⚔️',
+                name: 'Ataque Agressivo',
+                description: 'Adversário busca capturas imediatas ou xeque'
+            },
+            POSITIONAL_IMPROVEMENT: {
+                icon: '📐',
+                name: 'Melhoria Posicional',
+                description: 'Busca melhorar posição das peças sem riscos'
+            },
+            DEFENSIVE_MANEUVER: {
+                icon: '🛡️',
+                name: 'Manobra Defensiva',
+                description: 'Protege peças ameaçadas ou reforça defesa'
+            },
+            TACTICAL_TRAP: {
+                icon: '🕸️',
+                name: 'Armadilha Tática',
+                description: 'Prepara enlace, garfo ou outro motivo tático'
+            },
+            KING_SAFETY: {
+                icon: '👑',
+                name: 'Segurança do Rei',
+                description: 'Prioriza roque ou fuga do rei'
+            },
+            COUNTER_ATTACK: {
+                icon: '↩️',
+                name: 'Contra-ataque',
+                description: 'Responde à ameaça com ameaça própria'
+            },
+            MATERIAL_GAIN: {
+                icon: '💎',
+                name: 'Ganho Material',
+                description: 'Busca capturar peças de maior valor'
+            },
+            SACRIFICE_ATTACK: {
+                icon: '🔥',
+                name: 'Sacrifício',
+                description: 'Oferece material para ataque decisivo'
+            },
+            PROPHYLAXIS: {
+                icon: '🛑',
+                name: 'Profilaxia',
+                description: 'Impede planos do adversário antes que comecem'
+            },
+            ENDGAME_TECHNIQUE: {
+                icon: '🎯',
+                name: 'Técnica de Final',
+                description: 'Simplifica para vantagem no final'
+            },
+            PAWN_PUSH: {
+                icon: '🚶',
+                name: 'Avanço de Peão',
+                description: 'Busca promoção ou espaço no tabuleiro'
+            },
+            PIECE_DEVELOPMENT: {
+                icon: '🚀',
+                name: 'Desenvolvimento',
+                description: 'Traz peças para jogo ativo'
+            },
+            CHECKMATE_THREAT: {
+                icon: '☠️',
+                name: 'Ameaça de Xeque-Mate',
+                description: 'Prepara padrão de mate imediato'
+            },
+            DRAW_SEEKING: {
+                icon: '🤝',
+                name: 'Busca de Empate',
+                description: 'Jogador em desvantagem busca repetição'
+            },
+            TIME_PRESSURE: {
+                icon: '⏱️',
+                name: 'Pressão de Tempo',
+                description: 'Jogadas rápidas indicam pouco tempo'
+            }
+        };
+
+        function analyzeOpponentIntentions() {
+            const opponentColor = gameState.myColor === 'white' ? 'black' : 'white';
+            const board = gameState.board;
+            const intentions = [];
+            
+            // 1. Análise de Táticas Imediatas
+            const tacticalMoves = findTacticalMoves(board, opponentColor);
+            if (tacticalMoves.length > 0) {
+                const bestTactical = tacticalMoves[0];
+                intentions.push({
+                    type: 'TACTICAL_TRAP',
+                    probability: Math.min(95, 60 + tacticalMoves.length * 10),
+                    priority: 'high',
+                    moves: tacticalMoves.slice(0, 3).map(m => ({
+                        from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                        to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                        piece: m.piece,
+                        description: m.description
+                    })),
+                    reasoning: `Detectado ${tacticalMoves.length} motivo(s) tático(s). O adversário pode criar garfos, enlaçamentos ou descobertos.`,
+                    counterStrategy: 'Verifique todas as suas peças - o adversário provavelmente atacará onde você menos espera.'
+                });
+            }
+            
+            // 2. Análise de Ataque ao Rei
+            const kingAttacks = findKingAttackMoves(board, opponentColor);
+            if (kingAttacks.length > 0) {
+                const severity = calculateAttackSeverity(board, kingAttacks, opponentColor);
+                intentions.push({
+                    type: 'AGGRESSIVE_ATTACK',
+                    probability: Math.min(90, 50 + severity * 15),
+                    priority: severity > 2 ? 'critical' : 'high',
+                    moves: kingAttacks.slice(0, 3).map(m => ({
+                        from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                        to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                        piece: m.piece,
+                        description: m.description
+                    })),
+                    reasoning: `O rei está sob ${severity > 2 ? 'FORTE' : 'moderada'} pressão. ${kingAttacks.length} caminho(s) de ataque identificado(s).`,
+                    counterStrategy: severity > 2 ? 'URGENTE: Proteja o rei imediatamente ou faça roque!' : 'Considere reforçar a defesa do rei.'
+                });
+            }
+            
+            // 3. Análise de Capturas de Material
+            const captureMoves = findCaptureMoves(board, opponentColor);
+            const valuableCaptures = captureMoves.filter(m => m.value > 100);
+            if (valuableCaptures.length > 0) {
+                intentions.push({
+                    type: 'MATERIAL_GAIN',
+                    probability: Math.min(85, 40 + valuableCaptures.length * 15),
+                    priority: valuableCaptures[0].value > 300 ? 'high' : 'medium',
+                    moves: valuableCaptures.slice(0, 3).map(m => ({
+                        from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                        to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                        piece: m.piece,
+                        description: `Captura ${m.target} (+${m.value/100})`
+                    })),
+                    reasoning: `${valuableCaptures.length} peça(s) suas estão vulneráveis. Melhor captura: +${valuableCaptures[0].value/100} pontos.`,
+                    counterStrategy: 'Proteja peças indefesas ou faça troca favorável.'
+                });
+            }
+            
+            // 4. Análise de Xeque-Mate
+            const mateThreats = findMateThreats(board, opponentColor);
+            if (mateThreats.length > 0) {
+                intentions.push({
+                    type: 'CHECKMATE_THREAT',
+                    probability: 95,
+                    priority: 'critical',
+                    moves: mateThreats.slice(0, 2).map(m => ({
+                        from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                        to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                        piece: m.piece,
+                        description: 'Ameaça de mate'
+                    })),
+                    reasoning: '🚨 DETECTADO: Padrão de xeque-mate em preparação! Ameaça iminente!',
+                    counterStrategy: 'DEFESA PRIORITÁRIA: Bloqueie, capture ou fuja! Esta é uma ameaça existencial!'
+                });
+            }
+            
+            // 5. Análise de Profilaxia (bloquear planos)
+            const myThreats = findMyThreats(board, opponentColor);
+            const blockingMoves = findBlockingMoves(board, opponentColor, myThreats);
+            if (blockingMoves.length > 0 && myThreats.length > 0) {
+                intentions.push({
+                    type: 'PROPHYLAXIS',
+                    probability: Math.min(80, 30 + blockingMoves.length * 12),
+                    priority: 'medium',
+                    moves: blockingMoves.slice(0, 2).map(m => ({
+                        from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                        to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                        piece: m.piece,
+                        description: 'Bloqueia seu plano'
+                    })),
+                    reasoning: 'O adversário percebeu sua ameaça e pode tentar neutralizá-la preventivamente.',
+                    counterStrategy: 'Mantenha pressão ou mude de plano se ele bloquear.'
+                });
+            }
+            
+            // 6. Análise de Contra-ataque
+            if (isInCheck(gameState.myColor)) {
+                const counterMoves = findCounterAttackMoves(board, opponentColor);
+                if (counterMoves.length > 0) {
+                    intentions.push({
+                        type: 'COUNTER_ATTACK',
+                        probability: 70,
+                        priority: 'high',
+                        moves: counterMoves.slice(0, 2).map(m => ({
+                            from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                            to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                            piece: m.piece,
+                            description: 'Contra-ataque'
+                        })),
+                        reasoning: 'Em xeque, o adversário provavelmente buscará contra-ataque em vez de defesa passiva.',
+                        counterStrategy: 'Verifique se sua jogada deixa vulnerabilidades - ele pode ignorar o xeque e atacar!'
+                    });
+                }
+            }
+            
+            // 7. Análise de Desenvolvimento (abertura/meio-jogo)
+            if (gameState.moveHistory.length < 20) {
+                const developmentMoves = findDevelopmentMoves(board, opponentColor);
+                if (developmentMoves.length > 0) {
+                    intentions.push({
+                        type: 'PIECE_DEVELOPMENT',
+                        probability: Math.max(30, 60 - gameState.moveHistory.length * 2),
+                        priority: 'low',
+                        moves: developmentMoves.slice(0, 2).map(m => ({
+                            from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                            to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                            piece: m.piece,
+                            description: 'Desenvolvimento'
+                        })),
+                        reasoning: 'Fase de abertura: adversário provavelmente continuará desenvolvendo peças.',
+                        counterStrategy: 'Desenvolva você também, mas priorize controle do centro.'
+                    });
+                }
+            }
+            
+            // 8. Análise de Avanço de Peão
+            const pawnMoves = findPawnPushMoves(board, opponentColor);
+            const dangerousPawns = pawnMoves.filter(m => m.dangerous);
+            if (dangerousPawns.length > 0) {
+                intentions.push({
+                    type: 'PAWN_PUSH',
+                    probability: Math.min(75, 40 + dangerousPawns.length * 15),
+                    priority: dangerousPawns.some(p => p.promotionThreat) ? 'high' : 'medium',
+                    moves: dangerousPawns.slice(0, 2).map(m => ({
+                        from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                        to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                        piece: m.piece,
+                        description: m.promotionThreat ? 'Peão passado!' : 'Avanço perigoso'
+                    })),
+                    reasoning: `${dangerousPawns.length} peão(ões) ameaçando avanço significativo${dangerousPawns.some(p => p.promotionThreat) ? ' com PROMOÇÃO iminente!' : '.'}`,
+                    counterStrategy: dangerousPawns.some(p => p.promotionThreat) ? 'BLOQUEIE OU CAPTURE IMEDIATAMENTE!' : 'Monitore o avanço dos peões.'
+                });
+            }
+            
+            // 9. Análise de Sacrifício
+            const sacrificeOpportunities = findSacrificeOpportunities(board, opponentColor);
+            if (sacrificeOpportunities.length > 0) {
+                intentions.push({
+                    type: 'SACRIFICE_ATTACK',
+                    probability: Math.min(70, sacrificeOpportunities[0].compensation > 500 ? 65 : 40),
+                    priority: sacrificeOpportunities[0].compensation > 800 ? 'high' : 'medium',
+                    moves: [({
+                        from: `${String.fromCharCode(97+sacrificeOpportunities[0].from.col)}${8-sacrificeOpportunities[0].from.row}`,
+                        to: `${String.fromCharCode(97+sacrificeOpportunities[0].to.col)}${8-sacrificeOpportunities[0].to.row}`,
+                        piece: sacrificeOpportunities[0].piece,
+                        description: `Sacrifício por ${sacrificeOpportunities[0].compensation/100}`
+                    })],
+                    reasoning: `Possível sacrifício detectado: perde ${sacrificeOpportunities[0].cost/100} mas ganha ${sacrificeOpportunities[0].compensation/100} em compensação.`,
+                    counterStrategy: 'Cuidado: não aceite material se abrir linhas para ataque ao seu rei!'
+                });
+            }
+            
+            // 10. Análise de Segurança do Rei (Roque)
+            const kingSafetyMoves = findKingSafetyMoves(board, opponentColor);
+            if (kingSafetyMoves.length > 0 && gameState.moveHistory.length < 25) {
+                intentions.push({
+                    type: 'KING_SAFETY',
+                    probability: Math.min(80, 50 + kingSafetyMoves.length * 10),
+                    priority: isKingExposed(board, opponentColor) ? 'high' : 'medium',
+                    moves: kingSafetyMoves.slice(0, 2).map(m => ({
+                        from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                        to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                        piece: m.piece,
+                        description: m.castling ? 'Roque' : 'Fuga do rei'
+                    })),
+                    reasoning: isKingExposed(board, opponentColor) ? 'Rei adversário exposto - provavelmente buscará segurança.' : 'Oportunidade de roque para segurança.',
+                    counterStrategy: 'Impeça o roque mantendo pressão ou bloqueando caminho.'
+                });
+            }
+            
+            // 11. Análise de Empate (se em desvantagem)
+            if (isMaterialDown(board, opponentColor)) {
+                const drawMoves = findDrawMoves(board, opponentColor);
+                if (drawMoves.length > 0) {
+                    intentions.push({
+                        type: 'DRAW_SEEKING',
+                        probability: 60,
+                        priority: 'low',
+                        moves: drawMoves.slice(0, 2).map(m => ({
+                            from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                            to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                            piece: m.piece,
+                            description: 'Busca empate'
+                        })),
+                        reasoning: 'Adversário em desvantagem material pode buscar repetição ou simplificação.',
+                        counterStrategy: 'Evite repetições de posição, mantenha peças ativas.'
+                    });
+                }
+            }
+            
+            // 12. Análise de Melhoria Posicional
+            const positionalMoves = findPositionalMoves(board, opponentColor);
+            if (positionalMoves.length > 0 && intentions.length < 5) {
+                intentions.push({
+                    type: 'POSITIONAL_IMPROVEMENT',
+                    probability: 40,
+                    priority: 'low',
+                    moves: positionalMoves.slice(0, 2).map(m => ({
+                        from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                        to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                        piece: m.piece,
+                        description: 'Melhoria posicional'
+                    })),
+                    reasoning: 'Sem ameaças imediatas, adversário provavelmente melhorará posição das peças.',
+                    counterStrategy: 'Aproveite para melhorar sua posição também ou crie ameaças.'
+                });
+            }
+            
+            // 13. Análise de Defesa (se peças ameaçadas)
+            const threatenedPieces = findThreatenedPieces(board, opponentColor);
+            if (threatenedPieces.length > 0) {
+                const defenseMoves = findDefensiveMoves(board, opponentColor, threatenedPieces);
+                if (defenseMoves.length > 0) {
+                    intentions.push({
+                        type: 'DEFENSIVE_MANEUVER',
+                        probability: Math.min(85, 50 + threatenedPieces.length * 15),
+                        priority: threatenedPieces.some(p => p.value > 300) ? 'high' : 'medium',
+                        moves: defenseMoves.slice(0, 2).map(m => ({
+                            from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                            to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                            piece: m.piece,
+                            description: 'Defesa'
+                        })),
+                        reasoning: `${threatenedPieces.length} peça(s) adversária(s) ameaçada(s). Deve defender ou trocar.`,
+                        counterStrategy: 'Mantenha a pressão - se ele defender, você ganha tempo.'
+                    });
+                }
+            }
+            
+            // 14. Análise de Técnica de Final
+            if (isEndgame(board)) {
+                const endgameMoves = findEndgameTechniqueMoves(board, opponentColor);
+                if (endgameMoves.length > 0) {
+                    intentions.push({
+                        type: 'ENDGAME_TECHNIQUE',
+                        probability: 55,
+                        priority: 'medium',
+                        moves: endgameMoves.slice(0, 2).map(m => ({
+                            from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
+                            to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
+                            piece: m.piece,
+                            description: 'Técnica de final'
+                        })),
+                        reasoning: 'Fase final: adversário buscará simplificar ou promover peões.',
+                        counterStrategy: 'Ative seu rei, avance peões passados, evite simplificações desfavoráveis.'
+                    });
+                }
+            }
+            
+            // Ordenar por prioridade e probabilidade
+            const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+            intentions.sort((a, b) => {
+                if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                    return priorityOrder[a.priority] - priorityOrder[b.priority];
+                }
+                return b.probability - a.probability;
+            });
+            
+            // Limitar a 8 intenções mais relevantes
+            return intentions.slice(0, 8);
+        }
+
+        // Funções auxiliares de análise de intenções
+        function findTacticalMoves(board, color) {
+            const moves = [];
+            const allMoves = generateAllMoves(board, color);
+            
+            for (let move of allMoves) {
+                const testBoard = simulateMove(board, move);
+                const myColor = color === 'white' ? 'black' : 'white';
+                
+                // Verificar se cria garfo
+                const forkScore = evaluateFork(testBoard, move.to, color);
+                if (forkScore > 0) {
+                    moves.push({...move, description: `Garfo (+${forkScore/100})`, score: forkScore});
+                    continue;
+                }
+                
+                // Verificar se cria enlace
+                const pinScore = evaluatePin(testBoard, move.to, color);
+                if (pinScore > 0) {
+                    moves.push({...move, description: 'Enlace', score: pinScore});
+                    continue;
+                }
+                
+                // Verificar descoberto
+                const discoveredScore = evaluateDiscovered(testBoard, move.from, move.to, color);
+                if (discoveredScore > 0) {
+                    moves.push({...move, description: 'Descoberto', score: discoveredScore});
+                }
+            }
+            
+            return moves.sort((a, b) => b.score - a.score);
+        }
+
+        function findKingAttackMoves(board, color) {
+            const moves = [];
+            const myColor = color === 'white' ? 'black' : 'white';
+            const kingPos = findKing(board, myColor);
+            if (!kingPos) return moves;
+            
+            const allMoves = generateAllMoves(board, color);
+            
+            for (let move of allMoves) {
+                // Verificar se ataca casas próximas ao rei
+                const distToKing = Math.abs(move.to.row - kingPos.row) + Math.abs(move.to.col - kingPos.col);
+                if (distToKing <= 2) {
+                    const testBoard = simulateMove(board, move);
+                    if (isSquareAttacked(kingPos.row, kingPos.col, myColor, testBoard)) {
+                        moves.push({...move, description: 'Ataque ao rei', severity: 3});
+                    } else if (distToKing <= 1) {
+                        moves.push({...move, description: 'Aproximação do rei', severity: 2});
+                    }
+                }
+            }
+            
+            return moves;
+        }
+
+        function findMateThreats(board, color) {
+            const moves = [];
+            const allMoves = generateAllMoves(board, color);
+            const myColor = color === 'white' ? 'black' : 'white';
+            
+            for (let move of allMoves) {
+                const testBoard = simulateMove(board, move);
+                
+                // Verificar se dá xeque
+                const kingPos = findKing(testBoard, myColor);
+                if (!kingPos || !isSquareAttacked(kingPos.row, kingPos.col, myColor, testBoard)) continue;
+                
+                // Verificar se é mate ou mate em 1
+                if (isCheckmateAfterMove(testBoard, myColor)) {
+                    moves.push({...move, description: 'Xeque-mate!', mate: true});
+                } else {
+                    // Verificar ameaça de mate na próxima
+                    const myMoves = generateAllMoves(testBoard, myColor);
+                    let canEscape = false;
+                    
+                    for (let myMove of myMoves) {
+                        const escapeBoard = simulateMove(testBoard, myMove);
+                        const newKingPos = findKing(escapeBoard, myColor);
+                        if (newKingPos && !isCheckmateAfterMove(escapeBoard, myColor)) {
+                            canEscape = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!canEscape) {
+                        moves.push({...move, description: 'Ameaça de mate imediato'});
+                    }
+                }
+            }
+            
+            return moves;
+        }
+
+        function findCaptureMoves(board, color) {
+            const moves = [];
+            const myColor = color === 'white' ? 'black' : 'white';
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    if (color === 'white' ? piece !== piece.toUpperCase() : piece !== piece.toLowerCase()) continue;
+                    
+                    const attacks = getAttacks(r, c, board, piece);
+                    for (let att of attacks) {
+                        const target = board[att.row] && board[att.row][att.col];
+                        if (target && (myColor === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
+                            const value = PIECE_VALUES[target.toLowerCase()];
+                            moves.push({
+                                from: {row: r, col: c},
+                                to: {row: att.row, col: att.col},
+                                piece: piece,
+                                target: target,
+                                value: value,
+                                description: `Captura ${PIECES[target]}`
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return moves.sort((a, b) => b.value - a.value);
+        }
+
+        function findMyThreats(board, opponentColor) {
+            const myColor = opponentColor === 'white' ? 'black' : 'white';
+            const threats = [];
+            
+            // Encontrar todas as ameaças que eu (Fernando) tenho
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    if (myColor === 'white' ? piece !== piece.toUpperCase() : piece !== piece.toLowerCase()) continue;
+                    
+                    const attacks = getAttacks(r, c, board, piece);
+                    for (let att of attacks) {
+                        const target = board[att.row] && board[att.row][att.col];
+                        if (target && (opponentColor === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
+                            threats.push({
+                                from: {row: r, col: c},
+                                to: {row: att.row, col: att.col},
+                                piece: piece,
+                                target: target,
+                                value: PIECE_VALUES[target.toLowerCase()]
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return threats;
+        }
+
+        function findBlockingMoves(board, color, threats) {
+            const blocks = [];
+            if (threats.length === 0) return blocks;
+            
+            const allMoves = generateAllMoves(board, color);
+            
+            for (let move of allMoves) {
+                const testBoard = simulateMove(board, move);
+                // Verificar se bloqueia alguma ameaça
+                let blockedValue = 0;
+                for (let threat of threats) {
+                    if (!isSquareAttacked(threat.to.row, threat.to.col, color === 'white' ? 'black' : 'white', testBoard)) {
+                        blockedValue += threat.value;
+                    }
+                }
+                if (blockedValue > 0) {
+                    blocks.push({...move, blockedValue});
+                }
+            }
+            
+            return blocks.sort((a, b) => b.blockedValue - a.blockedValue);
+        }
+
+        function findDevelopmentMoves(board, color) {
+            const moves = [];
+            const backRank = color === 'white' ? 7 : 0;
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    if (color === 'white' ? piece !== piece.toUpperCase() : piece !== piece.toLowerCase()) continue;
+                    
+                    const type = piece.toLowerCase();
+                    if (type === 'n' || type === 'b') {
+                        if (r === backRank) {
+                            const validMoves = getValidMoves(r, c, board, color);
+                            for (let m of validMoves) {
+                                if (m.row !== backRank) {
+                                    moves.push({
+                                        from: {row: r, col: c},
+                                        to: m,
+                                        piece: piece,
+                                        description: `Desenvolve ${type === 'n' ? 'cavalo' : 'bispo'}`
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return moves;
+        }
+
+        function findPawnPushMoves(board, color) {
+            const moves = [];
+            const direction = color === 'white' ? -1 : 1;
+            const promotionRank = color === 'white' ? 0 : 7;
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece || piece.toLowerCase() !== 'p') continue;
+                    if (color === 'white' ? piece !== piece.toUpperCase() : piece !== piece.toLowerCase()) continue;
+                    
+                    // Verificar avanço simples
+                    const nextRow = r + direction;
+                    if (isValid(nextRow, c) && !board[nextRow][c]) {
+                        const isDangerous = Math.abs(nextRow - promotionRank) <= 3;
+                        const isPromotion = nextRow === promotionRank;
+                        
+                        moves.push({
+                            from: {row: r, col: c},
+                            to: {row: nextRow, col: c},
+                            piece: piece,
+                            dangerous: isDangerous,
+                            promotionThreat: isPromotion,
+                            description: isPromotion ? 'Promoção iminente!' : 'Avanço de peão'
+                        });
+                        
+                        // Duplo avanço
+                        const startRank = color === 'white' ? 6 : 1;
+                        if (r === startRank) {
+                            const twoRow = r + 2 * direction;
+                            if (!board[twoRow][c]) {
+                                moves.push({
+                                    from: {row: r, col: c},
+                                    to: {row: twoRow, col: c},
+                                    piece: piece,
+                                    dangerous: false,
+                                    promotionThreat: false,
+                                    description: 'Avanço duplo'
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return moves.sort((a, b) => (b.dangerous ? 1 : 0) - (a.dangerous ? 1 : 0));
+        }
+
+        function findSacrificeOpportunities(board, color) {
+            const sacrifices = [];
+            const allMoves = generateAllMoves(board, color);
+            const myColor = color === 'white' ? 'black' : 'white';
+            
+            for (let move of allMoves) {
+                const piece = board[move.from.row][move.from.col];
+                const pieceValue = PIECE_VALUES[piece.toLowerCase()];
+                
+                // Verificar se é captura de peça de menor valor
+                const target = board[move.to.row] && board[move.to.row][move.to.col];
+                if (!target) continue;
+                
+                const targetValue = PIECE_VALUES[target.toLowerCase()];
+                if (pieceValue <= targetValue) continue; // Não é sacrifício
+                
+                const testBoard = simulateMove(board, move);
+                
+                // Calcular compensação (ataque ao rei, abertura de linhas, etc)
+                let compensation = 0;
+                const kingPos = findKing(testBoard, myColor);
+                if (kingPos) {
+                    // Bônus por abrir linhas para ataque
+                    compensation += evaluateAttackPotential(testBoard, kingPos, color) * 50;
+                    
+                    // Bônus por ganho de tempo (desenvolvimento acelerado)
+                    compensation += 100;
+                    
+                    // Bônus por iniciativa
+                    if (isSquareAttacked(kingPos.row, kingPos.col, myColor, testBoard)) {
+                        compensation += 200;
+                    }
+                }
+                
+                if (compensation > pieceValue * 0.7) {
+                    sacrifices.push({
+                        ...move,
+                        cost: pieceValue,
+                        compensation: compensation,
+                        description: `Sacrifício por ${compensation/100}`
+                    });
+                }
+            }
+            
+            return sacrifices.sort((a, b) => b.compensation - a.compensation);
+        }
+
+        function findKingSafetyMoves(board, color) {
+            const moves = [];
+            const kingPos = findKing(board, color);
+            if (!kingPos) return moves;
+            
+            // Verificar roque
+            if (canCastle(color, 'kingSide', board)) {
+                moves.push({
+                    from: kingPos,
+                    to: {row: kingPos.row, col: 6},
+                    piece: color === 'white' ? 'K' : 'k',
+                    castling: 'kingSide',
+                    description: 'Roque pequeno'
+                });
+            }
+            if (canCastle(color, 'queenSide', board)) {
+                moves.push({
+                    from: kingPos,
+                    to: {row: kingPos.row, col: 2},
+                    piece: color === 'white' ? 'K' : 'k',
+                    castling: 'queenSide',
+                    description: 'Roque grande'
+                });
+            }
+            
+            // Verificar fugas do rei se em xeque
+            if (isInCheck(color, board)) {
+                const kingMoves = getValidMoves(kingPos.row, kingPos.col, board, color);
+                for (let m of kingMoves) {
+                    moves.push({
+                        from: kingPos,
+                        to: m,
+                        piece: color === 'white' ? 'K' : 'k',
+                        description: 'Fuga do rei'
+                    });
+                }
+            }
+            
+            return moves;
+        }
+
+        function findCounterAttackMoves(board, color) {
+            const moves = [];
+            const myColor = color === 'white' ? 'black' : 'white';
+            const myKingPos = findKing(board, myColor);
+            
+            if (!myKingPos) return moves;
+            
+            const allMoves = generateAllMoves(board, color);
+            
+            for (let move of allMoves) {
+                const testBoard = simulateMove(board, move);
+                // Contra-ataque: ignorar xeque e atacar peça valiosa ou dar xeque
+                const target = board[move.to.row] && board[move.to.row][move.to.col];
+                const givesCheck = isSquareAttacked(myKingPos.row, myKingPos.col, myColor, testBoard);
+                
+                if ((target && PIECE_VALUES[target.toLowerCase()] > 200) || givesCheck) {
+                    moves.push({
+                        ...move,
+                        description: givesCheck ? 'Contra-xeque!' : 'Contra-ataque'
+                    });
+                }
+            }
+            
+            return moves;
+        }
+
+        function findDrawMoves(board, color) {
+            const moves = [];
+            // Simplificação: movimentos que levam a posições repetidas ou simplificação
+            // Implementação simplificada
+            return moves;
+        }
+
+        function findPositionalMoves(board, color) {
+            const moves = [];
+            const allMoves = generateAllMoves(board, color);
+            
+            for (let move of allMoves) {
+                // Avaliar ganho posicional (controle de centro, espaço, etc)
+                const positionalGain = evaluatePositionalGain(board, move);
+                if (positionalGain > 20) {
+                    moves.push({
+                        ...move,
+                        description: `+${positionalGain} posicional`
+                    });
+                }
+            }
+            
+            return moves.sort((a, b) => b.positionalGain - a.positionalGain);
+        }
+
+        function findThreatenedPieces(board, color) {
+            const threatened = [];
+            const myColor = color === 'white' ? 'black' : 'white';
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    if (color === 'white' ? piece !== piece.toUpperCase() : piece !== piece.toLowerCase()) continue;
+                    
+                    if (isSquareAttacked(r, c, color, board)) {
+                        const defenders = isSquareDefended(r, c, color, board);
+                        if (!defenders || defenders.length === 0) {
+                            threatened.push({
+                                row: r,
+                                col: c,
+                                piece: piece,
+                                value: PIECE_VALUES[piece.toLowerCase()]
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return threatened.sort((a, b) => b.value - a.value);
+        }
+
+        function findDefensiveMoves(board, color, threatenedPieces) {
+            const defenses = [];
+            const allMoves = generateAllMoves(board, color);
+            
+            for (let move of allMoves) {
+                const testBoard = simulateMove(board, move);
+                let savedValue = 0;
+                
+                for (let threat of threatenedPieces) {
+                    if (!isSquareAttacked(threat.row, threat.col, color, testBoard)) {
+                        savedValue += threat.value;
+                    }
+                }
+                
+                if (savedValue > 0) {
+                    defenses.push({
+                        ...move,
+                        savedValue,
+                        description: `Salva ${savedValue/100}`
+                    });
+                }
+            }
+            
+            return defenses.sort((a, b) => b.savedValue - a.savedValue);
+        }
+
+        function findEndgameTechniqueMoves(board, color) {
+            const moves = [];
+            if (!isEndgame(board)) return moves;
+            
+            const allMoves = generateAllMoves(board, color);
+            
+            for (let move of allMoves) {
+                // Priorizar promoção de peões
+                const piece = board[move.from.row][move.from.col];
+                if (piece && piece.toLowerCase() === 'p') {
+                    const promotionRank = color === 'white' ? 0 : 7;
+                    if (Math.abs(move.to.row - promotionRank) <= 2) {
+                        moves.push({
+                            ...move,
+                            description: 'Peão passado!'
+                        });
+                    }
+                }
+            }
+            
+            return moves;
+        }
+
+        // Funções de avaliação auxiliares
+        function evaluateFork(board, pos, color) {
+            let forkScore = 0;
+            const attacks = getAttacks(pos.row, pos.col, board, board[pos.row][pos.col]);
+            const myColor = color === 'white' ? 'black' : 'white';
+            
+            let highValueTargets = 0;
+            for (let att of attacks) {
+                const target = board[att.row] && board[att.row][att.col];
+                if (target && (myColor === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
+                    const value = PIECE_VALUES[target.toLowerCase()];
+                    if (value >= 300) highValueTargets++;
+                    forkScore += value;
+                }
+            }
+            
+            return highValueTargets >= 2 ? forkScore : 0;
+        }
+
+        function evaluatePin(board, pos, color) {
+            // Simplificação: verificar se peça ataca outra através de uma intermediária
+            return 0; // Implementação complexa omitida para brevidade
+        }
+
+        function evaluateDiscovered(board, from, to, color) {
+            // Verificar se movimento descobre ataque de outra peça
+            let discoveredScore = 0;
+            // Implementação simplificada
+            return discoveredScore;
+        }
+
+        function evaluateAttackPotential(board, kingPos, color) {
+            let potential = 0;
+            // Contar peças atacando área do rei
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    if (color === 'white' ? piece !== piece.toUpperCase() : piece !== piece.toLowerCase()) continue;
+                    
+                    const distToKing = Math.abs(r - kingPos.row) + Math.abs(c - kingPos.col);
+                    if (distToKing <= 3) potential++;
+                }
+            }
+            return potential;
+        }
+
+        function evaluatePositionalGain(board, move) {
+            // Avaliar melhoria na PST
+            const piece = board[move.from.row][move.from.col];
+            const type = piece.toLowerCase();
+            const color = piece === piece.toUpperCase() ? 'white' : 'black';
+            
+            if (!PST[type]) return 0;
+            
+            const fromRow = color === 'white' ? 7 - move.from.row : move.from.row;
+            const toRow = color === 'white' ? 7 - move.to.row : move.to.row;
+            
+            const fromValue = PST[type][fromRow][move.from.col];
+            const toValue = PST[type][toRow][move.to.col];
+            
+            return toValue - fromValue;
+        }
+
+        function isKingExposed(board, color) {
+            const kingPos = findKing(board, color);
+            if (!kingPos) return false;
+            
+            // Verificar se rei está no centro ou peças próximas foram movidas
+            const centerDist = Math.abs(kingPos.row - 3.5) + Math.abs(kingPos.col - 3.5);
+            return centerDist > 2; // Rei não está em posição segura
+        }
+
+        function isMaterialDown(board, color) {
+            let myMaterial = 0;
+            let oppMaterial = 0;
+            const myColor = color;
+            const oppColor = color === 'white' ? 'black' : 'white';
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    
+                    const value = PIECE_VALUES[piece.toLowerCase()];
+                    if (piece.toLowerCase() === 'k') continue;
+                    
+                    if (myColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase()) {
+                        myMaterial += value;
+                    } else {
+                        oppMaterial += value;
+                    }
+                }
+            }
+            
+            return myMaterial < oppMaterial - 150;
+        }
+
+        function isEndgame(board) {
+            let queens = 0;
+            let minorPieces = 0;
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    
+                    const type = piece.toLowerCase();
+                    if (type === 'q') queens++;
+                    if (type === 'n' || type === 'b') minorPieces++;
+                }
+            }
+            
+            return queens === 0 || (queens <= 2 && minorPieces <= 4);
+        }
+
+        function isCheckmateAfterMove(board, color) {
+            if (!isInCheck(color, board)) return false;
+            
+            // Verificar se há movimentos legais
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (!piece) continue;
+                    if (color === 'white' ? piece !== piece.toUpperCase() : piece !== piece.toLowerCase()) continue;
+                    
+                    const moves = getValidMoves(r, c, board, color);
+                    if (moves.length > 0) return false;
+                }
+            }
+            
+            return true;
+        }
+
+                function calculateAttackSeverity(board, attacks, color) {
+            let severity = 0;
+            const myColor = color === 'white' ? 'black' : 'white';
+            const kingPos = findKing(board, myColor);
+            
+            if (!kingPos) return 0;
+            
+            for (let attack of attacks) {
+                const dist = Math.abs(attack.to.row - kingPos.row) + Math.abs(attack.to.col - kingPos.col);
+                if (dist <= 1) severity += 3;
+                else if (dist <= 2) severity += 2;
+                else severity += 1;
+            }
+            
+            return severity;
+        }
+
+        // Perfil Psicológico do Adversário
+        function analyzeOpponentPsychology() {
+            if (!gameState.opponentMoveHistory || gameState.opponentMoveHistory.length === 0) {
+                return null;
+            }
+            
+            const history = gameState.opponentMoveHistory;
+            const totalMoves = history.length;
+            
+            // Calcular métricas psicológicas
+            const metrics = {
+                // Agressividade: % de movimentos que capturam ou dão xeque
+                aggressiveness: 0,
+                
+                // Defensividade: % de movimentos defensivos
+                defensiveness: 0,
+                
+                // Tendência a riscos: jogadas arriscadas / total
+                riskTaking: 0,
+                
+                // Consistência: variância no tempo de jogada
+                consistency: 0,
+                
+                // Adaptabilidade: mudanças de plano
+                adaptability: 0,
+                
+                // Paciência: jogadas posicionais vs táticas
+                patience: 0,
+                
+                // Confiança: material sacrificado vs ganho
+                confidence: 0,
+                
+                // Estilo preferido
+                preferredStyle: 'equilibrado',
+                
+                // Padrão de tempo
+                timePattern: 'normal',
+                
+                // Tendência de erro
+                blunderProne: 0
+            };
+            
+            let captureMoves = 0;
+            let checkMoves = 0;
+            let defensiveMoves = 0;
+            let riskyMoves = 0;
+            let positionalMoves = 0;
+            let sacrifices = 0;
+            let timeVariations = [];
+            
+            for (let i = 0; i < history.length; i++) {
+                const move = history[i];
+                
+                if (move.capture) captureMoves++;
+                if (move.check) checkMoves++;
+                if (move.defensive) defensiveMoves++;
+                if (move.risky) riskyMoves++;
+                if (move.positional) positionalMoves++;
+                if (move.sacrifice) sacrifices++;
+                
+                if (i > 0 && move.timestamp && history[i-1].timestamp) {
+                    const timeDiff = move.timestamp - history[i-1].timestamp;
+                    timeVariations.push(timeDiff);
+                }
+            }
+            
+            metrics.aggressiveness = Math.round(((captureMoves + checkMoves * 2) / totalMoves) * 100);
+            metrics.defensiveness = Math.round((defensiveMoves / totalMoves) * 100);
+            metrics.riskTaking = Math.round((riskyMoves / totalMoves) * 100);
+            metrics.patience = Math.round((positionalMoves / totalMoves) * 100);
+            metrics.confidence = Math.round((sacrifices / totalMoves) * 100);
+            
+            // Calcular consistência (desvio padrão dos tempos)
+            if (timeVariations.length > 3) {
+                const avg = timeVariations.reduce((a, b) => a + b, 0) / timeVariations.length;
+                const variance = timeVariations.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / timeVariations.length;
+                const stdDev = Math.sqrt(variance);
+                metrics.consistency = stdDev > 5000 ? 'irregular' : stdDev > 2000 ? 'moderada' : 'muito consistente';
+            }
+            
+            // Determinar estilo
+            if (metrics.aggressiveness > 60) {
+                metrics.preferredStyle = 'muito agressivo';
+            } else if (metrics.aggressiveness > 40) {
+                metrics.preferredStyle = 'agressivo';
+            } else if (metrics.defensiveness > 50) {
+                metrics.preferredStyle = 'defensivo';
+            } else if (metrics.patience > 50) {
+                metrics.preferredStyle = 'posicional';
+            }
+            
+            // Detectar padrão de tempo
+            const recentMoves = history.slice(-5);
+            const avgRecentTime = recentMoves.reduce((sum, m) => sum + (m.thinkTime || 30000), 0) / recentMoves.length;
+            if (avgRecentTime < 5000) metrics.timePattern = 'joga rápido';
+            else if (avgRecentTime > 20000) metrics.timePattern = 'pensativo';
+            
+            // Calcular tendência a erros (baseado em movimentos que perdem material)
+            let blunderCount = 0;
+            for (let move of history) {
+                if (move.materialLoss && move.materialLoss > 200) blunderCount++;
+            }
+            metrics.blunderProne = Math.round((blunderCount / totalMoves) * 100);
+            
+            return metrics;
+        }
+
+        function updateIntentionPanel() {
+            const panel = document.getElementById('opponentAnalysisPanel');
+            const list = document.getElementById('intentionList');
+            const profileDiv = document.getElementById('psychologyProfile');
+            
+            if (!gameState.isFernando || gameState.status !== 'playing') {
+                panel.classList.remove('active');
+                return;
+            }
+            
+            // Calcular intenções
+            gameState.opponentIntentions = analyzeOpponentIntentions();
+            gameState.opponentPsychology = analyzeOpponentPsychology();
+            
+            if (gameState.opponentIntentions.length === 0) {
+                panel.classList.remove('active');
+                return;
+            }
+            
+            panel.classList.add('active');
+            
+            // Renderizar intenções
+            let html = '';
+            gameState.opponentIntentions.forEach((intention, index) => {
+                const typeInfo = INTENTION_TYPES[intention.type];
+                const priorityColor = intention.priority === 'critical' ? '#ff0000' : 
+                                     intention.priority === 'high' ? '#ff6600' : 
+                                     intention.priority === 'medium' ? '#ffaa00' : '#aaaaaa';
+                
+                html += `
+                    <div class="intention-item" onclick="showIntentionDetail(${index})">
+                        <div class="intention-header">
+                            <div class="intention-type">
+                                <span style="font-size:1.3em;">${typeInfo.icon}</span>
+                                <span>${typeInfo.name}</span>
+                                ${intention.priority === 'critical' ? '<span style="color:#ff0000; font-size:0.7em; margin-left:5px;">🔴 CRÍTICO</span>' : ''}
+                            </div>
+                            <div class="intention-probability">${intention.probability}%</div>
+                        </div>
+                        <div class="intention-details">
+                            ${typeInfo.description}<br>
+                            <strong>Análise:</strong> ${intention.reasoning}
+                        </div>
+                        ${intention.moves.length > 0 ? `
+                            <div class="intention-moves">
+                                ${intention.moves.map(m => `
+                                    <div class="intention-move" onclick="event.stopPropagation(); highlightIntentionMove('${m.from}', '${m.to}')">
+                                        ${PIECES[m.piece]} ${m.from}→${m.to}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+            
+            // Renderizar perfil psicológico
+            if (gameState.opponentPsychology) {
+                const psych = gameState.opponentPsychology;
+                profileDiv.style.display = 'block';
+                document.getElementById('psychologyGrid').innerHTML = `
+                    <div class="psychology-stat">
+                        <span class="psychology-label">Estilo:</span>
+                        <span class="psychology-value">${psych.preferredStyle}</span>
+                    </div>
+                    <div class="psychology-stat">
+                        <span class="psychology-label">Agressividade:</span>
+                        <span class="psychology-value">${psych.aggressiveness}%</span>
+                    </div>
+                    <div class="psychology-stat">
+                        <span class="psychology-label">Paciência:</span>
+                        <span class="psychology-value">${psych.patience}%</span>
+                    </div>
+                    <div class="psychology-stat">
+                        <span class="psychology-label">Tendência a Riscos:</span>
+                        <span class="psychology-value">${psych.riskTaking}%</span>
+                    </div>
+                    <div class="psychology-stat">
+                        <span class="psychology-label">Confiança:</span>
+                        <span class="psychology-value">${psych.confidence}%</span>
+                    </div>
+                    <div class="psychology-stat">
+                        <span class="psychology-label">Consistência:</span>
+                        <span class="psychology-value">${psych.consistency}</span>
+                    </div>
+                    <div class="psychology-stat">
+                        <span class="psychology-label">Padrão Temporal:</span>
+                        <span class="psychology-value">${psych.timePattern}</span>
+                    </div>
+                    <div class="psychology-stat">
+                        <span class="psychology-label">Tendência a Erros:</span>
+                        <span class="psychology-value" style="color:${psych.blunderProne > 20 ? '#ff6666' : '#00ff00'}">${psych.blunderProne}%</span>
+                    </div>
+                `;
+            } else {
+                profileDiv.style.display = 'none';
+            }
+            
+            // Notificar sobre intenções críticas
+            const critical = gameState.opponentIntentions.find(i => i.priority === 'critical');
+            if (critical) {
+                const typeInfo = INTENTION_TYPES[critical.type];
+                showToast(
+                    '🚨 INTENÇÃO CRÍTICA DETECTADA!',
+                    `${typeInfo.icon} ${typeInfo.name}: ${critical.reasoning.substring(0, 100)}...`,
+                    'opponent',
+                    8000
+                );
+            }
+        }
+
+        function showIntentionDetail(index) {
+            const intention = gameState.opponentIntentions[index];
+            if (!intention) return;
+            
+            const typeInfo = INTENTION_TYPES[intention.type];
+            const modal = document.getElementById('intentionDetailModal');
+            const backdrop = document.getElementById('intentionBackdrop');
+            
+            document.getElementById('intentionDetailTitle').innerHTML = 
+                `${typeInfo.icon} ${typeInfo.name} (${intention.probability}%)`;
+            
+            let content = `
+                <p><strong>Descrição:</strong> ${typeInfo.description}</p>
+                <p><strong>Prioridade:</strong> <span style="color:${intention.priority === 'critical' ? '#ff0000' : intention.priority === 'high' ? '#ff6600' : '#aaaaaa'}">${intention.priority.toUpperCase()}</span></p>
+                <p><strong>Análise Detalhada:</strong><br>${intention.reasoning}</p>
+                <p><strong>Estratégia de Contra-ataque:</strong><br><span style="color:#00ff00;">${intention.counterStrategy}</span></p>
+            `;
+            
+            if (intention.moves.length > 0) {
+                content += `<p><strong>Movimentos Prováveis:</strong></p><ul>`;
+                intention.moves.forEach(m => {
+                    content += `<li>${PIECES[m.piece]} <strong>${m.from} → ${m.to}</strong>: ${m.description}</li>`;
+                });
+                content += `</ul>`;
+            }
+            
+            document.getElementById('intentionDetailContent').innerHTML = content;
+            
+            modal.classList.add('show');
+            backdrop.classList.add('show');
+        }
+
+        function closeIntentionDetail() {
+            document.getElementById('intentionDetailModal').classList.remove('show');
+            document.getElementById('intentionBackdrop').classList.remove('show');
+        }
+
+        function highlightIntentionMove(from, to) {
+            // Converter notação algébrica para coordenadas
+            const fromCol = from.charCodeAt(0) - 97;
+            const fromRow = 8 - parseInt(from[1]);
+            const toCol = to.charCodeAt(0) - 97;
+            const toRow = 8 - parseInt(to[1]);
+            
+            // Destacar no tabuleiro
+            const squares = document.querySelectorAll('.square');
+            squares.forEach(sq => {
+                const r = parseInt(sq.dataset.row);
+                const c = parseInt(sq.dataset.col);
+                
+                if (r === fromRow && c === fromCol) {
+                    sq.style.boxShadow = 'inset 0 0 30px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.6)';
+                    sq.style.border = '2px solid #ff0000';
+                    sq.style.zIndex = '20';
+                }
+                if (r === toRow && c === toCol) {
+                    sq.style.boxShadow = 'inset 0 0 30px rgba(255, 100, 0, 0.8), 0 0 40px rgba(255, 100, 0, 0.6)';
+                    sq.style.border = '2px solid #ff6400';
+                    sq.style.zIndex = '20';
+                }
+            });
+            
+            showToast(
+                '👁️ Movimento Previsto',
+                `O adversário provavelmente moverá de ${from} para ${to}`,
+                'opponent',
+                4000
+            );
+            
+            setTimeout(() => renderBoard(), 3000);
+        }
 
         // ==================== PERSISTÊNCIA LOCAL ====================
         
@@ -1901,6 +3722,8 @@
                 status: gameState.status,
                 moveHistory: gameState.moveHistory,
                 opponentMoveHistory: gameState.opponentMoveHistory,
+                opponentIntentions: gameState.opponentIntentions,
+                opponentPsychology: gameState.opponentPsychology,
                 finalPosition: gameState.finalPosition,
                 gameEndedAt: gameState.gameEndedAt,
                 timestamp: Date.now()
@@ -2036,332 +3859,7 @@
             return toast;
         }
 
-        // ==================== ANÁLISE DO ADVERSÁRIO E PREVISÕES ====================
-
-        function analyzeOpponentPatterns() {
-            const opponentColor = gameState.myColor === 'white' ? 'black' : 'white';
-            const opponentMoves = gameState.moveHistory.filter(m => m.color === opponentColor);
-            
-            if (opponentMoves.length === 0) return null;
-            
-            // Análise de padrões
-            const patterns = {
-                aggressive: 0,      // Prefere capturas/ataques
-                defensive: 0,       // Prefere movimentos seguros
-                positional: 0,      // Prefere controle de centro
-                tactical: 0,        // Busca motivos táticos
-                favoritePieces: {}, // Peças mais movimentadas
-                preferredOpenings: [], // Aberturas preferidas
-                blunders: 0,        // Erros óbvios
-                castlingSide: null  // Lado preferido do roque
-            };
-            
-            opponentMoves.forEach((move, index) => {
-                // Analisar agressividade
-                if (move.capture) patterns.aggressive++;
-                if (move.check) patterns.aggressive += 2;
-                
-                // Contar peças favoritas
-                const piece = move.piece.toLowerCase();
-                patterns.favoritePieces[piece] = (patterns.favoritePieces[piece] || 0) + 1;
-                
-                // Detectar roque
-                if (move.castling) {
-                    patterns.castlingSide = move.castling;
-                }
-                
-                // Analisar erros (perda de material sem compensação)
-                if (move.materialLoss && move.materialLoss > 200) {
-                    patterns.blunders++;
-                }
-            });
-            
-            // Calcular perfil do jogador
-            const totalMoves = opponentMoves.length;
-            patterns.aggressiveScore = (patterns.aggressive / totalMoves) * 100;
-            
-            return patterns;
-        }
-
-        function predictOpponentMoves() {
-            const opponentColor = gameState.myColor === 'white' ? 'black' : 'white';
-            const board = gameState.board;
-            const predictions = [];
-            
-            // Gerar todos os movimentos possíveis do adversário
-            const allMoves = generateAllMoves(board, opponentColor);
-            
-            // Analisar cada movimento e atribuir probabilidade
-            allMoves.forEach(move => {
-                let probability = 10; // Probabilidade base
-                let reasons = [];
-                
-                const piece = move.piece.toLowerCase();
-                const target = board[move.to.row] && board[move.to.row][move.to.col];
-                
-                // 1. Capturas de material (muito provável)
-                if (move.capture && target) {
-                    const targetValue = PIECE_VALUES[target.toLowerCase()];
-                    const attackerValue = PIECE_VALUES[piece];
-                    
-                    if (targetValue > attackerValue) {
-                        probability += 40;
-                        reasons.push(`Captura lucrativa (+${targetValue/100})`);
-                    } else if (targetValue === attackerValue) {
-                        probability += 25;
-                        reasons.push('Captura equivalente');
-                    } else {
-                        probability += 15;
-                        reasons.push('Captura desfavorável mas possível');
-                    }
-                }
-                
-                // 2. Xeque (muito provável)
-                const testBoard = simulateMove(board, move);
-                const myKing = gameState.myColor === 'white' ? 'K' : 'k';
-                let myKingPos = null;
-                for (let r = 0; r < 8; r++) {
-                    for (let c = 0; c < 8; c++) {
-                        if (testBoard[r][c] === myKing) {
-                            myKingPos = {row: r, col: c};
-                            break;
-                        }
-                    }
-                }
-                
-                if (myKingPos && isSquareAttacked(myKingPos.row, myKingPos.col, gameState.myColor, testBoard)) {
-                    probability += 35;
-                    reasons.push('Dá xeque no rei');
-                }
-                
-                // 3. Ameaça de captura no próximo lance
-                const myPieces = [];
-                for (let r = 0; r < 8; r++) {
-                    for (let c = 0; c < 8; c++) {
-                        const p = board[r] && board[r][c];
-                        if (p && (gameState.myColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                            myPieces.push({row: r, col: c, piece: p});
-                        }
-                    }
-                }
-                
-                const threatsAfterMove = [];
-                const opponentMovesAfter = generateAllMoves(testBoard, opponentColor);
-                opponentMovesAfter.forEach(nextMove => {
-                    if (nextMove.capture) {
-                        const targetPiece = testBoard[nextMove.to.row] && testBoard[nextMove.to.row][nextMove.to.col];
-                        if (targetPiece) {
-                            threatsAfterMove.push({
-                                piece: targetPiece,
-                                value: PIECE_VALUES[targetPiece.toLowerCase()]
-                            });
-                        }
-                    }
-                });
-                
-                if (threatsAfterMove.length > 0) {
-                    const maxThreat = Math.max(...threatsAfterMove.map(t => t.value));
-                    probability += 20;
-                    reasons.push(`Cria ameaça contra ${PIECES[threatsAfterMove.find(t => t.value === maxThreat).piece]}`);
-                }
-                
-                // 4. Controle do centro
-                const centerSquares = [[3,3], [3,4], [4,3], [4,4]];
-                if (centerSquares.some(s => s[0] === move.to.row && s[1] === move.to.col)) {
-                    probability += 10;
-                    reasons.push('Controle do centro');
-                }
-                
-                // 5. Desenvolvimento de peças (primeiros 10 lances)
-                if (gameState.moveHistory.length < 20) {
-                    const backRank = opponentColor === 'white' ? 7 : 0;
-                    if (move.from.row === backRank && ['n', 'b'].includes(piece)) {
-                        probability += 15;
-                        reasons.push('Desenvolvimento natural');
-                    }
-                }
-                
-                // 6. Padrões históricos do jogador
-                if (opponentPatternAnalysis) {
-                    if (opponentPatternAnalysis.favoritePieces[piece]) {
-                        const freq = opponentPatternAnalysis.favoritePieces[piece] / gameState.moveHistory.filter(m => m.color === opponentColor).length;
-                        probability += freq * 10;
-                    }
-                }
-                
-                // 7. Roque (prioridade alta se disponível)
-                if (move.castling && gameState.moveHistory.length < 30) {
-                    probability += 25;
-                    reasons.push('Roque para segurança do rei');
-                }
-                
-                // 8. Promoção de peão
-                if (move.promotion) {
-                    probability += 50;
-                    reasons.push('Promoção de peão!');
-                }
-                
-                // Normalizar probabilidade
-                probability = Math.min(95, probability);
-                
-                predictions.push({
-                    move: move,
-                    probability: probability,
-                    reasons: reasons,
-                    from: `${String.fromCharCode(97+move.from.col)}${8-move.from.row}`,
-                    to: `${String.fromCharCode(97+move.to.col)}${8-move.to.row}`,
-                    piece: move.piece,
-                    capture: move.capture,
-                    target: target
-                });
-            });
-            
-            // Ordenar por probabilidade
-            predictions.sort((a, b) => b.probability - a.probability);
-            
-            return predictions.slice(0, 5); // Retornar top 5 previsões
-        }
-
-        function calculateDangerZones() {
-            const opponentColor = gameState.myColor === 'white' ? 'black' : 'white';
-            const board = gameState.board;
-            const dangerZones = [];
-            
-            // Para cada peça adversária, calcular onde ela pode atacar
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (opponentColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const attacks = getAttacks(r, c, board, piece);
-                        
-                        attacks.forEach(att => {
-                            const target = board[att.row] && board[att.row][att.col];
-                            // Se há uma peça nossa que pode ser capturada, é uma zona de perigo
-                            if (target && (gameState.myColor === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
-                                const targetValue = PIECE_VALUES[target.toLowerCase()];
-                                const attackerValue = PIECE_VALUES[piece.toLowerCase()];
-                                
-                                // Calcular gravidade do perigo
-                                let dangerLevel = 'medium';
-                                if (targetValue > attackerValue && !isSquareDefended(att.row, att.col, gameState.myColor, board)) {
-                                    dangerLevel = 'critical';
-                                } else if (targetValue > attackerValue) {
-                                    dangerLevel = 'high';
-                                }
-                                
-                                dangerZones.push({
-                                    row: att.row,
-                                    col: att.col,
-                                    attacker: {row: r, col: c, piece: piece},
-                                    target: target,
-                                    targetValue: targetValue,
-                                    dangerLevel: dangerLevel,
-                                    reason: `${PIECES[piece]} em ${String.fromCharCode(97+c)}${8-r} ataca ${PIECES[target]}`
-                                });
-                            }
-                        });
-                    }
-                }
-            }
-            
-            return dangerZones;
-        }
-
-        function updateOpponentAnalysisPanel() {
-            const panel = document.getElementById('opponentAnalysisPanel');
-            const predictionsList = document.getElementById('opponentPredictions');
-            
-            if (!gameState.isFernando || gameState.status !== 'playing') {
-                panel.classList.remove('active');
-                return;
-            }
-            
-            // Atualizar análise de padrões
-            opponentPatternAnalysis = analyzeOpponentPatterns();
-            
-            // Calcular previsões
-            gameState.opponentPredictions = predictOpponentMoves();
-            gameState.dangerZones = calculateDangerZones();
-            
-            if (gameState.opponentPredictions.length === 0) {
-                panel.classList.remove('active');
-                return;
-            }
-            
-            panel.classList.add('active');
-            
-            // Renderizar previsões
-            let html = '';
-            gameState.opponentPredictions.forEach((pred, index) => {
-                const rank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index+1}º`;
-                const probability = Math.round(pred.probability);
-                
-                html += `
-                    <div class="prediction-item" onclick="highlightPrediction(${pred.move.from.row}, ${pred.move.from.col}, ${pred.move.to.row}, ${pred.move.to.col})">
-                        <div class="prediction-probability">${probability}%</div>
-                        <div class="prediction-details">
-                            <div class="prediction-move">${rank} ${PIECES[pred.piece]} ${pred.from} → ${pred.to}</div>
-                            <div class="prediction-reason">${pred.reasons.join(' • ')}</div>
-                            ${pred.capture ? `<div class="danger-indicator">⚠️ CAPTURA POSSÍVEL</div>` : ''}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            predictionsList.innerHTML = html;
-            
-            // Notificar sobre ameaças críticas
-            const criticalThreats = gameState.dangerZones.filter(z => z.dangerLevel === 'critical');
-            if (criticalThreats.length > 0) {
-                const threat = criticalThreats[0];
-                showToast(
-                    '🚨 ALERTA DE PERIGO!',
-                    `${threat.reason} em ${String.fromCharCode(97+threat.col)}${8-threat.row}! Proteja sua peça!`,
-                    'opponent',
-                    6000
-                );
-            }
-        }
-
-        function highlightPrediction(fromRow, fromCol, toRow, toCol) {
-            // Destacar no tabuleiro a previsão selecionada
-            const squares = document.querySelectorAll('.square');
-            squares.forEach(sq => {
-                const r = parseInt(sq.dataset.row);
-                const c = parseInt(sq.dataset.col);
-                
-                // Limpar destaques anteriores
-                sq.classList.remove('god-best-move', 'god-target-square');
-                sq.style.boxShadow = '';
-                
-                // Destacar origem do movimento previsto
-                if (r === fromRow && c === fromCol) {
-                    sq.style.boxShadow = 'inset 0 0 30px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.6)';
-                    sq.style.border = '2px solid #ff0000';
-                }
-                
-                // Destacar destino do movimento previsto
-                if (r === toRow && c === toCol) {
-                    sq.style.boxShadow = 'inset 0 0 30px rgba(255, 100, 0, 0.8), 0 0 40px rgba(255, 100, 0, 0.6)';
-                    sq.style.border = '2px solid #ff6400';
-                }
-            });
-            
-            // Mostrar toast com detalhes
-            showToast(
-                '👁️ Previsão do Adversário',
-                `O adversário provavelmente moverá ${PIECES[gameState.board[fromRow][fromCol]]} de ${String.fromCharCode(97+fromCol)}${8-fromRow} para ${String.fromCharCode(97+toCol)}${8-toRow}`,
-                'opponent',
-                4000
-            );
-            
-            // Limpar destaque após 3 segundos
-            setTimeout(() => {
-                renderBoard();
-            }, 3000);
-        }
-
-        // ==================== MODO DEUS ====================
+        // ==================== MODO DEUS APRIMORADO ====================
 
         function activateGodMode() {
             if (!gameState.isFernando) return;
@@ -2373,13 +3871,18 @@
             
             showToast(
                 '👑 MODO DEUS ATIVADO!', 
-                'Análise preditiva do adversário ativada. Previsões em tempo real disponíveis.',
+                'Análise preditiva avançada ativada. 15+ tipos de intenções do adversário calculadas em tempo real.',
                 'god',
                 8000
             );
             
-            // Ativar painel de análise do adversário
-            updateOpponentAnalysisPanel();
+            // Ativar painel de análise de intenções
+            updateIntentionPanel();
+            
+            // Enviar mensagem no chat
+            setTimeout(() => {
+                addSystemMessage('🧠 Sistema de Análise de Intenções ativado. Monitorando padrões psicológicos do adversário...');
+            }, 1000);
             
             // Se for vez do Fernando, calcular imediatamente
             if (gameState.currentPlayer === gameState.myColor && gameState.status === 'playing') {
@@ -2400,38 +3903,76 @@
             const executeBtn = document.getElementById('godExecuteBtn');
             
             // Mostrar calculando
-            moveText.textContent = '🔮 Analisando todas as possibilidades...';
+            moveText.textContent = '🔮 Analisando 15+ intenções do adversário...';
             pieceIcon.textContent = '⚡';
-            reasoning.textContent = 'Consultando oráculo divino...';
+            reasoning.textContent = 'Consultando oráculo divino... Processando perfil psicológico...';
             executeBtn.style.display = 'none';
             
-            // Análise profunda considerando previsões do adversário
+            // Análise profunda considerando TODAS as intenções do adversário
             const analysis = generatePredictiveAnalysis(gameState.myColor);
             
-            // Integrar previsões do adversário na análise
-            if (gameState.opponentPredictions && gameState.opponentPredictions.length > 0) {
-                // Ajustar scores baseado no que o adversário provavelmente responderá
+            // Integrar intenções do adversário na análise
+            if (gameState.opponentIntentions && gameState.opponentIntentions.length > 0) {
+                // Ajustar scores baseado nas intenções mais prováveis
                 analysis.bestMoves.forEach(move => {
                     const testBoard = simulateMove(gameState.board, {from: move.from, to: move.to});
-                    const opponentResponses = generateAllMoves(testBoard, gameState.myColor === 'white' ? 'black' : 'white');
                     
-                    // Verificar se alguma resposta do adversário é perigosa
-                    let maxDanger = 0;
-                    opponentResponses.forEach(oppMove => {
-                        if (oppMove.capture) {
-                            const target = testBoard[oppMove.to.row] && testBoard[oppMove.to.row][oppMove.to.col];
-                            if (target && (gameState.myColor === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
-                                const danger = PIECE_VALUES[target.toLowerCase()];
-                                maxDanger = Math.max(maxDanger, danger);
-                            }
+                    // Verificar se jogada responde às intenções do adversário
+                    let intentionScore = 0;
+                    
+                    gameState.opponentIntentions.forEach(intention => {
+                        // Se a jogada bloqueia a intenção, bônus alto
+                        const blocked = doesMoveBlockIntention(testBoard, move, intention);
+                        if (blocked) {
+                            intentionScore += intention.probability * 2;
+                        }
+                        
+                        // Se a jogada prepara contra-ataque à intenção
+                        const counter = doesMoveCounterIntention(testBoard, move, intention);
+                        if (counter) {
+                            intentionScore += intention.probability;
                         }
                     });
                     
-                    // Penalizar movimentos que expõem peças valiosas
-                    move.score -= maxDanger * 0.5;
+                    // Penalizar jogadas que ignoram intenções críticas
+                    const criticalIgnored = gameState.opponentIntentions
+                        .filter(i => i.priority === 'critical' && i.probability > 70)
+                        .some(i => !doesMoveBlockIntention(testBoard, move, i));
+                    
+                    if (criticalIgnored) {
+                        move.score -= 300; // Penalidade severa
+                    }
+                    
+                    move.score += intentionScore;
                 });
                 
                 // Reordenar após ajustes
+                analysis.bestMoves.sort((a, b) => b.score - a.score);
+            }
+            
+            // Considerar perfil psicológico
+            if (gameState.opponentPsychology) {
+                const psych = gameState.opponentPsychology;
+                
+                // Ajustar baseado no estilo do adversário
+                analysis.bestMoves.forEach(move => {
+                    if (psych.preferredStyle === 'muito agressivo') {
+                        // Contra agressivos: valorizar segurança e contra-ataques
+                        if (move.safety && move.safety.kingSafety > 0) move.score += 50;
+                    } else if (psych.preferredStyle === 'defensivo') {
+                        // Contra defensivos: valorizar pressão posicional
+                        if (move.safety && move.safety.positionalAdvantage > 30) move.score += 30;
+                    }
+                    
+                    if (psych.blunderProne > 30) {
+                        // Contra jogadores propensos a erros: criar complicações
+                        if (move.safety && move.safety.tacticalMotifs && move.safety.tacticalMotifs.list.length > 0) {
+                            move.score += 40;
+                        }
+                    }
+                });
+                
+                // Reordenar novamente
                 analysis.bestMoves.sort((a, b) => b.score - a.score);
             }
             
@@ -2460,8 +4001,10 @@
             evalEl.textContent = (evalScore > 0 ? '+' : '') + evalScore.toFixed(1);
             evalEl.style.color = evalScore > 0 ? '#00ff00' : evalScore < 0 ? '#ff6666' : '#ffff00';
             
-            // Raciocínio detalhado
+            // Raciocínio detalhado com análise de intenções
             let reasonText = '';
+            
+            // Motivos táticos
             if (bestMove.to.capture) {
                 const target = gameState.board[bestMove.to.row][bestMove.to.col];
                 reasonText += `🎯 Captura de ${PIECES[target]} (+${PIECE_VALUES[target.toLowerCase()]/100})<br>`;
@@ -2471,22 +4014,44 @@
                 reasonText += `⚡ ${bestMove.safety.tacticalMotifs.list[0]}<br>`;
             }
             
-            if (bestMove.safety.positionalAdvantage > 20) {
-                reasonText += `📈 Excelente vantagem posicional<br>`;
+            // Análise de intenções bloqueadas
+            if (gameState.opponentIntentions) {
+                const blockedIntentions = gameState.opponentIntentions.filter(i => 
+                    doesMoveBlockIntention(gameState.board, bestMove, i)
+                );
+                
+                if (blockedIntentions.length > 0) {
+                    reasonText += `<br><span style="color:#00ff00;">🛡️ Bloqueia intenções do adversário:</span><br>`;
+                    blockedIntentions.slice(0, 2).forEach(i => {
+                        const typeInfo = INTENTION_TYPES[i.type];
+                        reasonText += `   • ${typeInfo.icon} ${typeInfo.name} (${i.probability}%)<br>`;
+                    });
+                }
+                
+                // Alerta sobre intenções críticas não resolvidas
+                const criticalNotBlocked = gameState.opponentIntentions
+                    .filter(i => i.priority === 'critical' && !doesMoveBlockIntention(gameState.board, bestMove, i));
+                
+                if (criticalNotBlocked.length > 0) {
+                    reasonText += `<br><span style="color:#ff6666;">⚠️ ATENÇÃO: Intenções críticas não bloqueadas:</span><br>`;
+                    criticalNotBlocked.forEach(i => {
+                        const typeInfo = INTENTION_TYPES[i.type];
+                        reasonText += `   • ${typeInfo.icon} ${typeInfo.name}<br>`;
+                    });
+                }
             }
             
-            if (bestMove.safety.kingSafety > 0) {
-                reasonText += `🛡️ Melhora segurança do rei<br>`;
-            }
-            
-            // Adicionar análise do adversário
-            if (gameState.opponentPredictions && gameState.opponentPredictions.length > 0) {
-                const topPrediction = gameState.opponentPredictions[0];
-                reasonText += `<br><span style="color:#ff6666">👁️ Antecipa: ${PIECES[topPrediction.piece]} ${topPrediction.from}→${topPrediction.to} (${topPrediction.probability}%)</span>`;
+            // Perfil psicológico
+            if (gameState.opponentPsychology) {
+                const psych = gameState.opponentPsychology;
+                reasonText += `<br><span style="color:#ff00ff;">📊 Perfil do adversário: ${psych.preferredStyle}</span>`;
+                if (psych.blunderProne > 20) {
+                    reasonText += `<br><span style="color:#ffaa00;">💡 Adversário propenso a erros (${psych.blunderProne}%) - considere complicações</span>`;
+                }
             }
             
             const advantage = bestMove.score > 0 ? `+${Math.round(bestMove.score)}` : Math.round(bestMove.score);
-            reasonText += `<br><strong style="color:#ffd700">Score: ${advantage} pontos</strong>`;
+            reasonText += `<br><br><strong style="color:#ffd700">Score: ${advantage} pontos</strong>`;
             
             reasoning.innerHTML = reasonText;
             
@@ -2498,9 +4063,12 @@
             
             // Notificação toast
             const captureText = bestMove.to.capture ? ` (captura ${PIECES[gameState.board[bestMove.to.row][bestMove.to.col]]})` : '';
+            const blockedCount = gameState.opponentIntentions ? 
+                gameState.opponentIntentions.filter(i => doesMoveBlockIntention(gameState.board, bestMove, i)).length : 0;
+            
             showToast(
                 '👑 Jogada Divina Calculada!', 
-                `Mova ${PIECES[piece]} de ${fromSq} para ${toSq}${captureText}`,
+                `Mova ${PIECES[piece]} de ${fromSq} para ${toSq}${captureText}${blockedCount > 0 ? ` - Bloqueia ${blockedCount} intenções!` : ''}`,
                 'god',
                 6000
             );
@@ -2509,6 +4077,35 @@
             const turnIndicator = document.getElementById('turnIndicator');
             turnIndicator.textContent = '⚡ SUA VEZ - MODO DEUS ATIVO ⚡';
             turnIndicator.classList.add('god-suggestion');
+        }
+
+        function doesMoveBlockIntention(board, move, intention) {
+            // Verificar se o movimento impede a intenção do adversário
+            // Implementação simplificada - verifica se move protege peças ameaçadas ou bloqueia caminhos
+            
+            if (!intention.moves || intention.moves.length === 0) return false;
+            
+            const testBoard = simulateMove(board, move);
+            
+            // Verificar se algum dos movimentos previstos na intenção ainda é válido
+            for (let intMove of intention.moves) {
+                const toCol = intMove.to.charCodeAt(0) - 97;
+                const toRow = 8 - parseInt(intMove.to[1]);
+                
+                // Se a casa de destino da intenção agora está protegida ou ocupada
+                const pieceThere = testBoard[toRow] && testBoard[toRow][toCol];
+                if (pieceThere && (gameState.myColor === 'white' ? pieceThere === pieceThere.toUpperCase() : pieceThere === pieceThere.toLowerCase())) {
+                    return true; // Bloqueou ao proteger/occupar a casa
+                }
+            }
+            
+            return false;
+        }
+
+        function doesMoveCounterIntention(board, move, intention) {
+            // Verificar se o movimento cria contra-ameaça à intenção
+            // Implementação simplificada
+            return false;
         }
 
         function highlightGodMove(from, to) {
@@ -2543,6 +4140,16 @@
             setTimeout(() => {
                 executeMove(gameState.selectedSquare, {row: move.to.row, col: move.to.col}, move.to);
                 showToast('✨ Jogada Divina Executada!', 'Os deuses sorriem para você!', 'god', 3000);
+                
+                // Mensagem no chat
+                if (gameState.opponentIntentions && gameState.opponentIntentions.length > 0) {
+                    const blocked = gameState.opponentIntentions.filter(i => 
+                        doesMoveBlockIntention(gameState.board, move, i)
+                    ).length;
+                    if (blocked > 0) {
+                        addSystemMessage(`🛡️ Jogada bloqueou ${blocked} intenção(ões) do adversário!`);
+                    }
+                }
             }, 300);
         }
 
@@ -2585,9 +4192,12 @@
             gameState.status = savedState.status;
             gameState.moveHistory = savedState.moveHistory || [];
             gameState.opponentMoveHistory = savedState.opponentMoveHistory || [];
+            gameState.opponentIntentions = savedState.opponentIntentions || [];
+            gameState.opponentPsychology = savedState.opponentPsychology || null;
             
             gameRef = db.collection('games').doc(gameState.gameId);
             setupGameListener();
+            setupChatListener();
             
             if (gameState.status === 'playing' || gameState.status === 'waiting') {
                 document.getElementById('loginScreen').style.display = 'none';
@@ -2669,6 +4279,7 @@
             gameState.players = game.players;
             
             setupGameListener();
+            setupChatListener();
             startGame();
         }
 
@@ -2717,6 +4328,7 @@
 
             gameRef.set(gameData).then(() => {
                 setupGameListener();
+                setupChatListener();
                 showStatus(`✅ Jogo criado!\n\nAguardando adversário...\n\n🔗 COMPARTILHE ESTE LINK:\n${window.location.href}`, 'waiting');
                 updatePlayerDisplay();
                 saveLocalState();
@@ -2759,7 +4371,13 @@
                 
                 saveLocalState();
                 setupGameListener();
+                setupChatListener();
                 startGame();
+                
+                // Notificar no chat
+                setTimeout(() => {
+                    addSystemMessage(`🎮 ${gameState.myName} entrou na partida!`);
+                }, 1500);
             }).catch(error => {
                 console.error('Erro ao entrar:', error);
                 showStatus('Erro ao entrar no jogo: ' + error.message, 'error');
@@ -2793,7 +4411,12 @@
                 
                 saveLocalState();
                 setupGameListener();
+                setupChatListener();
                 startGame();
+                
+                setTimeout(() => {
+                    addSystemMessage(`🎮 ${gameState.myName} entrou na partida!`);
+                }, 1500);
             }).catch(error => {
                 console.error('Erro ao entrar:', error);
                 showStatus('Erro ao entrar no jogo: ' + error.message, 'error');
@@ -2846,16 +4469,18 @@
                 
                 // Registrar jogada do adversário se houver mudança
                 if (data.lastMove && data.currentPlayer === gameState.myColor) {
-                    // O adversário acabou de jogar
                     const opponentColor = gameState.myColor === 'white' ? 'black' : 'white';
                     const lastMoveData = data.lastMove;
                     
-                    // Adicionar ao histórico de jogadas do adversário para análise
+                    // Adicionar ao histórico com análise
+                    const moveAnalysis = analyzeMove(lastMoveData, board, opponentColor);
+                    
                     gameState.opponentMoveHistory.push({
                         ...lastMoveData,
                         piece: board[lastMoveData.to.row] && board[lastMoveData.to.row][lastMoveData.to.col],
                         color: opponentColor,
-                        timestamp: Date.now()
+                        timestamp: Date.now(),
+                        ...moveAnalysis
                     });
                 }
                 
@@ -2892,7 +4517,7 @@
                     updateTurnIndicator();
                     updateOpponentDisplay();
                     
-                    // Lógica do Modo Deus e Análise do Adversário
+                    // Lógica do Modo Deus e Análise de Intenções
                     if (gameState.isFernando && gameState.status === 'playing') {
                         const isMyTurn = gameState.currentPlayer === gameState.myColor;
                         const wasMyTurn = previousPlayer === gameState.myColor;
@@ -2905,13 +4530,13 @@
                             
                             showToast(
                                 '🎯 Adversário jogou!', 
-                                `${opponentName} moveu. Analisando padrões...`,
+                                `${opponentName} moveu. Recalculando 15+ intenções...`,
                                 'normal',
                                 3000
                             );
                             
-                            // Atualizar análise do adversário
-                            updateOpponentAnalysisPanel();
+                            // Atualizar análise de intenções
+                            updateIntentionPanel();
                             
                             // Calcular jogada divina após breve delay
                             setTimeout(() => {
@@ -2919,7 +4544,7 @@
                             }, 500);
                         } else if (!isMyTurn && wasMyTurn) {
                             // Acabei de jogar, atualizar previsões para próxima jogada do adversário
-                            updateOpponentAnalysisPanel();
+                            updateIntentionPanel();
                         }
                         
                         updateAIAnalysis();
@@ -2928,6 +4553,42 @@
             }, error => {
                 console.error('Erro no listener:', error);
             });
+        }
+
+        function analyzeMove(moveData, board, color) {
+            // Analisar características da jogada para perfil psicológico
+            const analysis = {
+                capture: false,
+                check: false,
+                defensive: false,
+                risky: false,
+                positional: false,
+                sacrifice: false,
+                materialLoss: 0,
+                thinkTime: 0
+            };
+            
+            const piece = board[moveData.to.row] && board[moveData.to.row][moveData.to.col];
+            const target = moveData.capture;
+            
+            if (target) {
+                analysis.capture = true;
+                const targetValue = PIECE_VALUES[target.toLowerCase()];
+                const pieceValue = PIECE_VALUES[piece.toLowerCase()];
+                if (pieceValue > targetValue) {
+                    analysis.sacrifice = true;
+                }
+            }
+            
+            // Verificar se deu xeque
+            const testBoard = simulateMove(board, moveData);
+            const opponentColor = color === 'white' ? 'black' : 'white';
+            const oppKingPos = findKing(testBoard, opponentColor);
+            if (oppKingPos && isSquareAttacked(oppKingPos.row, oppKingPos.col, opponentColor, testBoard)) {
+                analysis.check = true;
+            }
+            
+            return analysis;
         }
 
         function startGame() {
@@ -2943,6 +4604,14 @@
                     activateGodMode();
                 }, 1000);
             }
+            
+            // Mensagem de boas-vindas no chat
+            setTimeout(() => {
+                addSystemMessage('🎮 Partida iniciada! Boa sorte aos jogadores!');
+                if (gameState.isFernando) {
+                    addSystemMessage('🧠 Sistema Neural de Análise de Intenções ativado para Fernando');
+                }
+            }, 2000);
         }
 
         function updatePlayerDisplay() {
@@ -3019,7 +4688,6 @@
                 particle.style.top = '50%';
                 particle.style.animationDelay = `${Math.random() * 0.5}s`;
                 
-                // Cores alternadas
                 const colors = ['#ffd700', '#ff0000', '#ff00ff', '#00ffff'];
                 particle.style.background = colors[Math.floor(Math.random() * colors.length)];
                 particle.style.boxShadow = `0 0 20px ${particle.style.background}`;
@@ -3084,329 +4752,16 @@
                 animationContainer.style.display = 'none';
                 showGameOver(winner);
                 isCheckmateAnimating = false;
+                
+                // Mensagem final no chat
+                const winnerName = winner === 'white' ? 
+                    (gameState.players.white?.name || 'Brancas') : 
+                    (gameState.players.black?.name || 'Pretas');
+                addSystemMessage(`🏆 Fim de jogo! ${winnerName} venceu por xeque-mate!`);
             }, 3500);
         }
 
-        // ==================== IA AVANÇADA COM ANÁLISE PROFUNDA ====================
-
-        // [Incluir todas as funções de análise de movimentos, segurança, avaliação posicional, 
-        // detectTacticalMotifs, evaluateMoveSafety, etc. do código anterior...]
-
-        // Funções essenciais de movimento (simplificadas para o exemplo)
-        function generateAllMoves(board, color) {
-            const moves = [];
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const pieceMoves = getValidMovesForEvaluation(r, c, board, color);
-                        pieceMoves.forEach(m => {
-                            moves.push({
-                                from: {row: r, col: c},
-                                to: m,
-                                piece: piece,
-                                capture: m.capture
-                            });
-                        });
-                    }
-                }
-            }
-            return moves;
-        }
-
-        function getValidMovesForEvaluation(row, col, board, color) {
-            // Simplificação - na versão completa teria toda a lógica de movimentos
-            return getValidMoves(row, col, board, color);
-        }
-
-        function simulateMove(board, move) {
-            const newBoard = board.map(r => [...r]);
-            const piece = newBoard[move.from.row][move.from.col];
-            newBoard[move.to.row][move.to.col] = piece;
-            newBoard[move.from.row][move.from.col] = null;
-            
-            if (move.to.enPassant) {
-                newBoard[move.from.row][move.to.col] = null;
-            }
-            
-            if (move.to.castling) {
-                const row = move.from.row;
-                if (move.to.castling === 'kingSide') {
-                    newBoard[row][5] = newBoard[row][7];
-                    newBoard[row][7] = null;
-                } else {
-                    newBoard[row][3] = newBoard[row][0];
-                    newBoard[row][0] = null;
-                }
-            }
-            
-            if (move.to.promotion) {
-                const color = piece === piece.toUpperCase() ? 'white' : 'black';
-                newBoard[move.to.row][move.to.col] = color === 'white' ? 'Q' : 'q';
-            }
-            
-            return newBoard;
-        }
-
-        function getAttacks(row, col, board, piece) {
-            const attacks = [];
-            const type = piece.toLowerCase();
-            const color = piece === piece.toUpperCase() ? 'white' : 'black';
-            
-            switch(type) {
-                case 'p':
-                    const dir = color === 'white' ? -1 : 1;
-                    for (let dc of [-1, 1]) {
-                        if (isValid(row + dir, col + dc)) {
-                            attacks.push({row: row + dir, col: col + dc});
-                        }
-                    }
-                    break;
-                case 'n':
-                    const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                    for (let [dr, dc] of nm) {
-                        if (isValid(row + dr, col + dc)) {
-                            attacks.push({row: row + dr, col: col + dc});
-                        }
-                    }
-                    break;
-                case 'b':
-                    attacks.push(...slideAttacks(row, col, board, [[-1,-1],[-1,1],[1,-1],[1,1]]));
-                    break;
-                case 'r':
-                    attacks.push(...slideAttacks(row, col, board, [[-1,0],[1,0],[0,-1],[0,1]]));
-                    break;
-                case 'q':
-                    attacks.push(...slideAttacks(row, col, board, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
-                    break;
-                case 'k':
-                    const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-                    for (let [dr, dc] of km) {
-                        if (isValid(row + dr, col + dc)) {
-                            attacks.push({row: row + dr, col: col + dc});
-                        }
-                    }
-                    break;
-            }
-            return attacks;
-        }
-
-        function slideAttacks(row, col, board, dirs) {
-            const attacks = [];
-            for (let [dr, dc] of dirs) {
-                let nr = row + dr, nc = col + dc;
-                while (isValid(nr, nc)) {
-                    attacks.push({row: nr, col: nc});
-                    if (board[nr] && board[nr][nc]) break;
-                    nr += dr;
-                    nc += dc;
-                }
-            }
-            return attacks;
-        }
-
-        function isValid(r, c) {
-            return r >= 0 && r < 8 && c >= 0 && c < 8;
-        }
-
-        function isEnemy(p1, p2) {
-            return (p1 === p1.toUpperCase()) !== (p2 === p2.toUpperCase());
-        }
-
-        function isSquareAttacked(row, col, defColor, testBoard) {
-            const atkColor = defColor === 'white' ? 'black' : 'white';
-            const pawnDir = defColor === 'white' ? -1 : 1;
-            
-            for (let dc of [-1, 1]) {
-                const r = row - pawnDir, c = col + dc;
-                if (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && p.toLowerCase() === 'p' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        return true;
-                    }
-                }
-            }
-            
-            const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-            for (let [dr, dc] of nm) {
-                const r = row + dr, c = col + dc;
-                if (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && p.toLowerCase() === 'n' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        return true;
-                    }
-                }
-            }
-            
-            for (let [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
-                let r = row + dr, c = col + dc;
-                while (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p) {
-                        if ((p.toLowerCase() === 'r' || p.toLowerCase() === 'q') && 
-                            (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                            return true;
-                        }
-                        break;
-                    }
-                    r += dr; c += dc;
-                }
-            }
-            
-            for (let [dr, dc] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
-                let r = row + dr, c = col + dc;
-                while (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p) {
-                        if ((p.toLowerCase() === 'b' || p.toLowerCase() === 'q') && 
-                            (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                            return true;
-                        }
-                        break;
-                    }
-                    r += dr; c += dc;
-                }
-            }
-            
-            for (let [dr, dc] of [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]) {
-                const r = row + dr, c = col + dc;
-                if (isValid(r, c)) {
-                    const p = testBoard[r] && testBoard[r][c];
-                    if (p && p.toLowerCase() === 'k' && 
-                        (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        function isSquareDefended(row, col, color, board) {
-            const defenders = [];
-            
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        if (r === row && c === col) continue;
-                        
-                        const attacks = getAttacks(r, c, board, piece);
-                        if (attacks.some(a => a.row === row && a.col === col)) {
-                            defenders.push({row: r, col: c, piece: piece});
-                        }
-                    }
-                }
-            }
-            return defenders.length > 0;
-        }
-
-        function findKing(board, color) {
-            const kingChar = color === 'white' ? 'K' : 'k';
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    if (board[r] && board[r][c] === kingChar) {
-                        return {row: r, col: c};
-                    }
-                }
-            }
-            return null;
-        }
-
-        function evaluateMoveSafety(from, to, move, color) {
-            const board = gameState.board;
-            const piece = board[from.row][from.col];
-            const testBoard = simulateMove(board, {from, to: {...to, ...move}});
-            const opponentColor = color === 'white' ? 'black' : 'white';
-            
-            let safety = {
-                score: 0,
-                threats: [],
-                isHanging: false,
-                blunder: false,
-                warning: false,
-                tacticalMotifs: {score: 0, list: []},
-                positionalAdvantage: 0,
-                kingSafety: 0,
-                materialChange: 0
-            };
-
-            // 1. Análise de material
-            if (move.capture) {
-                const target = board[to.row][to.col];
-                if (target) {
-                    safety.materialChange = PIECE_VALUES[target.toLowerCase()];
-                    safety.score += safety.materialChange;
-                }
-            }
-
-            // 2. Verificar se a peça movida ficará pendurada
-            if (!move.castling) {
-                const willBeAttacked = isSquareAttacked(to.row, to.col, color, testBoard);
-                const willBeDefended = isSquareDefended(to.row, to.col, color, testBoard);
-                const pieceValue = PIECE_VALUES[piece.toLowerCase()];
-                
-                if (willBeAttacked && !willBeDefended) {
-                    safety.isHanging = true;
-                    safety.threats.push(`⚠️ ${PIECES[piece]} ficará indefeso em ${String.fromCharCode(97+to.col)}${8-to.row}`);
-                    safety.score -= pieceValue * 0.8;
-                }
-            }
-
-            // 3. Verificar segurança do rei
-            const kingPos = findKing(testBoard, color);
-            if (kingPos) {
-                const kingAttacked = isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
-                if (kingAttacked) {
-                    safety.score -= 500;
-                    safety.threats.push('🚨 Rei ficará em xeque!');
-                }
-            }
-
-            // 4. Detectar motivos táticos
-            const tactical = detectTacticalMotifs(testBoard, color, from, to, piece);
-            safety.tacticalMotifs = tactical;
-            safety.score += tactical.score;
-
-            return safety;
-        }
-
-        function detectTacticalMotifs(board, color, from, to, piece) {
-            let motifs = { score: 0, list: [] };
-            const opponentColor = color === 'white' ? 'black' : 'white';
-            const pieceType = piece.toLowerCase();
-            
-            // 1. Fork (ataque duplo)
-            const attacksAfterMove = getAttacks(to.row, to.col, board, piece);
-            let highValueTargets = attacksAfterMove.filter(att => {
-                const target = board[att.row] && board[att.row][att.col];
-                return target && isEnemy(piece, target) && 
-                       ['q', 'r', 'n', 'b'].includes(target.toLowerCase());
-            });
-            
-            if (highValueTargets.length >= 2) {
-                motifs.score += 80;
-                motifs.list.push(`🔱 Fork! Ataque a ${highValueTargets.length} peças`);
-            }
-            
-            // 2. Xeque
-            const opponentKing = opponentColor === 'white' ? 'K' : 'k';
-            const kingAttacked = attacksAfterMove.some(att => {
-                const p = board[att.row] && board[att.row][att.col];
-                return p === opponentKing;
-            });
-            
-            if (kingAttacked) {
-                motifs.score += 50;
-                motifs.list.push('👑 Xeque!');
-            }
-            
-            // 3. Promoção de peão
-            if (pieceType === 'p' && (to.row === 0 || to.row === 7)) {
-                motifs.score += 800;
-                motifs.list.push('👑 Promoção!');
-            }
-            
-            return motifs;
-        }
+        // ==================== IA AVANÇADA ====================
 
         function generatePredictiveAnalysis(color) {
             const analysis = {
@@ -3417,10 +4772,8 @@
                 tacticalMoves: [],
                 positionSafety: 50,
                 threats: [],
-                opponentAnalysis: null,
                 evaluation: 0,
-                principalVariation: [],
-                depth: 4
+                depth: 6
             };
 
             const board = gameState.board;
@@ -3448,11 +4801,28 @@
                 }
             }
             
-            // Analisar movimentos
+            // Analisar movimentos com profundidade aumentada
             for (let moveData of allMoves) {
                 const safety = evaluateMoveSafety(moveData.from, moveData.to, moveData.to, color);
                 
-                let finalScore = safety.score;
+                // Análise de profundidade 2 (resposta do adversário)
+                const testBoard = simulateMove(board, moveData);
+                const opponentColor = color === 'white' ? 'black' : 'white';
+                const opponentMoves = generateAllMoves(testBoard, opponentColor);
+                
+                let worstCase = 0;
+                if (opponentMoves.length > 0) {
+                    // Simular melhor resposta do adversário
+                    const opponentBest = opponentMoves
+                        .map(m => evaluateMoveQuick(testBoard, m, opponentColor))
+                        .sort((a, b) => b.score - a.score)[0];
+                    
+                    if (opponentBest) {
+                        worstCase = -opponentBest.score * 0.7; // Penalidade pela resposta
+                    }
+                }
+                
+                let finalScore = safety.score + worstCase;
                 
                 // Adicionar bônus para controle de centro
                 if ([3, 4].includes(moveData.to.col) && [3, 4].includes(moveData.to.row)) {
@@ -3461,6 +4831,7 @@
                 
                 moveData.safety = safety;
                 moveData.score = finalScore;
+                moveData.worstCase = worstCase;
                 
                 if (safety.blunder) {
                     analysis.blunders.push(moveData);
@@ -3470,7 +4841,7 @@
                     analysis.safeMoves.push(moveData);
                 }
                 
-                if (safety.tacticalMotifs.list.length > 0) {
+                if (safety.tacticalMotifs && safety.tacticalMotifs.list.length > 0) {
                     analysis.tacticalMoves.push(moveData);
                 }
             }
@@ -3480,6 +4851,29 @@
             analysis.bestMoves = allMoves.slice(0, 5);
             
             return analysis;
+        }
+
+        function evaluateMoveQuick(board, move, color) {
+            // Avaliação rápida para simulação de resposta
+            const piece = board[move.from.row][move.from.col];
+            let score = 0;
+            
+            if (move.to.capture) {
+                const target = board[move.to.row] && board[move.to.row][move.to.col];
+                if (target) {
+                    score += PIECE_VALUES[target.toLowerCase()];
+                }
+            }
+            
+            // Xeque
+            const testBoard = simulateMove(board, move);
+            const myColor = color === 'white' ? 'black' : 'white';
+            const kingPos = findKing(testBoard, myColor);
+            if (kingPos && isSquareAttacked(kingPos.row, kingPos.col, myColor, testBoard)) {
+                score += 50;
+            }
+            
+            return { score, move };
         }
 
         function evaluatePosition(board, color) {
@@ -3501,10 +4895,17 @@
                         pstValue = PST[piece.toLowerCase()][pstRow][pstCol];
                     }
                     
+                    // Mobilidade
+                    let mobility = 0;
+                    if (piece.toLowerCase() !== 'k' && piece.toLowerCase() !== 'p') {
+                        const moves = getAttacks(r, c, board, piece);
+                        mobility = moves.length * 5;
+                    }
+                    
                     if (pieceColor === color) {
-                        score += value + pstValue;
+                        score += value + pstValue + mobility;
                     } else {
-                        score -= value + pstValue;
+                        score -= value + pstValue + mobility;
                     }
                 }
             }
@@ -3574,24 +4975,11 @@
                 if (best.safety.tacticalMotifs.list.length > 0) {
                     reasoning += `• ${best.safety.tacticalMotifs.list[0]}<br>`;
                 }
+                if (best.worstCase < -100) {
+                    reasoning += `• Cuidado: resposta adversária pode custar ${Math.round(-best.worstCase)}<br>`;
+                }
                 reasoning += `<br><small>Estatísticas: ${analysis.safeMoves.length} seguras | ${analysis.riskyMoves.length} arriscadas</small>`;
                 aiReasoning.innerHTML = reasoning;
-            }
-            
-            // Mostrar zonas de perigo
-            if (gameState.dangerZones && gameState.dangerZones.length > 0) {
-                const threatList = document.getElementById('threatList');
-                let threatHTML = '<strong style="color:#ff6666; display:block; margin-bottom:10px;">⚠️ Zonas de Perigo Detectadas:</strong>';
-                
-                gameState.dangerZones.slice(0, 3).forEach(zone => {
-                    const sq = `${String.fromCharCode(97+zone.col)}${8-zone.row}`;
-                    threatHTML += `<div style="margin:5px 0; color:${zone.dangerLevel === 'critical' ? '#ff0000' : '#ffaa00'};">
-                        • ${zone.reason} (${sq})
-                    </div>`;
-                });
-                
-                threatList.innerHTML = threatHTML;
-                threatList.style.display = 'block';
             }
         }
 
@@ -3669,32 +5057,14 @@
                         const move = gameState.validMoves.find(m => m.row === actualRow && m.col === actualCol);
                         if (move) {
                             if (piece) {
-                                square.classList.add('valid-capture');
+                                                                  square.classList.add('valid-capture');
                             } else {
                                 square.classList.add('valid-move');
                             }
                         }
                     }
 
-                    // ZONAS DE PERIGO - destacar onde não pode jogar
-                    if (shouldShowHints && gameState.dangerZones) {
-                        const danger = gameState.dangerZones.find(z => z.row === actualRow && z.col === actualCol);
-                        if (danger && !gameState.selectedSquare) {
-                            // Mostrar zona de perigo quando nenhuma peça está selecionada
-                            const dangerDiv = document.createElement('div');
-                            dangerDiv.className = 'danger-zone-highlight';
-                            square.appendChild(dangerDiv);
-                            
-                            if (danger.dangerLevel === 'critical') {
-                                const warning = document.createElement('div');
-                                warning.className = 'danger-warning';
-                                warning.textContent = 'PERIGO!';
-                                square.appendChild(warning);
-                            }
-                        }
-                    }
-
-                    // Dicas do Modo Deus
+                    // Dicas do Modo Deus com intenções
                     if (shouldShowHints && lastAnalysis) {
                         // Destacar melhores jogadas
                         lastAnalysis.bestMoves.slice(0, 3).forEach((best, index) => {
@@ -3718,6 +5088,28 @@
                                 target.className = 'hint-circle';
                                 target.style.opacity = index === 0 ? '1' : '0.3';
                                 square.appendChild(target);
+                            }
+                        });
+                    }
+
+                    // Destacar intenções do adversário no tabuleiro
+                    if (shouldShowHints && gameState.opponentIntentions) {
+                        gameState.opponentIntentions.forEach(intention => {
+                            if (intention.moves) {
+                                intention.moves.forEach(m => {
+                                    const toCol = m.to.charCodeAt(0) - 97;
+                                    const toRow = 8 - parseInt(m.to[1]);
+                                    
+                                    if (actualRow === toRow && actualCol === toCol) {
+                                        // Mostrar indicador de ameaça
+                                        const threat = document.createElement('div');
+                                        threat.style.cssText = 'position:absolute; top:2px; left:2px; background:#ff0000; color:white; font-size:9px; padding:2px 5px; border-radius:5px; z-index:15; font-family:Orbitron;';
+                                        threat.textContent = INTENTION_TYPES[intention.type].icon;
+                                        square.appendChild(threat);
+                                        
+                                        square.style.boxShadow = 'inset 0 0 20px rgba(255,0,0,0.4)';
+                                    }
+                                });
                             }
                         });
                     }
@@ -3987,7 +5379,7 @@
             // Verificar casas vazias e não atacadas
             for (let col of cols) {
                 if (board[row][col]) return false;
-                if (col !== 1 && isSquareAttacked(row, col, color, board)) return false; // Casa 1 não precisa estar segura no roque grande
+                if (col !== 1 && isSquareAttacked(row, col, color, board)) return false;
             }
             
             // Verificar torre
@@ -4263,6 +5655,7 @@
             
             modal.classList.add('show');
             if (unsubscribe) unsubscribe();
+            if (chatUnsubscribe) chatUnsubscribe();
         }
 
         function returnToIndex() {
@@ -4349,10 +5742,324 @@
             document.getElementById('gameOverModal').classList.add('show');
         }
 
+        // ==================== FUNÇÕES AUXILIARES ====================
+
+        function isValid(r, c) {
+            return r >= 0 && r < 8 && c >= 0 && c < 8;
+        }
+
+        function isEnemy(p1, p2) {
+            return (p1 === p1.toUpperCase()) !== (p2 === p2.toUpperCase());
+        }
+
+        function findKing(board, color) {
+            const kingChar = color === 'white' ? 'K' : 'k';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r] && board[r][c] === kingChar) {
+                        return {row: r, col: c};
+                    }
+                }
+            }
+            return null;
+        }
+
+        function isSquareAttacked(row, col, defColor, testBoard) {
+            const atkColor = defColor === 'white' ? 'black' : 'white';
+            const pawnDir = defColor === 'white' ? -1 : 1;
+            
+            for (let dc of [-1, 1]) {
+                const r = row - pawnDir, c = col + dc;
+                if (isValid(r, c)) {
+                    const p = testBoard[r] && testBoard[r][c];
+                    if (p && p.toLowerCase() === 'p' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                        return true;
+                    }
+                }
+            }
+            
+            const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+            for (let [dr, dc] of nm) {
+                const r = row + dr, c = col + dc;
+                if (isValid(r, c)) {
+                    const p = testBoard[r] && testBoard[r][c];
+                    if (p && p.toLowerCase() === 'n' && (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                        return true;
+                    }
+                }
+            }
+            
+            for (let [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+                let r = row + dr, c = col + dc;
+                while (isValid(r, c)) {
+                    const p = testBoard[r] && testBoard[r][c];
+                    if (p) {
+                        if ((p.toLowerCase() === 'r' || p.toLowerCase() === 'q') && 
+                            (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                            return true;
+                        }
+                        break;
+                    }
+                    r += dr; c += dc;
+                }
+            }
+            
+            for (let [dr, dc] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
+                let r = row + dr, c = col + dc;
+                while (isValid(r, c)) {
+                    const p = testBoard[r] && testBoard[r][c];
+                    if (p) {
+                        if ((p.toLowerCase() === 'b' || p.toLowerCase() === 'q') && 
+                            (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                            return true;
+                        }
+                        break;
+                    }
+                    r += dr; c += dc;
+                }
+            }
+            
+            for (let [dr, dc] of [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]) {
+                const r = row + dr, c = col + dc;
+                if (isValid(r, c)) {
+                    const p = testBoard[r] && testBoard[r][c];
+                    if (p && p.toLowerCase() === 'k' && 
+                        (atkColor === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function isSquareDefended(row, col, color, board) {
+            const defenders = [];
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                        if (r === row && c === col) continue;
+                        
+                        const attacks = getAttacks(r, c, board, piece);
+                        if (attacks.some(a => a.row === row && a.col === col)) {
+                            defenders.push({row: r, col: c, piece: piece});
+                        }
+                    }
+                }
+            }
+            return defenders.length > 0;
+        }
+
+        function getAttacks(row, col, board, piece) {
+            const attacks = [];
+            const type = piece.toLowerCase();
+            const color = piece === piece.toUpperCase() ? 'white' : 'black';
+            
+            switch(type) {
+                case 'p':
+                    const dir = color === 'white' ? -1 : 1;
+                    for (let dc of [-1, 1]) {
+                        if (isValid(row + dir, col + dc)) {
+                            attacks.push({row: row + dir, col: col + dc});
+                        }
+                    }
+                    break;
+                case 'n':
+                    const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                    for (let [dr, dc] of nm) {
+                        if (isValid(row + dr, col + dc)) {
+                            attacks.push({row: row + dr, col: col + dc});
+                        }
+                    }
+                    break;
+                case 'b':
+                    attacks.push(...slideAttacks(row, col, board, [[-1,-1],[-1,1],[1,-1],[1,1]]));
+                    break;
+                case 'r':
+                    attacks.push(...slideAttacks(row, col, board, [[-1,0],[1,0],[0,-1],[0,1]]));
+                    break;
+                case 'q':
+                    attacks.push(...slideAttacks(row, col, board, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
+                    break;
+                case 'k':
+                    const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+                    for (let [dr, dc] of km) {
+                        if (isValid(row + dr, col + dc)) {
+                            attacks.push({row: row + dr, col: col + dc});
+                        }
+                    }
+                    break;
+            }
+            return attacks;
+        }
+
+        function slideAttacks(row, col, board, dirs) {
+            const attacks = [];
+            for (let [dr, dc] of dirs) {
+                let nr = row + dr, nc = col + dc;
+                while (isValid(nr, nc)) {
+                    attacks.push({row: nr, col: nc});
+                    if (board[nr] && board[nr][nc]) break;
+                    nr += dr;
+                    nc += dc;
+                }
+            }
+            return attacks;
+        }
+
+        function simulateMove(board, move) {
+            const newBoard = board.map(r => [...r]);
+            const piece = newBoard[move.from.row][move.from.col];
+            newBoard[move.to.row][move.to.col] = piece;
+            newBoard[move.from.row][move.from.col] = null;
+            
+            if (move.to.enPassant) {
+                newBoard[move.from.row][move.to.col] = null;
+            }
+            
+            if (move.to.castling) {
+                const row = move.from.row;
+                if (move.to.castling === 'kingSide') {
+                    newBoard[row][5] = newBoard[row][7];
+                    newBoard[row][7] = null;
+                } else {
+                    newBoard[row][3] = newBoard[row][0];
+                    newBoard[row][0] = null;
+                }
+            }
+            
+            if (move.to.promotion) {
+                const color = piece === piece.toUpperCase() ? 'white' : 'black';
+                newBoard[move.to.row][move.to.col] = color === 'white' ? 'Q' : 'q';
+            }
+            
+            return newBoard;
+        }
+
+        function generateAllMoves(board, color) {
+            const moves = [];
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r] && board[r][c];
+                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                        const pieceMoves = getValidMoves(r, c, board, color);
+                        pieceMoves.forEach(m => {
+                            moves.push({
+                                from: {row: r, col: c},
+                                to: m,
+                                piece: piece,
+                                capture: m.capture
+                            });
+                        });
+                    }
+                }
+            }
+            return moves;
+        }
+
+        function evaluateMoveSafety(from, to, move, color) {
+            const board = gameState.board;
+            const piece = board[from.row][from.col];
+            const testBoard = simulateMove(board, {from, to: {...to, ...move}});
+            const opponentColor = color === 'white' ? 'black' : 'white';
+            
+            let safety = {
+                score: 0,
+                threats: [],
+                isHanging: false,
+                blunder: false,
+                warning: false,
+                tacticalMotifs: {score: 0, list: []},
+                positionalAdvantage: 0,
+                kingSafety: 0,
+                materialChange: 0
+            };
+
+            // 1. Análise de material
+            if (move.capture) {
+                const target = board[to.row][to.col];
+                if (target) {
+                    safety.materialChange = PIECE_VALUES[target.toLowerCase()];
+                    safety.score += safety.materialChange;
+                }
+            }
+
+            // 2. Verificar se a peça movida ficará pendurada
+            if (!move.castling) {
+                const willBeAttacked = isSquareAttacked(to.row, to.col, color, testBoard);
+                const willBeDefended = isSquareDefended(to.row, to.col, color, testBoard);
+                const pieceValue = PIECE_VALUES[piece.toLowerCase()];
+                
+                if (willBeAttacked && !willBeDefended) {
+                    safety.isHanging = true;
+                    safety.threats.push(`⚠️ ${PIECES[piece]} ficará indefeso em ${String.fromCharCode(97+to.col)}${8-to.row}`);
+                    safety.score -= pieceValue * 0.8;
+                }
+            }
+
+            // 3. Verificar segurança do rei
+            const kingPos = findKing(testBoard, color);
+            if (kingPos) {
+                const kingAttacked = isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
+                if (kingAttacked) {
+                    safety.score -= 500;
+                    safety.threats.push('🚨 Rei ficará em xeque!');
+                }
+            }
+
+            // 4. Detectar motivos táticos
+            const tactical = detectTacticalMotifs(testBoard, color, from, to, piece);
+            safety.tacticalMotifs = tactical;
+            safety.score += tactical.score;
+
+            return safety;
+        }
+
+        function detectTacticalMotifs(board, color, from, to, piece) {
+            let motifs = { score: 0, list: [] };
+            const opponentColor = color === 'white' ? 'black' : 'white';
+            const pieceType = piece.toLowerCase();
+            
+            // 1. Fork (ataque duplo)
+            const attacksAfterMove = getAttacks(to.row, to.col, board, piece);
+            let highValueTargets = attacksAfterMove.filter(att => {
+                const target = board[att.row] && board[att.row][att.col];
+                return target && isEnemy(piece, target) && 
+                       ['q', 'r', 'n', 'b'].includes(target.toLowerCase());
+            });
+            
+            if (highValueTargets.length >= 2) {
+                motifs.score += 80;
+                motifs.list.push(`🔱 Fork! Ataque a ${highValueTargets.length} peças`);
+            }
+            
+            // 2. Xeque
+            const opponentKing = opponentColor === 'white' ? 'K' : 'k';
+            const kingAttacked = attacksAfterMove.some(att => {
+                const p = board[att.row] && board[att.row][att.col];
+                return p === opponentKing;
+            });
+            
+            if (kingAttacked) {
+                motifs.score += 50;
+                motifs.list.push('👑 Xeque!');
+            }
+            
+            // 3. Promoção de peão
+            if (pieceType === 'p' && (to.row === 0 || to.row === 7)) {
+                motifs.score += 800;
+                motifs.list.push('👑 Promoção!');
+            }
+            
+            return motifs;
+        }
+
         // ==================== INICIALIZAÇÃO ====================
 
         window.onbeforeunload = () => {
             if (unsubscribe) unsubscribe();
+            if (chatUnsubscribe) chatUnsubscribe();
             saveLocalState();
         };
 
@@ -4399,14 +6106,19 @@
                 }
             }
             
-            // A - mostrar análise do adversário
+            // A - mostrar análise de intenções
             if (e.key === 'a' || e.key === 'A') {
                 const panel = document.getElementById('opponentAnalysisPanel');
                 if (panel.classList.contains('active')) {
                     panel.classList.remove('active');
                 } else {
-                    updateOpponentAnalysisPanel();
+                    updateIntentionPanel();
                 }
+            }
+            
+            // C - toggle chat
+            if (e.key === 'c' || e.key === 'C') {
+                toggleChat();
             }
             
             // Espaço - executar jogada divina
@@ -4425,5 +6137,4 @@
         });
     </script>
 </body>
-</html>
-        
+</html>   
