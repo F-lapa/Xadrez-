@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -1700,10 +1700,14 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             z-index: 100;
-            display: flex;
+            display: none; /* Inicialmente escondido */
             flex-direction: column;
             transition: all 0.3s ease;
             overflow: hidden;
+        }
+
+        .chat-container.visible {
+            display: flex;
         }
 
         .chat-container.minimized {
@@ -1764,6 +1768,52 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
+        /* Botão flutuante do chat quando minimizado/escondido */
+        .chat-floating-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border: none;
+            color: #000;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            z-index: 99;
+            display: none;
+            transition: all 0.3s;
+            animation: chatBtnPulse 2s infinite;
+        }
+
+        .chat-floating-btn.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6);
+        }
+
+        .chat-floating-btn.has-new-message {
+            animation: chatBtnNewMessage 1s infinite;
+            background: linear-gradient(135deg, #ff00ff, #00ffff);
+        }
+
+        @keyframes chatBtnPulse {
+            0%, 100% { box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4); }
+            50% { box-shadow: 0 15px 40px rgba(255, 215, 0, 0.6); }
+        }
+
+        @keyframes chatBtnNewMessage {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 0, 255, 0.6); }
+            50% { transform: scale(1.15); box-shadow: 0 0 40px rgba(0, 255, 255, 0.8); }
+        }
+
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -1780,9 +1830,7 @@
 
         .chat-messages::-webkit-scrollbar-track {
             background: rgba(0,0,0,0.2);
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
+        }         .chat-messages::-webkit-scrollbar-thumb {
             background: var(--gold);
             border-radius: 3px;
         }
@@ -1855,8 +1903,7 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: rgba(0, 0, 0, 0.3);
             color: white;
-            border-radius:
-                        border-radius: 25px;
+            border-radius: 25px;
             font-size: 0.9em;
             outline: none;
             transition: all 0.3s;
@@ -1907,6 +1954,11 @@
             .chat-container {
                 width: calc(100% - 40px);
                 max-width: 350px;
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .chat-floating-btn {
                 bottom: 10px;
                 right: 10px;
             }
@@ -2006,6 +2058,12 @@
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Botão flutuante do chat (aparece quando chat está minimizado/escondido) -->
+    <button class="chat-floating-btn" id="chatFloatingBtn" onclick="showChat()">
+        💬
+        <span class="new-intention-badge" id="floatingBadge" style="display:none;">!</span>
+    </button>
 
     <!-- Sistema de Chat -->
     <div class="chat-container minimized" id="chatContainer">
@@ -2296,8 +2354,8 @@
             opponentMoveHistory: [],
             dangerZones: [],
             opponentPredictions: [],
-            opponentIntentions: [], // NOVO: Intenções calculadas do adversário
-            opponentPsychology: null // NOVO: Perfil psicológico do adversário
+            opponentIntentions: [],
+            opponentPsychology: null
         };
 
         let gameRef = null;
@@ -2310,18 +2368,47 @@
         let lastOpponentMoveTime = 0;
         let opponentPatternAnalysis = null;
         let hasNewMessage = false;
+        let isChatVisible = false;
 
-        // ==================== SISTEMA DE CHAT ====================
+        // ==================== SISTEMA DE CHAT CORRIGIDO ====================
 
         function toggleChat() {
             const container = document.getElementById('chatContainer');
+            const floatingBtn = document.getElementById('chatFloatingBtn');
+            
             container.classList.toggle('minimized');
             
             if (!container.classList.contains('minimized')) {
+                // Chat maximizado
                 document.getElementById('newMessageBadge').style.display = 'none';
+                document.getElementById('floatingBadge').style.display = 'none';
                 hasNewMessage = false;
+                floatingBtn.classList.remove('has-new-message');
                 scrollToBottom();
             }
+        }
+
+        function showChat() {
+            const container = document.getElementById('chatContainer');
+            const floatingBtn = document.getElementById('chatFloatingBtn');
+            
+            container.classList.remove('minimized');
+            container.classList.add('visible');
+            floatingBtn.classList.remove('visible');
+            
+            document.getElementById('newMessageBadge').style.display = 'none';
+            document.getElementById('floatingBadge').style.display = 'none';
+            hasNewMessage = false;
+            scrollToBottom();
+        }
+
+        function hideChat() {
+            const container = document.getElementById('chatContainer');
+            const floatingBtn = document.getElementById('chatFloatingBtn');
+            
+            container.classList.remove('visible');
+            container.classList.add('minimized');
+            floatingBtn.classList.add('visible');
         }
 
         function handleChatKeypress(e) {
@@ -2330,30 +2417,53 @@
             }
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
+            const sendBtn = document.getElementById('chatSendBtn');
             
-            if (!text || !gameRef) return;
+            if (!text) return;
             
-            const message = {
-                text: text,
-                sender: gameState.myName,
-                senderColor: gameState.myColor,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                gameId: gameState.gameId
-            };
+            // Verificar se o jogo está pronto para chat
+            if (!gameRef) {
+                showToast('Erro', 'Aguarde o jogo iniciar completamente', 'error');
+                return;
+            }
             
-            gameRef.collection('chat').add(message).then(() => {
+            if (!gameState.players || (!gameState.players.white || !gameState.players.black)) {
+                showToast('Erro', 'Aguarde o adversário entrar na partida', 'error');
+                return;
+            }
+            
+            // Desabilitar botão durante envio
+            sendBtn.disabled = true;
+            
+            try {
+                const message = {
+                    text: text,
+                    sender: gameState.myName,
+                    senderColor: gameState.myColor,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    gameId: gameState.gameId
+                };
+                
+                await gameRef.collection('chat').add(message);
                 input.value = '';
-            }).catch(error => {
+            } catch (error) {
                 console.error('Erro ao enviar mensagem:', error);
-                showToast('Erro', 'Não foi possível enviar a mensagem', 'error');
-            });
+                showToast('Erro', 'Não foi possível enviar a mensagem. Tente novamente.', 'error');
+            } finally {
+                sendBtn.disabled = false;
+            }
         }
 
         function setupChatListener() {
             if (!gameRef) return;
+            
+            // Limpar listener anterior se existir
+            if (chatUnsubscribe) {
+                chatUnsubscribe();
+            }
             
             chatUnsubscribe = gameRef.collection('chat')
                 .orderBy('timestamp', 'asc')
@@ -2363,18 +2473,40 @@
                             const msg = change.doc.data();
                             displayMessage(msg);
                             
-                            // Notificar se for mensagem do adversário e chat estiver minimizado
-                            if (msg.senderColor !== gameState.myColor) {
-                                const container = document.getElementById('chatContainer');
-                                if (container.classList.contains('minimized')) {
-                                    hasNewMessage = true;
-                                    document.getElementById('newMessageBadge').style.display = 'block';
-                                    showToast('💬 Nova mensagem', `${msg.sender}: ${msg.text.substring(0, 50)}${msg.text.length > 50 ? '...' : ''}`, 'normal', 3000);
-                                }
+                            // Notificar se for mensagem do adversário
+                            if (msg.senderColor !== gameState.myColor && msg.sender !== 'Sistema') {
+                                notifyNewMessage(msg);
                             }
                         }
                     });
+                }, error => {
+                    console.error('Erro no chat:', error);
                 });
+        }
+
+        function notifyNewMessage(msg) {
+            const container = document.getElementById('chatContainer');
+            const floatingBtn = document.getElementById('chatFloatingBtn');
+            
+            // Se chat está minimizado ou escondido, mostrar notificação
+            if (!container.classList.contains('visible') || container.classList.contains('minimized')) {
+                hasNewMessage = true;
+                
+                // Atualizar badges
+                document.getElementById('newMessageBadge').style.display = 'block';
+                document.getElementById('floatingBadge').style.display = 'block';
+                
+                // Animar botão flutuante
+                floatingBtn.classList.add('has-new-message');
+                
+                // Mostrar toast
+                showToast(
+                    '💬 Nova mensagem', 
+                    `${msg.sender}: ${msg.text.substring(0, 50)}${msg.text.length > 50 ? '...' : ''}`,
+                    'normal',
+                    4000
+                );
+            }
         }
 
         function displayMessage(msg) {
@@ -2386,10 +2518,18 @@
             
             div.className = `chat-message ${isSystem ? 'system' : isOwn ? 'own' : 'opponent'}`;
             
-            const time = msg.timestamp ? new Date(msg.timestamp.toDate()).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'}) : '';
+            let time = '';
+            if (msg.timestamp) {
+                try {
+                    const date = msg.timestamp.toDate ? msg.timestamp.toDate() : new Date(msg.timestamp);
+                    time = date.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+                } catch (e) {
+                    time = '';
+                }
+            }
             
             div.innerHTML = `
-                ${!isSystem ? `<div class="chat-sender">${msg.sender}</div>` : ''}
+                ${!isSystem ? `<div class="chat-sender">${escapeHtml(msg.sender)}</div>` : ''}
                 <div>${escapeHtml(msg.text)}</div>
                 ${time ? `<div class="chat-time">${time}</div>` : ''}
             `;
@@ -3392,7 +3532,7 @@
             return true;
         }
 
-                function calculateAttackSeverity(board, attacks, color) {
+        function calculateAttackSeverity(board, attacks, color) {
             let severity = 0;
             const myColor = color === 'white' ? 'black' : 'white';
             const kingPos = findKing(board, myColor);
@@ -4210,6 +4350,9 @@
                 if (gameState.godMode) {
                     activateGodMode();
                 }
+                
+                // Mostrar chat apenas se ambos os jogadores estiverem conectados
+                updateChatVisibility();
             }
         }
 
@@ -4267,6 +4410,28 @@
                 document.getElementById('joinBtn').disabled = false;
                 document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
             });
+        }
+
+        function updateChatVisibility() {
+            const chatContainer = document.getElementById('chatContainer');
+            const floatingBtn = document.getElementById('chatFloatingBtn');
+            
+            // Verificar se ambos os jogadores estão conectados
+            const hasBothPlayers = gameState.players && 
+                                  gameState.players.white && 
+                                  gameState.players.black &&
+                                  gameState.players.white.name && 
+                                  gameState.players.black.name;
+            
+            if (hasBothPlayers && gameState.status === 'playing') {
+                // Mostrar chat
+                chatContainer.classList.add('visible');
+                floatingBtn.classList.remove('visible');
+            } else {
+                // Esconder chat
+                chatContainer.classList.remove('visible');
+                floatingBtn.classList.remove('visible');
+            }
         }
 
         function restorePlayerState(game) {
@@ -4332,6 +4497,9 @@
                 showStatus(`✅ Jogo criado!\n\nAguardando adversário...\n\n🔗 COMPARTILHE ESTE LINK:\n${window.location.href}`, 'waiting');
                 updatePlayerDisplay();
                 saveLocalState();
+                
+                // Chat fica escondido até o adversário entrar
+                updateChatVisibility();
             }).catch(error => {
                 console.error('Erro ao criar jogo:', error);
                 showStatus('Erro ao criar jogo: ' + error.message, 'error');
@@ -4378,6 +4546,9 @@
                 setTimeout(() => {
                     addSystemMessage(`🎮 ${gameState.myName} entrou na partida!`);
                 }, 1500);
+                
+                // Mostrar chat agora que ambos estão conectados
+                updateChatVisibility();
             }).catch(error => {
                 console.error('Erro ao entrar:', error);
                 showStatus('Erro ao entrar no jogo: ' + error.message, 'error');
@@ -4417,6 +4588,9 @@
                 setTimeout(() => {
                     addSystemMessage(`🎮 ${gameState.myName} entrou na partida!`);
                 }, 1500);
+                
+                // Mostrar chat agora que ambos estão conectados
+                updateChatVisibility();
             }).catch(error => {
                 console.error('Erro ao entrar:', error);
                 showStatus('Erro ao entrar no jogo: ' + error.message, 'error');
@@ -4511,6 +4685,9 @@
                 }
 
                 saveLocalState();
+                
+                // Atualizar visibilidade do chat
+                updateChatVisibility();
                 
                 requestAnimationFrame(() => {
                     renderBoard();
@@ -4934,7 +5111,7 @@
             // Barra de avaliação
             const score = analysis.evaluation;
             evalScore.textContent = (score > 0 ? '+' : '') + score.toFixed(1);
-            evalScore.className = 'eval-score ' + (score > 0.5 ? 'positive' : score < -0.5 ? 'negative' : 'equal');
+            evalScore.className = 'eval-score ' + (score >  0.5 ? 'positive' : score < -0.5 ? 'negative' : 'equal');
             
             let percent = 50 + (score / 10) * 50;
             percent = Math.max(5, Math.min(95, percent));
@@ -5057,7 +5234,7 @@
                         const move = gameState.validMoves.find(m => m.row === actualRow && m.col === actualCol);
                         if (move) {
                             if (piece) {
-                                                                  square.classList.add('valid-capture');
+                                square.classList.add('valid-capture');
                             } else {
                                 square.classList.add('valid-move');
                             }
@@ -5656,6 +5833,10 @@
             modal.classList.add('show');
             if (unsubscribe) unsubscribe();
             if (chatUnsubscribe) chatUnsubscribe();
+            
+            // Esconder chat no fim do jogo
+            document.getElementById('chatContainer').classList.remove('visible');
+            document.getElementById('chatFloatingBtn').classList.remove('visible');
         }
 
         function returnToIndex() {
@@ -6118,7 +6299,12 @@
             
             // C - toggle chat
             if (e.key === 'c' || e.key === 'C') {
-                toggleChat();
+                const container = document.getElementById('chatContainer');
+                if (container.classList.contains('visible')) {
+                    toggleChat();
+                } else {
+                    showChat();
+                }
             }
             
             // Espaço - executar jogada divina
@@ -6137,4 +6323,6 @@
         });
     </script>
 </body>
-</html>   
+</html>
+
+        
