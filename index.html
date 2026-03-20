@@ -761,9 +761,9 @@
     <!-- MODAL: Desafiar Jogador -->
     <div class="modal-overlay" id="challengeModal">
         <div class="modal">
-            <div class="modal-icon">⚔️</div>
+            <div class="modal-icon">âš”ï¸</div>
             <h2>Desafiar <span id="challengeTargetName">Jogador</span>?</h2>
-            <p>Rating: <span id="challengeTargetRating">0</span> • <span id="challengeTargetStatus">Online</span></p>
+            <p>Rating: <span id="challengeTargetRating">0</span> â€¢ <span id="challengeTargetStatus">Online</span></p>
             <div class="modal-buttons">
                 <button class="btn btn-accept" onclick="sendChallenge()">
                     <i class="fas fa-check"></i> Desafiar
@@ -778,7 +778,7 @@
     <!-- MODAL: Receber Desafio -->
     <div class="modal-overlay" id="receiveChallengeModal">
         <div class="modal">
-            <div class="modal-icon" style="background: linear-gradient(135deg, var(--purple), #6d28d9); color: white;">🎯</div>
+            <div class="modal-icon" style="background: linear-gradient(135deg, var(--purple), #6d28d9); color: white;">ðŸŽ¯</div>
             <h2>Desafio Recebido!</h2>
             <p><strong id="challengerName">Jogador</strong> te desafiou para uma partida<br>Rating: <span id="challengerRating">0</span></p>
             <div class="modal-buttons">
@@ -796,7 +796,7 @@
     <div class="container" id="loginScreen">
         <div class="card">
             <div class="header">
-                <div class="logo">♔</div>
+                <div class="logo">â™”</div>
                 <h1 class="title">Xadrez Pro Ultra</h1>
                 <p class="subtitle">Entre para jogar partidas ranqueadas</p>
             </div>
@@ -807,7 +807,7 @@
             </button>
             
             <p style="text-align: center; color: #71717a; font-size: 0.9em;">
-                Ao entrar, você aceita os Termos de Serviço
+                Ao entrar, vocÃª aceita os Termos de ServiÃ§o
             </p>
         </div>
     </div>
@@ -816,13 +816,13 @@
     <div class="container hidden" id="usernameScreen">
         <div class="card">
             <div class="header">
-                <div class="logo">👤</div>
+                <div class="logo">ðŸ‘¤</div>
                 <h1 class="title" style="font-size: 1.8em;">Escolha seu Nome</h1>
-                <p class="subtitle">Este será seu nome público no jogo</p>
+                <p class="subtitle">Este serÃ¡ seu nome pÃºblico no jogo</p>
             </div>
             
             <div class="input-group">
-                <label class="input-label">Nome de Usuário</label>
+                <label class="input-label">Nome de UsuÃ¡rio</label>
                 <input 
                     type="text" 
                     class="input-field" 
@@ -832,7 +832,7 @@
                 >
                 <div class="input-hint" id="usernameHint">
                     <i class="fas fa-info-circle"></i>
-                    <span>3-20 caracteres, apenas letras, números e _</span>
+                    <span>3-20 caracteres, apenas letras, nÃºmeros e _</span>
                 </div>
             </div>
             
@@ -872,12 +872,12 @@
             <div class="stat-card">
                 <div class="stat-icon green"><i class="fas fa-trophy"></i></div>
                 <div class="stat-value" id="statWins">0</div>
-                <div class="stat-label">Vitórias</div>
+                <div class="stat-label">VitÃ³rias</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon purple"><i class="fas fa-percentage"></i></div>
                 <div class="stat-value" id="statWinRate">0%</div>
-                <div class="stat-label">Taxa de Vitória</div>
+                <div class="stat-label">Taxa de VitÃ³ria</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon blue"><i class="fas fa-gamepad"></i></div>
@@ -924,7 +924,7 @@
                 <div class="quick-match">
                     <button class="btn-quick" onclick="startQuickMatch()">
                         <i class="fas fa-bolt"></i>
-                        <span>Partida Rápida</span>
+                        <span>Partida RÃ¡pida</span>
                     </button>
                 </div>
             </div>
@@ -935,7 +935,7 @@
     <div class="queue-box" id="queueBox">
         <div class="queue-spinner"></div>
         <div>
-            <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px;">Buscando Adversário</h4>
+            <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px;">Buscando AdversÃ¡rio</h4>
             <p style="color: #a1a1aa; font-size: 0.9em;" id="queueTime">Tempo: 0s</p>
         </div>
         <button class="cancel-btn" onclick="cancelQueue()">Cancelar</button>
@@ -944,7 +944,7 @@
     <!-- JAVASCRIPT -->
     <script>
         // ==========================================
-        // CONFIGURAÇÃO FIREBASE
+        // CONFIGURAÃ‡ÃƒO FIREBASE
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDCjrg7g-E_sxQz3cUZyg_W_75ZKsqpaYw",
@@ -961,7 +961,7 @@
         const db = firebase.firestore();
         
         // ==========================================
-        // VARIÁVEIS GLOBAIS
+        // VARIÃVEIS GLOBAIS
         // ==========================================
         let currentUser = null;
         let userData = null;
@@ -974,7 +974,7 @@
         let pendingChallenges = new Map();
         
         // ==========================================
-        // FUNÇÕES DE TELA
+        // FUNÃ‡Ã•ES DE TELA
         // ==========================================
         function showScreen(screenName) {
             document.getElementById('loginScreen').classList.add('hidden');
@@ -1025,7 +1025,7 @@
         }
         
         // ==========================================
-        // VALIDAÇÃO DE NOME
+        // VALIDAÃ‡ÃƒO DE NOME
         // ==========================================
         const usernameInput = document.getElementById('usernameInput');
         let checkTimeout = null;
@@ -1039,14 +1039,14 @@
             btn.disabled = true;
             
             if (value.length < 3) {
-                hint.innerHTML = '<i class="fas fa-times"></i> <span>Mínimo 3 caracteres</span>';
+                hint.innerHTML = '<i class="fas fa-times"></i> <span>MÃ­nimo 3 caracteres</span>';
                 hint.className = 'input-hint invalid';
                 usernameInput.classList.add('error');
                 return;
             }
             
             if (!/^[a-zA-Z0-9_]+$/.test(value)) {
-                hint.innerHTML = '<i class="fas fa-times"></i> <span>Apenas letras, números e _</span>';
+                hint.innerHTML = '<i class="fas fa-times"></i> <span>Apenas letras, nÃºmeros e _</span>';
                 hint.className = 'input-hint invalid';
                 usernameInput.classList.add('error');
                 return;
@@ -1062,11 +1062,11 @@
                     .get();
                 
                 if (!snapshot.empty) {
-                    hint.innerHTML = '<i class="fas fa-times"></i> <span>Nome já em uso</span>';
+                    hint.innerHTML = '<i class="fas fa-times"></i> <span>Nome jÃ¡ em uso</span>';
                     hint.className = 'input-hint invalid';
                     usernameInput.classList.add('error');
                 } else {
-                    hint.innerHTML = '<i class="fas fa-check"></i> <span>Nome disponível!</span>';
+                    hint.innerHTML = '<i class="fas fa-check"></i> <span>Nome disponÃ­vel!</span>';
                     hint.className = 'input-hint valid';
                     btn.disabled = false;
                 }
@@ -1086,7 +1086,7 @@
             btn.textContent = 'Criando...';
             
             try {
-                // CRIA USUÁRIO COM RATING 0 (ZERADO)
+                // CRIA USUÃRIO COM RATING 0 (ZERADO)
                 const userDataToSave = {
                     uid: currentUser.uid,
                     email: currentUser.email,
@@ -1109,7 +1109,7 @@
                 
                 await db.collection('users').doc(currentUser.uid).set(userDataToSave);
                 
-                // STATS TAMBÉM COM RATING 0
+                // STATS TAMBÃ‰M COM RATING 0
                 await db.collection('stats').doc(currentUser.uid).set({
                     uid: currentUser.uid,
                     username: username,
@@ -1129,7 +1129,7 @@
                 
             } catch (error) {
                 console.error('Erro ao criar conta:', error);
-                showToast('Erro', 'Não foi possível criar conta: ' + error.message, 'error');
+                showToast('Erro', 'NÃ£o foi possÃ­vel criar conta: ' + error.message, 'error');
                 btn.disabled = false;
                 btn.textContent = 'Confirmar';
             }
@@ -1170,7 +1170,7 @@
         }
         
         // ==========================================
-        // SISTEMA DE PRESENÇA ONLINE
+        // SISTEMA DE PRESENÃ‡A ONLINE
         // ==========================================
         function setupOnlinePresence() {
             updateOnlineStatus();
@@ -1203,12 +1203,12 @@
         // LISTENERS
         // ==========================================
         function startListeners() {
-            // Listener do próprio usuário
+            // Listener do prÃ³prio usuÃ¡rio
             const userUnsub = db.collection('users').doc(currentUser.uid)
                 .onSnapshot(doc => {
                     if (doc.exists) {
                         userData = { ...userData, ...doc.data() };
-                        // GARANTE RATING NÃO NEGATIVO
+                        // GARANTE RATING NÃƒO NEGATIVO
                         if (userData.rating < 0) {
                             userData.rating = 0;
                             db.collection('users').doc(currentUser.uid).update({ rating: 0 });
@@ -1255,8 +1255,8 @@
                         <div class="rank-number ${rankClass}">${rankNum}</div>
                         <div class="rank-avatar">${data.username.charAt(0).toUpperCase()}</div>
                         <div class="rank-info">
-                            <div class="rank-name">${data.username} ${isYou ? '(Você)' : ''}</div>
-                            <div class="rank-stats">${data.wins || 0} vitórias • ${data.totalGames || 0} jogos</div>
+                            <div class="rank-name">${data.username} ${isYou ? '(VocÃª)' : ''}</div>
+                            <div class="rank-stats">${data.wins || 0} vitÃ³rias â€¢ ${data.totalGames || 0} jogos</div>
                         </div>
                         <div class="rank-rating">${safeRating}</div>
                     </li>
@@ -1282,7 +1282,7 @@
                 const list = document.getElementById('onlineList');
                 
                 if (allPlayers.length === 0) {
-                    list.innerHTML = '<li style="color: #71717a; text-align: center;">Nenhum jogador disponível</li>';
+                    list.innerHTML = '<li style="color: #71717a; text-align: center;">Nenhum jogador disponÃ­vel</li>';
                     return;
                 }
                 
@@ -1302,7 +1302,7 @@
                             </div>
                             <div class="online-info">
                                 <div class="online-name">${player.username}</div>
-                                <div class="online-rating">Pontos: ${player.rating} • ${isOnline ? 'Online' : 'Offline'}</div>
+                                <div class="online-rating">Pontos: ${player.rating} â€¢ ${isOnline ? 'Online' : 'Offline'}</div>
                             </div>
                             <button class="challenge-btn ${isOnline ? '' : 'offline'}">
                                 Desafiar
@@ -1316,18 +1316,18 @@
         }
         
         // ==========================================
-        // SISTEMA DE DESAFIOS - CORRIGIDO (SEM PERMISSÃO NEGADA)
+        // SISTEMA DE DESAFIOS - CORRIGIDO (SEM PERMISSÃƒO NEGADA)
         // ==========================================
         function openChallengeModal(uid, username, rating, isOnline) {
             if (uid === currentUser.uid) {
-                showToast('Erro', 'Você não pode desafiar a si mesmo', 'error');
+                showToast('Erro', 'VocÃª nÃ£o pode desafiar a si mesmo', 'error');
                 return;
             }
             
             selectedPlayer = { uid, username, rating, isOnline };
             document.getElementById('challengeTargetName').textContent = username;
             document.getElementById('challengeTargetRating').textContent = rating;
-            document.getElementById('challengeTargetStatus').textContent = isOnline ? 'Online' : 'Offline (receberá notificação)';
+            document.getElementById('challengeTargetStatus').textContent = isOnline ? 'Online' : 'Offline (receberÃ¡ notificaÃ§Ã£o)';
             document.getElementById('challengeTargetStatus').style.color = isOnline ? 'var(--green)' : '#71717a';
             openModal('challengeModal');
         }
@@ -1353,14 +1353,14 @@
             };
             
             try {
-                // CORREÇÃO: Cria apenas o challenge, sem tentar escrever no documento do outro usuário
-                // Isso evita erro de permissão
+                // CORREÃ‡ÃƒO: Cria apenas o challenge, sem tentar escrever no documento do outro usuÃ¡rio
+                // Isso evita erro de permissÃ£o
                 await db.collection('challenges').doc(challengeId).set(challengeData);
                 
                 showToast('Desafio Enviado!', 
                     selectedPlayer.isOnline 
                         ? `Aguardando ${selectedPlayer.username}...` 
-                        : `${selectedPlayer.username} receberá ao entrar`, 
+                        : `${selectedPlayer.username} receberÃ¡ ao entrar`, 
                     'info');
                 
                 // ESCUTA RESPOSTA EM TEMPO REAL
@@ -1401,7 +1401,7 @@
                 
             } catch (error) {
                 console.error('Erro ao enviar desafio:', error);
-                showToast('Erro', 'Não foi possível enviar desafio: ' + error.message, 'error');
+                showToast('Erro', 'NÃ£o foi possÃ­vel enviar desafio: ' + error.message, 'error');
             }
         }
         
@@ -1413,7 +1413,7 @@
                 window.challengeListener();
             }
             
-            // ESCUTA DESAFIOS ONDE O USUÁRIO É O DESTINATÁRIO
+            // ESCUTA DESAFIOS ONDE O USUÃRIO Ã‰ O DESTINATÃRIO
             window.challengeListener = db.collection('challenges')
                 .where('toUid', '==', currentUser.uid)
                 .where('status', '==', 'pending')
@@ -1421,7 +1421,7 @@
                     snapshot.docChanges().forEach(change => {
                         if (change.type === 'added') {
                             const challenge = change.doc.data();
-                            // Verifica se não expirou
+                            // Verifica se nÃ£o expirou
                             const expires = challenge.expiresAt?.toDate();
                             if (!expires || expires > new Date()) {
                                 challenge.docId = change.doc.id;
@@ -1468,7 +1468,7 @@
                 
             } catch (error) {
                 console.error('Erro ao aceitar:', error);
-                showToast('Erro', 'Não foi possível aceitar: ' + error.message, 'error');
+                showToast('Erro', 'NÃ£o foi possÃ­vel aceitar: ' + error.message, 'error');
             }
         }
         
@@ -1501,130 +1501,57 @@
         }
         
         // ==========================================
-// INICIAR JOGO - CORRIGIDO E COMPLETO
-// ==========================================
-function startGameWithPlayer(challengeData, color) {
-    const gameId = challengeData.challengeId;
-    
-    const whiteRating = Math.max(0, color === 'white' ? challengeData.fromRating : (userData.rating || 0));
-    const blackRating = Math.max(0, color === 'black' ? challengeData.fromRating : (userData.rating || 0));
-    
-    // Criar tabuleiro inicial
-    const initialBoard = {};
-    const boardSetup = [
-        ['r','n','b','q','k','b','n','r'],
-        ['p','p','p','p','p','p','p','p'],
-        [null,null,null,null,null,null,null,null],
-        [null,null,null,null,null,null,null,null],
-        [null,null,null,null,null,null,null,null],
-        [null,null,null,null,null,null,null,null],
-        ['P','P','P','P','P','P','P','P'],
-        ['R','N','B','Q','K','B','N','R']
-    ];
-    
-    for (let r = 0; r < 8; r++) {
-        for (let c = 0; c < 8; c++) {
-            if (boardSetup[r][c]) {
-                initialBoard[`${r}-${c}`] = boardSetup[r][c];
-            }
+        // INICIAR JOGO
+        // ==========================================
+        function startGameWithPlayer(challengeData, color) {
+            const gameId = challengeData.challengeId;
+            
+            const whiteRating = Math.max(0, color === 'white' ? challengeData.fromRating : (userData.rating || 0));
+            const blackRating = Math.max(0, color === 'black' ? challengeData.fromRating : (userData.rating || 0));
+            
+            db.collection('games').doc(gameId).set({
+                gameId: gameId,
+                whitePlayer: color === 'white' ? challengeData.fromUid : currentUser.uid,
+                whiteUsername: color === 'white' ? challengeData.fromUsername : userData.username,
+                whiteRating: whiteRating,
+                blackPlayer: color === 'black' ? challengeData.fromUid : currentUser.uid,
+                blackUsername: color === 'black' ? challengeData.fromUsername : userData.username,
+                blackRating: blackRating,
+                status: 'playing',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                sessionStorage.setItem('currentUser', JSON.stringify({
+                    uid: currentUser.uid,
+                    username: userData.username,
+                    rating: Math.max(0, userData.rating || 0),
+                    color: color,
+                    isFernando: userData.username.toLowerCase() === 'fernando'
+                }));
+                
+                sessionStorage.setItem('currentGame', JSON.stringify({
+                    gameId: gameId,
+                    timestamp: Date.now()
+                }));
+                
+                stopAllListeners();
+                window.location.href = `game.html?game=${gameId}`;
+                
+            }).catch(error => {
+                console.error('Erro ao criar jogo:', error);
+                showToast('Erro', 'NÃ£o foi possÃ­vel iniciar o jogo', 'error');
+            });
         }
-    }
-    
-    // Dados completos do jogo
-    const gameData = {
-        // IDs dos jogadores
-        gameId: gameId,
-        whitePlayer: color === 'white' ? challengeData.fromUid : currentUser.uid,
-        whiteUsername: color === 'white' ? challengeData.fromUsername : userData.username,
-        whiteRating: whiteRating,
-        whiteConnected: true,
-        
-        blackPlayer: color === 'black' ? challengeData.fromUid : currentUser.uid,
-        blackUsername: color === 'black' ? challengeData.fromUsername : userData.username,
-        blackRating: blackRating,
-        blackConnected: true,
-        
-        // Estado do tabuleiro (ESSENCIAL!)
-        board: initialBoard,
-        currentPlayer: 'white',
-        status: 'playing',
-        
-        // Regras especiais
-        castlingRights: { 
-            white: {kingSide: true, queenSide: true}, 
-            black: {kingSide: true, queenSide: true} 
-        },
-        enPassantTarget: null,
-        lastMove: null,
-        capturedPieces: { white: '', black: '' },
-        kingPositions: { 
-            white: {row: 7, col: 4}, 
-            black: {row: 0, col: 4} 
-        },
-        moveHistory: [],
-        
-        // Timestamps
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        startedAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-    
-    console.log('🎮 Criando jogo no Firebase:', gameData);
-    
-    db.collection('games').doc(gameId).set(gameData).then(() => {
-        console.log('✅ Jogo criado no Firebase!');
-        
-        // PREPARAR DADOS PARA O GAME.HTML (formato compatível)
-        const playerData = {
-            uid: currentUser.uid,
-            username: userData.username,
-            rating: Math.max(0, userData.rating || 0),
-            color: color,
-            isFernando: userData.username.toLowerCase() === 'fernando',
-            gameId: gameId
-        };
-        
-        // Salvar em MÚLTIPLOS lugares para garantir compatibilidade
-        // 1. Formato antigo (compatibilidade)
-        sessionStorage.setItem('currentUser', JSON.stringify(playerData));
-        sessionStorage.setItem('currentGame', JSON.stringify({
-            gameId: gameId,
-            timestamp: Date.now()
-        }));
-        
-        // 2. Novo formato (mais completo)
-        sessionStorage.setItem('chessPlayerData', JSON.stringify(playerData));
-        sessionStorage.setItem('chessGameId', gameId);
-        sessionStorage.setItem('chessGameMode', 'challenge');
-        
-        // 3. Backup no localStorage (persiste se fechar navegador)
-        localStorage.setItem('chessPlayerData', JSON.stringify(playerData));
-        localStorage.setItem('chessLastGameId', gameId);
-        
-        console.log('💾 Dados salvos:', playerData);
-        
-        stopAllListeners();
-        
-        // Redirecionar com parâmetros na URL (IMPORTANTE!)
-        window.location.href = `game.html?game=${gameId}&player=${currentUser.uid}&color=${color}`;
-        
-    }).catch(error => {
-        console.error('❌ Erro ao criar jogo:', error);
-        showToast('Erro', 'Não foi possível iniciar o jogo: ' + error.message, 'error');
-    });
-}
-        
-        
         
         // ==========================================
-        // NOVO SISTEMA DE PONTUAÇÃO
+        // NOVO SISTEMA DE PONTUAÃ‡ÃƒO
         // ==========================================
-        // Função para atualizar pontuação após jogo (chamar no game.html)
+        // FunÃ§Ã£o para atualizar pontuaÃ§Ã£o apÃ³s jogo (chamar no game.html)
         async function updateRatingAfterGame(gameId, winnerUid, loserUid, isDraw) {
             try {
                 const batch = db.batch();
                 
                 if (isDraw) {
-                    // Empate: ninguém ganha pontos
+                    // Empate: ninguÃ©m ganha pontos
                     const gameRef = db.collection('games').doc(gameId);
                     batch.update(gameRef, { 
                         status: 'finished',
@@ -1632,8 +1559,8 @@ function startGameWithPlayer(challengeData, color) {
                         finishedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 } else {
-                    // VITÓRIA: +10 pontos para vencedor
-                    // DERROTA: -10 pontos para perdedor (mínimo 0)
+                    // VITÃ“RIA: +10 pontos para vencedor
+                    // DERROTA: -10 pontos para perdedor (mÃ­nimo 0)
                     
                     // Busca ratings atuais
                     const [winnerDoc, loserDoc] = await Promise.all([
@@ -1650,7 +1577,7 @@ function startGameWithPlayer(challengeData, color) {
                     // Vencedor ganha 10
                     const winnerNew = winnerCurrent + 10;
                     
-                    // Perdedor perde 10, mas não fica negativo
+                    // Perdedor perde 10, mas nÃ£o fica negativo
                     const loserNew = Math.max(0, loserCurrent - 10);
                     
                     // Atualiza vencedor
@@ -1703,18 +1630,18 @@ function startGameWithPlayer(challengeData, color) {
                 }
                 
                 await batch.commit();
-                console.log('Pontuação atualizada com sucesso!');
+                console.log('PontuaÃ§Ã£o atualizada com sucesso!');
                 
             } catch (error) {
-                console.error('Erro ao atualizar pontuação:', error);
+                console.error('Erro ao atualizar pontuaÃ§Ã£o:', error);
             }
         }
         
-        // Expõe função global para usar no game.html
+        // ExpÃµe funÃ§Ã£o global para usar no game.html
         window.updateRatingAfterGame = updateRatingAfterGame;
         
         // ==========================================
-        // MATCHMAKING RÁPIDO
+        // MATCHMAKING RÃPIDO
         // ==========================================
         function startQuickMatch() {
             document.getElementById('queueBox').classList.add('active');
@@ -1725,91 +1652,44 @@ function startGameWithPlayer(challengeData, color) {
                 document.getElementById('queueTime').textContent = `Tempo: ${elapsed}s`;
             }, 1000);
             
-                setTimeout(() => {
-        const gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
-        
-        // Criar tabuleiro inicial
-        const initialBoard = {};
-        const boardSetup = [
-            ['r','n','b','q','k','b','n','r'],
-            ['p','p','p','p','p','p','p','p'],
-            [null,null,null,null,null,null,null,null],
-            [null,null,null,null,null,null,null,null],
-            [null,null,null,null,null,null,null,null],
-            [null,null,null,null,null,null,null,null],
-            ['P','P','P','P','P','P','P','P'],
-            ['R','N','B','Q','K','B','N','R']
-        ];
-        
-        for (let r = 0; r < 8; r++) {
-            for (let c = 0; c < 8; c++) {
-                if (boardSetup[r][c]) {
-                    initialBoard[`${r}-${c}`] = boardSetup[r][c];
-                }
-            }
+            setTimeout(() => {
+                const gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
+                
+                db.collection('games').doc(gameId).set({
+                    gameId: gameId,
+                    whitePlayer: currentUser.uid,
+                    whiteUsername: userData.username,
+                    whiteRating: Math.max(0, userData.rating || 0),
+                    status: 'waiting',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                cancelQueue();
+                enterGame(gameId);
+            }, 3000);
         }
-        
-        db.collection('games').doc(gameId).set({
-            gameId: gameId,
-            whitePlayer: currentUser.uid,
-            whiteUsername: userData.username,
-            whiteRating: Math.max(0, userData.rating || 0),
-            whiteConnected: true,
-            
-            // Tabuleiro inicial ESSENCIAL
-            board: initialBoard,
-            currentPlayer: 'white',
-            status: 'waiting',
-            
-            castlingRights: { 
-                white: {kingSide: true, queenSide: true}, 
-                black: {kingSide: true, queenSide: true} 
-            },
-            kingPositions: { 
-                white: {row: 7, col: 4}, 
-                black: {row: 0, col: 4} 
-            },
-            capturedPieces: { white: '', black: '' },
-            moveHistory: [],
-            
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        cancelQueue();
-        enterGame(gameId, 'white');
-    }, 3000);
         
         function cancelQueue() {
             document.getElementById('queueBox').classList.remove('active');
             clearInterval(queueInterval);
         }
         
-        function enterGame(gameId, color = null) {
-    const playerData = {
-        uid: currentUser.uid,
-        username: userData.username,
-        rating: Math.max(0, userData.rating || 0),
-        color: color,
-        isFernando: userData.username.toLowerCase() === 'fernando',
-        gameId: gameId
-    };
-    
-    // Salvar em múltiplos formatos para compatibilidade
-    sessionStorage.setItem('currentUser', JSON.stringify(playerData));
-    sessionStorage.setItem('currentGame', JSON.stringify({
-        gameId: gameId,
-        timestamp: Date.now()
-    }));
-    sessionStorage.setItem('chessPlayerData', JSON.stringify(playerData));
-    sessionStorage.setItem('chessGameId', gameId);
-    
-    // Backup localStorage
-    localStorage.setItem('chessPlayerData', JSON.stringify(playerData));
-    localStorage.setItem('chessLastGameId', gameId);
-    
-    stopAllListeners();
-    window.location.href = `game.html?game=${gameId}&player=${currentUser.uid}${color ? '&color=' + color : ''}`;
-}
+        function enterGame(gameId) {
+            sessionStorage.setItem('currentUser', JSON.stringify({
+                uid: currentUser.uid,
+                username: userData.username,
+                rating: Math.max(0, userData.rating || 0),
+                isFernando: userData.username.toLowerCase() === 'fernando'
+            }));
+            
+            sessionStorage.setItem('currentGame', JSON.stringify({
+                gameId: gameId,
+                timestamp: Date.now()
+            }));
+            
+            stopAllListeners();
+            window.location.href = `game.html?game=${gameId}`;
+        }
         
         // ==========================================
         // LIMPEZA
@@ -1879,7 +1759,7 @@ function startGameWithPlayer(challengeData, color) {
         }
         
         // ==========================================
-        // INICIALIZAÇÃO
+        // INICIALIZAÃ‡ÃƒO
         // ==========================================
         auth.onAuthStateChanged(user => {
             if (user) {
@@ -1896,7 +1776,7 @@ function startGameWithPlayer(challengeData, color) {
                         showScreen('username');
                     }
                 }).catch(error => {
-                    console.error('Erro ao carregar usuário:', error);
+                    console.error('Erro ao carregar usuÃ¡rio:', error);
                     showToast('Erro', 'Erro ao carregar dados', 'error');
                 });
             } else {
@@ -1904,7 +1784,7 @@ function startGameWithPlayer(challengeData, color) {
             }
         });
         
-        // Expõe funções globais
+        // ExpÃµe funÃ§Ãµes globais
         window.signInWithGoogle = signInWithGoogle;
         window.confirmUsername = confirmUsername;
         window.signOut = signOut;
