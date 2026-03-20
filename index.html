@@ -379,6 +379,7 @@
             border-radius: 12px;
             margin-bottom: 10px;
             transition: all 0.3s;
+            cursor: pointer;
         }
         
         .ranking-item:hover {
@@ -480,6 +481,10 @@
             border: 2px solid var(--dark);
         }
         
+        .online-status.offline {
+            background: #71717a;
+        }
+        
         .online-info {
             flex: 1;
         }
@@ -509,6 +514,12 @@
         .challenge-btn:hover {
             background: var(--green);
             color: #000;
+        }
+        
+        .challenge-btn.offline {
+            background: rgba(113, 113, 122, 0.2);
+            border-color: #71717a;
+            color: #71717a;
         }
         
         .quick-match {
@@ -752,7 +763,7 @@
         <div class="modal">
             <div class="modal-icon">⚔️</div>
             <h2>Desafiar <span id="challengeTargetName">Jogador</span>?</h2>
-            <p>Rating: <span id="challengeTargetRating">0</span></p>
+            <p>Rating: <span id="challengeTargetRating">0</span> • <span id="challengeTargetStatus">Online</span></p>
             <div class="modal-buttons">
                 <button class="btn btn-accept" onclick="sendChallenge()">
                     <i class="fas fa-check"></i> Desafiar
@@ -877,7 +888,7 @@
         
         <!-- Content -->
         <div class="content-grid">
-            <!-- Ranking -->
+            <!-- Ranking Global (todos os jogadores, online ou offline) -->
             <div class="section-card">
                 <div class="section-header">
                     <h3 class="section-title">
@@ -892,21 +903,21 @@
                 </ul>
             </div>
             
-            <!-- Online -->
+            <!-- Jogadores Online -->
             <div class="section-card">
                 <div class="section-header">
                     <h3 class="section-title">
                         <i class="fas fa-users"></i>
-                        Online
+                        Jogadores
                         <span style="color: var(--green); font-size: 0.7em; margin-left: 10px;">
                             <i class="fas fa-circle" style="font-size: 0.5em;"></i>
-                            <span id="onlineCount">0</span>
+                            <span id="onlineCount">0</span> online
                         </span>
                     </h3>
                 </div>
                 <ul class="online-list" id="onlineList">
                     <li style="color: #71717a; text-align: center; padding: 20px;">
-                        Buscando jogadores...
+                        Carregando jogadores...
                     </li>
                 </ul>
                 
@@ -933,7 +944,7 @@
     <!-- JAVASCRIPT -->
     <script>
         // ==========================================
-        // CONFIGURAÇÃO FIREBASE (FIRESTORE APENAS)
+        // CONFIGURAÇÃO FIREBASE
         // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDCjrg7g-E_sxQz3cUZyg_W_75ZKsqpaYw",
@@ -949,12 +960,6 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
         
-        // Configurações do Firestore para melhor performance
-        db.settings({
-            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-            merge: true
-        });
-        
         // ==========================================
         // VARIÁVEIS GLOBAIS
         // ==========================================
@@ -965,9 +970,7 @@
         let listeners = [];
         let selectedPlayer = null;
         let currentChallenge = null;
-        let heartbeatInterval = null;
-        let onlineListener = null;
-        let challengeListener = null;
+        let allPlayers = []; // Todos os jogadores para desafiar
         
         // ==========================================
         // FUNÇÕES DE TELA
@@ -1070,7 +1073,7 @@
         });
         
         // ==========================================
-        // CONFIRMAR NOME E CRIAR CONTA (RATING 0)
+        // CONFIRMAR NOME - RATING COMEÇA EM 0
         // ==========================================
         async function confirmUsername() {
             const username = usernameInput.value.trim();
@@ -1082,6 +1085,7 @@
             btn.textContent = 'Criando...';
             
             try {
+                // CRIA USUÁRIO COM RATING 0 (ZERADO)
                 await db.collection('users').doc(currentUser.uid).set({
                     uid: currentUser.uid,
                     email: currentUser.email,
@@ -1089,7 +1093,7 @@
                     username: username,
                     usernameLower: username.toLowerCase(),
                     photoURL: currentUser.photoURL,
-                    rating: 0, // COMEÇA COM 0
+                    rating: 0, // <<<< ZERADO
                     wins: 0,
                     losses: 0,
                     draws: 0,
@@ -1102,10 +1106,11 @@
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
+                // STATS TAMBÉM COM RATING 0
                 await db.collection('stats').doc(currentUser.uid).set({
                     uid: currentUser.uid,
                     username: username,
-                    rating: 0, // COMEÇA COM 0
+                    rating: 0, // <<<< ZERADO
                     highestRating: 0,
                     totalGames: 0,
                     wins: 0,
@@ -1117,14 +1122,14 @@
                 userData = {
                     uid: currentUser.uid,
                     username: username,
-                    rating: 0,
+                    rating: 0, // <<<< ZERADO
                     wins: 0,
                     losses: 0,
                     draws: 0,
                     gamesPlayed: 0
                 };
                 
-                showToast('Bem-vindo!', 'Conta criada com sucesso', 'success');
+                showToast('Bem-vindo!', 'Conta criada com sucesso! Rating inicial: 0', 'success');
                 startDashboard();
                 
             } catch (error) {
@@ -1153,6 +1158,7 @@
             document.getElementById('userName').textContent = userData.username;
             document.getElementById('userRating').textContent = `Rating: ${userData.rating || 0}`;
             
+            // MOSTRA RATING 0
             document.getElementById('statRating').textContent = userData.rating || 0;
             document.getElementById('statWins').textContent = userData.wins || 0;
             
@@ -1164,16 +1170,16 @@
         }
         
         // ==========================================
-        // SISTEMA DE PRESENÇA ONLINE (FIRESTORE)
+        // SISTEMA DE PRESENÇA ONLINE
         // ==========================================
         function setupOnlinePresence() {
-            // Marca como online imediatamente
+            // Marca como online
             updateOnlineStatus();
             
-            // Heartbeat a cada 10 segundos para manter online
-            heartbeatInterval = setInterval(updateOnlineStatus, 10000);
+            // Heartbeat a cada 10 segundos
+            setInterval(updateOnlineStatus, 10000);
             
-            // Quando fechar a página, marca offline (best effort)
+            // Marca offline ao sair
             window.addEventListener('beforeunload', () => {
                 if (currentUser) {
                     db.collection('users').doc(currentUser.uid).update({
@@ -1190,8 +1196,7 @@
             try {
                 await db.collection('users').doc(currentUser.uid).update({
                     isOnline: true,
-                    lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastPing: Date.now() // Timestamp do cliente para debug
+                    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
                 });
             } catch (e) {
                 console.log('Erro ao atualizar status:', e);
@@ -1199,7 +1204,7 @@
         }
         
         // ==========================================
-        // LISTENERS EM TEMPO REAL
+        // LISTENERS - BUSCA TODOS OS JOGADORES
         // ==========================================
         function startListeners() {
             // Listener do próprio usuário
@@ -1212,54 +1217,23 @@
                 });
             listeners.push(userUnsub);
             
-            // Listener do ranking (top 10)
+            // Listener do ranking (todos os jogadores, não só online)
             const rankingUnsub = db.collection('stats')
                 .orderBy('rating', 'desc')
-                .limit(10)
+                .limit(20)
                 .onSnapshot(snapshot => {
                     updateRanking(snapshot.docs);
+                    // Guarda todos os jogadores para poder desafiar qualquer um
+                    allPlayers = snapshot.docs.map(doc => ({
+                        uid: doc.data().uid,
+                        username: doc.data().username,
+                        rating: doc.data().rating || 0
+                    })).filter(p => p.uid !== currentUser.uid);
+                    
+                    // Atualiza lista de jogadores (online e offline)
+                    updatePlayersList();
                 });
             listeners.push(rankingUnsub);
-            
-            // Listener de jogadores online - USA get() com server para evitar cache
-            fetchOnlinePlayers();
-            
-            // Atualiza lista a cada 5 segundos para garantir sincronia entre contas
-            setInterval(fetchOnlinePlayers, 5000);
-            
-            // Listener de desafios recebidos
-            listenForChallenges();
-        }
-        
-        async function fetchOnlinePlayers() {
-            if (!currentUser) return;
-            
-            try {
-                // Força fetch do servidor (ignora cache local)
-                const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-                
-                const snapshot = await db.collection('users')
-                    .where('isOnline', '==', true)
-                    .where('lastSeen', '>', fiveMinutesAgo)
-                    .get({ source: 'server' }); // FORÇA SERVIDOR
-                
-                const users = [];
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    // Filtra o próprio usuário manualmente (mais confiável que query !=)
-                    if (data.uid !== currentUser.uid) {
-                        users.push({
-                            uid: data.uid,
-                            username: data.username,
-                            rating: data.rating || 0
-                        });
-                    }
-                });
-                
-                updateOnlineList(users);
-            } catch (error) {
-                console.error('Erro ao buscar online:', error);
-            }
         }
         
         function updateRanking(docs) {
@@ -1277,7 +1251,7 @@
                 const rankNum = index < 3 ? '' : (index + 1);
                 
                 return `
-                    <li class="ranking-item ${isYou ? 'you' : ''}">
+                    <li class="ranking-item ${isYou ? 'you' : ''}" onclick="openChallengeModal('${data.uid}', '${data.username}', ${data.rating || 0}, ${isYou ? true : false})">
                         <div class="rank-number ${rankClass}">${rankNum}</div>
                         <div class="rank-avatar">${data.username.charAt(0).toUpperCase()}</div>
                         <div class="rank-info">
@@ -1290,55 +1264,72 @@
             }).join('');
         }
         
-        function updateOnlineList(users) {
-            const list = document.getElementById('onlineList');
-            document.getElementById('onlineCount').textContent = users.length;
+        async function updatePlayersList() {
+            // Busca status online de todos os jogadores
+            const onlineSnapshot = await db.collection('users')
+                .where('isOnline', '==', true)
+                .get();
             
-            if (users.length === 0) {
-                list.innerHTML = '<li style="color: #71717a; text-align: center;">Ninguém online</li>';
+            const onlineUids = new Set();
+            onlineSnapshot.forEach(doc => {
+                if (doc.id !== currentUser.uid) {
+                    onlineUids.add(doc.id);
+                }
+            });
+            
+            // Atualiza contador
+            document.getElementById('onlineCount').textContent = onlineUids.size;
+            
+            // Mostra lista mista: online primeiro, depois offline
+            const list = document.getElementById('onlineList');
+            
+            if (allPlayers.length === 0) {
+                list.innerHTML = '<li style="color: #71717a; text-align: center;">Nenhum jogador disponível</li>';
                 return;
             }
             
-            list.innerHTML = users.map(user => {
+            // Ordena: online primeiro
+            const sortedPlayers = [...allPlayers].sort((a, b) => {
+                const aOnline = onlineUids.has(a.uid);
+                const bOnline = onlineUids.has(b.uid);
+                return bOnline - aOnline; // true (1) vem antes de false (0)
+            });
+            
+            list.innerHTML = sortedPlayers.map(player => {
+                const isOnline = onlineUids.has(player.uid);
                 return `
-                    <li class="online-item" onclick="openChallengeModal('${user.uid}', '${user.username}', ${user.rating})">
+                    <li class="online-item" onclick="openChallengeModal('${player.uid}', '${player.username}', ${player.rating}, ${isOnline})">
                         <div class="online-avatar">
-                            ${user.username.charAt(0).toUpperCase()}
-                            <span class="online-status"></span>
+                            ${player.username.charAt(0).toUpperCase()}
+                            <span class="online-status ${isOnline ? '' : 'offline'}"></span>
                         </div>
                         <div class="online-info">
-                            <div class="online-name">${user.username}</div>
-                            <div class="online-rating">Rating: ${user.rating}</div>
+                            <div class="online-name">${player.username}</div>
+                            <div class="online-rating">Rating: ${player.rating} • ${isOnline ? 'Online' : 'Offline'}</div>
                         </div>
-                        <button class="challenge-btn">Desafiar</button>
+                        <button class="challenge-btn ${isOnline ? '' : 'offline'}">
+                            ${isOnline ? 'Desafiar' : 'Desafiar'}
+                        </button>
                     </li>
                 `;
             }).join('');
         }
         
         // ==========================================
-        // SISTEMA DE DESAFIOS (FIRESTORE)
+        // SISTEMA DE DESAFIOS - FUNCIONA ONLINE E OFFLINE
         // ==========================================
-        function listenForChallenges() {
-            // Escuta desafios onde este usuário é o destinatário
-            challengeListener = db.collection('challenges')
-                .where('toUid', '==', currentUser.uid)
-                .where('status', '==', 'pending')
-                .onSnapshot(snapshot => {
-                    snapshot.docChanges().forEach(change => {
-                        if (change.type === 'added') {
-                            const challenge = change.doc.data();
-                            challenge.docId = change.doc.id;
-                            receiveChallenge(challenge);
-                        }
-                    });
-                });
-        }
-        
-        function openChallengeModal(uid, username, rating) {
-            selectedPlayer = { uid, username, rating };
+        function openChallengeModal(uid, username, rating, isOnline) {
+            // Não permite desafiar a si mesmo
+            if (uid === currentUser.uid) {
+                showToast('Erro', 'Você não pode desafiar a si mesmo', 'error');
+                return;
+            }
+            
+            selectedPlayer = { uid, username, rating, isOnline };
             document.getElementById('challengeTargetName').textContent = username;
             document.getElementById('challengeTargetRating').textContent = rating;
+            document.getElementById('challengeTargetStatus').textContent = isOnline ? 'Online' : 'Offline (receberá quando entrar)';
+            document.getElementById('challengeTargetStatus').style.color = isOnline ? 'var(--green)' : '#71717a';
             openModal('challengeModal');
         }
         
@@ -1358,56 +1349,90 @@
                 toUsername: selectedPlayer.username,
                 toRating: selectedPlayer.rating,
                 status: 'pending',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // Expira em 24 horas
             };
             
             try {
-                // Cria o desafio
+                // Cria o desafio na coleção challenges
                 await db.collection('challenges').doc(challengeId).set(challengeData);
                 
-                // Cria referência no documento do remetente para rastrear resposta
-                await db.collection('users').doc(currentUser.uid).collection('sentChallenges').doc(challengeId).set({
+                // Cria notificação para o destinatário (visível quando ele entrar)
+                await db.collection('notifications').doc(selectedPlayer.uid).collection('challenges').doc(challengeId).set({
                     ...challengeData,
-                    expiresAt: new Date(Date.now() + 60000) // Expira em 1 minuto
+                    read: false
                 });
                 
-                showToast('Desafio Enviado!', `Aguardando ${selectedPlayer.username}...`, 'info');
+                showToast('Desafio Enviado!', 
+                    selectedPlayer.isOnline 
+                        ? `Aguardando ${selectedPlayer.username}...` 
+                        : `${selectedPlayer.username} receberá ao entrar no jogo`, 
+                    'info');
                 
-                // Escuta resposta
-                const unsubscribe = db.collection('challenges').doc(challengeId)
-                    .onSnapshot(doc => {
-                        if (!doc.exists) return;
-                        
-                        const data = doc.data();
-                        
-                        if (data.status === 'accepted') {
-                            unsubscribe();
-                            startGameWithPlayer(data, 'white');
-                        } else if (data.status === 'rejected') {
-                            unsubscribe();
-                            showToast('Desafio Recusado', `${selectedPlayer.username} recusou o desafio`, 'error');
-                            // Limpa referência
-                            db.collection('users').doc(currentUser.uid).collection('sentChallenges').doc(challengeId).delete();
-                        }
-                    });
-                
-                // Timeout automático após 60 segundos
-                setTimeout(() => {
-                    db.collection('challenges').doc(challengeId).get().then(doc => {
-                        if (doc.exists && doc.data().status === 'pending') {
-                            db.collection('challenges').doc(challengeId).update({ status: 'expired' });
-                            showToast('Desafio Expirado', 'O jogador não respondeu a tempo', 'error');
-                        }
-                    });
-                }, 60000);
+                // Se o jogador estiver online, escuta resposta em tempo real
+                if (selectedPlayer.isOnline) {
+                    const unsubscribe = db.collection('challenges').doc(challengeId)
+                        .onSnapshot(doc => {
+                            if (!doc.exists) return;
+                            
+                            const data = doc.data();
+                            
+                            if (data.status === 'accepted') {
+                                unsubscribe();
+                                startGameWithPlayer(data, 'white');
+                            } else if (data.status === 'rejected') {
+                                unsubscribe();
+                                showToast('Desafio Recusado', `${selectedPlayer.username} recusou`, 'error');
+                                cleanupChallenge(challengeId);
+                            }
+                        });
+                    
+                    // Timeout de 60 segundos se online
+                    setTimeout(() => {
+                        db.collection('challenges').doc(challengeId).get().then(doc => {
+                            if (doc.exists && doc.data().status === 'pending') {
+                                db.collection('challenges').doc(challengeId).update({ status: 'expired' });
+                                showToast('Desafio Expirado', 'Tempo esgotado', 'error');
+                                cleanupChallenge(challengeId);
+                            }
+                        });
+                    }, 60000);
+                }
                 
             } catch (error) {
                 showToast('Erro', 'Não foi possível enviar desafio', 'error');
             }
         }
         
+        // Escuta desafios recebidos em tempo real
+        function listenForChallenges() {
+            // Limpa listener anterior se existir
+            if (window.challengeUnsubscribe) {
+                window.challengeUnsubscribe();
+            }
+            
+            window.challengeUnsubscribe = db.collection('challenges')
+                .where('toUid', '==', currentUser.uid)
+                .where('status', '==', 'pending')
+                .onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            const challenge = change.doc.data();
+                            // Só mostra se foi criado nos últimos 60 segundos (desafio ativo)
+                            const created = challenge.createdAt?.toDate() || new Date();
+                            const age = Date.now() - created.getTime();
+                            
+                            if (age < 60000) { // 60 segundos
+                                challenge.docId = change.doc.id;
+                                receiveChallenge(challenge);
+                            }
+                        }
+                    });
+                });
+        }
+        
         function receiveChallenge(challenge) {
-            // Evita mostrar o mesmo desafio múltiplas vezes
+            // Evita múltiplos modais
             if (document.getElementById('receiveChallengeModal').classList.contains('active')) {
                 return;
             }
@@ -1429,15 +1454,11 @@
                     acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // Limpa desafio após aceitar
-                setTimeout(() => {
-                    db.collection('challenges').doc(currentChallenge.docId || currentChallenge.challengeId).delete();
-                }, 2000);
-                
+                cleanupChallenge(currentChallenge.challengeId);
                 startGameWithPlayer(currentChallenge, 'black');
                 
             } catch (error) {
-                showToast('Erro', 'Não foi possível aceitar desafio', 'error');
+                showToast('Erro', 'Não foi possível aceitar', 'error');
             }
         }
         
@@ -1452,9 +1473,7 @@
                     rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                setTimeout(() => {
-                    db.collection('challenges').doc(currentChallenge.docId || currentChallenge.challengeId).delete();
-                }, 2000);
+                setTimeout(() => cleanupChallenge(currentChallenge.challengeId), 2000);
                 
             } catch (error) {
                 console.error('Erro ao rejeitar:', error);
@@ -1463,13 +1482,18 @@
             currentChallenge = null;
         }
         
+        async function cleanupChallenge(challengeId) {
+            await db.collection('challenges').doc(challengeId).delete().catch(() => {});
+            await db.collection('notifications').doc(currentUser?.uid).collection('challenges').doc(challengeId).delete().catch(() => {});
+        }
+        
         // ==========================================
         // INICIAR JOGO
         // ==========================================
         function startGameWithPlayer(challengeData, color) {
             const gameId = challengeData.challengeId;
             
-            // Cria jogo no Firestore
+            // Cria jogo
             db.collection('games').doc(gameId).set({
                 gameId: gameId,
                 whitePlayer: color === 'white' ? challengeData.fromUid : currentUser.uid,
@@ -1479,11 +1503,10 @@
                 blackUsername: color === 'black' ? challengeData.fromUsername : userData.username,
                 blackRating: color === 'black' ? challengeData.fromRating : userData.rating,
                 status: 'playing',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                challengeData: challengeData
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             
-            // Salva dados da sessão
+            // Salva sessão
             sessionStorage.setItem('currentUser', JSON.stringify({
                 uid: currentUser.uid,
                 username: userData.username,
@@ -1497,7 +1520,7 @@
                 timestamp: Date.now()
             }));
             
-            // Para todos os listeners
+            // Para listeners
             stopAllListeners();
             
             // Vai para o jogo
@@ -1556,20 +1579,15 @@
         }
         
         // ==========================================
-        // LIMPEZA DE LISTENERS
+        // LIMPEZA
         // ==========================================
         function stopAllListeners() {
             listeners.forEach(unsub => unsub());
             listeners = [];
             
-            if (challengeListener) {
-                challengeListener();
-                challengeListener = null;
-            }
-            
-            if (heartbeatInterval) {
-                clearInterval(heartbeatInterval);
-                heartbeatInterval = null;
+            if (window.challengeUnsubscribe) {
+                window.challengeUnsubscribe();
+                window.challengeUnsubscribe = null;
             }
         }
         
@@ -1591,7 +1609,7 @@
         }
         
         // ==========================================
-        // TOAST NOTIFICATIONS
+        // TOAST
         // ==========================================
         function showToast(title, message, type = 'info') {
             const container = document.getElementById('toastContainer');
@@ -1632,6 +1650,7 @@
                     if (doc.exists) {
                         userData = doc.data();
                         startDashboard();
+                        listenForChallenges(); // Começa a escutar desafios
                     } else {
                         showScreen('username');
                     }
