@@ -6275,63 +6275,79 @@
         });
 
         // Atalhos de teclado
-        document.addEventListener('keydown', (e) => {
-            if (!gameState.isFernando || gameState.status !== 'playing') return;
-            
-            // H - mostrar/esconder análise
-            if (e.key === 'h' || e.key === 'H') {
-                const aiAnalysis = document.getElementById('aiAnalysis');
-                aiAnalysis.style.display = aiAnalysis.style.display === 'none' ? 'block' : 'none';
-            }
-            
-            // G - ativar/desativar Modo Deus
-            if (e.key === 'g' || e.key === 'G') {
-                if (gameState.godMode) {
-                    gameState.godMode = false;
-                    document.getElementById('godModePanel').classList.remove('active');
-                    document.getElementById('playerBadge').classList.remove('god-mode');
-                    document.getElementById('playerBadge').textContent = '♔ MODO FERNANDO PRO ♔';
-                    document.getElementById('turnIndicator').classList.remove('god-suggestion');
-                    showToast('👤 Modo Deus Desativado', 'Você está jogando normalmente agora.', 'normal', 3000);
-                } else {
-                    activateGodMode();
-                }
-            }
-            
-            // A - mostrar análise de intenções
-            if (e.key === 'a' || e.key === 'A') {
-                const panel = document.getElementById('opponentAnalysisPanel');
-                if (panel.classList.contains('active')) {
-                    panel.classList.remove('active');
-                } else {
-                    updateIntentionPanel();
-                }
-            }
-            
-            // C - toggle chat
-            if (e.key === 'c' || e.key === 'C') {
-                const container = document.getElementById('chatContainer');
-                if (container.classList.contains('visible')) {
-                    toggleChat();
-                } else {
-                    showChat();
-                }
-            }
-            
-            // Espaço - executar jogada divina
-            if (e.key === ' ' && gameState.godMode && currentGodMove) {
-                e.preventDefault();
-                executeGodMove();
-            }
-            
-            // 1, 2, 3 - auto-jogar sugestão
-            if (['1', '2', '3'].includes(e.key) && lastAnalysis && lastAnalysis.bestMoves.length >= parseInt(e.key)) {
-                const move = lastAnalysis.bestMoves[parseInt(e.key) - 1];
-                gameState.selectedSquare = move.from;
-                gameState.validMoves = getValidMoves(move.from.row, move.from.col);
-                executeMove(move.from, {row: move.to.row, col: move.to.col}, move.to);
-            }
-        });
+        // Atalhos de teclado
+document.addEventListener('keydown', (e) => {
+    // 🆕 NÃO interceptar se estiver digitando em input/textarea
+    const activeElement = document.activeElement;
+    const isTyping = activeElement && (
+        activeElement.tagName === 'INPUT' || 
+        activeElement.tagName === 'TEXTAREA' || 
+        activeElement.classList.contains('chat-input') ||
+        activeElement.isContentEditable
+    );
+    
+    // Se estiver digitando, permitir todas as teclas normalmente
+    if (isTyping) {
+        return; // Sai da função sem interceptar nada
+    }
+    
+    // Só aplica atalhos do jogo se NÃO estiver digitando
+    if (!gameState.isFernando || gameState.status !== 'playing') return;
+    
+    // H - mostrar/esconder análise
+    if (e.key === 'h' || e.key === 'H') {
+        const aiAnalysis = document.getElementById('aiAnalysis');
+        aiAnalysis.style.display = aiAnalysis.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    // G - ativar/desativar Modo Deus
+    if (e.key === 'g' || e.key === 'G') {
+        if (gameState.godMode) {
+            gameState.godMode = false;
+            document.getElementById('godModePanel').classList.remove('active');
+            document.getElementById('playerBadge').classList.remove('god-mode');
+            document.getElementById('playerBadge').textContent = '♔ MODO FERNANDO PRO ♔';
+            document.getElementById('turnIndicator').classList.remove('god-suggestion');
+            showToast('👤 Modo Deus Desativado', 'Você está jogando normalmente agora.', 'normal', 3000);
+        } else {
+            activateGodMode();
+        }
+    }
+    
+    // A - mostrar análise de intenções
+    if (e.key === 'a' || e.key === 'A') {
+        const panel = document.getElementById('opponentAnalysisPanel');
+        if (panel.classList.contains('active')) {
+            panel.classList.remove('active');
+        } else {
+            updateIntentionPanel();
+        }
+    }
+    
+    // C - toggle chat
+    if (e.key === 'c' || e.key === 'C') {
+        const container = document.getElementById('chatContainer');
+        if (container.classList.contains('visible')) {
+            toggleChat();
+        } else {
+            showChat();
+        }
+    }
+    
+    // Espaço - executar jogada divina (só funciona fora do chat)
+    if (e.key === ' ' && gameState.godMode && currentGodMove) {
+        e.preventDefault();
+        executeGodMove();
+    }
+    
+    // 1, 2, 3 - auto-jogar sugestão
+    if (['1', '2', '3'].includes(e.key) && lastAnalysis && lastAnalysis.bestMoves.length >= parseInt(e.key)) {
+        const move = lastAnalysis.bestMoves[parseInt(e.key) - 1];
+        gameState.selectedSquare = move.from;
+        gameState.validMoves = getValidMoves(move.from.row, gameState.selectedSquare.col);
+        executeMove(move.from, {row: move.to.row, col: move.to.col}, move.to);
+    }
+});
     </script>
 </body>
 </html>
