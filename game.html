@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>♔ Xadrez Pro Ultra - Modo Fernando Análise ♚</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
@@ -2104,6 +2105,22 @@
 
     <div class="game-screen" id="gameScreen">
         <div class="game-header">
+            <button onclick="backToDashboard()" style="
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    padding: 10px 20px;
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid #ffd700;
+    border-radius: 10px;
+    color: #ffd700;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9em;
+    z-index: 100;
+">
+    ← Dashboard
+</button>
             <h2 id="playerNameDisplay">Jogador</h2>
             <div>
                 <span class="player-badge" id="playerBadge">Aguardando...</span>
@@ -2254,9 +2271,23 @@
             appId: "1:595655273304:web:a29cf5845830151e34532d",
             measurementId: "G-7T8GW789VC"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+const savedUser = sessionStorage.getItem('currentUser');
+    const savedGame = sessionStorage.getItem('currentGame');
+    
+    // Se NÃO veio do index.html de login, manda pra lá
+    if (!savedUser) {
+        window.location.href = 'index.html';
+    }
+    
+    // Converte dados do login
+    const userData = JSON.parse(savedUser);
+    const gameData = JSON.parse(savedGame || '{}');
+    
+    console.log('Usuário logado:', userData.username);
+    console.log('É Fernando?', userData.isFernando);
+
 
         // Game State
         const PIECES = {
@@ -4302,25 +4333,47 @@
         // ==================== SISTEMA DE JOGO ====================
 
         function joinGame() {
-            const name = document.getElementById('playerName').value.trim();
-            if (!name) {
-                showStatus('Digite seu nome!', 'error');
-                return;
-            }
-            const btn = document.getElementById('joinBtn');
-            btn.disabled = true;
-            btn.textContent = 'Conectando...';
-            gameState.myName = name;
-            gameState.isFernando = name.toLowerCase() === 'fernando';
-            gameState.gameId = getGameId();
-            
-            const savedState = loadLocalState();
-            if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
-                restoreGameState(savedState);
-            } else {
-                connectToGame();
-            }
+    // ========== NOVO: LOGIN VIA FIREBASE ==========
+    // Se tem dados do login novo, usa eles
+    if (typeof userData !== 'undefined' && userData && userData.username) {
+        gameState.myName = userData.username;
+        gameState.isFernando = userData.isFernando;
+        gameState.userId = userData.uid;
+        gameState.gameId = getGameId();
+        
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('gameScreen').style.display = 'flex';
+        
+        const savedState = loadLocalState();
+        if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
+            restoreGameState(savedState);
+        } else {
+            connectToGame();
         }
+        return;
+    }
+    // ========== FIM DO NOVO LOGIN ==========
+    
+    // Fallback: login antigo com input (para compatibilidade)
+    const name = document.getElementById('playerName').value.trim();
+    if (!name) {
+        showStatus('Digite seu nome!', 'error');
+        return;
+    }
+    const btn = document.getElementById('joinBtn');
+    btn.disabled = true;
+    btn.textContent = 'Conectando...';
+    gameState.myName = name;
+    gameState.isFernando = name.toLowerCase() === 'fernando';
+    gameState.gameId = getGameId();
+    
+    const savedState = loadLocalState();
+    if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
+        restoreGameState(savedState);
+    } else {
+        connectToGame();
+    }
+}
 
         function restoreGameState(savedState) {
             gameState.myColor = savedState.myColor;
@@ -4804,22 +4857,26 @@
         }
 
         function updatePlayerDisplay() {
-            const badge = document.getElementById('playerBadge');
-            const nameDisplay = document.getElementById('playerNameDisplay');
-            nameDisplay.textContent = gameState.myName;
-            
-            if (gameState.godMode) {
-                badge.textContent = '👑 MODO DEUS ATIVO 👑';
-                badge.classList.add('god-mode');
-            } else if (gameState.isFernando) {
-                badge.textContent = '♔ MODO FERNANDO PRO ♔';
-                badge.classList.add('fernando');
-                document.getElementById('aiAnalysis').classList.add('show');
-            } else {
-                badge.textContent = `Jogando com ${gameState.myColor === 'white' ? 'Brancas ♔' : 'Pretas ♚'}`;
-            }
-        }
-
+    const badge = document.getElementById('playerBadge');
+    const nameDisplay = document.getElementById('playerNameDisplay');
+    
+    nameDisplay.textContent = gameState.myName;
+    
+    // Prioridade: Modo Deus ativo > Fernando logado > Normal
+    if (gameState.godMode && gameState.isFernando) {
+        badge.textContent = '👑 MODO DEUS ATIVO 👑';
+        badge.classList.add('god-mode');
+        badge.classList.remove('fernando');
+    } else if (gameState.isFernando) {
+        badge.textContent = '♔ MODO FERNANDO PRO ♔';
+        badge.classList.add('fernando');
+        badge.classList.remove('god-mode');
+        document.getElementById('aiAnalysis').classList.add('show');
+    } else {
+        badge.textContent = `Jogando com ${gameState.myColor === 'white' ? 'Brancas ♔' : 'Pretas ♚'}`;
+        badge.classList.remove('god-mode', 'fernando');
+    }
+}
         function updateOpponentDisplay() {
             const opponentBadge = document.getElementById('opponentBadge');
             const opponent = gameState.myColor === 'white' ? gameState.players.black : gameState.players.white;
@@ -4851,91 +4908,138 @@
 
         // ==================== ANIMAÇÃO ESPECTACULAR DE CHECKMATE ====================
 
-        function showCheckmateAnimation(winner) {
-            isCheckmateAnimating = true;
-            const animationContainer = document.getElementById('checkmateAnimation');
-            animationContainer.style.display = 'block';
-            animationContainer.innerHTML = '';
-
-            // Flash vermelho/dourado
-            const flash = document.createElement('div');
-            flash.className = 'checkmate-flash';
-            animationContainer.appendChild(flash);
-
-            // Partículas explosivas
-            const particlesContainer = document.createElement('div');
-            particlesContainer.className = 'checkmate-particles';
+       function showCheckmateAnimation(winner) {
+    isCheckmateAnimating = true;
+    
+    // ========== SALVAR ESTATÍSTICAS NO FIREBASE ==========
+    async function saveGameStats(winner) {
+        if (!userData || !userData.uid) return;
+        
+        const isWin = winner === gameState.myColor;
+        const updates = {};
+        
+        if (isWin) {
+            updates.wins = firebase.firestore.FieldValue.increment(1);
+            updates.winStreak = firebase.firestore.FieldValue.increment(1);
+        } else {
+            updates.losses = firebase.firestore.FieldValue.increment(1);
+            updates.winStreak = 0;
+        }
+        
+        updates.gamesPlayed = firebase.firestore.FieldValue.increment(1);
+        updates.lastGameAt = firebase.firestore.FieldValue.serverTimestamp();
+        
+        try {
+            await db.collection('users').doc(userData.uid).update(updates);
             
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const angle = (Math.PI * 2 * i) / 50;
-                const distance = 100 + Math.random() * 300;
-                particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
-                particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
-                particle.style.left = '50%';
-                particle.style.top = '50%';
-                particle.style.animationDelay = `${Math.random() * 0.5}s`;
-                
-                const colors = ['#ffd700', '#ff0000', '#ff00ff', '#00ffff'];
-                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.boxShadow = `0 0 20px ${particle.style.background}`;
-                
-                particlesContainer.appendChild(particle);
-            }
-            animationContainer.appendChild(particlesContainer);
-
-            // Efeito de brilho
-            const shine = document.createElement('div');
-            shine.className = 'victory-shine';
-            animationContainer.appendChild(shine);
-
-            // Texto CHECKMATE
-            const text = document.createElement('div');
-            text.className = 'checkmate-text';
-            const isWinner = winner === gameState.myColor;
+            const currentRating = userData.rating || 1200;
+            const newRating = calculateNewRating(currentRating, 1200, isWin ? 1 : 0);
             
-            if (isWinner) {
-                text.innerHTML = `
-                    <span style="color:#00ff00; text-shadow: 0 0 30px #00ff00;">🏆 CHECKMATE! 🏆</span><br>
-                    <span style="font-size:0.5em; color:#ffd700; text-shadow: 0 0 20px #ffd700;">Você Venceu!</span>
-                `;
-            } else {
-                text.innerHTML = `
-                    <span style="color:#ff0000; text-shadow: 0 0 30px #ff0000;">💀 CHECKMATE 💀</span><br>
-                    <span style="font-size:0.5em; color:#ff6666; text-shadow: 0 0 20px #ff6666;">Você Perdeu!</span>
-                `;
+            await db.collection('stats').doc(userData.uid).update({
+                totalGames: firebase.firestore.FieldValue.increment(1),
+                wins: isWin ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
+                losses: !isWin ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
+                rating: newRating,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            console.log('Stats salvo:', isWin ? 'VITÓRIA' : 'DERROTA', 'Rating:', newRating);
+        } catch (error) {
+            console.error('Erro ao salvar stats:', error);
+        }
+    }
+    
+    saveGameStats(winner);
+    // ========== FIM DO SALVAMENTO ==========
+    
+    const animationContainer = document.getElementById('checkmateAnimation');
+    animationContainer.style.display = 'block';
+    animationContainer.innerHTML = '';
+
+    const flash = document.createElement('div');
+    flash.className = 'checkmate-flash';
+    animationContainer.appendChild(flash);
+
+    const particlesContainer = document.createElement('div');
+    particlesContainer.className = 'checkmate-particles';
+    
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        const angle = (Math.PI * 2 * i) / 50;
+        const distance = 100 + Math.random() * 300;
+        particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+        particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+        particle.style.left = '50%';
+        particle.style.top = '50%';
+        particle.style.animationDelay = `${Math.random() * 0.5}s`;
+        
+        const colors = ['#ffd700', '#ff0000', '#ff00ff', '#00ffff'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.boxShadow = `0 0 20px ${particle.style.background}`;
+        
+        particlesContainer.appendChild(particle);
+    }
+    animationContainer.appendChild(particlesContainer);
+
+    const shine = document.createElement('div');
+    shine.className = 'victory-shine';
+    animationContainer.appendChild(shine);
+
+    const text = document.createElement('div');
+    text.className = 'checkmate-text';
+    const isWinner = winner === gameState.myColor;
+    
+    if (isWinner) {
+        text.innerHTML = `
+            <span style="color:#00ff00; text-shadow: 0 0 30px #00ff00;">🏆 CHECKMATE! 🏆</span><br>
+            <span style="font-size:0.5em; color:#ffd700; text-shadow: 0 0 20px #ffd700;">Você Venceu!</span>
+        `;
+    } else {
+        text.innerHTML = `
+            <span style="color:#ff0000; text-shadow: 0 0 30px #ff0000;">💀 CHECKMATE 💀</span><br>
+            <span style="font-size:0.5em; color:#ff6666; text-shadow: 0 0 20px #ff6666;">Você Perdeu!</span>
+        `;
+    }
+    animationContainer.appendChild(text);
+
+    if (isWinner) {
+        for (let i = 0; i < 8; i++) {
+            const crown = document.createElement('div');
+            crown.className = 'checkmate-crown';
+            crown.textContent = '👑';
+            crown.style.left = `${15 + Math.random() * 70}%`;
+            crown.style.top = `${15 + Math.random() * 70}%`;
+            crown.style.animationDelay = `${i * 0.15}s`;
+            crown.style.fontSize = `${2 + Math.random() * 2}em`;
+            animationContainer.appendChild(crown);
+        }
+    }
+
+    setTimeout(() => {
+        const loserColor = winner === 'white' ? 'black' : 'white';
+        const loserKing = loserColor === 'white' ? 'K' : 'k';
+        
+        const squares = document.querySelectorAll('.square');
+        squares.forEach(sq => {
+            const piece = sq.textContent;
+            if (piece === PIECES[loserKing]) {
+                sq.classList.add('checkmate-king-fall');
             }
-            animationContainer.appendChild(text);
+        });
+    }, 500);
 
-            // Coroas flutuantes para o vencedor
-            if (isWinner) {
-                for (let i = 0; i < 8; i++) {
-                    const crown = document.createElement('div');
-                    crown.className = 'checkmate-crown';
-                    crown.textContent = '👑';
-                    crown.style.left = `${15 + Math.random() * 70}%`;
-                    crown.style.top = `${15 + Math.random() * 70}%`;
-                    crown.style.animationDelay = `${i * 0.15}s`;
-                    crown.style.fontSize = `${2 + Math.random() * 2}em`;
-                    animationContainer.appendChild(crown);
-                }
-            }
-
-            // Animar o rei derrotado
-            setTimeout(() => {
-                const loserColor = winner === 'white' ? 'black' : 'white';
-                const loserKing = loserColor === 'white' ? 'K' : 'k';
-                
-                const squares = document.querySelectorAll('.square');
-                squares.forEach(sq => {
-                    const piece = sq.textContent;
-                    if (piece === PIECES[loserKing]) {
-                        sq.classList.add('checkmate-king-fall');
-                    }
-                });
-            }, 500);
-
+    setTimeout(() => {
+        animationContainer.style.display = 'none';
+        showGameOver(winner);
+        isCheckmateAnimating = false;
+        
+        const winnerName = winner === 'white' ? 
+            (gameState.players.white?.name || 'Brancas') : 
+            (gameState.players.black?.name || 'Pretas');
+        addSystemMessage(`🏆 Fim de jogo! ${winnerName} venceu por xeque-mate!`);
+    }, 3500);
+}
             // Remover animação após 3.5 segundos e mostrar modal
             setTimeout(() => {
                 animationContainer.style.display = 'none';
@@ -4948,7 +5052,7 @@
                     (gameState.players.black?.name || 'Pretas');
                 addSystemMessage(`🏆 Fim de jogo! ${winnerName} venceu por xeque-mate!`);
             }, 3500);
-        }
+        
 
         // ==================== IA AVANÇADA ====================
 
@@ -5812,44 +5916,70 @@
 
         // ==================== FIM DE JOGO ====================
 
-        function showGameOver(winner) {
-            const modal = document.getElementById('gameOverModal');
-            const text = document.getElementById('gameOverText');
-            const viewPositionBtn = document.getElementById('viewPositionBtn');
+       function showGameOver(winner) {
+    // ========== SALVAR ESTATÍSTICAS PARA EMPATE ==========
+    async function saveDrawStats() {
+        if (!userData || !userData.uid) return;
+        
+        try {
+            await db.collection('users').doc(userData.uid).update({
+                draws: firebase.firestore.FieldValue.increment(1),
+                gamesPlayed: firebase.firestore.FieldValue.increment(1),
+                lastGameAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
             
-            if (winner === 'draw') {
-                text.innerHTML = '🤝 <span style="color:#ffff00; text-shadow:0 0 30px #ffff00;">Empate!</span><br><span style="font-size:0.6em; color:#aaa;">Stalemate</span>';
-                viewPositionBtn.style.display = 'none';
-            } else {
-                const isMe = winner === gameState.myColor;
-                const winnerName = winner === 'white' ? 
-                    (gameState.players.white ? gameState.players.white.name : 'Brancas') : 
-                    (gameState.players.black ? gameState.players.black.name : 'Pretas');
-                    
-                if (isMe) {
-                    text.innerHTML = `
-                        <span style="color:#00ff00; text-shadow:0 0 40px #00ff00;">🏆 VITÓRIA! 🏆</span><br>
-                        <span style="font-size:0.6em; color:#ffd700; text-shadow:0 0 20px #ffd700;">Parabéns, ${winnerName}!</span>
-                    `;
-                } else {
-                    text.innerHTML = `
-                        <span style="color:#ff0000; text-shadow:0 0 40px #ff0000;">💀 DERROTA 💀</span><br>
-                        <span style="font-size:0.6em; color:#ff6666; text-shadow:0 0 20px #ff6666;">${winnerName} venceu</span>
-                    `;
-                }
-                
-                viewPositionBtn.style.display = 'inline-block';
-            }
+            await db.collection('stats').doc(userData.uid).update({
+                totalGames: firebase.firestore.FieldValue.increment(1),
+                draws: firebase.firestore.FieldValue.increment(1),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
             
-            modal.classList.add('show');
-            if (unsubscribe) unsubscribe();
-            if (chatUnsubscribe) chatUnsubscribe();
-            
-            // Esconder chat no fim do jogo
-            document.getElementById('chatContainer').classList.remove('visible');
-            document.getElementById('chatFloatingBtn').classList.remove('visible');
+            console.log('Stats salvo: EMPATE');
+        } catch (error) {
+            console.error('Erro ao salvar empate:', error);
         }
-
+    }
+    
+    if (winner === 'draw') {
+        saveDrawStats();
+    }
+    // ========== FIM DO SALVAMENTO ==========
+    
+    const modal = document.getElementById('gameOverModal');
+    const text = document.getElementById('gameOverText');
+    const viewPositionBtn = document.getElementById('viewPositionBtn');
+    
+    if (winner === 'draw') {
+        text.innerHTML = '🤝 <span style="color:#ffff00; text-shadow:0 0 30px #ffff00;">Empate!</span><br><span style="font-size:0.6em; color:#aaa;">Stalemate</span>';
+        viewPositionBtn.style.display = 'none';
+    } else {
+        const isMe = winner === gameState.myColor;
+        const winnerName = winner === 'white' ? 
+            (gameState.players.white ? gameState.players.white.name : 'Brancas') : 
+            (gameState.players.black ? gameState.players.black.name : 'Pretas');
+            
+        if (isMe) {
+            text.innerHTML = `
+                <span style="color:#00ff00; text-shadow:0 0 40px #00ff00;">🏆 VITÓRIA! 🏆</span><br>
+                <span style="font-size:0.6em; color:#ffd700; text-shadow:0 0 20px #ffd700;">Parabéns, ${winnerName}!</span>
+            `;
+        } else {
+            text.innerHTML = `
+                <span style="color:#ff0000; text-shadow:0 0 40px #ff0000;">💀 DERROTA 💀</span><br>
+                <span style="font-size:0.6em; color:#ff6666; text-shadow:0 0 20px #ff6666;">${winnerName} venceu</span>
+            `;
+        }
+        
+        viewPositionBtn.style.display = 'inline-block';
+    }
+    
+    modal.classList.add('show');
+    if (unsubscribe) unsubscribe();
+    if (chatUnsubscribe) chatUnsubscribe();
+    
+    document.getElementById('chatContainer').classList.remove('visible');
+    document.getElementById('chatFloatingBtn').classList.remove('visible');
+}
         function returnToIndex() {
             clearLocalState();
             window.location.href = window.location.pathname;
@@ -6255,6 +6385,18 @@
             saveLocalState();
         };
 
+        // ========== FUNÇÕES AUXILIARES DO SISTEMA DE LOGIN ==========
+
+function calculateNewRating(current, opponent, result, k = 32) {
+    const expected = 1 / (1 + Math.pow(10, (opponent - current) / 400));
+    return Math.round(current + k * (result - expected));
+}
+
+function backToDashboard() {
+    sessionStorage.removeItem('currentGame');
+    window.location.href = 'index.html';
+}
+
         window.onload = () => {
             const savedName = localStorage.getItem('chessPlayerName');
             if (savedName) {
@@ -6348,6 +6490,11 @@ document.addEventListener('keydown', (e) => {
         executeMove(move.from, {row: move.to.row, col: move.to.col}, move.to);
     }
 });
+
+function backToDashboard() {
+    sessionStorage.removeItem('currentGame');
+    window.location.href = 'index.html';
+}
     </script>
 </body>
 </html>
