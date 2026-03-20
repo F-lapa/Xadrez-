@@ -2277,16 +2277,84 @@ const savedUser = sessionStorage.getItem('currentUser');
     const savedGame = sessionStorage.getItem('currentGame');
     
     // Se NÃO veio do index.html de login, manda pra lá
-    if (!savedUser) {
-        window.location.href = 'index.html';
+    // ========== SISTEMA DE LOGIN FLEXÍVEL ==========
+// Tenta múltiplas fontes de dados (sessionStorage, URL, localStorage)
+
+const urlParams = new URLSearchParams(window.location.search);
+const urlGameId = urlParams.get('game');
+const urlPlayerId = urlParams.get('player');
+
+function getGameIdFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('game');
+}
+
+// Tentar sessionStorage primeiro (do index.html)
+let savedUser = sessionStorage.getItem('currentUser');  // formato antigo
+let savedGame = sessionStorage.getItem('currentGame');  // formato antigo
+let chessPlayerData = sessionStorage.getItem('chessPlayerData');  // novo formato
+
+// Se não tem no sessionStorage, tentar localStorage
+if (!savedUser && !chessPlayerData) {
+    savedUser = localStorage.getItem('currentUser');
+    chessPlayerData = localStorage.getItem('chessPlayerData');
+    console.log('Tentando localStorage...');
+}
+
+// Variável global para dados do usuário
+let userData = null;
+let gameData = {};
+
+// Tentar parsear dados
+try {
+    if (chessPlayerData) {
+        // Novo formato (mais completo)
+        userData = JSON.parse(chessPlayerData);
+        console.log('✅ Dados carregados (novo formato):', userData);
+    } else if (savedUser) {
+        // Formato antigo (compatibilidade)
+        userData = JSON.parse(savedUser);
+        console.log('✅ Dados carregados (formato antigo):', userData);
     }
     
-    // Converte dados do login
-    const userData = JSON.parse(savedUser);
-    const gameData = JSON.parse(savedGame || '{}');
+    if (savedGame) {
+        gameData = JSON.parse(savedGame);
+    }
+} catch (e) {
+    console.error('❌ Erro ao carregar dados:', e);
+}
+
+// Se não tem dados mas tem ID na URL, criar objeto mínimo
+if (!userData && urlPlayerId) {
+    console.log('⚠️ Criando dados mínimos da URL');
+    userData = {
+        uid: urlPlayerId,
+        username: 'Jogador',
+        rating: 0,
+        color: null,
+        isFernando: false
+    };
+}
+
+// Verificação final - só redireciona se REALMENTE não tem nada
+if (!userData || !userData.uid) {
+    console.error('❌ Sem dados de usuário!');
     
-    console.log('Usuário logado:', userData.username);
-    console.log('É Fernando?', userData.isFernando);
+    // Mostrar tela de login manual em vez de redirecionar imediatamente
+    // O jogador pode digitar o nome manualmente
+    console.log('Aguardando login manual...');
+    
+    // Aguardar 2 segundos para ver se algo carrega (Firebase pode demorar)
+    setTimeout(() => {
+        if (!window.gameState || !window.gameState.myName) {
+            console.log('Redirecionando para login após timeout...');
+            // window.location.href = 'index.html';  // Descomente se quiser forçar redirect
+        }
+    }, 2000);
+} else {
+    console.log('✅ Usuário autenticado:', userData.username);
+    console.log('👑 É Fernando?', userData.isFernando);
+}
 
 
         // Game State
@@ -4332,26 +4400,65 @@ const savedUser = sessionStorage.getItem('currentUser');
 
         // ==================== SISTEMA DE JOGO ====================
 
-        function joinGame() {
-    // ========== NOVO: LOGIN VIA FIREBASE ==========
-    // Se tem dados do login novo, usa eles
-    if (typeof userData !== 'undefined' && userData && userData.username) {
-        gameState.myName = userData.username;
-        gameState.isFernando = userData.isFernando;
-        gameState.userId = userData.uid;
-        gameState.gameId = getGameId();
+     function joinGame() {
+    console.log('🎮 Iniciando joinGame()...');
+    console.log('userData disponível:', userData);
+    console.log('gameData disponível:', gameData);
+    
+    // ========== LOGIN AUTOMÁTICO COM DADOS DO INDEX ==========
+    if (userData && userData.username) {
+        console.log('✅ Usando dados do index.html');
         
+        gameState.myName = userData.username;
+        gameState.isFernando = userData.isFernando || false;
+        gameState.userId = userData.uid;
+        gameState.myColor = userData.color || null;  // Pode ser null, será determinado pelo Firebase
+        gameState.gameId = urlGameId || gameData.gameId || getGameIdFromURL();
+        
+        console.log('Estado inicial:', {
+            name: gameState.myName,
+            isFernando: gameState.isFernando,
+            gameId: gameState.gameId
+        });
+        
+        // Esconder tela de login, mostrar jogo
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('gameScreen').style.display = 'flex';
         
+        // Tentar restaurar jogo anterior ou conectar
         const savedState = loadLocalState();
         if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
+            console.log('🔄 Restaurando estado local');
             restoreGameState(savedState);
         } else {
+            console.log('🌐 Conectando ao Firebase');
             connectToGame();
         }
+        return;  // IMPORTANTE: sai da função aqui
+    }
+    
+    // ========== LOGIN MANUAL (FALLBACK) ==========
+    console.log('⌨️ Modo login manual');
+    const nameInput = document.getElementById('playerName');
+    const name = nameInput ? nameInput.value.trim() : '';
+    
+    if (!name) {
+        showStatus('Digite seu nome para começar!', 'error');
         return;
     }
+    
+    const btn = document.getElementById('joinBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Conectando...';
+    }
+    
+    gameState.myName = name;
+    gameState.isFernando = name.toLowerCase() === 'fernando';
+    gameState.gameId = urlGameId || getGameIdFromURL();
+    
+    connectToGame();
+}   
     // ========== FIM DO NOVO LOGIN ==========
     
     // Fallback: login antigo com input (para compatibilidade)
@@ -4438,126 +4545,193 @@ const savedUser = sessionStorage.getItem('currentUser');
         }
 
         function connectToGame() {
-            gameRef = db.collection('games').doc(gameState.gameId);
+    const gameId = gameState.gameId || getGameIdFromURL();
+    
+    if (!gameId) {
+        console.error('❌ Sem ID do jogo!');
+        showStatus('Erro: ID do jogo não encontrado na URL', 'error');
+        return;
+    }
+    
+    console.log('🌐 Conectando ao jogo:', gameId);
+    gameState.gameId = gameId;
+    gameRef = db.collection('games').doc(gameId);
+    
+    gameRef.get().then(doc => {
+        if (!doc.exists) {
+            // ========== CRIAR NOVO JOGO (SOU PLAYER 1 - BRANCAS) ==========
+            console.log('🆕 Criando novo jogo como Brancas');
+            gameState.amPlayer1 = true;
+            gameState.myColor = 'white';
+            createNewGame();
             
-            gameRef.get().then(doc => {
-                if (!doc.exists) {
-                    gameState.amPlayer1 = true;
-                    gameState.myColor = 'white';
-                    createNewGame();
-                } else {
-                    const game = doc.data();
-                    const hasWhite = game.players && game.players.white;
-                    const hasBlack = game.players && game.players.black;
-                    
-                    if (hasWhite && !hasBlack) {
-                        gameState.amPlayer1 = false;
-                        gameState.myColor = 'black';
-                        joinExistingGame(game);
-                    } else if (!hasWhite && hasBlack) {
-                        gameState.amPlayer1 = true;
-                        gameState.myColor = 'white';
-                        joinAsWhitePlayer(game);
-                    } else if (hasWhite && hasBlack) {
-                        if (game.players.white.name === gameState.myName) {
-                            gameState.amPlayer1 = true;
-                            gameState.myColor = 'white';
-                            restorePlayerState(game);
-                        } else if (game.players.black.name === gameState.myName) {
-                            gameState.amPlayer1 = false;
-                            gameState.myColor = 'black';
-                            restorePlayerState(game);
-                        } else {
-                            showStatus('Jogo já está cheio! Crie um novo jogo.', 'error');
-                            document.getElementById('joinBtn').disabled = false;
-                            document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
-                            
-                            setTimeout(() => {
-                                if (confirm('Jogo cheio. Criar novo jogo?')) {
-                                    window.location.search = '';
-                                    location.reload();
-                                }
-                            }, 100);
-                        }
-                    } else {
-                        gameState.amPlayer1 = true;
-                        gameState.myColor = 'white';
-                        createNewGame();
-                    }
+        } else {
+            // ========== JOGO EXISTE - VERIFICAR QUAL JOGADOR SOU ==========
+            const game = doc.data();
+            console.log('📋 Jogo encontrado:', game);
+            
+            const myUid = userData ? userData.uid : null;
+            const myName = gameState.myName || (userData ? userData.username : null);
+            
+            console.log('Meu UID:', myUid);
+            console.log('Meu nome:', myName);
+            console.log('WhitePlayer:', game.whitePlayer);
+            console.log('BlackPlayer:', game.blackPlayer);
+            
+            // Verificar se já sou um dos jogadores
+            const imWhite = game.whitePlayer === myUid || 
+                           (game.players && game.players.white && game.players.white.uid === myUid) ||
+                           (game.whiteUsername === myName && myName);
+                           
+            const imBlack = game.blackPlayer === myUid || 
+                           (game.players && game.players.black && game.players.black.uid === myUid) ||
+                           (game.blackUsername === myName && myName);
+            
+            if (imWhite) {
+                console.log('♔ Sou as BRANCAS (jogador existente)');
+                gameState.amPlayer1 = true;
+                gameState.myColor = 'white';
+                restorePlayerState(game);
+                
+            } else if (imBlack) {
+                console.log('♚ Sou as PRETAS (jogador existente)');
+                gameState.amPlayer1 = false;
+                gameState.myColor = 'black';
+                restorePlayerState(game);
+                
+            } else if (!game.blackPlayer && !game.players?.black) {
+                // ========== ENTRAR COMO PRETAS (PLAYER 2) ==========
+                console.log('♚ Entrando como PRETAS');
+                gameState.amPlayer1 = false;
+                gameState.myColor = 'black';
+                joinExistingGame(game);
+                
+            } else if (!game.whitePlayer && !game.players?.white) {
+                // ========== ENTRAR COMO BRANCAS (RARO) ==========
+                console.log('♔ Entrando como BRANCAS');
+                gameState.amPlayer1 = true;
+                gameState.myColor = 'white';
+                joinAsWhitePlayer(game);
+                
+            } else {
+                // ========== JOGO CHEIO ==========
+                console.log('❌ Jogo cheio!');
+                showStatus('Este jogo já tem 2 jogadores!', 'error');
+                
+                const btn = document.getElementById('joinBtn');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = 'Entrar no Jogo';
                 }
-            }).catch(error => {
-                console.error('Erro ao conectar:', error);
-                showStatus('Erro de conexão: ' + error.message, 'error');
-                document.getElementById('joinBtn').disabled = false;
-                document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
-            });
+                
+                setTimeout(() => {
+                    if (confirm('Jogo cheio. Criar novo jogo?')) {
+                        window.location.search = '';
+                        location.reload();
+                    }
+                }, 500);
+            }
         }
+    }).catch(error => {
+        console.error('❌ Erro ao conectar:', error);
+        showStatus('Erro de conexão: ' + error.message, 'error');
+        
+        const btn = document.getElementById('joinBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Entrar no Jogo';
+        }
+    });
+}
 
         function createNewGame() {
-            // CORREÇÃO: Posição inicial correta do rei - rei branco em e1 (col 4), rei preto em e8 (col 4)
-            // Mas o usuário pediu para mudar a posição do rei - vou inverter para d1 e d8 (col 3)
-            const initialBoard = [
-                ['r','n','b','q','k','b','n','r'],  // CORREÇÃO: Rei preto em e8 (col 4) - mantendo padrão
-                ['p','p','p','p','p','p','p','p'],
-                [null,null,null,null,null,null,null,null],
-                [null,null,null,null,null,null,null,null],
-                [null,null,null,null,null,null,null,null],
-                [null,null,null,null,null,null,null,null],
-                ['P','P','P','P','P','P','P','P'],
-                ['R','N','B','Q','K','B','N','R']   // CORREÇÃO: Rei branco em e1 (col 4) - mantendo padrão
-            ];
-
-            // NOTA: O usuário pediu para mudar a posição do rei, mas não especificou para onde
-            // Vou manter a posição padrão do xadrez (e1 para branco, e8 para preto)
-            // Se quiser mudar, altere as posições acima
-
-            const boardObj = boardToFirestore(initialBoard);
-            const capturedObj = capturedPiecesToFirestore({ white: [], black: [] });
-
-            const gameData = {
-                board: boardObj,
-                currentPlayer: 'white',
-                players: {
-                    white: { 
-                        name: gameState.myName, 
-                        isFernando: gameState.isFernando,
-                        connected: true,
-                        joinedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    },
-                    black: null
-                },
-                status: 'waiting',
-                castlingRights: { 
-                    white: {kingSide: true, queenSide: true}, 
-                    black: {kingSide: true, queenSide: true} 
-                },
-                enPassantTarget: null,
-                lastMove: null,
-                capturedPieces: capturedObj,
-                kingPositions: { 
-                    white: {row: 7, col: 4},  // e1 - posição padrão do rei branco
-                    black: {row: 0, col: 4}   // e8 - posição padrão do rei preto
-                },
-                moveHistory: [],
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            gameRef.set(gameData).then(() => {
-                setupGameListener();
-                setupChatListener();
-                showStatus(`✅ Jogo criado!\n\nAguardando adversário...\n\n🔗 COMPARTILHE ESTE LINK:\n${window.location.href}`, 'waiting');
-                updatePlayerDisplay();
-                saveLocalState();
-                
-                // Chat fica escondido até o adversário entrar
-                updateChatVisibility();
-            }).catch(error => {
-                console.error('Erro ao criar jogo:', error);
-                showStatus('Erro ao criar jogo: ' + error.message, 'error');
-                document.getElementById('joinBtn').disabled = false;
-                document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
-            });
+    console.log('🏗️ Criando novo jogo...');
+    
+    // Tabuleiro inicial padrão
+    const initialBoard = [
+        ['r','n','b','q','k','b','n','r'],
+        ['p','p','p','p','p','p','p','p'],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        ['P','P','P','P','P','P','P','P'],
+        ['R','N','B','Q','K','B','N','R']
+    ];
+    
+    // Converter para formato do Firestore
+    const boardObj = {};
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            if (initialBoard[r][c]) {
+                boardObj[`${r}-${c}`] = initialBoard[r][c];
+            }
         }
+    }
+    
+    const capturedObj = { white: '', black: '' };
+
+    const gameData = {
+        // Identificação dos jogadores
+        whitePlayer: gameState.userId || userData?.uid || 'white_' + Date.now(),
+        whiteUsername: gameState.myName,
+        whiteRating: Math.max(0, userData?.rating || 0),
+        whiteConnected: true,
+        whiteJoinedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        
+        blackPlayer: null,
+        blackUsername: null,
+        blackRating: 0,
+        blackConnected: false,
+        
+        // Estado do jogo
+        board: boardObj,  // ✅ TABULEIRO INICIAL AQUI!
+        currentPlayer: 'white',
+        status: 'waiting',
+        
+        // Regras especiais
+        castlingRights: { 
+            white: {kingSide: true, queenSide: true}, 
+            black: {kingSide: true, queenSide: true} 
+        },
+        enPassantTarget: null,
+        lastMove: null,
+        capturedPieces: capturedObj,
+        kingPositions: { 
+            white: {row: 7, col: 4},  // e1
+            black: {row: 0, col: 4}   // e8
+        },
+        moveHistory: [],
+        
+        // Metadados
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        gameMode: 'challenge'
+    };
+
+    console.log('💾 Salvando no Firebase:', gameData);
+    
+    gameRef.set(gameData).then(() => {
+        console.log('✅ Jogo criado com sucesso!');
+        
+        setupGameListener();
+        setupChatListener();
+        
+        showStatus(`✅ Jogo criado!\n\nAguardando adversário...\n\n🔗 Link: ${window.location.href}`, 'waiting');
+        updatePlayerDisplay();
+        saveLocalState();
+        updateChatVisibility();
+        
+    }).catch(error => {
+        console.error('❌ Erro ao criar jogo:', error);
+        showStatus('Erro ao criar jogo: ' + error.message, 'error');
+        
+        const btn = document.getElementById('joinBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Entrar no Jogo';
+        }
+    });
+}
 
         function joinExistingGame(game) {
             if (!game.players || !game.players.white) {
