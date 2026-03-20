@@ -867,7 +867,7 @@
             <div class="stat-card">
                 <div class="stat-icon gold"><i class="fas fa-star"></i></div>
                 <div class="stat-value" id="statRating">0</div>
-                <div class="stat-label">Rating</div>
+                <div class="stat-label">Pontos</div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon green"><i class="fas fa-trophy"></i></div>
@@ -971,7 +971,7 @@
         let selectedPlayer = null;
         let currentChallenge = null;
         let allPlayers = [];
-        let pendingChallenges = new Map(); // Guarda listeners de desafios pendentes
+        let pendingChallenges = new Map();
         
         // ==========================================
         // FUNÇÕES DE TELA
@@ -1124,7 +1124,7 @@
                 
                 userData = userDataToSave;
                 
-                showToast('Bem-vindo!', 'Conta criada! Rating inicial: 0', 'success');
+                showToast('Bem-vindo!', 'Conta criada! Pontos iniciais: 0', 'success');
                 startDashboard();
                 
             } catch (error) {
@@ -1143,7 +1143,7 @@
             setupOnlinePresence();
             updateUserInfo();
             startListeners();
-            listenForChallenges(); // Começa a escutar desafios imediatamente
+            listenForChallenges();
         }
         
         function updateUserInfo() {
@@ -1156,7 +1156,7 @@
             
             document.getElementById('userAvatar').textContent = initial;
             document.getElementById('userName').textContent = userData.username;
-            document.getElementById('userRating').textContent = `Rating: ${safeRating}`;
+            document.getElementById('userRating').textContent = `Pontos: ${safeRating}`;
             
             // MOSTRA RATING (SEMPRE 0 OU POSITIVO)
             document.getElementById('statRating').textContent = safeRating;
@@ -1227,7 +1227,7 @@
                     allPlayers = snapshot.docs.map(doc => ({
                         uid: doc.data().uid,
                         username: doc.data().username,
-                        rating: Math.max(0, doc.data().rating || 0) // GARANTE NÃO NEGATIVO
+                        rating: Math.max(0, doc.data().rating || 0)
                     })).filter(p => p.uid !== currentUser.uid);
                     
                     updatePlayersList();
@@ -1302,7 +1302,7 @@
                             </div>
                             <div class="online-info">
                                 <div class="online-name">${player.username}</div>
-                                <div class="online-rating">Rating: ${player.rating} • ${isOnline ? 'Online' : 'Offline'}</div>
+                                <div class="online-rating">Pontos: ${player.rating} • ${isOnline ? 'Online' : 'Offline'}</div>
                             </div>
                             <button class="challenge-btn ${isOnline ? '' : 'offline'}">
                                 Desafiar
@@ -1316,7 +1316,7 @@
         }
         
         // ==========================================
-        // SISTEMA DE DESAFIOS - CORRIGIDO
+        // SISTEMA DE DESAFIOS - CORRIGIDO (SEM PERMISSÃO NEGADA)
         // ==========================================
         function openChallengeModal(uid, username, rating, isOnline) {
             if (uid === currentUser.uid) {
@@ -1349,27 +1349,13 @@
                 toRating: selectedPlayer.rating,
                 status: 'pending',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                expiresAt: new Date(Date.now() + 60 * 1000) // 60 segundos
+                expiresAt: new Date(Date.now() + 60 * 1000)
             };
             
             try {
-                // CORREÇÃO: Usa batch write para garantir atomicidade
-                const batch = db.batch();
-                
-                const challengeRef = db.collection('challenges').doc(challengeId);
-                batch.set(challengeRef, challengeData);
-                
-                const notifRef = db.collection('users').doc(selectedPlayer.uid).collection('notifications').doc(challengeId);
-                batch.set(notifRef, {
-                    type: 'challenge',
-                    challengeId: challengeId,
-                    fromUid: currentUser.uid,
-                    fromUsername: userData.username,
-                    read: false,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                await batch.commit();
+                // CORREÇÃO: Cria apenas o challenge, sem tentar escrever no documento do outro usuário
+                // Isso evita erro de permissão
+                await db.collection('challenges').doc(challengeId).set(challengeData);
                 
                 showToast('Desafio Enviado!', 
                     selectedPlayer.isOnline 
@@ -1377,7 +1363,7 @@
                         : `${selectedPlayer.username} receberá ao entrar`, 
                     'info');
                 
-                // ESCUTA RESPOSTA EM TEMPO REAL - CORREÇÃO IMPORTANTE
+                // ESCUTA RESPOSTA EM TEMPO REAL
                 const unsubscribe = db.collection('challenges').doc(challengeId)
                     .onSnapshot(doc => {
                         if (!doc.exists) return;
@@ -1385,11 +1371,8 @@
                         const data = doc.data();
                         
                         if (data.status === 'accepted') {
-                            // REMOVE O LISTENER ANTES DE REDIRECIONAR
                             unsubscribe();
-                            // LIMPA DOS PENDENTES
                             pendingChallenges.delete(challengeId);
-                            // AMBOS ENTRAM NO JOGO - CORREÇÃO PRINCIPAL
                             startGameWithPlayer(data, 'white');
                         } else if (data.status === 'rejected') {
                             unsubscribe();
@@ -1399,7 +1382,6 @@
                         }
                     });
                 
-                // Guarda referência para limpar depois
                 pendingChallenges.set(challengeId, unsubscribe);
                 
                 // Timeout de 60 segundos
@@ -1407,7 +1389,6 @@
                     db.collection('challenges').doc(challengeId).get().then(doc => {
                         if (doc.exists && doc.data().status === 'pending') {
                             db.collection('challenges').doc(challengeId).update({ status: 'expired' });
-                            // Limpa listener
                             if (pendingChallenges.has(challengeId)) {
                                 pendingChallenges.get(challengeId)();
                                 pendingChallenges.delete(challengeId);
@@ -1428,34 +1409,23 @@
         function listenForChallenges() {
             if (!currentUser) return;
             
-            // Limpa listener anterior
             if (window.challengeListener) {
                 window.challengeListener();
             }
             
-            // ESCUTA NOTIFICAÇÕES DO USUÁRIO
-            window.challengeListener = db.collection('users').doc(currentUser.uid).collection('notifications')
-                .where('read', '==', false)
+            // ESCUTA DESAFIOS ONDE O USUÁRIO É O DESTINATÁRIO
+            window.challengeListener = db.collection('challenges')
+                .where('toUid', '==', currentUser.uid)
+                .where('status', '==', 'pending')
                 .onSnapshot(snapshot => {
                     snapshot.docChanges().forEach(change => {
                         if (change.type === 'added') {
-                            const notif = change.doc.data();
-                            if (notif.type === 'challenge') {
-                                // Busca dados completos do desafio
-                                db.collection('challenges').doc(notif.challengeId).get()
-                                    .then(challengeDoc => {
-                                        if (challengeDoc.exists) {
-                                            const challenge = challengeDoc.data();
-                                            // Verifica se ainda está pendente e não expirou
-                                            if (challenge.status === 'pending') {
-                                                const expires = challenge.expiresAt?.toDate();
-                                                if (!expires || expires > new Date()) {
-                                                    challenge.docId = challengeDoc.id;
-                                                    receiveChallenge(challenge);
-                                                }
-                                            }
-                                        }
-                                    });
+                            const challenge = change.doc.data();
+                            // Verifica se não expirou
+                            const expires = challenge.expiresAt?.toDate();
+                            if (!expires || expires > new Date()) {
+                                challenge.docId = change.doc.id;
+                                receiveChallenge(challenge);
                             }
                         }
                     });
@@ -1465,14 +1435,11 @@
         }
         
         function receiveChallenge(challenge) {
-            // Evita múltiplos modais do mesmo desafio
             if (currentChallenge && currentChallenge.challengeId === challenge.challengeId) {
                 return;
             }
             
-            // Evita modal se já tem um aberto
             if (document.getElementById('receiveChallengeModal').classList.contains('active')) {
-                // Guarda para mostrar depois
                 setTimeout(() => receiveChallenge(challenge), 1000);
                 return;
             }
@@ -1491,21 +1458,12 @@
             try {
                 const challengeId = currentChallenge.docId || currentChallenge.challengeId;
                 
-                // Atualiza status
                 await db.collection('challenges').doc(challengeId).update({
                     status: 'accepted',
                     acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                // Marca notificação como lida
-                await db.collection('users').doc(currentUser.uid).collection('notifications').doc(challengeId).update({
-                    read: true
-                });
-                
-                // Limpa após aceitar
                 setTimeout(() => cleanupChallenge(challengeId), 2000);
-                
-                // ENTRA NO JOGO COMO PRETO
                 startGameWithPlayer(currentChallenge, 'black');
                 
             } catch (error) {
@@ -1527,10 +1485,6 @@
                     rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 
-                await db.collection('users').doc(currentUser.uid).collection('notifications').doc(challengeId).update({
-                    read: true
-                });
-                
                 setTimeout(() => cleanupChallenge(challengeId), 2000);
                 
             } catch (error) {
@@ -1543,23 +1497,18 @@
         async function cleanupChallenge(challengeId) {
             try {
                 await db.collection('challenges').doc(challengeId).delete();
-                await db.collection('users').doc(currentUser?.uid).collection('notifications').doc(challengeId).delete();
-            } catch (e) {
-                // Ignora erros de cleanup
-            }
+            } catch (e) {}
         }
         
         // ==========================================
-        // INICIAR JOGO - CORRIGIDO PARA AMBOS
+        // INICIAR JOGO
         // ==========================================
         function startGameWithPlayer(challengeData, color) {
             const gameId = challengeData.challengeId;
             
-            // GARANTE RATINGS NÃO NEGATIVOS
             const whiteRating = Math.max(0, color === 'white' ? challengeData.fromRating : (userData.rating || 0));
             const blackRating = Math.max(0, color === 'black' ? challengeData.fromRating : (userData.rating || 0));
             
-            // Cria jogo
             db.collection('games').doc(gameId).set({
                 gameId: gameId,
                 whitePlayer: color === 'white' ? challengeData.fromUid : currentUser.uid,
@@ -1571,7 +1520,6 @@
                 status: 'playing',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
-                // Salva sessão
                 sessionStorage.setItem('currentUser', JSON.stringify({
                     uid: currentUser.uid,
                     username: userData.username,
@@ -1585,10 +1533,7 @@
                     timestamp: Date.now()
                 }));
                 
-                // Para listeners
                 stopAllListeners();
-                
-                // REDIRECIONA PARA O JOGO
                 window.location.href = `game.html?game=${gameId}`;
                 
             }).catch(error => {
@@ -1596,6 +1541,104 @@
                 showToast('Erro', 'Não foi possível iniciar o jogo', 'error');
             });
         }
+        
+        // ==========================================
+        // NOVO SISTEMA DE PONTUAÇÃO
+        // ==========================================
+        // Função para atualizar pontuação após jogo (chamar no game.html)
+        async function updateRatingAfterGame(gameId, winnerUid, loserUid, isDraw) {
+            try {
+                const batch = db.batch();
+                
+                if (isDraw) {
+                    // Empate: ninguém ganha pontos
+                    const gameRef = db.collection('games').doc(gameId);
+                    batch.update(gameRef, { 
+                        status: 'finished',
+                        result: 'draw',
+                        finishedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    // VITÓRIA: +10 pontos para vencedor
+                    // DERROTA: -10 pontos para perdedor (mínimo 0)
+                    
+                    // Busca ratings atuais
+                    const [winnerDoc, loserDoc] = await Promise.all([
+                        db.collection('users').doc(winnerUid).get(),
+                        db.collection('users').doc(loserUid).get()
+                    ]);
+                    
+                    const winnerData = winnerDoc.data();
+                    const loserData = loserDoc.data();
+                    
+                    const winnerCurrent = winnerData.rating || 0;
+                    const loserCurrent = loserData.rating || 0;
+                    
+                    // Vencedor ganha 10
+                    const winnerNew = winnerCurrent + 10;
+                    
+                    // Perdedor perde 10, mas não fica negativo
+                    const loserNew = Math.max(0, loserCurrent - 10);
+                    
+                    // Atualiza vencedor
+                    const winnerRef = db.collection('users').doc(winnerUid);
+                    batch.update(winnerRef, {
+                        rating: winnerNew,
+                        wins: (winnerData.wins || 0) + 1,
+                        gamesPlayed: (winnerData.gamesPlayed || 0) + 1,
+                        lastGame: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Atualiza stats do vencedor
+                    const winnerStatsRef = db.collection('stats').doc(winnerUid);
+                    batch.update(winnerStatsRef, {
+                        rating: winnerNew,
+                        wins: (winnerData.wins || 0) + 1,
+                        totalGames: (winnerData.gamesPlayed || 0) + 1,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Atualiza perdedor
+                    const loserRef = db.collection('users').doc(loserUid);
+                    batch.update(loserRef, {
+                        rating: loserNew,
+                        losses: (loserData.losses || 0) + 1,
+                        gamesPlayed: (loserData.gamesPlayed || 0) + 1,
+                        lastGame: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Atualiza stats do perdedor
+                    const loserStatsRef = db.collection('stats').doc(loserUid);
+                    batch.update(loserStatsRef, {
+                        rating: loserNew,
+                        losses: (loserData.losses || 0) + 1,
+                        totalGames: (loserData.gamesPlayed || 0) + 1,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Atualiza jogo
+                    const gameRef = db.collection('games').doc(gameId);
+                    batch.update(gameRef, {
+                        status: 'finished',
+                        winner: winnerUid,
+                        loser: loserUid,
+                        winnerPoints: winnerNew,
+                        loserPoints: loserNew,
+                        pointsExchanged: 10,
+                        finishedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                await batch.commit();
+                console.log('Pontuação atualizada com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao atualizar pontuação:', error);
+            }
+        }
+        
+        // Expõe função global para usar no game.html
+        window.updateRatingAfterGame = updateRatingAfterGame;
         
         // ==========================================
         // MATCHMAKING RÁPIDO
@@ -1660,7 +1703,6 @@
                 window.challengeListener = null;
             }
             
-            // Limpa todos os listeners de desafios pendentes
             pendingChallenges.forEach((unsub, id) => {
                 unsub();
             });
@@ -1725,7 +1767,6 @@
                 db.collection('users').doc(user.uid).get().then(doc => {
                     if (doc.exists) {
                         userData = doc.data();
-                        // GARANTE RATING NÃO NEGATIVO NO LOGIN
                         if (userData.rating < 0) {
                             userData.rating = 0;
                             db.collection('users').doc(user.uid).update({ rating: 0 });
