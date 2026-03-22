@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>â™” Xadrez Pro Ultra - Modo Fernando AnÃ¡lise â™š</title>
+    <title>♔ Xadrez Pro Ultra - Modo Fernando Análise ♚</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
@@ -723,7 +723,7 @@
             }
         }
 
-        /* Sistema de AnÃ¡lise do AdversÃ¡rio - NOVO */
+        /* Sistema de Análise do Adversário - NOVO */
         .opponent-analysis-panel {
             display: none;
             background: var(--glass-bg);
@@ -915,7 +915,7 @@
             font-family: 'Orbitron', sans-serif;
         }
 
-        /* Danger Zones - Onde nÃ£o pode jogar */
+        /* Danger Zones - Onde não pode jogar */
         .danger-zone-highlight {
             position: absolute;
             width: 100%;
@@ -1741,7 +1741,7 @@
         }
 
         .chat-title::before {
-            content: 'ðŸ’¬';
+            content: '💬';
         }
 
         .chat-header-buttons {
@@ -1769,7 +1769,7 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* BotÃ£o flutuante do chat quando minimizado/escondido */
+        /* Botão flutuante do chat quando minimizado/escondido */
         .chat-floating-btn {
             position: fixed;
             bottom: 20px;
@@ -1818,7 +1818,7 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 15px;
+            padding:             15px;
             max-height: 350px;
             display: flex;
             flex-direction: column;
@@ -1831,7 +1831,9 @@
 
         .chat-messages::-webkit-scrollbar-track {
             background: rgba(0,0,0,0.2);
-        }         .chat-messages::-webkit-scrollbar-thumb {
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
             background: var(--gold);
             border-radius: 3px;
         }
@@ -1847,7 +1849,7 @@
         }
 
         @keyframes messageIn {
-                        from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -1965,7 +1967,7 @@
             }
         }
 
-        /* Nova IntenÃ§Ã£o Badge */
+        /* Nova Intenção Badge */
         .new-intention-badge {
             position: absolute;
             top: -8px;
@@ -2060,9 +2062,9 @@
 <body>
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- BotÃ£o flutuante do chat (aparece quando chat estÃ¡ minimizado/escondido) -->
+    <!-- Botão flutuante do chat (aparece quando chat está minimizado/escondido) -->
     <button class="chat-floating-btn" id="chatFloatingBtn" onclick="showChat()">
-        ðŸ’¬
+        💬
         <span class="new-intention-badge" id="floatingBadge" style="display:none;">!</span>
     </button>
 
@@ -2074,27 +2076,27 @@
                 <span class="new-intention-badge" id="newMessageBadge" style="display:none;">NOVO</span>
             </div>
             <div class="chat-header-buttons">
-                <button class="chat-btn" onclick="event.stopPropagation(); toggleChat()" title="Minimizar/Maximizar">âˆ’</button>
+                <button class="chat-btn" onclick="event.stopPropagation(); toggleChat()" title="Minimizar/Maximizar">−</button>
             </div>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
-        <div class="typing-indicator" id="typingIndicator">AdversÃ¡rio estÃ¡ digitando...</div>
+        <div class="typing-indicator" id="typingIndicator">Adversário está digitando...</div>
         <div class="chat-input-area">
             <input type="text" class="chat-input" id="chatInput" placeholder="Digite sua mensagem..." maxlength="200" onkeypress="handleChatKeypress(event)">
-            <button class="chat-send-btn" id="chatSendBtn" onclick="sendMessage()">âž¤</button>
+            <button class="chat-send-btn" id="chatSendBtn" onclick="sendMessage()">➤</button>
         </div>
     </div>
 
     <!-- Intention Detail Modal -->
     <div class="overlay-backdrop" id="intentionBackdrop" onclick="closeIntentionDetail()"></div>
     <div class="intention-detail-modal" id="intentionDetailModal">
-        <div class="intention-detail-title" id="intentionDetailTitle">Detalhe da IntenÃ§Ã£o</div>
+        <div class="intention-detail-title" id="intentionDetailTitle">Detalhe da Intenção</div>
         <div class="intention-detail-content" id="intentionDetailContent"></div>
         <button class="intention-detail-close" onclick="closeIntentionDetail()">Fechar</button>
     </div>
 
     <div class="login-screen" id="loginScreen">
-        <h1>â™” XADREZ â™š</h1>
+        <h1>♔ XADREZ ♚</h1>
         <p>Modo Fernando Pro Ultra</p>
         <div class="input-group">
             <input type="text" id="playerName" placeholder="Digite seu nome" maxlength="20" autocomplete="off">
@@ -2106,54 +2108,54 @@
     <div class="game-screen" id="gameScreen">
         <div class="game-header">
             <button onclick="backToDashboard()" style="
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    padding: 10px 20px;
-    background: rgba(255, 215, 0, 0.2);
-    border: 1px solid #ffd700;
-    border-radius: 10px;
-    color: #ffd700;
-    cursor: pointer;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.9em;
-    z-index: 100;
-">
-    â† Dashboard
-</button>
+                position: absolute;
+                left: 20px;
+                top: 20px;
+                padding: 10px 20px;
+                background: rgba(255, 215, 0, 0.2);
+                border: 1px solid #ffd700;
+                border-radius: 10px;
+                color: #ffd700;
+                cursor: pointer;
+                font-family: 'Orbitron', sans-serif;
+                font-size: 0.9em;
+                z-index: 100;
+            ">
+                ← Dashboard
+            </button>
             <h2 id="playerNameDisplay">Jogador</h2>
             <div>
                 <span class="player-badge" id="playerBadge">Aguardando...</span>
                 <span class="player-badge" id="opponentBadge" style="display:none;"></span>
             </div>
-            <div class="turn-indicator" id="turnIndicator">Aguardando inÃ­cio...</div>
+            <div class="turn-indicator" id="turnIndicator">Aguardando início...</div>
         </div>
 
-        <!-- PAINEL DE ANÃLISE AVANÃ‡ADA DE INTENÃ‡Ã•ES DO ADVERSÃRIO -->
+        <!-- PAINEL DE ANÁLISE AVANÇADA DE INTENÇÕES DO ADVERSÁRIO -->
         <div class="opponent-analysis-panel" id="opponentAnalysisPanel">
-            <div class="opponent-title">ðŸ§  ANÃLISE DE INTENÃ‡Ã•ES DO ADVERSÃRIO</div>
+            <div class="opponent-title">🧠 ANÁLISE DE INTENÇÕES DO ADVERSÁRIO</div>
             <div class="intention-list" id="intentionList">
                 <!-- Preenchido dinamicamente -->
             </div>
             
-            <!-- Perfil PsicolÃ³gico do AdversÃ¡rio -->
+            <!-- Perfil Psicológico do Adversário -->
             <div class="psychology-profile" id="psychologyProfile">
-                <div class="psychology-title">ðŸ“Š Perfil PsicolÃ³gico do AdversÃ¡rio</div>
+                <div class="psychology-title">📊 Perfil Psicológico do Adversário</div>
                 <div class="psychology-grid" id="psychologyGrid">
                     <!-- Preenchido dinamicamente -->
                 </div>
             </div>
             
             <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px; font-size: 0.9em; color: #aaa;">
-                <strong>ðŸ’¡ Dica:</strong> Clique em qualquer intenÃ§Ã£o para ver detalhes completos e contramedidas sugeridas.
+                <strong>💡 Dica:</strong> Clique em qualquer intenção para ver detalhes completos e contramedidas sugeridas.
             </div>
         </div>
 
         <!-- PAINEL DO MODO DEUS -->
         <div class="god-mode-panel" id="godModePanel">
-            <div class="god-title">ðŸ‘‘ MODO DEUS ATIVO ðŸ‘‘</div>
+            <div class="god-title">👑 MODO DEUS ATIVO 👑</div>
             <div class="god-move-display" id="godMoveDisplay">
-                <span class="god-move-piece" id="godPieceIcon">â™”</span>
+                <span class="god-move-piece" id="godPieceIcon">♔</span>
                 <div class="god-move-text" id="godMoveText">Analisando...</div>
             </div>
             <div class="god-reasoning" id="godReasoning">
@@ -2162,7 +2164,7 @@
             <div class="god-stats" id="godStats">
                 <div class="god-stat">
                     <div class="god-stat-value" id="godEval">0.0</div>
-                    <div class="god-stat-label">AvaliaÃ§Ã£o</div>
+                    <div class="god-stat-label">Avaliação</div>
                 </div>
                 <div class="god-stat">
                     <div class="god-stat-value" id="godDepth">6</div>
@@ -2174,7 +2176,7 @@
                 </div>
             </div>
             <button class="god-execute-btn" id="godExecuteBtn" onclick="executeGodMove()" style="display:none;">
-                âœ¨ EXECUTAR JOGADA PERFEITA âœ¨
+                ✨ EXECUTAR JOGADA PERFEITA ✨
             </button>
         </div>
 
@@ -2187,13 +2189,13 @@
             <span>e</span><span>f</span><span>g</span><span>h</span>
         </div>
         <div class="game-info">
-            <div style="margin-bottom: 10px; font-family: 'Orbitron', sans-serif; color: var(--gold);">PeÃ§as Capturadas</div>
+            <div style="margin-bottom: 10px; font-family: 'Orbitron', sans-serif; color: var(--gold);">Peças Capturadas</div>
             <div id="capturedPieces" class="captured-pieces"></div>
             <div id="gameStatus" style="margin-top:15px; font-size:0.95em; color:#888; font-family: 'Orbitron', sans-serif;"></div>
         </div>
         <div class="ai-analysis" id="aiAnalysis">
             <div style="position: absolute; top: 10px; right: 15px; font-size: 0.75em; color: #666; background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 15px; font-family: 'Orbitron', sans-serif;" id="depthIndicator">Profundidade: 6</div>
-            <h3>ðŸ§  ANÃLISE PREDATIVA IA FERNANDO</h3>
+            <h3>🧠 ANÁLISE PREDATIVA IA FERNANDO</h3>
             
             <div class="evaluation-bar" id="evaluationBar" style="display:none;">
                 <div class="eval-display">
@@ -2208,12 +2210,12 @@
             <div class="ai-suggestion" id="aiSuggestion"></div>
             
             <div style="margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 10px; font-family: 'Courier New', monospace; font-size: 0.9em; display: none;" id="lineAnalysis">
-                <strong style="color: var(--gold); display: block; margin-bottom: 10px;">ðŸ“ˆ Linha Principal:</strong>
+                <strong style="color: var(--gold); display: block; margin-bottom: 10px;">📈 Linha Principal:</strong>
                 <div id="lineMoves"></div>
             </div>
 
             <div style="margin-top: 15px; padding: 15px; background: rgba(255,0,255,0.1); border-radius: 10px; border-left: 3px solid #ff00ff; display: none;" id="tacticalMotifs">
-                <strong style="color: #ff00ff; display: block; margin-bottom: 10px;">âš¡ Motivos TÃ¡ticos:</strong>
+                <strong style="color: #ff00ff; display: block; margin-bottom: 10px;">⚡ Motivos Táticos:</strong>
                 <div id="motifsList"></div>
             </div>
 
@@ -2240,13 +2242,13 @@
         <div class="modal-content">
             <h2 id="gameOverText">Fim de Jogo!</h2>
             <button class="btn" onclick="returnToIndex()">Novo Jogo</button>
-            <button class="btn btn-secondary" id="viewPositionBtn" onclick="showFinalPosition()" style="display:none; margin-top: 15px; background: linear-gradient(135deg, #444, #666);">Ver PosiÃ§Ã£o Final</button>
+            <button class="btn btn-secondary" id="viewPositionBtn" onclick="showFinalPosition()" style="display:none; margin-top: 15px; background: linear-gradient(135deg, #444, #666);">Ver Posição Final</button>
         </div>
     </div>
 
     <div class="modal-overlay" id="finalPositionModal">
         <div class="modal-content">
-            <h2 style="font-size: 2.5em;">PosiÃ§Ã£o Final - Checkmate</h2>
+            <h2 style="font-size: 2.5em;">Posição Final - Checkmate</h2>
             <div class="checkmate-position" id="finalPositionBoard"></div>
             <div class="final-position-info" id="finalPositionInfo"></div>
             <button class="btn" onclick="closeFinalPosition()" style="margin-top:25px;">Fechar</button>
@@ -2255,7 +2257,7 @@
 
     <div class="modal-overlay" id="promotionModal">
         <div class="modal-content">
-            <h2 style="font-size: 2em; margin-bottom: 30px;">Promover PeÃ£o para:</h2>
+            <h2 style="font-size: 2em; margin-bottom: 30px;">Promover Peão para:</h2>
             <div class="promotion-options" id="promotionOptions"></div>
         </div>
     </div>
@@ -2273,26 +2275,11 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-const savedUser = sessionStorage.getItem('currentUser');
-    const savedGame = sessionStorage.getItem('currentGame');
-    
-    // Se NÃƒO veio do index.html de login, manda pra lÃ¡
-    if (!savedUser) {
-        window.location.href = 'index.html';
-    }
-    
-    // Converte dados do login
-    const userData = JSON.parse(savedUser);
-    const gameData = JSON.parse(savedGame || '{}');
-    
-    console.log('UsuÃ¡rio logado:', userData.username);
-    console.log('Ã‰ Fernando?', userData.isFernando);
-
 
         // Game State
         const PIECES = {
-            'K': 'â™”', 'Q': 'â™•', 'R': 'â™–', 'B': 'â™—', 'N': 'â™˜', 'P': 'â™™',
-            'k': 'â™š', 'q': 'â™›', 'r': 'â™œ', 'b': 'â™', 'n': 'â™ž', 'p': 'â™Ÿ'
+            'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
+            'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
         };
 
         const PIECE_VALUES = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
@@ -2401,6 +2388,10 @@ const savedUser = sessionStorage.getItem('currentUser');
         let hasNewMessage = false;
         let isChatVisible = false;
 
+        // Variáveis para dados do usuário logado
+        let userData = null;
+        let gameData = null;
+
         // ==================== SISTEMA DE CHAT CORRIGIDO ====================
 
         function toggleChat() {
@@ -2455,22 +2446,22 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             if (!text) return;
             
-            // Verificar se o jogo estÃ¡ pronto para chat
+            // Verificar se o jogo está pronto para chat
             if (!gameRef) {
                 showToast('Erro', 'Aguarde o jogo iniciar completamente', 'error');
                 return;
             }
             
             if (!gameState.players || (!gameState.players.white || !gameState.players.black)) {
-                showToast('Erro', 'Aguarde o adversÃ¡rio entrar na partida', 'error');
+                showToast('Erro', 'Aguarde o adversário entrar na partida', 'error');
                 return;
             }
             
-            // Desabilitar botÃ£o durante envio
+            // Desabilitar botão durante envio
             sendBtn.disabled = true;
             
             try {
-                // CORREÃ‡ÃƒO: Usar db.collection() em vez de gameRef.collection()
+                // CORREÇÃO: Usar db.collection() em vez de gameRef.collection()
                 const chatRef = db.collection('games').doc(gameState.gameId).collection('chat');
                 
                 const message = {
@@ -2485,7 +2476,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                 input.value = '';
             } catch (error) {
                 console.error('Erro ao enviar mensagem:', error);
-                showToast('Erro', 'NÃ£o foi possÃ­vel enviar a mensagem. Tente novamente.', 'error');
+                showToast('Erro', 'Não foi possível enviar a mensagem. Tente novamente.', 'error');
             } finally {
                 sendBtn.disabled = false;
             }
@@ -2499,7 +2490,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                 chatUnsubscribe();
             }
             
-            // CORREÃ‡ÃƒO: Usar db.collection() para acessar o chat
+            // CORREÇÃO: Usar db.collection() para acessar o chat
             const chatRef = db.collection('games').doc(gameState.gameId).collection('chat');
             
             chatUnsubscribe = chatRef
@@ -2510,7 +2501,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                             const msg = change.doc.data();
                             displayMessage(msg);
                             
-                            // Notificar se for mensagem do adversÃ¡rio
+                            // Notificar se for mensagem do adversário
                             if (msg.senderColor !== gameState.myColor && msg.sender !== 'Sistema') {
                                 notifyNewMessage(msg);
                             }
@@ -2525,7 +2516,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             const container = document.getElementById('chatContainer');
             const floatingBtn = document.getElementById('chatFloatingBtn');
             
-            // Se chat estÃ¡ minimizado ou escondido, mostrar notificaÃ§Ã£o
+            // Se chat está minimizado ou escondido, mostrar notificação
             if (!container.classList.contains('visible') || container.classList.contains('minimized')) {
                 hasNewMessage = true;
                 
@@ -2533,12 +2524,12 @@ const savedUser = sessionStorage.getItem('currentUser');
                 document.getElementById('newMessageBadge').style.display = 'block';
                 document.getElementById('floatingBadge').style.display = 'block';
                 
-                // Animar botÃ£o flutuante
+                // Animar botão flutuante
                 floatingBtn.classList.add('has-new-message');
                 
                 // Mostrar toast
                 showToast(
-                    'ðŸ’¬ Nova mensagem', 
+                    '💬 Nova mensagem', 
                     `${msg.sender}: ${msg.text.substring(0, 50)}${msg.text.length > 50 ? '...' : ''}`,
                     'normal',
                     4000
@@ -2595,83 +2586,83 @@ const savedUser = sessionStorage.getItem('currentUser');
             scrollToBottom();
         }
 
-        // ==================== ANÃLISE AVANÃ‡ADA DE INTENÃ‡Ã•ES DO ADVERSÃRIO ====================
+        // ==================== ANÁLISE AVANÇADA DE INTENÇÕES DO ADVERSÁRIO ====================
 
         const INTENTION_TYPES = {
             AGGRESSIVE_ATTACK: {
-                icon: 'âš”ï¸',
+                icon: '⚔️',
                 name: 'Ataque Agressivo',
-                description: 'AdversÃ¡rio busca capturas imediatas ou xeque'
+                description: 'Adversário busca capturas imediatas ou xeque'
             },
             POSITIONAL_IMPROVEMENT: {
-                icon: 'ðŸ“',
+                icon: '📐',
                 name: 'Melhoria Posicional',
-                description: 'Busca melhorar posiÃ§Ã£o das peÃ§as sem riscos'
+                description: 'Busca melhorar posição das peças sem riscos'
             },
             DEFENSIVE_MANEUVER: {
-                icon: 'ðŸ›¡ï¸',
+                icon: '🛡️',
                 name: 'Manobra Defensiva',
-                description: 'Protege peÃ§as ameaÃ§adas ou reforÃ§a defesa'
+                description: 'Protege peças ameaçadas ou reforça defesa'
             },
             TACTICAL_TRAP: {
-                icon: 'ðŸ•¸ï¸',
-                name: 'Armadilha TÃ¡tica',
-                description: 'Prepara enlace, garfo ou outro motivo tÃ¡tico'
+                icon: '🕸️',
+                name: 'Armadilha Tática',
+                description: 'Prepara enlace, garfo ou outro motivo tático'
             },
             KING_SAFETY: {
-                icon: 'ðŸ‘‘',
-                name: 'SeguranÃ§a do Rei',
+                icon: '👑',
+                name: 'Segurança do Rei',
                 description: 'Prioriza roque ou fuga do rei'
             },
             COUNTER_ATTACK: {
-                icon: 'â†©ï¸',
+                icon: '↩️',
                 name: 'Contra-ataque',
-                description: 'Responde Ã  ameaÃ§a com ameaÃ§a prÃ³pria'
+                description: 'Responde à ameaça com ameaça própria'
             },
             MATERIAL_GAIN: {
-                icon: 'ðŸ’Ž',
+                icon: '💎',
                 name: 'Ganho Material',
-                description: 'Busca capturar peÃ§as de maior valor'
+                description: 'Busca capturar peças de maior valor'
             },
             SACRIFICE_ATTACK: {
-                icon: 'ðŸ”¥',
-                name: 'SacrifÃ­cio',
+                icon: '🔥',
+                name: 'Sacrifício',
                 description: 'Oferece material para ataque decisivo'
             },
             PROPHYLAXIS: {
-                icon: 'ðŸ›‘',
+                icon: '🚫',
                 name: 'Profilaxia',
-                description: 'Impede planos do adversÃ¡rio antes que comecem'
+                description: 'Impede planos do adversário antes que comecem'
             },
             ENDGAME_TECHNIQUE: {
-                icon: 'ðŸŽ¯',
-                name: 'TÃ©cnica de Final',
+                icon: '🎯',
+                name: 'Técnica de Final',
                 description: 'Simplifica para vantagem no final'
             },
             PAWN_PUSH: {
-                icon: 'ðŸš¶',
-                name: 'AvanÃ§o de PeÃ£o',
-                description: 'Busca promoÃ§Ã£o ou espaÃ§o no tabuleiro'
+                icon: '🚶',
+                name: 'Avanço de Peão',
+                description: 'Busca promoção ou espaço no tabuleiro'
             },
             PIECE_DEVELOPMENT: {
-                icon: 'ðŸš€',
+                icon: '🚀',
                 name: 'Desenvolvimento',
-                description: 'Traz peÃ§as para jogo ativo'
+                description: 'Traz peças para jogo ativo'
             },
             CHECKMATE_THREAT: {
-                icon: 'â˜ ï¸',
-                name: 'AmeaÃ§a de Xeque-Mate',
-                description: 'Prepara padrÃ£o de mate imediato'
+                icon: '☠️',
+                name: 'Ameaça de Xeque-Mate',
+                description: 'Prepara padrão de mate imediato'
             },
             DRAW_SEEKING: {
-                icon: 'ðŸ¤',
+                icon: '🤝',
                 name: 'Busca de Empate',
-                description: 'Jogador em desvantagem busca repetiÃ§Ã£o'
+                description: 'Jogador em desvantagem busca repetição'
             },
             TIME_PRESSURE: {
-                icon: 'â±ï¸',
-                name: 'PressÃ£o de Tempo',
-                description: 'Jogadas rÃ¡pidas indicam pouco tempo'
+                icon: '⏱️',
+                name: 'Pressão de Tempo',
+                description: 'Jogadas rápidas indicam pouco tempo'
             }
         };
 
@@ -2680,7 +2671,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             const board = gameState.board;
             const intentions = [];
             
-            // 1. AnÃ¡lise de TÃ¡ticas Imediatas
+            // 1. Análise de Táticas Imediatas
             const tacticalMoves = findTacticalMoves(board, opponentColor);
             if (tacticalMoves.length > 0) {
                 const bestTactical = tacticalMoves[0];
@@ -2694,12 +2685,12 @@ const savedUser = sessionStorage.getItem('currentUser');
                         piece: m.piece,
                         description: m.description
                     })),
-                    reasoning: `Detectado ${tacticalMoves.length} motivo(s) tÃ¡tico(s). O adversÃ¡rio pode criar garfos, enlaÃ§amentos ou descobertos.`,
-                    counterStrategy: 'Verifique todas as suas peÃ§as - o adversÃ¡rio provavelmente atacarÃ¡ onde vocÃª menos espera.'
+                    reasoning: `Detectado ${tacticalMoves.length} motivo(s) tático(s). O adversário pode criar garfos, enlaçamentos ou descobertos.`,
+                    counterStrategy: 'Verifique todas as suas peças - o adversário provavelmente atacará onde você menos espera.'
                 });
             }
             
-            // 2. AnÃ¡lise de Ataque ao Rei
+            // 2. Análise de Ataque ao Rei
             const kingAttacks = findKingAttackMoves(board, opponentColor);
             if (kingAttacks.length > 0) {
                 const severity = calculateAttackSeverity(board, kingAttacks, opponentColor);
@@ -2713,12 +2704,12 @@ const savedUser = sessionStorage.getItem('currentUser');
                         piece: m.piece,
                         description: m.description
                     })),
-                    reasoning: `O rei estÃ¡ sob ${severity > 2 ? 'FORTE' : 'moderada'} pressÃ£o. ${kingAttacks.length} caminho(s) de ataque identificado(s).`,
-                    counterStrategy: severity > 2 ? 'URGENTE: Proteja o rei imediatamente ou faÃ§a roque!' : 'Considere reforÃ§ar a defesa do rei.'
+                    reasoning: `O rei está sob ${severity > 2 ? 'FORTE' : 'moderada'} pressão. ${kingAttacks.length} caminho(s) de ataque identificado(s).`,
+                    counterStrategy: severity > 2 ? 'URGENTE: Proteja o rei imediatamente ou faça roque!' : 'Considere reforçar a defesa do rei.'
                 });
             }
             
-            // 3. AnÃ¡lise de Capturas de Material
+            // 3. Análise de Capturas de Material
             const captureMoves = findCaptureMoves(board, opponentColor);
             const valuableCaptures = captureMoves.filter(m => m.value > 100);
             if (valuableCaptures.length > 0) {
@@ -2730,14 +2721,15 @@ const savedUser = sessionStorage.getItem('currentUser');
                         from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
                         to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
                         piece: m.piece,
+                        target: m.target,
                         description: `Captura ${m.target} (+${m.value/100})`
                     })),
-                    reasoning: `${valuableCaptures.length} peÃ§a(s) suas estÃ£o vulnerÃ¡veis. Melhor captura: +${valuableCaptures[0].value/100} pontos.`,
-                    counterStrategy: 'Proteja peÃ§as indefesas ou faÃ§a troca favorÃ¡vel.'
+                    reasoning: `${valuableCaptures.length} peça(s) suas estão vulneráveis. Melhor captura: +${valuableCaptures[0].value/100} pontos.`,
+                    counterStrategy: 'Proteja peças indefesas ou faça troca favorável.'
                 });
             }
             
-            // 4. AnÃ¡lise de Xeque-Mate
+            // 4. Análise de Xeque-Mate
             const mateThreats = findMateThreats(board, opponentColor);
             if (mateThreats.length > 0) {
                 intentions.push({
@@ -2748,14 +2740,14 @@ const savedUser = sessionStorage.getItem('currentUser');
                         from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
                         to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
                         piece: m.piece,
-                        description: 'AmeaÃ§a de mate'
+                        description: 'Ameaça de mate'
                     })),
-                    reasoning: 'ðŸš¨ DETECTADO: PadrÃ£o de xeque-mate em preparaÃ§Ã£o! AmeaÃ§a iminente!',
-                    counterStrategy: 'DEFESA PRIORITÃRIA: Bloqueie, capture ou fuja! Esta Ã© uma ameaÃ§a existencial!'
+                    reasoning: '🚨 DETECTADO: Padrão de xeque-mate em preparação! Ameaça iminente!',
+                    counterStrategy: 'DEFESA PRIORITÁRIA: Bloqueie, capture ou fuja! Esta é uma ameaça existencial!'
                 });
             }
             
-            // 5. AnÃ¡lise de Profilaxia (bloquear planos)
+            // 5. Análise de Profilaxia (bloquear planos)
             const myThreats = findMyThreats(board, opponentColor);
             const blockingMoves = findBlockingMoves(board, opponentColor, myThreats);
             if (blockingMoves.length > 0 && myThreats.length > 0) {
@@ -2769,12 +2761,12 @@ const savedUser = sessionStorage.getItem('currentUser');
                         piece: m.piece,
                         description: 'Bloqueia seu plano'
                     })),
-                    reasoning: 'O adversÃ¡rio percebeu sua ameaÃ§a e pode tentar neutralizÃ¡-la preventivamente.',
-                    counterStrategy: 'Mantenha pressÃ£o ou mude de plano se ele bloquear.'
+                    reasoning: 'O adversário percebeu sua ameaça e pode tentar neutralizá-la preventivamente.',
+                    counterStrategy: 'Mantenha pressão ou mude de plano se ele bloquear.'
                 });
             }
             
-            // 6. AnÃ¡lise de Contra-ataque
+            // 6. Análise de Contra-ataque
             if (isInCheck(gameState.myColor)) {
                 const counterMoves = findCounterAttackMoves(board, opponentColor);
                 if (counterMoves.length > 0) {
@@ -2788,13 +2780,13 @@ const savedUser = sessionStorage.getItem('currentUser');
                             piece: m.piece,
                             description: 'Contra-ataque'
                         })),
-                        reasoning: 'Em xeque, o adversÃ¡rio provavelmente buscarÃ¡ contra-ataque em vez de defesa passiva.',
+                        reasoning: 'Em xeque, o adversário provavelmente buscará contra-ataque em vez de defesa passiva.',
                         counterStrategy: 'Verifique se sua jogada deixa vulnerabilidades - ele pode ignorar o xeque e atacar!'
                     });
                 }
             }
             
-            // 7. AnÃ¡lise de Desenvolvimento (abertura/meio-jogo)
+            // 7. Análise de Desenvolvimento (abertura/meio-jogo)
             if (gameState.moveHistory.length < 20) {
                 const developmentMoves = findDevelopmentMoves(board, opponentColor);
                 if (developmentMoves.length > 0) {
@@ -2808,13 +2800,13 @@ const savedUser = sessionStorage.getItem('currentUser');
                             piece: m.piece,
                             description: 'Desenvolvimento'
                         })),
-                        reasoning: 'Fase de abertura: adversÃ¡rio provavelmente continuarÃ¡ desenvolvendo peÃ§as.',
-                        counterStrategy: 'Desenvolva vocÃª tambÃ©m, mas priorize controle do centro.'
+                        reasoning: 'Fase de abertura: adversário provavelmente continuará desenvolvendo peças.',
+                        counterStrategy: 'Desenvolva você também, mas priorize controle do centro.'
                     });
                 }
             }
             
-            // 8. AnÃ¡lise de AvanÃ§o de PeÃ£o
+            // 8. Análise de Avanço de Peão
             const pawnMoves = findPawnPushMoves(board, opponentColor);
             const dangerousPawns = pawnMoves.filter(m => m.dangerous);
             if (dangerousPawns.length > 0) {
@@ -2826,14 +2818,14 @@ const savedUser = sessionStorage.getItem('currentUser');
                         from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
                         to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
                         piece: m.piece,
-                        description: m.promotionThreat ? 'PeÃ£o passado!' : 'AvanÃ§o perigoso'
+                        description: m.promotionThreat ? 'Peão passado!' : 'Avanço perigoso'
                     })),
-                    reasoning: `${dangerousPawns.length} peÃ£o(Ãµes) ameaÃ§ando avanÃ§o significativo${dangerousPawns.some(p => p.promotionThreat) ? ' com PROMOÃ‡ÃƒO iminente!' : '.'}`,
-                    counterStrategy: dangerousPawns.some(p => p.promotionThreat) ? 'BLOQUEIE OU CAPTURE IMEDIATAMENTE!' : 'Monitore o avanÃ§o dos peÃµes.'
+                    reasoning: `${dangerousPawns.length} peão(ões) ameaçando avanço significativo${dangerousPawns.some(p => p.promotionThreat) ? ' com PROMOÇÃO iminente!' : '.'}`,
+                    counterStrategy: dangerousPawns.some(p => p.promotionThreat) ? 'BLOQUEIE OU CAPTURE IMEDIATAMENTE!' : 'Monitore o avanço dos peões.'
                 });
             }
             
-            // 9. AnÃ¡lise de SacrifÃ­cio
+            // 9. Análise de Sacrifício
             const sacrificeOpportunities = findSacrificeOpportunities(board, opponentColor);
             if (sacrificeOpportunities.length > 0) {
                 intentions.push({
@@ -2844,14 +2836,14 @@ const savedUser = sessionStorage.getItem('currentUser');
                         from: `${String.fromCharCode(97+sacrificeOpportunities[0].from.col)}${8-sacrificeOpportunities[0].from.row}`,
                         to: `${String.fromCharCode(97+sacrificeOpportunities[0].to.col)}${8-sacrificeOpportunities[0].to.row}`,
                         piece: sacrificeOpportunities[0].piece,
-                        description: `SacrifÃ­cio por ${sacrificeOpportunities[0].compensation/100}`
+                        description: `Sacrifício por ${sacrificeOpportunities[0].compensation/100}`
                     })],
-                    reasoning: `PossÃ­vel sacrifÃ­cio detectado: perde ${sacrificeOpportunities[0].cost/100} mas ganha ${sacrificeOpportunities[0].compensation/100} em compensaÃ§Ã£o.`,
-                    counterStrategy: 'Cuidado: nÃ£o aceite material se abrir linhas para ataque ao seu rei!'
+                    reasoning: `Possível sacrifício detectado: perde ${sacrificeOpportunities[0].cost/100} mas ganha ${sacrificeOpportunities[0].compensation/100} em compensação.`,
+                    counterStrategy: 'Cuidado: não aceite material se abrir linhas para ataque ao seu rei!'
                 });
             }
             
-            // 10. AnÃ¡lise de SeguranÃ§a do Rei (Roque)
+            // 10. Análise de Segurança do Rei (Roque)
             const kingSafetyMoves = findKingSafetyMoves(board, opponentColor);
             if (kingSafetyMoves.length > 0 && gameState.moveHistory.length < 25) {
                 intentions.push({
@@ -2864,12 +2856,12 @@ const savedUser = sessionStorage.getItem('currentUser');
                         piece: m.piece,
                         description: m.castling ? 'Roque' : 'Fuga do rei'
                     })),
-                    reasoning: isKingExposed(board, opponentColor) ? 'Rei adversÃ¡rio exposto - provavelmente buscarÃ¡ seguranÃ§a.' : 'Oportunidade de roque para seguranÃ§a.',
-                    counterStrategy: 'ImpeÃ§a o roque mantendo pressÃ£o ou bloqueando caminho.'
+                    reasoning: isKingExposed(board, opponentColor) ? 'Rei adversário exposto - provavelmente buscará segurança.' : 'Oportunidade de roque para segurança.',
+                    counterStrategy: 'Impeça o roque mantendo pressão ou bloqueando caminho.'
                 });
             }
             
-            // 11. AnÃ¡lise de Empate (se em desvantagem)
+            // 11. Análise de Empate (se em desvantagem)
             if (isMaterialDown(board, opponentColor)) {
                 const drawMoves = findDrawMoves(board, opponentColor);
                 if (drawMoves.length > 0) {
@@ -2883,13 +2875,13 @@ const savedUser = sessionStorage.getItem('currentUser');
                             piece: m.piece,
                             description: 'Busca empate'
                         })),
-                        reasoning: 'AdversÃ¡rio em desvantagem material pode buscar repetiÃ§Ã£o ou simplificaÃ§Ã£o.',
-                        counterStrategy: 'Evite repetiÃ§Ãµes de posiÃ§Ã£o, mantenha peÃ§as ativas.'
+                        reasoning: 'Adversário em desvantagem material pode buscar repetição ou simplificação.',
+                        counterStrategy: 'Evite repetições de posição, mantenha peças ativas.'
                     });
                 }
             }
             
-            // 12. AnÃ¡lise de Melhoria Posicional
+            // 12. Análise de Melhoria Posicional
             const positionalMoves = findPositionalMoves(board, opponentColor);
             if (positionalMoves.length > 0 && intentions.length < 5) {
                 intentions.push({
@@ -2902,12 +2894,12 @@ const savedUser = sessionStorage.getItem('currentUser');
                         piece: m.piece,
                         description: 'Melhoria posicional'
                     })),
-                    reasoning: 'Sem ameaÃ§as imediatas, adversÃ¡rio provavelmente melhorarÃ¡ posiÃ§Ã£o das peÃ§as.',
-                    counterStrategy: 'Aproveite para melhorar sua posiÃ§Ã£o tambÃ©m ou crie ameaÃ§as.'
+                    reasoning: 'Sem ameaças imediatas, adversário provavelmente melhorará posição das peças.',
+                    counterStrategy: 'Aproveite para melhorar sua posição também ou crie ameaças.'
                 });
             }
             
-            // 13. AnÃ¡lise de Defesa (se peÃ§as ameaÃ§adas)
+            // 13. Análise de Defesa (se peças ameaçadas)
             const threatenedPieces = findThreatenedPieces(board, opponentColor);
             if (threatenedPieces.length > 0) {
                 const defenseMoves = findDefensiveMoves(board, opponentColor, threatenedPieces);
@@ -2922,13 +2914,13 @@ const savedUser = sessionStorage.getItem('currentUser');
                             piece: m.piece,
                             description: 'Defesa'
                         })),
-                        reasoning: `${threatenedPieces.length} peÃ§a(s) adversÃ¡ria(s) ameaÃ§ada(s). Deve defender ou trocar.`,
-                        counterStrategy: 'Mantenha a pressÃ£o - se ele defender, vocÃª ganha tempo.'
+                        reasoning: `${threatenedPieces.length} peça(s) adversária(s) ameaçada(s). Deve defender ou trocar.`,
+                        counterStrategy: 'Mantenha a pressão - se ele defender, você ganha tempo.'
                     });
                 }
             }
             
-            // 14. AnÃ¡lise de TÃ©cnica de Final
+            // 14. Análise de Técnica de Final
             if (isEndgame(board)) {
                 const endgameMoves = findEndgameTechniqueMoves(board, opponentColor);
                 if (endgameMoves.length > 0) {
@@ -2940,10 +2932,10 @@ const savedUser = sessionStorage.getItem('currentUser');
                             from: `${String.fromCharCode(97+m.from.col)}${8-m.from.row}`,
                             to: `${String.fromCharCode(97+m.to.col)}${8-m.to.row}`,
                             piece: m.piece,
-                            description: 'TÃ©cnica de final'
+                            description: 'Técnica de final'
                         })),
-                        reasoning: 'Fase final: adversÃ¡rio buscarÃ¡ simplificar ou promover peÃµes.',
-                        counterStrategy: 'Ative seu rei, avance peÃµes passados, evite simplificaÃ§Ãµes desfavorÃ¡veis.'
+                        reasoning: 'Fase final: adversário buscará simplificar ou promover peões.',
+                        counterStrategy: 'Ative seu rei, avance peões passados, evite simplificações desfavoráveis.'
                     });
                 }
             }
@@ -2957,11 +2949,11 @@ const savedUser = sessionStorage.getItem('currentUser');
                 return b.probability - a.probability;
             });
             
-            // Limitar a 8 intenÃ§Ãµes mais relevantes
+            // Limitar a 8 intenções mais relevantes
             return intentions.slice(0, 8);
         }
 
-        // FunÃ§Ãµes auxiliares de anÃ¡lise de intenÃ§Ãµes
+        // Funções auxiliares de análise de intenções
         function findTacticalMoves(board, color) {
             const moves = [];
             const allMoves = generateAllMoves(board, color);
@@ -3003,14 +2995,14 @@ const savedUser = sessionStorage.getItem('currentUser');
             const allMoves = generateAllMoves(board, color);
             
             for (let move of allMoves) {
-                // Verificar se ataca casas prÃ³ximas ao rei
+                // Verificar se ataca casas próximas ao rei
                 const distToKing = Math.abs(move.to.row - kingPos.row) + Math.abs(move.to.col - kingPos.col);
                 if (distToKing <= 2) {
                     const testBoard = simulateMove(board, move);
                     if (isSquareAttacked(kingPos.row, kingPos.col, myColor, testBoard)) {
                         moves.push({...move, description: 'Ataque ao rei', severity: 3});
                     } else if (distToKing <= 1) {
-                        moves.push({...move, description: 'AproximaÃ§Ã£o do rei', severity: 2});
+                        moves.push({...move, description: 'Aproximação do rei', severity: 2});
                     }
                 }
             }
@@ -3026,15 +3018,15 @@ const savedUser = sessionStorage.getItem('currentUser');
             for (let move of allMoves) {
                 const testBoard = simulateMove(board, move);
                 
-                // Verificar se dÃ¡ xeque
+                // Verificar se dá xeque
                 const kingPos = findKing(testBoard, myColor);
                 if (!kingPos || !isSquareAttacked(kingPos.row, kingPos.col, myColor, testBoard)) continue;
                 
-                // Verificar se Ã© mate ou mate em 1
+                // Verificar se é mate ou mate em 1
                 if (isCheckmateAfterMove(testBoard, myColor)) {
                     moves.push({...move, description: 'Xeque-mate!', mate: true});
                 } else {
-                    // Verificar ameaÃ§a de mate na prÃ³xima
+                    // Verificar ameaça de mate na próxima
                     const myMoves = generateAllMoves(testBoard, myColor);
                     let canEscape = false;
                     
@@ -3048,7 +3040,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                     }
                     
                     if (!canEscape) {
-                        moves.push({...move, description: 'AmeaÃ§a de mate imediato'});
+                        moves.push({...move, description: 'Ameaça de mate imediato'});
                     }
                 }
             }
@@ -3091,7 +3083,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             const myColor = opponentColor === 'white' ? 'black' : 'white';
             const threats = [];
             
-            // Encontrar todas as ameaÃ§as que eu (Fernando) tenho
+            // Encontrar todas as ameaças que eu (Fernando) tenho
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = board[r] && board[r][c];
@@ -3125,7 +3117,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             for (let move of allMoves) {
                 const testBoard = simulateMove(board, move);
-                // Verificar se bloqueia alguma ameaÃ§a
+                // Verificar se bloqueia alguma ameaça
                 let blockedValue = 0;
                 for (let threat of threats) {
                     if (!isSquareAttacked(threat.to.row, threat.to.col, color === 'white' ? 'black' : 'white', testBoard)) {
@@ -3183,7 +3175,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                     if (!piece || piece.toLowerCase() !== 'p') continue;
                     if (color === 'white' ? piece !== piece.toUpperCase() : piece !== piece.toLowerCase()) continue;
                     
-                    // Verificar avanÃ§o simples
+                    // Verificar avanço simples
                     const nextRow = r + direction;
                     if (isValid(nextRow, c) && !board[nextRow][c]) {
                         const isDangerous = Math.abs(nextRow - promotionRank) <= 3;
@@ -3195,10 +3187,10 @@ const savedUser = sessionStorage.getItem('currentUser');
                             piece: piece,
                             dangerous: isDangerous,
                             promotionThreat: isPromotion,
-                            description: isPromotion ? 'PromoÃ§Ã£o iminente!' : 'AvanÃ§o de peÃ£o'
+                            description: isPromotion ? 'Promoção iminente!' : 'Avanço de peão'
                         });
                         
-                        // Duplo avanÃ§o
+                        // Duplo avanço
                         const startRank = color === 'white' ? 6 : 1;
                         if (r === startRank) {
                             const twoRow = r + 2 * direction;
@@ -3209,7 +3201,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                                     piece: piece,
                                     dangerous: false,
                                     promotionThreat: false,
-                                    description: 'AvanÃ§o duplo'
+                                    description: 'Avanço duplo'
                                 });
                             }
                         }
@@ -3229,26 +3221,26 @@ const savedUser = sessionStorage.getItem('currentUser');
                 const piece = board[move.from.row][move.from.col];
                 const pieceValue = PIECE_VALUES[piece.toLowerCase()];
                 
-                // Verificar se Ã© captura de peÃ§a de menor valor
+                // Verificar se é captura de peça de menor valor
                 const target = board[move.to.row] && board[move.to.row][move.to.col];
                 if (!target) continue;
                 
                 const targetValue = PIECE_VALUES[target.toLowerCase()];
-                if (pieceValue <= targetValue) continue; // NÃ£o Ã© sacrifÃ­cio
+                if (pieceValue <= targetValue) continue; // Não é sacrifício
                 
                 const testBoard = simulateMove(board, move);
                 
-                // Calcular compensaÃ§Ã£o (ataque ao rei, abertura de linhas, etc)
+                // Calcular compensação (ataque ao rei, abertura de linhas, etc)
                 let compensation = 0;
                 const kingPos = findKing(testBoard, myColor);
                 if (kingPos) {
-                    // BÃ´nus por abrir linhas para ataque
+                    // Bônus por abrir linhas para ataque
                     compensation += evaluateAttackPotential(testBoard, kingPos, color) * 50;
                     
-                    // BÃ´nus por ganho de tempo (desenvolvimento acelerado)
+                    // Bônus por ganho de tempo (desenvolvimento acelerado)
                     compensation += 100;
                     
-                    // BÃ´nus por iniciativa
+                    // Bônus por iniciativa
                     if (isSquareAttacked(kingPos.row, kingPos.col, myColor, testBoard)) {
                         compensation += 200;
                     }
@@ -3259,7 +3251,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                         ...move,
                         cost: pieceValue,
                         compensation: compensation,
-                        description: `SacrifÃ­cio por ${compensation/100}`
+                        description: `Sacrifício por ${compensation/100}`
                     });
                 }
             }
@@ -3319,7 +3311,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             for (let move of allMoves) {
                 const testBoard = simulateMove(board, move);
-                // Contra-ataque: ignorar xeque e atacar peÃ§a valiosa ou dar xeque
+                // Contra-ataque: ignorar xeque e atacar peça valiosa ou dar xeque
                 const target = board[move.to.row] && board[move.to.row][move.to.col];
                 const givesCheck = isSquareAttacked(myKingPos.row, myKingPos.col, myColor, testBoard);
                 
@@ -3336,8 +3328,8 @@ const savedUser = sessionStorage.getItem('currentUser');
 
         function findDrawMoves(board, color) {
             const moves = [];
-            // SimplificaÃ§Ã£o: movimentos que levam a posiÃ§Ãµes repetidas ou simplificaÃ§Ã£o
-            // ImplementaÃ§Ã£o simplificada
+            // Simplificação: movimentos que levam a posições repetidas ou simplificação
+            // Implementação simplificada
             return moves;
         }
 
@@ -3346,7 +3338,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             const allMoves = generateAllMoves(board, color);
             
             for (let move of allMoves) {
-                // Avaliar ganho posicional (controle de centro, espaÃ§o, etc)
+                // Avaliar ganho posicional (controle de centro, espaço, etc)
                 const positionalGain = evaluatePositionalGain(board, move);
                 if (positionalGain > 20) {
                     moves.push({
@@ -3395,7 +3387,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                 let savedValue = 0;
                 
                 for (let threat of threatenedPieces) {
-                    if (!isSquareAttacked(threat.row, threat.col, color, testBoard)) {
+                    if (!isSquareAttacked(threat.row, threat.                    color, testBoard)) {
                         savedValue += threat.value;
                     }
                 }
@@ -3419,14 +3411,14 @@ const savedUser = sessionStorage.getItem('currentUser');
             const allMoves = generateAllMoves(board, color);
             
             for (let move of allMoves) {
-                // Priorizar promoÃ§Ã£o de peÃµes
+                // Priorizar promoção de peões
                 const piece = board[move.from.row][move.from.col];
                 if (piece && piece.toLowerCase() === 'p') {
                     const promotionRank = color === 'white' ? 0 : 7;
                     if (Math.abs(move.to.row - promotionRank) <= 2) {
                         moves.push({
                             ...move,
-                            description: 'PeÃ£o passado!'
+                            description: 'Peão passado!'
                         });
                     }
                 }
@@ -3435,7 +3427,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             return moves;
         }
 
-        // FunÃ§Ãµes de avaliaÃ§Ã£o auxiliares
+        // Funções de avaliação auxiliares
         function evaluateFork(board, pos, color) {
             let forkScore = 0;
             const attacks = getAttacks(pos.row, pos.col, board, board[pos.row][pos.col]);
@@ -3444,7 +3436,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             let highValueTargets = 0;
             for (let att of attacks) {
                 const target = board[att.row] && board[att.row][att.col];
-                                if (target && (myColor === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
+                if (target && (myColor === 'white' ? target === target.toUpperCase() : target === target.toLowerCase())) {
                     const value = PIECE_VALUES[target.toLowerCase()];
                     if (value >= 300) highValueTargets++;
                     forkScore += value;
@@ -3455,20 +3447,20 @@ const savedUser = sessionStorage.getItem('currentUser');
         }
 
         function evaluatePin(board, pos, color) {
-            // SimplificaÃ§Ã£o: verificar se peÃ§a ataca outra atravÃ©s de uma intermediÃ¡ria
-            return 0; // ImplementaÃ§Ã£o complexa omitida para brevidade
+            // Simplificação: verificar se peça ataca outra através de uma intermediária
+            return 0; // Implementação complexa omitida para brevidade
         }
 
         function evaluateDiscovered(board, from, to, color) {
-            // Verificar se movimento descobre ataque de outra peÃ§a
+            // Verificar se movimento descobre ataque de outra peça
             let discoveredScore = 0;
-            // ImplementaÃ§Ã£o simplificada
+            // Implementação simplificada
             return discoveredScore;
         }
 
         function evaluateAttackPotential(board, kingPos, color) {
             let potential = 0;
-            // Contar peÃ§as atacando Ã¡rea do rei
+            // Contar peças atacando área do rei
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = board[r] && board[r][c];
@@ -3503,9 +3495,9 @@ const savedUser = sessionStorage.getItem('currentUser');
             const kingPos = findKing(board, color);
             if (!kingPos) return false;
             
-            // Verificar se rei estÃ¡ no centro ou peÃ§as prÃ³ximas foram movidas
+            // Verificar se rei está no centro ou peças próximas foram movidas
             const centerDist = Math.abs(kingPos.row - 3.5) + Math.abs(kingPos.col - 3.5);
-            return centerDist > 2; // Rei nÃ£o estÃ¡ em posiÃ§Ã£o segura
+            return centerDist > 2; // Rei não está em posição segura
         }
 
         function isMaterialDown(board, color) {
@@ -3554,7 +3546,7 @@ const savedUser = sessionStorage.getItem('currentUser');
         function isCheckmateAfterMove(board, color) {
             if (!isInCheck(color, board)) return false;
             
-            // Verificar se hÃ¡ movimentos legais
+            // Verificar se há movimentos legais
             for (let r = 0; r < 8; r++) {
                 for (let c = 0; c < 8; c++) {
                     const piece = board[r] && board[r][c];
@@ -3586,7 +3578,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             return severity;
         }
 
-        // Perfil PsicolÃ³gico do AdversÃ¡rio
+        // Perfil Psicológico do Adversário
         function analyzeOpponentPsychology() {
             if (!gameState.opponentMoveHistory || gameState.opponentMoveHistory.length === 0) {
                 return null;
@@ -3595,36 +3587,36 @@ const savedUser = sessionStorage.getItem('currentUser');
             const history = gameState.opponentMoveHistory;
             const totalMoves = history.length;
             
-            // Calcular mÃ©tricas psicolÃ³gicas
+            // Calcular métricas psicológicas
             const metrics = {
-                // Agressividade: % de movimentos que capturam ou dÃ£o xeque
+                // Agressividade: % de movimentos que capturam ou dão xeque
                 aggressiveness: 0,
                 
                 // Defensividade: % de movimentos defensivos
                 defensiveness: 0,
                 
-                // TendÃªncia a riscos: jogadas arriscadas / total
+                // Tendência a riscos: jogadas arriscadas / total
                 riskTaking: 0,
                 
-                // ConsistÃªncia: variÃ¢ncia no tempo de jogada
+                // Consistência: variância no tempo de jogada
                 consistency: 0,
                 
-                // Adaptabilidade: mudanÃ§as de plano
+                // Adaptabilidade: mudanças de plano
                 adaptability: 0,
                 
-                // PaciÃªncia: jogadas posicionais vs tÃ¡ticas
+                // Paciência: jogadas posicionais vs táticas
                 patience: 0,
                 
-                // ConfianÃ§a: material sacrificado vs ganho
+                // Confiança: material sacrificado vs ganho
                 confidence: 0,
                 
                 // Estilo preferido
                 preferredStyle: 'equilibrado',
                 
-                // PadrÃ£o de tempo
+                // Padrão de tempo
                 timePattern: 'normal',
                 
-                // TendÃªncia de erro
+                // Tendência de erro
                 blunderProne: 0
             };
             
@@ -3658,7 +3650,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             metrics.patience = Math.round((positionalMoves / totalMoves) * 100);
             metrics.confidence = Math.round((sacrifices / totalMoves) * 100);
             
-            // Calcular consistÃªncia (desvio padrÃ£o dos tempos)
+            // Calcular consistência (desvio padrão dos tempos)
             if (timeVariations.length > 3) {
                 const avg = timeVariations.reduce((a, b) => a + b, 0) / timeVariations.length;
                 const variance = timeVariations.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / timeVariations.length;
@@ -3677,13 +3669,13 @@ const savedUser = sessionStorage.getItem('currentUser');
                 metrics.preferredStyle = 'posicional';
             }
             
-            // Detectar padrÃ£o de tempo
+            // Detectar padrão de tempo
             const recentMoves = history.slice(-5);
             const avgRecentTime = recentMoves.reduce((sum, m) => sum + (m.thinkTime || 30000), 0) / recentMoves.length;
-            if (avgRecentTime < 5000) metrics.timePattern = 'joga rÃ¡pido';
+            if (avgRecentTime < 5000) metrics.timePattern = 'joga rápido';
             else if (avgRecentTime > 20000) metrics.timePattern = 'pensativo';
             
-            // Calcular tendÃªncia a erros (baseado em movimentos que perdem material)
+            // Calcular tendência a erros (baseado em movimentos que perdem material)
             let blunderCount = 0;
             for (let move of history) {
                 if (move.materialLoss && move.materialLoss > 200) blunderCount++;
@@ -3703,7 +3695,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                 return;
             }
             
-            // Calcular intenÃ§Ãµes
+            // Calcular intenções
             gameState.opponentIntentions = analyzeOpponentIntentions();
             gameState.opponentPsychology = analyzeOpponentPsychology();
             
@@ -3714,7 +3706,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             panel.classList.add('active');
             
-            // Renderizar intenÃ§Ãµes
+            // Renderizar intenções
             let html = '';
             gameState.opponentIntentions.forEach((intention, index) => {
                 const typeInfo = INTENTION_TYPES[intention.type];
@@ -3728,19 +3720,19 @@ const savedUser = sessionStorage.getItem('currentUser');
                             <div class="intention-type">
                                 <span style="font-size:1.3em;">${typeInfo.icon}</span>
                                 <span>${typeInfo.name}</span>
-                                ${intention.priority === 'critical' ? '<span style="color:#ff0000; font-size:0.7em; margin-left:5px;">ðŸ”´ CRÃTICO</span>' : ''}
+                                ${intention.priority === 'critical' ? '<span style="color:#ff0000; font-size:0.7em; margin-left:5px;">🔴 CRÍTICO</span>' : ''}
                             </div>
                             <div class="intention-probability">${intention.probability}%</div>
                         </div>
                         <div class="intention-details">
                             ${typeInfo.description}<br>
-                            <strong>AnÃ¡lise:</strong> ${intention.reasoning}
+                            <strong>Análise:</strong> ${intention.reasoning}
                         </div>
                         ${intention.moves.length > 0 ? `
                             <div class="intention-moves">
                                 ${intention.moves.map(m => `
                                     <div class="intention-move" onclick="event.stopPropagation(); highlightIntentionMove('${m.from}', '${m.to}')">
-                                        ${PIECES[m.piece]} ${m.from}â†’${m.to}
+                                        ${PIECES[m.piece]} ${m.from}→${m.to}
                                     </div>
                                 `).join('')}
                             </div>
@@ -3751,7 +3743,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             list.innerHTML = html;
             
-            // Renderizar perfil psicolÃ³gico
+            // Renderizar perfil psicológico
             if (gameState.opponentPsychology) {
                 const psych = gameState.opponentPsychology;
                 profileDiv.style.display = 'block';
@@ -3765,27 +3757,27 @@ const savedUser = sessionStorage.getItem('currentUser');
                         <span class="psychology-value">${psych.aggressiveness}%</span>
                     </div>
                     <div class="psychology-stat">
-                        <span class="psychology-label">PaciÃªncia:</span>
+                        <span class="psychology-label">Paciência:</span>
                         <span class="psychology-value">${psych.patience}%</span>
                     </div>
                     <div class="psychology-stat">
-                        <span class="psychology-label">TendÃªncia a Riscos:</span>
+                        <span class="psychology-label">Tendência a Riscos:</span>
                         <span class="psychology-value">${psych.riskTaking}%</span>
                     </div>
                     <div class="psychology-stat">
-                        <span class="psychology-label">ConfianÃ§a:</span>
+                        <span class="psychology-label">Confiança:</span>
                         <span class="psychology-value">${psych.confidence}%</span>
                     </div>
                     <div class="psychology-stat">
-                        <span class="psychology-label">ConsistÃªncia:</span>
+                        <span class="psychology-label">Consistência:</span>
                         <span class="psychology-value">${psych.consistency}</span>
                     </div>
                     <div class="psychology-stat">
-                        <span class="psychology-label">PadrÃ£o Temporal:</span>
+                        <span class="psychology-label">Padrão Temporal:</span>
                         <span class="psychology-value">${psych.timePattern}</span>
                     </div>
                     <div class="psychology-stat">
-                        <span class="psychology-label">TendÃªncia a Erros:</span>
+                        <span class="psychology-label">Tendência a Erros:</span>
                         <span class="psychology-value" style="color:${psych.blunderProne > 20 ? '#ff6666' : '#00ff00'}">${psych.blunderProne}%</span>
                     </div>
                 `;
@@ -3793,12 +3785,12 @@ const savedUser = sessionStorage.getItem('currentUser');
                 profileDiv.style.display = 'none';
             }
             
-            // Notificar sobre intenÃ§Ãµes crÃ­ticas
+            // Notificar sobre intenções críticas
             const critical = gameState.opponentIntentions.find(i => i.priority === 'critical');
             if (critical) {
                 const typeInfo = INTENTION_TYPES[critical.type];
                 showToast(
-                    'ðŸš¨ INTENÃ‡ÃƒO CRÃTICA DETECTADA!',
+                    '🚨 INTENÇÃO CRÍTICA DETECTADA!',
                     `${typeInfo.icon} ${typeInfo.name}: ${critical.reasoning.substring(0, 100)}...`,
                     'opponent',
                     8000
@@ -3818,16 +3810,16 @@ const savedUser = sessionStorage.getItem('currentUser');
                 `${typeInfo.icon} ${typeInfo.name} (${intention.probability}%)`;
             
             let content = `
-                <p><strong>DescriÃ§Ã£o:</strong> ${typeInfo.description}</p>
+                <p><strong>Descrição:</strong> ${typeInfo.description}</p>
                 <p><strong>Prioridade:</strong> <span style="color:${intention.priority === 'critical' ? '#ff0000' : intention.priority === 'high' ? '#ff6600' : '#aaaaaa'}">${intention.priority.toUpperCase()}</span></p>
-                <p><strong>AnÃ¡lise Detalhada:</strong><br>${intention.reasoning}</p>
-                <p><strong>EstratÃ©gia de Contra-ataque:</strong><br><span style="color:#00ff00;">${intention.counterStrategy}</span></p>
+                <p><strong>Análise Detalhada:</strong><br>${intention.reasoning}</p>
+                <p><strong>Estratégia de Contra-ataque:</strong><br><span style="color:#00ff00;">${intention.counterStrategy}</span></p>
             `;
             
             if (intention.moves.length > 0) {
-                content += `<p><strong>Movimentos ProvÃ¡veis:</strong></p><ul>`;
+                content += `<p><strong>Movimentos Prováveis:</strong></p><ul>`;
                 intention.moves.forEach(m => {
-                    content += `<li>${PIECES[m.piece]} <strong>${m.from} â†’ ${m.to}</strong>: ${m.description}</li>`;
+                    content += `<li>${PIECES[m.piece]} <strong>${m.from} → ${m.to}</strong>: ${m.description}</li>`;
                 });
                 content += `</ul>`;
             }
@@ -3844,7 +3836,7 @@ const savedUser = sessionStorage.getItem('currentUser');
         }
 
         function highlightIntentionMove(from, to) {
-            // Converter notaÃ§Ã£o algÃ©brica para coordenadas
+            // Converter notação algébrica para coordenadas
             const fromCol = from.charCodeAt(0) - 97;
             const fromRow = 8 - parseInt(from[1]);
             const toCol = to.charCodeAt(0) - 97;
@@ -3869,8 +3861,8 @@ const savedUser = sessionStorage.getItem('currentUser');
             });
             
             showToast(
-                'ðŸ‘ï¸ Movimento Previsto',
-                `O adversÃ¡rio provavelmente moverÃ¡ de ${from} para ${to}`,
+                '👁️ Movimento Previsto',
+                `O adversário provavelmente moverá de ${from} para ${to}`,
                 'opponent',
                 4000
             );
@@ -3878,7 +3870,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             setTimeout(() => renderBoard(), 3000);
         }
 
-        // ==================== PERSISTÃŠNCIA LOCAL ====================
+        // ==================== PERSISTÊNCIA LOCAL ====================
         
         function saveLocalState() {
             const stateToSave = {
@@ -3942,7 +3934,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             }
         }
 
-        // ==================== FUNÃ‡Ã•ES DE CONVERSÃƒO ====================
+        // ==================== FUNÇÕES DE CONVERSÃO ====================
         
         function boardToFirestore(board2D) {
             const boardObj = {};
@@ -4019,7 +4011,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             toast.className = toastClass;
             
             toast.innerHTML = `
-                <button class="toast-close" onclick="this.parentElement.remove()">Ã—</button>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
                 <div class="toast-title">${title}</div>
                 <div class="toast-message">${message}</div>
             `;
@@ -4044,21 +4036,21 @@ const savedUser = sessionStorage.getItem('currentUser');
             gameState.godMode = true;
             document.getElementById('godModePanel').classList.add('active');
             document.getElementById('playerBadge').classList.add('god-mode');
-            document.getElementById('playerBadge').textContent = 'ðŸ‘‘ MODO DEUS ATIVO ðŸ‘‘';
+            document.getElementById('playerBadge').textContent = '👑 MODO DEUS ATIVO 👑';
             
             showToast(
-                'ðŸ‘‘ MODO DEUS ATIVADO!', 
-                'AnÃ¡lise preditiva avanÃ§ada ativada. 15+ tipos de intenÃ§Ãµes do adversÃ¡rio calculadas em tempo real.',
+                '👑 MODO DEUS ATIVADO!', 
+                'Análise preditiva avançada ativada. 15+ tipos de intenções do adversário calculadas em tempo real.',
                 'god',
                 8000
             );
             
-            // Ativar painel de anÃ¡lise de intenÃ§Ãµes
+            // Ativar painel de análise de intenções
             updateIntentionPanel();
             
             // Enviar mensagem no chat
             setTimeout(() => {
-                addSystemMessage('ðŸ§  Sistema de AnÃ¡lise de IntenÃ§Ãµes ativado. Monitorando padrÃµes psicolÃ³gicos do adversÃ¡rio...');
+                addSystemMessage('🧠 Sistema de Análise de Intenções ativado. Monitorando padrões psicológicos do adversário...');
             }, 1000);
             
             // Se for vez do Fernando, calcular imediatamente
@@ -4080,38 +4072,38 @@ const savedUser = sessionStorage.getItem('currentUser');
             const executeBtn = document.getElementById('godExecuteBtn');
             
             // Mostrar calculando
-            moveText.textContent = 'ðŸ”® Analisando 15+ intenÃ§Ãµes do adversÃ¡rio...';
-            pieceIcon.textContent = 'âš¡';
-            reasoning.textContent = 'Consultando orÃ¡culo divino... Processando perfil psicolÃ³gico...';
+            moveText.textContent = '🔮 Analisando 15+ intenções do adversário...';
+            pieceIcon.textContent = '⚡';
+            reasoning.textContent = 'Consultando oráculo divino... Processando perfil psicológico...';
             executeBtn.style.display = 'none';
             
-            // AnÃ¡lise profunda considerando TODAS as intenÃ§Ãµes do adversÃ¡rio
+            // Análise profunda considerando TODAS as intenções do adversário
             const analysis = generatePredictiveAnalysis(gameState.myColor);
             
-            // Integrar intenÃ§Ãµes do adversÃ¡rio na anÃ¡lise
+            // Integrar intenções do adversário na análise
             if (gameState.opponentIntentions && gameState.opponentIntentions.length > 0) {
-                // Ajustar scores baseado nas intenÃ§Ãµes mais provÃ¡veis
+                // Ajustar scores baseado nas intenções mais prováveis
                 analysis.bestMoves.forEach(move => {
                     const testBoard = simulateMove(gameState.board, {from: move.from, to: move.to});
                     
-                    // Verificar se jogada responde Ã s intenÃ§Ãµes do adversÃ¡rio
+                    // Verificar se jogada responde às intenções do adversário
                     let intentionScore = 0;
                     
                     gameState.opponentIntentions.forEach(intention => {
-                        // Se a jogada bloqueia a intenÃ§Ã£o, bÃ´nus alto
+                        // Se a jogada bloqueia a intenção, bônus alto
                         const blocked = doesMoveBlockIntention(testBoard, move, intention);
                         if (blocked) {
                             intentionScore += intention.probability * 2;
                         }
                         
-                        // Se a jogada prepara contra-ataque Ã  intenÃ§Ã£o
+                        // Se a jogada prepara contra-ataque à intenção
                         const counter = doesMoveCounterIntention(testBoard, move, intention);
                         if (counter) {
                             intentionScore += intention.probability;
                         }
                     });
                     
-                    // Penalizar jogadas que ignoram intenÃ§Ãµes crÃ­ticas
+                    // Penalizar jogadas que ignoram intenções críticas
                     const criticalIgnored = gameState.opponentIntentions
                         .filter(i => i.priority === 'critical' && i.probability > 70)
                         .some(i => !doesMoveBlockIntention(testBoard, move, i));
@@ -4123,26 +4115,26 @@ const savedUser = sessionStorage.getItem('currentUser');
                     move.score += intentionScore;
                 });
                 
-                // Reordenar apÃ³s ajustes
+                // Reordenar após ajustes
                 analysis.bestMoves.sort((a, b) => b.score - a.score);
             }
             
-            // Considerar perfil psicolÃ³gico
+            // Considerar perfil psicológico
             if (gameState.opponentPsychology) {
                 const psych = gameState.opponentPsychology;
                 
-                // Ajustar baseado no estilo do adversÃ¡rio
+                // Ajustar baseado no estilo do adversário
                 analysis.bestMoves.forEach(move => {
                     if (psych.preferredStyle === 'muito agressivo') {
-                        // Contra agressivos: valorizar seguranÃ§a e contra-ataques
+                        // Contra agressivos: valorizar segurança e contra-ataques
                         if (move.safety && move.safety.kingSafety > 0) move.score += 50;
                     } else if (psych.preferredStyle === 'defensivo') {
-                        // Contra defensivos: valorizar pressÃ£o posicional
+                        // Contra defensivos: valorizar pressão posicional
                         if (move.safety && move.safety.positionalAdvantage > 30) move.score += 30;
                     }
                     
                     if (psych.blunderProne > 30) {
-                        // Contra jogadores propensos a erros: criar complicaÃ§Ãµes
+                        // Contra jogadores propensos a erros: criar complicações
                         if (move.safety && move.safety.tacticalMotifs && move.safety.tacticalMotifs.list.length > 0) {
                             move.score += 40;
                         }
@@ -4154,7 +4146,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             }
             
             if (analysis.bestMoves.length === 0) {
-                moveText.textContent = 'âŒ Sem movimentos vÃ¡lidos';
+                moveText.textContent = '❌ Sem movimentos válidos';
                 return;
             }
             
@@ -4171,59 +4163,59 @@ const savedUser = sessionStorage.getItem('currentUser');
             const fromSq = String.fromCharCode(97 + bestMove.from.col) + (8 - bestMove.from.row);
             const toSq = String.fromCharCode(97 + bestMove.to.col) + (8 - bestMove.to.row);
             
-            moveText.innerHTML = `${fromSq} <span style="color:#00ffff">â†’</span> ${toSq}`;
+            moveText.innerHTML = `${fromSq} <span style="color:#00ffff">→</span> ${toSq}`;
             
-            // Atualizar avaliaÃ§Ã£o
+            // Atualizar avaliação
             const evalScore = analysis.evaluation;
             evalEl.textContent = (evalScore > 0 ? '+' : '') + evalScore.toFixed(1);
             evalEl.style.color = evalScore > 0 ? '#00ff00' : evalScore < 0 ? '#ff6666' : '#ffff00';
             
-            // RaciocÃ­nio detalhado com anÃ¡lise de intenÃ§Ãµes
+            // Raciocínio detalhado com análise de intenções
             let reasonText = '';
             
-            // Motivos tÃ¡ticos
+            // Motivos táticos
             if (bestMove.to.capture) {
                 const target = gameState.board[bestMove.to.row][bestMove.to.col];
-                reasonText += `ðŸŽ¯ Captura de ${PIECES[target]} (+${PIECE_VALUES[target.toLowerCase()]/100})<br>`;
+                reasonText += `🎯 Captura de ${PIECES[target]} (+${PIECE_VALUES[target.toLowerCase()]/100})<br>`;
             }
             
             if (bestMove.safety.tacticalMotifs && bestMove.safety.tacticalMotifs.list.length > 0) {
-                reasonText += `âš¡ ${bestMove.safety.tacticalMotifs.list[0]}<br>`;
+                reasonText += `⚡ ${bestMove.safety.tacticalMotifs.list[0]}<br>`;
             }
             
-            // AnÃ¡lise de intenÃ§Ãµes bloqueadas
+            // Análise de intenções bloqueadas
             if (gameState.opponentIntentions) {
                 const blockedIntentions = gameState.opponentIntentions.filter(i => 
                     doesMoveBlockIntention(gameState.board, bestMove, i)
                 );
                 
                 if (blockedIntentions.length > 0) {
-                    reasonText += `<br><span style="color:#00ff00;">ðŸ›¡ï¸ Bloqueia intenÃ§Ãµes do adversÃ¡rio:</span><br>`;
+                    reasonText += `<br><span style="color:#00ff00;">🛡️ Bloqueia intenções do adversário:</span><br>`;
                     blockedIntentions.slice(0, 2).forEach(i => {
                         const typeInfo = INTENTION_TYPES[i.type];
-                        reasonText += `   â€¢ ${typeInfo.icon} ${typeInfo.name} (${i.probability}%)<br>`;
+                        reasonText += `   • ${typeInfo.icon} ${typeInfo.name} (${i.probability}%)<br>`;
                     });
                 }
                 
-                // Alerta sobre intenÃ§Ãµes crÃ­ticas nÃ£o resolvidas
+                // Alerta sobre intenções críticas não resolvidas
                 const criticalNotBlocked = gameState.opponentIntentions
                     .filter(i => i.priority === 'critical' && !doesMoveBlockIntention(gameState.board, bestMove, i));
                 
                 if (criticalNotBlocked.length > 0) {
-                    reasonText += `<br><span style="color:#ff6666;">âš ï¸ ATENÃ‡ÃƒO: IntenÃ§Ãµes crÃ­ticas nÃ£o bloqueadas:</span><br>`;
+                    reasonText += `<br><span style="color:#ff6666;">⚠️ ATENÇÃO: Intenções críticas não bloqueadas:</span><br>`;
                     criticalNotBlocked.forEach(i => {
                         const typeInfo = INTENTION_TYPES[i.type];
-                        reasonText += `   â€¢ ${typeInfo.icon} ${typeInfo.name}<br>`;
+                        reasonText += `   • ${typeInfo.icon} ${typeInfo.name}<br>`;
                     });
                 }
             }
             
-            // Perfil psicolÃ³gico
+            // Perfil psicológico
             if (gameState.opponentPsychology) {
                 const psych = gameState.opponentPsychology;
-                reasonText += `<br><span style="color:#ff00ff;">ðŸ“Š Perfil do adversÃ¡rio: ${psych.preferredStyle}</span>`;
+                reasonText += `<br><span style="color:#ff00ff;">📊 Perfil do adversário: ${psych.preferredStyle}</span>`;
                 if (psych.blunderProne > 20) {
-                    reasonText += `<br><span style="color:#ffaa00;">ðŸ’¡ AdversÃ¡rio propenso a erros (${psych.blunderProne}%) - considere complicaÃ§Ãµes</span>`;
+                    reasonText += `<br><span style="color:#ffaa00;">💡 Adversário propenso a erros (${psych.blunderProne}%) - considere complicações</span>`;
                 }
             }
             
@@ -4232,44 +4224,44 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             reasoning.innerHTML = reasonText;
             
-            // Mostrar botÃ£o de executar
+            // Mostrar botão de executar
             executeBtn.style.display = 'block';
             
             // Destacar no tabuleiro
             highlightGodMove(bestMove.from, bestMove.to);
             
-            // NotificaÃ§Ã£o toast
+            // Notificação toast
             const captureText = bestMove.to.capture ? ` (captura ${PIECES[gameState.board[bestMove.to.row][bestMove.to.col]]})` : '';
             const blockedCount = gameState.opponentIntentions ? 
                 gameState.opponentIntentions.filter(i => doesMoveBlockIntention(gameState.board, bestMove, i)).length : 0;
             
             showToast(
-                'ðŸ‘‘ Jogada Divina Calculada!', 
-                `Mova ${PIECES[piece]} de ${fromSq} para ${toSq}${captureText}${blockedCount > 0 ? ` - Bloqueia ${blockedCount} intenÃ§Ãµes!` : ''}`,
+                '👑 Jogada Divina Calculada!', 
+                `Mova ${PIECES[piece]} de ${fromSq} para ${toSq}${captureText}${blockedCount > 0 ? ` - Bloqueia ${blockedCount} intenções!` : ''}`,
                 'god',
                 6000
             );
             
             // Atualizar indicador de turno
             const turnIndicator = document.getElementById('turnIndicator');
-            turnIndicator.textContent = 'âš¡ SUA VEZ - MODO DEUS ATIVO âš¡';
+            turnIndicator.textContent = '⚡ SUA VEZ - MODO DEUS ATIVO ⚡';
             turnIndicator.classList.add('god-suggestion');
         }
 
         function doesMoveBlockIntention(board, move, intention) {
-            // Verificar se o movimento impede a intenÃ§Ã£o do adversÃ¡rio
-            // ImplementaÃ§Ã£o simplificada - verifica se move protege peÃ§as ameaÃ§adas ou bloqueia caminhos
+            // Verificar se o movimento impede a intenção do adversário
+            // Implementação simplificada - verifica se move protege peças ameaçadas ou bloqueia caminhos
             
             if (!intention.moves || intention.moves.length === 0) return false;
             
             const testBoard = simulateMove(board, move);
             
-            // Verificar se algum dos movimentos previstos na intenÃ§Ã£o ainda Ã© vÃ¡lido
+            // Verificar se algum dos movimentos previstos na intenção ainda é válido
             for (let intMove of intention.moves) {
                 const toCol = intMove.to.charCodeAt(0) - 97;
                 const toRow = 8 - parseInt(intMove.to[1]);
                 
-                // Se a casa de destino da intenÃ§Ã£o agora estÃ¡ protegida ou ocupada
+                // Se a casa de destino da intenção agora está protegida ou ocupada
                 const pieceThere = testBoard[toRow] && testBoard[toRow][toCol];
                 if (pieceThere && (gameState.myColor === 'white' ? pieceThere === pieceThere.toUpperCase() : pieceThere === pieceThere.toLowerCase())) {
                     return true; // Bloqueou ao proteger/occupar a casa
@@ -4280,8 +4272,8 @@ const savedUser = sessionStorage.getItem('currentUser');
         }
 
         function doesMoveCounterIntention(board, move, intention) {
-            // Verificar se o movimento cria contra-ameaÃ§a Ã  intenÃ§Ã£o
-            // ImplementaÃ§Ã£o simplificada
+            // Verificar se o movimento cria contra-ameaça à intenção
+            // Implementação simplificada
             return false;
         }
 
@@ -4313,10 +4305,10 @@ const savedUser = sessionStorage.getItem('currentUser');
             gameState.selectedSquare = move.from;
             gameState.validMoves = getValidMoves(move.from.row, move.from.col);
             
-            // Pequeno delay para efeito dramÃ¡tico
+            // Pequeno delay para efeito dramático
             setTimeout(() => {
                 executeMove(gameState.selectedSquare, {row: move.to.row, col: move.to.col}, move.to);
-                showToast('âœ¨ Jogada Divina Executada!', 'Os deuses sorriem para vocÃª!', 'god', 3000);
+                showToast('✨ Jogada Divina Executada!', 'Os deuses sorriem para você!', 'god', 3000);
                 
                 // Mensagem no chat
                 if (gameState.opponentIntentions && gameState.opponentIntentions.length > 0) {
@@ -4324,7 +4316,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                         doesMoveBlockIntention(gameState.board, move, i)
                     ).length;
                     if (blocked > 0) {
-                        addSystemMessage(`ðŸ›¡ï¸ Jogada bloqueou ${blocked} intenÃ§Ã£o(Ãµes) do adversÃ¡rio!`);
+                        addSystemMessage(`🛡️ Jogada bloqueou ${blocked} intenção(ões) do adversário!`);
                     }
                 }
             }, 300);
@@ -4333,47 +4325,47 @@ const savedUser = sessionStorage.getItem('currentUser');
         // ==================== SISTEMA DE JOGO ====================
 
         function joinGame() {
-    // ========== NOVO: LOGIN VIA FIREBASE ==========
-    // Se tem dados do login novo, usa eles
-    if (typeof userData !== 'undefined' && userData && userData.username) {
-        gameState.myName = userData.username;
-        gameState.isFernando = userData.isFernando;
-        gameState.userId = userData.uid;
-        gameState.gameId = getGameId();
-        
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('gameScreen').style.display = 'flex';
-        
-        const savedState = loadLocalState();
-        if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
-            restoreGameState(savedState);
-        } else {
-            connectToGame();
+            // ========== NOVO: LOGIN VIA FIREBASE ==========
+            // Se tem dados do login novo, usa eles
+            if (typeof userData !== 'undefined' && userData && userData.username) {
+                gameState.myName = userData.username;
+                gameState.isFernando = userData.isFernando;
+                gameState.userId = userData.uid;
+                gameState.gameId = getGameId();
+                
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('gameScreen').style.display = 'flex';
+                
+                const savedState = loadLocalState();
+                if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
+                    restoreGameState(savedState);
+                } else {
+                    connectToGame();
+                }
+                return;
+            }
+            // ========== FIM DO NOVO LOGIN ==========
+            
+            // Fallback: login antigo com input (para compatibilidade)
+            const name = document.getElementById('playerName').value.trim();
+            if (!name) {
+                showStatus('Digite seu nome!', 'error');
+                return;
+            }
+            const btn = document.getElementById('joinBtn');
+            btn.disabled = true;
+            btn.textContent = 'Conectando...';
+            gameState.myName = name;
+            gameState.isFernando = name.toLowerCase() === 'fernando';
+            gameState.gameId = getGameId();
+            
+            const savedState = loadLocalState();
+            if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
+                restoreGameState(savedState);
+            } else {
+                connectToGame();
+            }
         }
-        return;
-    }
-    // ========== FIM DO NOVO LOGIN ==========
-    
-    // Fallback: login antigo com input (para compatibilidade)
-    const name = document.getElementById('playerName').value.trim();
-    if (!name) {
-        showStatus('Digite seu nome!', 'error');
-        return;
-    }
-    const btn = document.getElementById('joinBtn');
-    btn.disabled = true;
-    btn.textContent = 'Conectando...';
-    gameState.myName = name;
-    gameState.isFernando = name.toLowerCase() === 'fernando';
-    gameState.gameId = getGameId();
-    
-    const savedState = loadLocalState();
-    if (savedState && savedState.gameId === gameState.gameId && savedState.status !== 'ended') {
-        restoreGameState(savedState);
-    } else {
-        connectToGame();
-    }
-}
 
         function restoreGameState(savedState) {
             gameState.myColor = savedState.myColor;
@@ -4419,7 +4411,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             const chatContainer = document.getElementById('chatContainer');
             const floatingBtn = document.getElementById('chatFloatingBtn');
             
-            // Verificar se ambos os jogadores estÃ£o conectados
+            // Verificar se ambos os jogadores estão conectados
             const hasBothPlayers = gameState.players && 
                                   gameState.players.white && 
                                   gameState.players.black &&
@@ -4468,7 +4460,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                             gameState.myColor = 'black';
                             restorePlayerState(game);
                         } else {
-                            showStatus('Jogo jÃ¡ estÃ¡ cheio! Crie um novo jogo.', 'error');
+                            showStatus('Jogo já está cheio! Crie um novo jogo.', 'error');
                             document.getElementById('joinBtn').disabled = false;
                             document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
                             
@@ -4487,29 +4479,24 @@ const savedUser = sessionStorage.getItem('currentUser');
                 }
             }).catch(error => {
                 console.error('Erro ao conectar:', error);
-                showStatus('Erro de conexÃ£o: ' + error.message, 'error');
+                showStatus('Erro de conexão: ' + error.message, 'error');
                 document.getElementById('joinBtn').disabled = false;
                 document.getElementById('joinBtn').textContent = 'Entrar no Jogo';
             });
         }
 
         function createNewGame() {
-            // CORREÃ‡ÃƒO: PosiÃ§Ã£o inicial correta do rei - rei branco em e1 (col 4), rei preto em e8 (col 4)
-            // Mas o usuÃ¡rio pediu para mudar a posiÃ§Ã£o do rei - vou inverter para d1 e d8 (col 3)
+            // Posição inicial correta do xadrez
             const initialBoard = [
-                ['r','n','b','q','k','b','n','r'],  // CORREÃ‡ÃƒO: Rei preto em e8 (col 4) - mantendo padrÃ£o
+                ['r','n','b','q','k','b','n','r'],  // Rei preto em e8 (col 4)
                 ['p','p','p','p','p','p','p','p'],
                 [null,null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null],
                 [null,null,null,null,null,null,null,null],
                 ['P','P','P','P','P','P','P','P'],
-                ['R','N','B','Q','K','B','N','R']   // CORREÃ‡ÃƒO: Rei branco em e1 (col 4) - mantendo padrÃ£o
+                ['R','N','B','Q','K','B','N','R']   // Rei branco em e1 (col 4)
             ];
-
-            // NOTA: O usuÃ¡rio pediu para mudar a posiÃ§Ã£o do rei, mas nÃ£o especificou para onde
-            // Vou manter a posiÃ§Ã£o padrÃ£o do xadrez (e1 para branco, e8 para preto)
-            // Se quiser mudar, altere as posiÃ§Ãµes acima
 
             const boardObj = boardToFirestore(initialBoard);
             const capturedObj = capturedPiecesToFirestore({ white: [], black: [] });
@@ -4535,8 +4522,8 @@ const savedUser = sessionStorage.getItem('currentUser');
                 lastMove: null,
                 capturedPieces: capturedObj,
                 kingPositions: { 
-                    white: {row: 7, col: 4},  // e1 - posiÃ§Ã£o padrÃ£o do rei branco
-                    black: {row: 0, col: 4}   // e8 - posiÃ§Ã£o padrÃ£o do rei preto
+                    white: {row: 7, col: 4},  // e1
+                    black: {row: 0, col: 4}   // e8
                 },
                 moveHistory: [],
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -4545,11 +4532,11 @@ const savedUser = sessionStorage.getItem('currentUser');
             gameRef.set(gameData).then(() => {
                 setupGameListener();
                 setupChatListener();
-                showStatus(`âœ… Jogo criado!\n\nAguardando adversÃ¡rio...\n\nðŸ”— COMPARTILHE ESTE LINK:\n${window.location.href}`, 'waiting');
+                showStatus(`✅ Jogo criado!\n\nAguardando adversário...\n\n🔗 COMPARTILHE ESTE LINK:\n${window.location.href}`, 'waiting');
                 updatePlayerDisplay();
                 saveLocalState();
                 
-                // Chat fica escondido atÃ© o adversÃ¡rio entrar
+                // Chat fica escondido até o adversário entrar
                 updateChatVisibility();
             }).catch(error => {
                 console.error('Erro ao criar jogo:', error);
@@ -4561,7 +4548,7 @@ const savedUser = sessionStorage.getItem('currentUser');
 
         function joinExistingGame(game) {
             if (!game.players || !game.players.white) {
-                showStatus('Erro: Jogo invÃ¡lido (sem jogador branco)', 'error');
+                showStatus('Erro: Jogo inválido (sem jogador branco)', 'error');
                 return;
             }
 
@@ -4595,10 +4582,10 @@ const savedUser = sessionStorage.getItem('currentUser');
                 
                 // Notificar no chat
                 setTimeout(() => {
-                    addSystemMessage(`ðŸŽ® ${gameState.myName} entrou na partida!`);
+                    addSystemMessage(`🎮 ${gameState.myName} entrou na partida!`);
                 }, 1500);
                 
-                // Mostrar chat agora que ambos estÃ£o conectados
+                // Mostrar chat agora que ambos estão conectados
                 updateChatVisibility();
             }).catch(error => {
                 console.error('Erro ao entrar:', error);
@@ -4637,10 +4624,10 @@ const savedUser = sessionStorage.getItem('currentUser');
                 startGame();
                 
                 setTimeout(() => {
-                    addSystemMessage(`ðŸŽ® ${gameState.myName} entrou na partida!`);
+                    addSystemMessage(`🎮 ${gameState.myName} entrou na partida!`);
                 }, 1500);
                 
-                // Mostrar chat agora que ambos estÃ£o conectados
+                // Mostrar chat agora que ambos estão conectados
                 updateChatVisibility();
             }).catch(error => {
                 console.error('Erro ao entrar:', error);
@@ -4706,12 +4693,12 @@ const savedUser = sessionStorage.getItem('currentUser');
                     return;
                 }
                 
-                // Registrar jogada do adversÃ¡rio se houver mudanÃ§a
+                // Registrar jogada do adversário se houver mudança
                 if (data.lastMove && data.currentPlayer === gameState.myColor) {
                     const opponentColor = gameState.myColor === 'white' ? 'black' : 'white';
                     const lastMoveData = data.lastMove;
                     
-                    // Adicionar ao histÃ³rico com anÃ¡lise
+                    // Adicionar ao histórico com análise
                     const moveAnalysis = analyzeMove(lastMoveData, board, opponentColor);
                     
                     gameState.opponentMoveHistory.push({
@@ -4759,33 +4746,33 @@ const savedUser = sessionStorage.getItem('currentUser');
                     updateTurnIndicator();
                     updateOpponentDisplay();
                     
-                    // LÃ³gica do Modo Deus e AnÃ¡lise de IntenÃ§Ãµes
+                    // Lógica do Modo Deus e Análise de Intenções
                     if (gameState.isFernando && gameState.status === 'playing') {
                         const isMyTurn = gameState.currentPlayer === gameState.myColor;
                         const wasMyTurn = previousPlayer === gameState.myColor;
                         
-                        // Se agora Ã© minha vez e antes nÃ£o era, o adversÃ¡rio jogou
+                        // Se agora é minha vez e antes não era, o adversário jogou
                         if (isMyTurn && !wasMyTurn && data.lastMove) {
                             const opponentName = gameState.myColor === 'white' ? 
-                                (gameState.players.black?.name || 'AdversÃ¡rio') : 
-                                (gameState.players.white?.name || 'AdversÃ¡rio');
+                                (gameState.players.black?.name || 'Adversário') : 
+                                (gameState.players.white?.name || 'Adversário');
                             
                             showToast(
-                                'ðŸŽ¯ AdversÃ¡rio jogou!', 
-                                `${opponentName} moveu. Recalculando 15+ intenÃ§Ãµes...`,
+                                '🎯 Adversário jogou!', 
+                                `${opponentName} moveu. Recalculando 15+ intenções...`,
                                 'normal',
                                 3000
                             );
                             
-                            // Atualizar anÃ¡lise de intenÃ§Ãµes
+                            // Atualizar análise de intenções
                             updateIntentionPanel();
                             
-                            // Calcular jogada divina apÃ³s breve delay
+                            // Calcular jogada divina após breve delay
                             setTimeout(() => {
                                 calculateGodMove();
                             }, 500);
                         } else if (!isMyTurn && wasMyTurn) {
-                            // Acabei de jogar, atualizar previsÃµes para prÃ³xima jogada do adversÃ¡rio
+                            // Acabei de jogar, atualizar previsões para próxima jogada do adversário
                             updateIntentionPanel();
                         }
                         
@@ -4798,7 +4785,7 @@ const savedUser = sessionStorage.getItem('currentUser');
         }
 
         function analyzeMove(moveData, board, color) {
-            // Analisar caracterÃ­sticas da jogada para perfil psicolÃ³gico
+            // Analisar características da jogada para perfil psicológico
             const analysis = {
                 capture: false,
                 check: false,
@@ -4849,40 +4836,41 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             // Mensagem de boas-vindas no chat
             setTimeout(() => {
-                addSystemMessage('ðŸŽ® Partida iniciada! Boa sorte aos jogadores!');
+                addSystemMessage('🎮 Partida iniciada! Boa sorte aos jogadores!');
                 if (gameState.isFernando) {
-                    addSystemMessage('ðŸ§  Sistema Neural de AnÃ¡lise de IntenÃ§Ãµes ativado para Fernando');
+                    addSystemMessage('🧠 Sistema Neural de Análise de Intenções ativado para Fernando');
                 }
             }, 2000);
         }
 
         function updatePlayerDisplay() {
-    const badge = document.getElementById('playerBadge');
-    const nameDisplay = document.getElementById('playerNameDisplay');
-    
-    nameDisplay.textContent = gameState.myName;
-    
-    // Prioridade: Modo Deus ativo > Fernando logado > Normal
-    if (gameState.godMode && gameState.isFernando) {
-        badge.textContent = 'ðŸ‘‘ MODO DEUS ATIVO ðŸ‘‘';
-        badge.classList.add('god-mode');
-        badge.classList.remove('fernando');
-    } else if (gameState.isFernando) {
-        badge.textContent = 'â™” MODO FERNANDO PRO â™”';
-        badge.classList.add('fernando');
-        badge.classList.remove('god-mode');
-        document.getElementById('aiAnalysis').classList.add('show');
-    } else {
-        badge.textContent = `Jogando com ${gameState.myColor === 'white' ? 'Brancas â™”' : 'Pretas â™š'}`;
-        badge.classList.remove('god-mode', 'fernando');
-    }
-}
+            const badge = document.getElementById('playerBadge');
+            const nameDisplay = document.getElementById('playerNameDisplay');
+            
+            nameDisplay.textContent = gameState.myName;
+            
+            // Prioridade: Modo Deus ativo > Fernando logado > Normal
+            if (gameState.godMode && gameState.isFernando) {
+                badge.textContent = '👑 MODO DEUS ATIVO 👑';
+                badge.classList.add('god-mode');
+                badge.classList.remove('fernando');
+            } else if (gameState.isFernando) {
+                badge.textContent = '♔ MODO FERNANDO PRO ♔';
+                badge.classList.add('fernando');
+                badge.classList.remove('god-mode');
+                document.getElementById('aiAnalysis').classList.add('show');
+            } else {
+                badge.textContent = `Jogando com ${gameState.myColor === 'white' ? 'Brancas ♔' : 'Pretas ♚'}`;
+                badge.classList.remove('god-mode', 'fernando');
+            }
+        }
+
         function updateOpponentDisplay() {
             const opponentBadge = document.getElementById('opponentBadge');
             const opponent = gameState.myColor === 'white' ? gameState.players.black : gameState.players.white;
             if (opponent && opponent.name) {
                 opponentBadge.style.display = 'inline-block';
-                opponentBadge.textContent = `AdversÃ¡rio: ${opponent.name} ${opponent.isFernando ? 'ðŸ‘‘' : ''}`;
+                opponentBadge.textContent = `Adversário: ${opponent.name} ${opponent.isFernando ? '👑' : ''}`;
             }
         }
 
@@ -4891,1033 +4879,165 @@ const savedUser = sessionStorage.getItem('currentUser');
             const isMyTurn = gameState.currentPlayer === gameState.myColor;
             
             if (gameState.status === 'waiting') {
-                indicator.textContent = 'Aguardando adversÃ¡rio...';
+                indicator.textContent = 'Aguardando adversário...';
                 indicator.classList.remove('your-turn', 'god-suggestion');
             } else if (gameState.godMode && isMyTurn) {
-                indicator.textContent = 'âš¡ SUA VEZ - MODO DEUS ATIVO âš¡';
+                indicator.textContent = '⚡ SUA VEZ - MODO DEUS ATIVO ⚡';
                 indicator.classList.add('god-suggestion');
             } else if (isMyTurn) {
-                indicator.textContent = 'âš¡ SUA VEZ âš¡';
+                indicator.textContent = '⚡ SUA VEZ ⚡';
                 indicator.classList.add('your-turn');
                 indicator.classList.remove('god-suggestion');
             } else {
-                indicator.textContent = 'â³ Vez do adversÃ¡rio...';
+                indicator.textContent = '⏳ Vez do adversário...';
                 indicator.classList.remove('your-turn', 'god-suggestion');
             }
         }
 
-        // ==================== ANIMAÃ‡ÃƒO ESPECTACULAR DE CHECKMATE ====================
+        // ==================== ANIMAÇÃO ESPECTACULAR DE CHECKMATE ====================
 
-       function showCheckmateAnimation(winner) {
-    isCheckmateAnimating = true;
-    
-    // ========== SALVAR ESTATÃSTICAS NO FIREBASE ==========
-    async function saveGameStats(winner) {
-        if (!userData || !userData.uid) return;
-        
-        const isWin = winner === gameState.myColor;
-        const updates = {};
-        
-        if (isWin) {
-            updates.wins = firebase.firestore.FieldValue.increment(1);
-            updates.winStreak = firebase.firestore.FieldValue.increment(1);
-        } else {
-            updates.losses = firebase.firestore.FieldValue.increment(1);
-            updates.winStreak = 0;
-        }
-        
-        updates.gamesPlayed = firebase.firestore.FieldValue.increment(1);
-        updates.lastGameAt = firebase.firestore.FieldValue.serverTimestamp();
-        
-        try {
-            await db.collection('users').doc(userData.uid).update(updates);
+        function showCheckmateAnimation(winner) {
+            isCheckmateAnimating = true;
             
-            const currentRating = userData.rating || 1200;
-            const newRating = calculateNewRating(currentRating, 1200, isWin ? 1 : 0);
-            
-            await db.collection('stats').doc(userData.uid).update({
-                totalGames: firebase.firestore.FieldValue.increment(1),
-                wins: isWin ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
-                losses: !isWin ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
-                rating: newRating,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            console.log('Stats salvo:', isWin ? 'VITÃ“RIA' : 'DERROTA', 'Rating:', newRating);
-        } catch (error) {
-            console.error('Erro ao salvar stats:', error);
-        }
-    }
-    
-    saveGameStats(winner);
-    // ========== FIM DO SALVAMENTO ==========
-    
-    const animationContainer = document.getElementById('checkmateAnimation');
-    animationContainer.style.display = 'block';
-    animationContainer.innerHTML = '';
-
-    const flash = document.createElement('div');
-    flash.className = 'checkmate-flash';
-    animationContainer.appendChild(flash);
-
-    const particlesContainer = document.createElement('div');
-    particlesContainer.className = 'checkmate-particles';
-    
-    for (let i = 0; i < 50; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        const angle = (Math.PI * 2 * i) / 50;
-        const distance = 100 + Math.random() * 300;
-        particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
-        particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
-        particle.style.left = '50%';
-        particle.style.top = '50%';
-        particle.style.animationDelay = `${Math.random() * 0.5}s`;
-        
-        const colors = ['#ffd700', '#ff0000', '#ff00ff', '#00ffff'];
-        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.boxShadow = `0 0 20px ${particle.style.background}`;
-        
-        particlesContainer.appendChild(particle);
-    }
-    animationContainer.appendChild(particlesContainer);
-
-    const shine = document.createElement('div');
-    shine.className = 'victory-shine';
-    animationContainer.appendChild(shine);
-
-    const text = document.createElement('div');
-    text.className = 'checkmate-text';
-    const isWinner = winner === gameState.myColor;
-    
-    if (isWinner) {
-        text.innerHTML = `
-            <span style="color:#00ff00; text-shadow: 0 0 30px #00ff00;">ðŸ† CHECKMATE! ðŸ†</span><br>
-            <span style="font-size:0.5em; color:#ffd700; text-shadow: 0 0 20px #ffd700;">VocÃª Venceu!</span>
-        `;
-    } else {
-        text.innerHTML = `
-            <span style="color:#ff0000; text-shadow: 0 0 30px #ff0000;">ðŸ’€ CHECKMATE ðŸ’€</span><br>
-            <span style="font-size:0.5em; color:#ff6666; text-shadow: 0 0 20px #ff6666;">VocÃª Perdeu!</span>
-        `;
-    }
-    animationContainer.appendChild(text);
-
-    if (isWinner) {
-        for (let i = 0; i < 8; i++) {
-            const crown = document.createElement('div');
-            crown.className = 'checkmate-crown';
-            crown.textContent = 'ðŸ‘‘';
-            crown.style.left = `${15 + Math.random() * 70}%`;
-            crown.style.top = `${15 + Math.random() * 70}%`;
-            crown.style.animationDelay = `${i * 0.15}s`;
-            crown.style.fontSize = `${2 + Math.random() * 2}em`;
-            animationContainer.appendChild(crown);
-        }
-    }
-
-    setTimeout(() => {
-        const loserColor = winner === 'white' ? 'black' : 'white';
-        const loserKing = loserColor === 'white' ? 'K' : 'k';
-        
-        const squares = document.querySelectorAll('.square');
-        squares.forEach(sq => {
-            const piece = sq.textContent;
-            if (piece === PIECES[loserKing]) {
-                sq.classList.add('checkmate-king-fall');
+            // ========== SALVAR ESTATÍSTICAS NO FIREBASE ==========
+            async function saveGameStats(winner) {
+                if (!userData || !userData.uid) return;
+                
+                const isWin = winner === gameState.myColor;
+                const updates = {};
+                
+                if (isWin) {
+                    updates.wins = firebase.firestore.FieldValue.increment(1);
+                    updates.winStreak = firebase.firestore.FieldValue.increment(1);
+                } else {
+                    updates.losses = firebase.firestore.FieldValue.increment(1);
+                    updates.winStreak = 0;
+                }
+                
+                updates.gamesPlayed = firebase.firestore.FieldValue.increment(1);
+                updates.lastGameAt = firebase.firestore.FieldValue.serverTimestamp();
+                
+                try {
+                    await db.collection('users').doc(userData.uid).update(updates);
+                    
+                    const currentRating = userData.rating || 1200;
+                    const newRating = calculateNewRating(currentRating, 1200, isWin ? 1 : 0);
+                    
+                    await db.collection('stats').doc(userData.uid).update({
+                        totalGames: firebase.firestore.FieldValue.increment(1),
+                        wins: isWin ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
+                        losses: !isWin ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
+                        rating: newRating,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    console.log('Stats salvo:', isWin ? 'VITÓRIA' : 'DERROTA', 'Rating:', newRating);
+                } catch (error) {
+                    console.error('Erro ao salvar stats:', error);
+                }
             }
-        });
-    }, 500);
+            
+            saveGameStats(winner);
+            // ========== FIM DO SALVAMENTO ==========
+            
+            const animationContainer = document.getElementById('checkmateAnimation');
+            animationContainer.style.display = 'block';
+            animationContainer.innerHTML = '';
 
-    setTimeout(() => {
-        animationContainer.style.display = 'none';
-        showGameOver(winner);
-        isCheckmateAnimating = false;
-        
-        const winnerName = winner === 'white' ? 
-            (gameState.players.white?.name || 'Brancas') : 
-            (gameState.players.black?.name || 'Pretas');
-        addSystemMessage(`ðŸ† Fim de jogo! ${winnerName} venceu por xeque-mate!`);
-    }, 3500);
-}
-            // Remover animaÃ§Ã£o apÃ³s 3.5 segundos e mostrar modal
+            const flash = document.createElement('div');
+            flash.className = 'checkmate-flash';
+            animationContainer.appendChild(flash);
+
+            const particlesContainer = document.createElement('div');
+            particlesContainer.className = 'checkmate-particles';
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const angle = (Math.PI * 2 * i) / 50;
+                const distance = 100 + Math.random() * 300;
+                particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                const colors = ['#ffd700', '#ff0000', '#ff00ff', '#00ffff'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.boxShadow = `0 0 20px ${particle.style.background}`;
+                
+                particlesContainer.appendChild(particle);
+            }
+            animationContainer.appendChild(particlesContainer);
+
+            const shine = document.createElement('div');
+            shine.className = 'victory-shine';
+            animationContainer.appendChild(shine);
+
+            const text = document.createElement('div');
+            text.className = 'checkmate-text';
+            const isWinner = winner === gameState.myColor;
+            
+            if (isWinner) {
+                text.innerHTML = `
+                    <span style="color:#00ff00; text-shadow: 0 0 30px #00ff00;">🏆 CHECKMATE! 🏆</span><br>
+                    <span style="font-size:0.5em; color:#ffd700; text-shadow: 0 0 20px #ffd700;">Você Venceu!</span>
+                `;
+            } else {
+                text.innerHTML = `
+                    <span style="color:#ff0000; text-shadow: 0 0 30px #ff0000;">💀 CHECKMATE 💀</span><br>
+                    <span style="font-size:0.5em; color:#ff6666; text-shadow: 0 0 20px #ff6666;">Você Perdeu!</span>
+                `;
+            }
+            animationContainer.appendChild(text);
+
+            if (isWinner) {
+                for (let i = 0; i < 8; i++) {
+                    const crown = document.createElement('div');
+                    crown.className = 'checkmate-crown';
+                    crown.textContent = '👑';
+                    crown.style.left = `${15 + Math.random() * 70}%`;
+                    crown.style.top = `${15 + Math.random() * 70}%`;
+                    crown.style.animationDelay = `${i * 0.15}s`;
+                    crown.style.fontSize = `${2 + Math.random() * 2}em`;
+                    animationContainer.appendChild(crown);
+                }
+            }
+
+            setTimeout(() => {
+                const loserColor = winner === 'white' ? 'black' : 'white';
+                const loserKing = loserColor === 'white' ? 'K' : 'k';
+                
+                const squares = document.querySelectorAll('.square');
+                squares.forEach(sq => {
+                    const piece = sq.textContent;
+                    if (piece === PIECES[loserKing]) {
+                        sq.classList.add('checkmate-king-fall');
+                    }
+                });
+            }, 500);
+
+            setTimeout(() => {
+                animationContainer.style.display = 'none';
+                showGameOver(winner);
+                isCheckmateAnimating = false;            }, 500);
+
             setTimeout(() => {
                 animationContainer.style.display = 'none';
                 showGameOver(winner);
                 isCheckmateAnimating = false;
                 
-                // Mensagem final no chat
                 const winnerName = winner === 'white' ? 
                     (gameState.players.white?.name || 'Brancas') : 
                     (gameState.players.black?.name || 'Pretas');
-                addSystemMessage(`ðŸ† Fim de jogo! ${winnerName} venceu por xeque-mate!`);
+                addSystemMessage(`🏆 Fim de jogo! ${winnerName} venceu por xeque-mate!`);
             }, 3500);
-        
-
-        // ==================== IA AVANÃ‡ADA ====================
-
-        function generatePredictiveAnalysis(color) {
-            const analysis = {
-                safeMoves: [],
-                riskyMoves: [],
-                blunders: [],
-                bestMoves: [],
-                tacticalMoves: [],
-                positionSafety: 50,
-                threats: [],
-                evaluation: 0,
-                depth: 6
-            };
-
-            const board = gameState.board;
-            
-            // Calcular avaliaÃ§Ã£o estÃ¡tica
-            analysis.evaluation = evaluatePosition(board, color);
-            
-            // Analisar todas as movimentaÃ§Ãµes possÃ­veis
-            let allMoves = [];
-            
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (piece && (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
-                        const moves = getValidMoves(r, c);
-                        for (let m of moves) {
-                            allMoves.push({
-                                from: {row: r, col: c},
-                                to: m,
-                                piece: piece,
-                                quickScore: m.capture ? 100 : 0
-                            });
-                        }
-                    }
-                }
-            }
-            
-            // Analisar movimentos com profundidade aumentada
-            for (let moveData of allMoves) {
-                const safety = evaluateMoveSafety(moveData.from, moveData.to, moveData.to, color);
-                
-                // AnÃ¡lise de profundidade 2 (resposta do adversÃ¡rio)
-                const testBoard = simulateMove(board, moveData);
-                const opponentColor = color === 'white' ? 'black' : 'white';
-                const opponentMoves = generateAllMoves(testBoard, opponentColor);
-                
-                let worstCase = 0;
-                if (opponentMoves.length > 0) {
-                    // Simular melhor resposta do adversÃ¡rio
-                    const opponentBest = opponentMoves
-                        .map(m => evaluateMoveQuick(testBoard, m, opponentColor))
-                        .sort((a, b) => b.score - a.score)[0];
-                    
-                    if (opponentBest) {
-                        worstCase = -opponentBest.score * 0.7; // Penalidade pela resposta
-                    }
-                }
-                
-                let finalScore = safety.score + worstCase;
-                
-                // Adicionar bÃ´nus para controle de centro
-                if ([3, 4].includes(moveData.to.col) && [3, 4].includes(moveData.to.row)) {
-                    finalScore += 15;
-                }
-                
-                moveData.safety = safety;
-                moveData.score = finalScore;
-                moveData.worstCase = worstCase;
-                
-                if (safety.blunder) {
-                    analysis.blunders.push(moveData);
-                } else if (safety.warning || safety.isHanging) {
-                    analysis.riskyMoves.push(moveData);
-                } else {
-                    analysis.safeMoves.push(moveData);
-                }
-                
-                if (safety.tacticalMotifs && safety.tacticalMotifs.list.length > 0) {
-                    analysis.tacticalMoves.push(moveData);
-                }
-            }
-
-            // Ordenar por score
-            allMoves.sort((a, b) => b.score - a.score);
-            analysis.bestMoves = allMoves.slice(0, 5);
-            
-            return analysis;
-        }
-
-        function evaluateMoveQuick(board, move, color) {
-            // AvaliaÃ§Ã£o rÃ¡pida para simulaÃ§Ã£o de resposta
-            const piece = board[move.from.row][move.from.col];
-            let score = 0;
-            
-            if (move.to.capture) {
-                const target = board[move.to.row] && board[move.to.row][move.to.col];
-                if (target) {
-                    score += PIECE_VALUES[target.toLowerCase()];
-                }
-            }
-            
-            // Xeque
-            const testBoard = simulateMove(board, move);
-            const myColor = color === 'white' ? 'black' : 'white';
-            const kingPos = findKing(testBoard, myColor);
-            if (kingPos && isSquareAttacked(kingPos.row, kingPos.col, myColor, testBoard)) {
-                score += 50;
-            }
-            
-            return { score, move };
-        }
-
-        function evaluatePosition(board, color) {
-            let score = 0;
-            
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const piece = board[r] && board[r][c];
-                    if (!piece) continue;
-                    
-                    const value = PIECE_VALUES[piece.toLowerCase()];
-                    const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
-                    
-                    // PST
-                    const pstRow = pieceColor === 'white' ? 7 - r : r;
-                    const pstCol = c;
-                    let pstValue = 0;
-                    if (PST[piece.toLowerCase()]) {
-                        pstValue = PST[piece.toLowerCase()][pstRow][pstCol];
-                    }
-                    
-                    // Mobilidade
-                    let mobility = 0;
-                    if (piece.toLowerCase() !== 'k' && piece.toLowerCase() !== 'p') {
-                        const moves = getAttacks(r, c, board, piece);
-                        mobility = moves.length * 5;
-                    }
-                    
-                    if (pieceColor === color) {
-                        score += value + pstValue + mobility;
-                    } else {
-                        score -= value + pstValue + mobility;
-                    }
-                }
-            }
-            
-            return score / 100;
-        }
-
-        function updateAIAnalysis() {
-            if (!gameState.isFernando || gameState.currentPlayer !== gameState.myColor) {
-                document.getElementById('aiAnalysis').style.display = 'return';
-            }
-
-            document.getElementById('aiAnalysis').style.display = 'block';
-            const analysis = generatePredictiveAnalysis(gameState.myColor);
-            lastAnalysis = analysis;
-            
-            // Atualizar elementos da UI
-            const evalScore = document.getElementById('evalScore');
-            const evalBarFill = document.getElementById('evalBarFill');
-            const evalBarMarker = document.getElementById('evalBarMarker');
-            const aiSuggestion = document.getElementById('aiSuggestion');
-            const aiReasoning = document.getElementById('aiReasoning');
-            const suggestionList = document.getElementById('suggestionList');
-            
-            // Barra de avaliaÃ§Ã£o
-            const score = analysis.evaluation;
-            evalScore.textContent = (score > 0 ? '+' : '') + score.toFixed(1);
-            evalScore.className = 'eval-score ' + (score > 0.5 ? 'positive' : score < -0.5 ? 'negative' : 'equal');
-            
-            let percent = 50 + (score / 10) * 50;
-            percent = Math.max(5, Math.min(95, percent));
-            evalBarFill.style.width = percent + '%';
-            evalBarMarker.style.left = percent + '%';
-            
-            // SugestÃ£o principal
-            if (analysis.bestMoves.length > 0) {
-                const best = analysis.bestMoves[0];
-                const from = `${String.fromCharCode(97+best.from.col)}${8-best.from.row}`;
-                const to = `${String.fromCharCode(97+best.to.col)}${8-best.to.row}`;
-                aiSuggestion.innerHTML = `âœ… Melhor: <strong>${PIECES[best.piece]} ${from} â†’ ${to}</strong>`;
-                aiSuggestion.className = 'ai-suggestion';
-                
-                // Lista de sugestÃµes
-                let listHTML = '<strong style="color:#ffd700; display:block; margin-bottom:15px;">ðŸ† Top SugestÃµes:</strong>';
-                analysis.bestMoves.forEach((move, idx) => {
-                    const moveFrom = `${String.fromCharCode(97+move.from.col)}${8-move.from.row}`;
-                    const moveTo = `${String.fromCharCode(97+move.to.col)}${8-move.to.row}`;
-                    const rank = idx === 0 ? 'ðŸ¥‡' : idx === 1 ? 'ðŸ¥ˆ' : idx === 2 ? 'ðŸ¥‰' : `${idx+1}Âº`;
-                    
-                    listHTML += `
-                        <div class="suggestion-item" onclick="highlightMove(${move.from.row}, ${move.from.col}, ${move.to.row}, ${move.to.col})">
-                            <span>${rank} ${PIECES[move.piece]} ${moveFrom}â†’${moveTo}</span>
-                            <span class="suggestion-score">${move.score > 0 ? '+' : ''}${Math.round(move.score)}</span>
-                        </div>
-                    `;
-                });
-                suggestionList.innerHTML = listHTML;
-                suggestionList.style.display = 'block';
-                
-                // RaciocÃ­nio
-                let reasoning = '';
-                if (best.to.capture) {
-                    const target = gameState.board[best.to.row][best.to.col];
-                    reasoning += `â€¢ Captura de ${PIECES[target]}<br>`;
-                }
-                if (best.safety.tacticalMotifs.list.length > 0) {
-                    reasoning += `â€¢ ${best.safety.tacticalMotifs.list[0]}<br>`;
-                }
-                if (best.worstCase < -100) {
-                    reasoning += `â€¢ Cuidado: resposta adversÃ¡ria pode custar ${Math.round(-best.worstCase)}<br>`;
-                }
-                reasoning += `<br><small>EstatÃ­sticas: ${analysis.safeMoves.length} seguras | ${analysis.riskyMoves.length} arriscadas</small>`;
-                aiReasoning.innerHTML = reasoning;
-            }
-        }
-
-        function highlightMove(fromRow, fromCol, toRow, toCol) {
-            gameState.selectedSquare = {row: fromRow, col: fromCol};
-            gameState.validMoves = getValidMoves(fromRow, fromCol);
-            renderBoard();
-            
-            setTimeout(() => {
-                const squares = document.querySelectorAll('.square');
-                squares.forEach(sq => {
-                    const r = parseInt(sq.dataset.row);
-                    const c = parseInt(sq.dataset.col);
-                    if (r === toRow && c === toCol) {
-                        sq.style.boxShadow = 'inset 0 0 40px #00ff00, 0 0 40px #00ff00';
-                        setTimeout(() => {
-                            sq.style.boxShadow = '';
-                        }, 2000);
-                    }
-                });
-            }, 100);
-        }
-
-        // ==================== RENDERIZAÃ‡ÃƒO DO TABULEIRO ====================
-
-        function renderBoard() {
-            if (isRendering) return;
-            isRendering = true;
-
-            const boardEl = document.getElementById('chessboard');
-            boardEl.innerHTML = '';
-
-            const isMyTurn = gameState.currentPlayer === gameState.myColor;
-            const shouldShowHints = gameState.isFernando && isMyTurn && gameState.status === 'playing';
-            
-            // Criar tabuleiro com perspectiva 3D
-            for (let displayRow = 0; displayRow < 8; displayRow++) {
-                for (let displayCol = 0; displayCol < 8; displayCol++) {
-                    const actualRow = gameState.myColor === 'white' ? displayRow : 7 - displayRow;
-                    const actualCol = gameState.myColor === 'white' ? displayCol : 7 - displayCol;
-                    
-                    const square = document.createElement('div');
-                    square.className = `square ${(displayRow + displayCol) % 2 === 0 ? 'light' : 'dark'}`;
-                    square.dataset.row = actualRow;
-                    square.dataset.col = actualCol;
-
-                    const piece = gameState.board[actualRow] ? gameState.board[actualRow][actualCol] : null;
-                    if (piece) {
-                        square.textContent = PIECES[piece];
-                        square.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
-                    }
-
-                    // Ãšltimo movimento
-                    if (gameState.lastMove) {
-                        if ((gameState.lastMove.from.row === actualRow && gameState.lastMove.from.col === actualCol) ||
-                            (gameState.lastMove.to.row === actualRow && gameState.lastMove.to.col === actualCol)) {
-                            square.classList.add('last-move');
-                        }
-                    }
-
-                    // Xeque no rei
-                    if (piece && piece.toLowerCase() === 'k') {
-                        const color = piece === piece.toUpperCase() ? 'white' : 'black';
-                        if (isInCheck(color)) {
-                            square.classList.add('check');
-                        }
-                    }
-
-                    // SeleÃ§Ã£o e movimentos vÃ¡lidos
-                    if (isMyTurn && gameState.selectedSquare) {
-                        if (gameState.selectedSquare.row === actualRow && gameState.selectedSquare.col === actualCol) {
-                            square.classList.add('selected');
-                        }
-                        
-                        const move = gameState.validMoves.find(m => m.row === actualRow && m.col === actualCol);
-                        if (move) {
-                            if (piece) {
-                                square.classList.add('valid-capture');
-                            } else {
-                                square.classList.add('valid-move');
-                            }
-                        }
-                    }
-
-                    // Dicas do Modo Deus com intenÃ§Ãµes
-                    if (shouldShowHints && lastAnalysis) {
-                        // Destacar melhores jogadas
-                        lastAnalysis.bestMoves.slice(0, 3).forEach((best, index) => {
-                            const isFrom = best.from.row === actualRow && best.from.col === actualCol;
-                            const isTo = best.to.row === actualRow && best.to.col === actualCol;
-
-                            if (isFrom) {
-                                const glow = document.createElement('div');
-                                glow.className = 'hint-glow';
-                                glow.style.opacity = index === 0 ? '1' : '0.5';
-                                square.appendChild(glow);
-                                
-                                const rank = document.createElement('div');
-                                rank.style.cssText = 'position:absolute; top:3px; right:3px; background:#00ff00; color:#000; font-size:11px; font-weight:bold; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:15; font-family:Orbitron;';
-                                rank.textContent = index + 1;
-                                square.appendChild(rank);
-                            }
-
-                            if (isTo) {
-                                const target = document.createElement('div');
-                                target.className = 'hint-circle';
-                                target.style.opacity = index === 0 ? '1' : '0.3';
-                                square.appendChild(target);
-                            }
-                        });
-                    }
-
-                    // Destacar intenÃ§Ãµes do adversÃ¡rio no tabuleiro
-                    if (shouldShowHints && gameState.opponentIntentions) {
-                        gameState.opponentIntentions.forEach(intention => {
-                            if (intention.moves) {
-                                intention.moves.forEach(m => {
-                                    const toCol = m.to.charCodeAt(0) - 97;
-                                    const toRow = 8 - parseInt(m.to[1]);
-                                    
-                                    if (actualRow === toRow && actualCol === toCol) {
-                                        // Mostrar indicador de ameaÃ§a
-                                        const threat = document.createElement('div');
-                                        threat.style.cssText = 'position:absolute; top:2px; left:2px; background:#ff0000; color:white; font-size:9px; padding:2px 5px; border-radius:5px; z-index:15; font-family:Orbitron;';
-                                        threat.textContent = INTENTION_TYPES[intention.type].icon;
-                                        square.appendChild(threat);
-                                        
-                                        square.style.boxShadow = 'inset 0 0 20px rgba(255,0,0,0.4)';
-                                    }
-                                });
-                            }
-                        });
-                    }
-
-                    // Clique
-                    if (gameState.status === 'playing') {
-                        square.addEventListener('click', () => handleSquareClick(actualRow, actualCol));
-                    }
-
-                    boardEl.appendChild(square);
-                }
-            }
-
-            // Desenhar trilha para melhor jogada
-            if (shouldShowHints && lastAnalysis && lastAnalysis.bestMoves.length > 0) {
-                setTimeout(() => drawTrail(boardEl, lastAnalysis.bestMoves[0].from, lastAnalysis.bestMoves[0].to), 50);
-            }
-
-            updateCapturedDisplay();
-            isRendering = false;
-        }
-
-        function drawTrail(boardEl, from, to) {
-            const squareSize = boardEl.firstChild ? boardEl.firstChild.offsetWidth : 85;
-            if (!squareSize || squareSize === 0) return;
-
-            const fromDisplayRow = gameState.myColor === 'white' ? from.row : 7 - from.row;
-            const fromDisplayCol = gameState.myColor === 'white' ? from.col : 7 - from.col;
-            const toDisplayRow = gameState.myColor === 'white' ? to.row : 7 - to.row;
-            const toDisplayCol = gameState.myColor === 'white' ? to.col : 7 - to.col;
-
-            const fromX = fromDisplayCol * squareSize + squareSize / 2;
-            const fromY = fromDisplayRow * squareSize + squareSize / 2;
-            const toX = toDisplayCol * squareSize + squareSize / 2;
-            const toY = toDisplayRow * squareSize + squareSize / 2;
-
-            const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
-            const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
-
-            const trail = document.createElement('div');
-            trail.className = 'hint-trail';
-            trail.style.width = length + 'px';
-            trail.style.left = fromX + 'px';
-            trail.style.top = fromY + 'px';
-            trail.style.transform = `rotate(${angle}deg)`;
-            
-            boardEl.appendChild(trail);
-        }
-
-        function updateCapturedDisplay() {
-            const display = document.getElementById('capturedPieces');
-            const myCaptures = gameState.capturedPieces[gameState.myColor] || [];
-            
-            // Calcular vantagem material
-            let materialAdvantage = 0;
-            const myPieces = gameState.capturedPieces[gameState.myColor] || [];
-            const oppPieces = gameState.capturedPieces[gameState.myColor === 'white' ? 'black' : 'white'] || [];
-            
-            myPieces.forEach(p => materialAdvantage += PIECE_VALUES[p.toLowerCase()]);
-            oppPieces.forEach(p => materialAdvantage -= PIECE_VALUES[p.toLowerCase()]);
-            
-            let advantageText = '';
-            if (materialAdvantage > 0) {
-                advantageText = ` (+${materialAdvantage/100})`;
-            } else if (materialAdvantage < 0) {
-                advantageText = ` (${materialAdvantage/100})`;
-            }
-            
-            display.innerHTML = myCaptures.map(p => `<span style="filter:drop-shadow(0 0 5px rgba(255,255,255,0.5));">${PIECES[p]}</span>`).join(' ') + 
-                (advantageText ? `<span style="color:${materialAdvantage > 0 ? '#00ff00' : '#ff6666'}; font-size:0.8em; margin-left:15px; font-family:Orbitron;">${advantageText}</span>` : '');
-        }
-
-        // ==================== LÃ“GICA DO JOGO ====================
-
-        function handleSquareClick(row, col) {
-            const piece = gameState.board[row] && gameState.board[row][col];
-            
-            // Selecionar peÃ§a prÃ³pria
-            if (piece && isMyPiece(piece) && !gameState.selectedSquare) {
-                gameState.selectedSquare = {row, col};
-                gameState.validMoves = getValidMoves(row, col);
-                renderBoard();
-                return;
-            }
-
-            // Executar movimento ou trocar seleÃ§Ã£o
-            if (gameState.selectedSquare) {
-                const move = gameState.validMoves.find(m => m.row === row && m.col === col);
-                
-                if (move) {
-                    // LIBERDADE TOTAL: permitir qualquer movimento, mesmo que seja perigoso
-                    // Apenas mostrar aviso se for muito arriscado
-                    if (gameState.isFernando) {
-                        const safety = evaluateMoveSafety(gameState.selectedSquare, {row, col}, move, gameState.myColor);
-                        if (safety.blunder || (safety.isHanging && safety.score < -200)) {
-                            // Mostrar aviso mas permitir jogada
-                            showToast(
-                                'âš ï¸ Jogada Arriscada!',
-                                'VocÃª estÃ¡ fazendo um movimento perigoso. Cuidado!',
-                                'opponent',
-                                3000
-                            );
-                        }
-                    }
-                    
-                    executeMove(gameState.selectedSquare, {row, col}, move);
-                } else if (piece && isMyPiece(piece)) {
-                    // Trocar seleÃ§Ã£o
-                    gameState.selectedSquare = {row, col};
-                    gameState.validMoves = getValidMoves(row, col);
-                    renderBoard();
-                } else {
-                    // Cancelar seleÃ§Ã£o
-                    gameState.selectedSquare = null;
-                    gameState.validMoves = [];
-                    renderBoard();
-                }
-            }
-        }
-
-        function isMyPiece(piece) {
-            return gameState.myColor === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase();
-        }
-
-        function getValidMoves(row, col, board = gameState.board, color = gameState.myColor) {
-            const piece = board[row] && board[row][col];
-            if (!piece) return [];
-            
-            const moves = [];
-            const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
-            const type = piece.toLowerCase();
-            
-            // Se estamos analisando para outra cor, ajustar
-            const actualColor = color || pieceColor;
-            
-            switch(type) {
-                case 'p':
-                    const dir = actualColor === 'white' ? -1 : 1;
-                    const start = actualColor === 'white' ? 6 : 1;
-                    
-                    // Movimento simples
-                    if (isValid(row + dir, col) && !board[row + dir][col]) {
-                        moves.push({row: row + dir, col: col, promotion: (row + dir === 0 || row + dir === 7)});
-                        
-                        // Duplo no inÃ­cio
-                        if (row === start && !board[row + 2*dir][col]) {
-                            moves.push({row: row + 2*dir, col: col, isDoublePush: true});
-                        }
-                    }
-                    
-                    // Capturas
-                    for (let dc of [-1, 1]) {
-                        const nr = row + dir, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = board[nr] && board[nr][nc];
-                            if (target && isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: true, promotion: (nr === 0 || nr === 7)});
-                            }
-                            // En passant
-                            if (gameState.enPassantTarget && 
-                                gameState.enPassantTarget.row === nr && 
-                                gameState.enPassantTarget.col === nc) {
-                                moves.push({row: nr, col: nc, enPassant: true});
-                            }
-                        }
-                    }
-                    break;
-
-                case 'n':
-                    const nm = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
-                    for (let [dr, dc] of nm) {
-                        const nr = row + dr, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = board[nr] && board[nr][nc];
-                            if (!target || isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: !!target});
-                            }
-                        }
-                    }
-                    break;
-
-                case 'b':
-                    moves.push(...slideMoves(row, col, piece, board, [[-1,-1],[-1,1],[1,-1],[1,1]]));
-                    break;
-
-                case 'r':
-                    moves.push(...slideMoves(row, col, piece, board, [[-1,0],[1,0],[0,-1],[0,1]]));
-                    break;
-
-                case 'q':
-                    moves.push(...slideMoves(row, col, piece, board, [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]]));
-                    break;
-
-                case 'k':
-                    const km = [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
-                    for (let [dr, dc] of km) {
-                        const nr = row + dr, nc = col + dc;
-                        if (isValid(nr, nc)) {
-                            const target = board[nr] && board[nr][nc];
-                            if (!target || isEnemy(piece, target)) {
-                                moves.push({row: nr, col: nc, capture: !!target});
-                            }
-                        }
-                    }
-                    
-                    // Roque
-                    if (canCastle(actualColor, 'kingSide', board)) {
-                        moves.push({row, col: col+2, castling: 'kingSide'});
-                    }
-                    if (canCastle(actualColor, 'queenSide', board)) {
-                        moves.push({row, col: col-2, castling: 'queenSide'});
-                    }
-                    break;
-            }
-
-            // Filtrar movimentos que deixam o rei em xeque
-            return moves.filter(m => {
-                const testBoard = copyBoard(board);
-                testBoard[m.row][m.col] = testBoard[row][col];
-                testBoard[row][col] = null;
-                
-                // Ajustar posiÃ§Ã£o do rei se ele se moveu
-                let kingPos = findKing(testBoard, actualColor);
-                if (type === 'k') {
-                    kingPos = {row: m.row, col: m.col};
-                }
-                
-                return kingPos && !isSquareAttacked(kingPos.row, kingPos.col, actualColor, testBoard);
-            });
-        }
-
-        function slideMoves(row, col, piece, board, dirs) {
-            const moves = [];
-            for (let [dr, dc] of dirs) {
-                let nr = row + dr, nc = col + dc;
-                while (isValid(nr, nc)) {
-                    const target = board[nr] && board[nr][nc];
-                    if (!target) {
-                        moves.push({row: nr, col: nc});
-                    } else {
-                        if (isEnemy(piece, target)) {
-                            moves.push({row: nr, col: nc, capture: true});
-                        }
-                        break;
-                    }
-                    nr += dr;
-                    nc += dc;
-                }
-            }
-            return moves;
-        }
-
-        function canCastle(color, side, board = gameState.board) {
-            const rights = gameState.castlingRights[color];
-            if (side === 'kingSide' && !rights.kingSide) return false;
-            if (side === 'queenSide' && !rights.queenSide) return false;
-            
-            const row = color === 'white' ? 7 : 0;
-            
-            // Verificar se rei estÃ¡ em xeque
-            const kingPos = findKing(board, color);
-            if (isSquareAttacked(kingPos.row, kingPos.col, color, board)) return false;
-            
-            const dir = side === 'kingSide' ? 1 : -1;
-            const cols = side === 'kingSide' ? [5, 6] : [1, 2, 3];
-            
-            // Verificar casas vazias e nÃ£o atacadas
-            for (let col of cols) {
-                if (board[row][col]) return false;
-                if (col !== 1 && isSquareAttacked(row, col, color, board)) return false;
-            }
-            
-            // Verificar torre
-            const rookCol = side === 'kingSide' ? 7 : 0;
-            const rook = board[row][rookCol];
-            if (!rook || rook.toLowerCase() !== 'r') return false;
-            
-            return true;
-        }
-
-        function isInCheck(color, board = gameState.board) {
-            const kingPos = findKing(board, color);
-            return kingPos && isSquareAttacked(kingPos.row, kingPos.col, color, board);
-        }
-
-        function copyBoard(b) {
-            return b.map(r => [...r]);
-        }
-
-        function executeMove(from, to, move) {
-            const piece = gameState.board[from.row][from.col];
-            const color = piece === piece.toUpperCase() ? 'white' : 'black';
-            const targetPiece = gameState.board[to.row][to.col];
-
-            // Verificar captura do rei (checkmate imediato)
-            if (targetPiece && targetPiece.toLowerCase() === 'k') {
-                gameState.board[to.row][to.col] = piece;
-                gameState.board[from.row][from.col] = null;
-                
-                const winner = color;
-                gameState.status = 'ended';
-                gameState.winner = winner;
-                gameState.finalPosition = gameState.board.map(r => [...r]);
-                gameState.gameEndedAt = Date.now();
-                
-                saveGameState();
-                saveLocalState();
-                showCheckmateAnimation(winner);
-                return;
-            }
-
-            // En passant
-            if (move.enPassant) {
-                gameState.board[from.row][to.col] = null;
-            }
-            
-            // Mover peÃ§a
-            gameState.board[to.row][to.col] = piece;
-            gameState.board[from.row][from.col] = null;
-
-            // Atualizar posiÃ§Ã£o do rei
-            if (piece.toLowerCase() === 'k') {
-                gameState.kingPositions[color] = {row: to.row, col: to.col};
-                
-                // Roque
-                if (move.castling) {
-                    const row = from.row;
-                    if (move.castling === 'kingSide') {
-                        gameState.board[row][5] = gameState.board[row][7];
-                        gameState.board[row][7] = null;
-                    } else {
-                        gameState.board[row][3] = gameState.board[row][0];
-                        gameState.board[row][0] = null;
-                    }
-                }
-                
-                gameState.castlingRights[color] = {kingSide: false, queenSide: false};
-            }
-
-            // Atualizar direitos de roque se torre moveu
-            if (piece.toLowerCase() === 'r') {
-                const row = color === 'white' ? 7 : 0;
-                if (from.row === row && from.col === 0) gameState.castlingRights[color].queenSide = false;
-                if (from.row === row && from.col === 7) gameState.castlingRights[color].kingSide = false;
-            }
-
-            // PromoÃ§Ã£o
-            if (move.promotion) {
-                showPromotion(to, color, from);
-                return;
-            }
-
-            // Atualizar en passant target
-            if (move.isDoublePush) {
-                gameState.enPassantTarget = {row: (from.row + to.row) / 2, col: from.col};
-            } else {
-                gameState.enPassantTarget = null;
-            }
-
-            // Capturar peÃ§a
-            if (targetPiece && isEnemy(piece, targetPiece)) {
-                gameState.capturedPieces[color].push(targetPiece);
-            }
-
-            // Registrar movimento
-            const moveNotation = `${PIECES[piece]} ${String.fromCharCode(97+from.col)}${8-from.row}â†’${String.fromCharCode(97+to.col)}${8-to.row}`;
-            gameState.moveHistory.push({
-                piece: piece,
-                from: from,
-                to: to,
-                capture: !!targetPiece,
-                notation: moveNotation,
-                color: color,
-                timestamp: Date.now()
-            });
-
-            // Atualizar estado
-            gameState.lastMove = {from, to};
-            gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
-            gameState.selectedSquare = null;
-            gameState.validMoves = [];
-
-            // Verificar fim de jogo
-            const nextColor = gameState.currentPlayer;
-            const opponentKing = nextColor === 'white' ? 'K' : 'k';
-            let opponentKingExists = false;
-            
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    if (gameState.board[r] && gameState.board[r][c] === opponentKing) {
-                        opponentKingExists = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!opponentKingExists) {
-                gameState.status = 'ended';
-                gameState.winner = color;
-                gameState.finalPosition = gameState.board.map(r => [...r]);
-                gameState.gameEndedAt = Date.now();
-                showCheckmateAnimation(color);
-            } else if (isCheckmate(nextColor)) {
-                gameState.status = 'ended';
-                gameState.winner = color;
-                gameState.finalPosition = gameState.board.map(r => [...r]);
-                gameState.gameEndedAt = Date.now();
-                showCheckmateAnimation(color);
-            } else if (isStalemate(nextColor)) {
-                gameState.status = 'ended';
-                gameState.winner = 'draw';
-                gameState.finalPosition = gameState.board.map(r => [...r]);
-                gameState.gameEndedAt = Date.now();
-                showGameOver('draw');
-            }
-
-            saveGameState();
-            saveLocalState();
-        }
-
-        function saveGameState() {
-            if (!gameRef) return;
-            
-            const boardObj = boardToFirestore(gameState.board);
-            const capturedObj = capturedPiecesToFirestore(gameState.capturedPieces);
-            
-            const updates = {
-                board: boardObj,
-                currentPlayer: gameState.currentPlayer,
-                castlingRights: gameState.castlingRights,
-                enPassantTarget: gameState.enPassantTarget,
-                lastMove: gameState.lastMove,
-                kingPositions: gameState.kingPositions,
-                capturedPieces: capturedObj,
-                status: gameState.status,
-                winner: gameState.winner || null,
-                moveHistory: gameState.moveHistory,
-                finalPosition: gameState.finalPosition ? boardToFirestore(gameState.finalPosition) : null,
-                gameEndedAt: gameState.gameEndedAt
-            };
-            
-            gameRef.update(updates).catch(error => {
-                console.error('Erro ao salvar:', error);
-            });
-        }
-
-        function showPromotion(pos, color, from) {
-            const modal = document.getElementById('promotionModal');
-            const opts = document.getElementById('promotionOptions');
-            opts.innerHTML = '';
-            
-            const pieces = color === 'white' ? ['Q','R','B','N'] : ['q','r','b','n'];
-            const pieceNames = {'Q': 'Rainha', 'R': 'Torre', 'B': 'Bispo', 'N': 'Cavalo',
-                              'q': 'Rainha', 'r': 'Torre', 'b': 'Bispo', 'n': 'Cavalo'};
-            
-            pieces.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'promotion-piece';
-                div.textContent = PIECES[p];
-                div.title = pieceNames[p];
-                div.onclick = () => {
-                    gameState.board[pos.row][pos.col] = p;
-                    modal.classList.remove('show');
-                    gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
-                    gameState.selectedSquare = null;
-                    gameState.enPassantTarget = null;
-                    
-                    const nextColor = gameState.currentPlayer;
-                    if (isCheckmate(nextColor)) {
-                        gameState.status = 'ended';
-                        gameState.winner = color;
-                        gameState.finalPosition = gameState.board.map(r => [...r]);
-                        showCheckmateAnimation(color);
-                    } else if (isStalemate(nextColor)) {
-                        gameState.status = 'ended';
-                        gameState.winner = 'draw';
-                        gameState.finalPosition = gameState.board.map(r => [...r]);
-                        showGameOver('draw');
-                    }
-                    
-                    saveGameState();
-                    saveLocalState();
-                    renderBoard();
-                };
-                opts.appendChild(div);
-            });
-            
-            modal.classList.add('show');
-        }
-
-        function isCheckmate(color) {
-            if (!isInCheck(color)) return false;
-            return !hasAnyMove(color);
-        }
-
-        function isStalemate(color) {
-            if (isInCheck(color)) return false;
-            return !hasAnyMove(color);
-        }
-
-        function hasAnyMove(color) {
-            for (let r = 0; r < 8; r++) {
-                for (let c = 0; c < 8; c++) {
-                    const p = gameState.board[r] && gameState.board[r][c];
-                    if (p && (color === 'white' ? p === p.toUpperCase() : p === p.toLowerCase())) {
-                        if (getValidMoves(r, c).length > 0) return true;
-                    }
-                }
-            }
-            return false;
         }
 
         // ==================== FIM DE JOGO ====================
 
        function showGameOver(winner) {
-    // ========== SALVAR ESTATÃSTICAS PARA EMPATE ==========
+    // ========== SALVAR ESTATÍSTICAS PARA EMPATE ==========
     async function saveDrawStats() {
         if (!userData || !userData.uid) return;
         
@@ -5950,7 +5070,7 @@ const savedUser = sessionStorage.getItem('currentUser');
     const viewPositionBtn = document.getElementById('viewPositionBtn');
     
     if (winner === 'draw') {
-        text.innerHTML = 'ðŸ¤ <span style="color:#ffff00; text-shadow:0 0 30px #ffff00;">Empate!</span><br><span style="font-size:0.6em; color:#aaa;">Stalemate</span>';
+        text.innerHTML = '🤝 <span style="color:#ffff00; text-shadow:0 0 30px #ffff00;">Empate!</span><br><span style="font-size:0.6em; color:#aaa;">Stalemate</span>';
         viewPositionBtn.style.display = 'none';
     } else {
         const isMe = winner === gameState.myColor;
@@ -5960,12 +5080,12 @@ const savedUser = sessionStorage.getItem('currentUser');
             
         if (isMe) {
             text.innerHTML = `
-                <span style="color:#00ff00; text-shadow:0 0 40px #00ff00;">ðŸ† VITÃ“RIA! ðŸ†</span><br>
-                <span style="font-size:0.6em; color:#ffd700; text-shadow:0 0 20px #ffd700;">ParabÃ©ns, ${winnerName}!</span>
+                <span style="color:#00ff00; text-shadow:0 0 40px #00ff00;">🏆 VITÓRIA! 🏆</span><br>
+                <span style="font-size:0.6em; color:#ffd700; text-shadow:0 0 20px #ffd700;">Parabéns, ${winnerName}!</span>
             `;
         } else {
             text.innerHTML = `
-                <span style="color:#ff0000; text-shadow:0 0 40px #ff0000;">ðŸ’€ DERROTA ðŸ’€</span><br>
+                <span style="color:#ff0000; text-shadow:0 0 40px #ff0000;">💀 DERROTA 💀</span><br>
                 <span style="font-size:0.6em; color:#ff6666; text-shadow:0 0 20px #ff6666;">${winnerName} venceu</span>
             `;
         }
@@ -6026,7 +5146,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             boardContainer.appendChild(miniBoard);
             
-            // EstatÃ­sticas
+            // Estatísticas
             const totalMoves = gameState.moveHistory.length;
             const capturedByWinner = gameState.capturedPieces[gameState.winner] || [];
             const capturedByLoser = gameState.capturedPieces[gameState.winner === 'white' ? 'black' : 'white'] || [];
@@ -6041,18 +5161,18 @@ const savedUser = sessionStorage.getItem('currentUser');
             infoEl.innerHTML = `
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; text-align:left; margin-bottom:20px;">
                     <div style="background:rgba(0,255,0,0.1); padding:15px; border-radius:12px; border:1px solid #00ff00;">
-                        <div style="color:#00ff00; font-weight:bold; font-family:Orbitron;">ðŸ† ${winnerName}</div>
+                        <div style="color:#00ff00; font-weight:bold; font-family:Orbitron;">🏆 ${winnerName}</div>
                         <div style="font-size:0.95em; margin-top:8px;">Material: ${winnerMaterial/100}</div>
                         <div style="font-size:0.85em; margin-top:5px; opacity:0.8;">${capturedByWinner.map(p => PIECES[p]).join(' ') || 'Nenhuma'}</div>
                     </div>
                     <div style="background:rgba(255,0,0,0.1); padding:15px; border-radius:12px; border:1px solid #ff0000;">
-                        <div style="color:#ff6666; font-weight:bold; font-family:Orbitron;">ðŸ’€ Perdedor</div>
+                        <div style="color:#ff6666; font-weight:bold; font-family:Orbitron;">💀 Perdedor</div>
                         <div style="font-size:0.95em; margin-top:8px;">Material: ${loserMaterial/100}</div>
                         <div style="font-size:0.85em; margin-top:5px; opacity:0.8;">${capturedByLoser.map(p => PIECES[p]).join(' ') || 'Nenhuma'}</div>
                     </div>
                 </div>
                 <div style="font-family:Orbitron; color:#ffd700;"><strong>Total de lances:</strong> ${totalMoves}</div>
-                <div style="margin-top:10px; color:#ff6666; font-size:0.9em;">ðŸ”´ Rei derrotado destacado em vermelho</div>
+                <div style="margin-top:10px; color:#ff6666; font-size:0.9em;">🔴 Rei derrotado destacado em vermelho</div>
             `;
             
             document.getElementById('gameOverModal').classList.remove('show');
@@ -6064,7 +5184,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             document.getElementById('gameOverModal').classList.add('show');
         }
 
-        // ==================== FUNÃ‡Ã•ES AUXILIARES ====================
+        // ==================== FUNÇÕES AUXILIARES ====================
 
         function isValid(r, c) {
             return r >= 0 && r < 8 && c >= 0 && c < 8;
@@ -6298,7 +5418,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                 materialChange: 0
             };
 
-            // 1. AnÃ¡lise de material
+            // 1. Análise de material
             if (move.capture) {
                 const target = board[to.row][to.col];
                 if (target) {
@@ -6307,7 +5427,7 @@ const savedUser = sessionStorage.getItem('currentUser');
                 }
             }
 
-            // 2. Verificar se a peÃ§a movida ficarÃ¡ pendurada
+            // 2. Verificar se a peça movida ficará pendurada
             if (!move.castling) {
                 const willBeAttacked = isSquareAttacked(to.row, to.col, color, testBoard);
                 const willBeDefended = isSquareDefended(to.row, to.col, color, testBoard);
@@ -6315,22 +5435,22 @@ const savedUser = sessionStorage.getItem('currentUser');
                 
                 if (willBeAttacked && !willBeDefended) {
                     safety.isHanging = true;
-                    safety.threats.push(`âš ï¸ ${PIECES[piece]} ficarÃ¡ indefeso em ${String.fromCharCode(97+to.col)}${8-to.row}`);
+                    safety.threats.push(`⚠️ ${PIECES[piece]} ficará indefeso em ${String.fromCharCode(97+to.col)}${8-to.row}`);
                     safety.score -= pieceValue * 0.8;
                 }
             }
 
-            // 3. Verificar seguranÃ§a do rei
+            // 3. Verificar segurança do rei
             const kingPos = findKing(testBoard, color);
             if (kingPos) {
                 const kingAttacked = isSquareAttacked(kingPos.row, kingPos.col, color, testBoard);
                 if (kingAttacked) {
                     safety.score -= 500;
-                    safety.threats.push('ðŸš¨ Rei ficarÃ¡ em xeque!');
+                    safety.threats.push('🚨 Rei ficará em xeque!');
                 }
             }
 
-            // 4. Detectar motivos tÃ¡ticos
+            // 4. Detectar motivos táticos
             const tactical = detectTacticalMotifs(testBoard, color, from, to, piece);
             safety.tacticalMotifs = tactical;
             safety.score += tactical.score;
@@ -6353,7 +5473,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             if (highValueTargets.length >= 2) {
                 motifs.score += 80;
-                motifs.list.push(`ðŸ”± Fork! Ataque a ${highValueTargets.length} peÃ§as`);
+                motifs.list.push(`🔱 Fork! Ataque a ${highValueTargets.length} peças`);
             }
             
             // 2. Xeque
@@ -6365,19 +5485,19 @@ const savedUser = sessionStorage.getItem('currentUser');
             
             if (kingAttacked) {
                 motifs.score += 50;
-                motifs.list.push('ðŸ‘‘ Xeque!');
+                motifs.list.push('👑 Xeque!');
             }
             
-            // 3. PromoÃ§Ã£o de peÃ£o
+            // 3. Promoção de peão
             if (pieceType === 'p' && (to.row === 0 || to.row === 7)) {
                 motifs.score += 800;
-                motifs.list.push('ðŸ‘‘ PromoÃ§Ã£o!');
+                motifs.list.push('👑 Promoção!');
             }
             
             return motifs;
         }
 
-        // ==================== INICIALIZAÃ‡ÃƒO ====================
+        // ==================== INICIALIZAÇÃO ====================
 
         window.onbeforeunload = () => {
             if (unsubscribe) unsubscribe();
@@ -6385,7 +5505,7 @@ const savedUser = sessionStorage.getItem('currentUser');
             saveLocalState();
         };
 
-        // ========== FUNÃ‡Ã•ES AUXILIARES DO SISTEMA DE LOGIN ==========
+        // ========== FUNÇÕES AUXILIARES DO SISTEMA DE LOGIN ==========
 
 function calculateNewRating(current, opponent, result, k = 32) {
     const expected = 1 / (1 + Math.pow(10, (opponent - current) / 400));
@@ -6406,7 +5526,7 @@ function backToDashboard() {
             const savedState = loadLocalState();
             if (savedState) {
                 const statusMsg = document.getElementById('statusMessage');
-                statusMsg.textContent = `ðŸŽ® Jogo anterior detectado (${savedState.gameId})`;
+                statusMsg.textContent = `🎮 Jogo anterior detectado (${savedState.gameId})`;
                 statusMsg.className = 'status-message waiting';
                 statusMsg.style.display = 'block';
             }
@@ -6419,7 +5539,7 @@ function backToDashboard() {
         // Atalhos de teclado
         // Atalhos de teclado
 document.addEventListener('keydown', (e) => {
-    // ðŸ†• NÃƒO interceptar se estiver digitando em input/textarea
+    // 🆕 NÃO interceptar se estiver digitando em input/textarea
     const activeElement = document.activeElement;
     const isTyping = activeElement && (
         activeElement.tagName === 'INPUT' || 
@@ -6430,13 +5550,13 @@ document.addEventListener('keydown', (e) => {
     
     // Se estiver digitando, permitir todas as teclas normalmente
     if (isTyping) {
-        return; // Sai da funÃ§Ã£o sem interceptar nada
+        return; // Sai da função sem interceptar nada
     }
     
-    // SÃ³ aplica atalhos do jogo se NÃƒO estiver digitando
+    // Só aplica atalhos do jogo se NÃO estiver digitando
     if (!gameState.isFernando || gameState.status !== 'playing') return;
     
-    // H - mostrar/esconder anÃ¡lise
+    // H - mostrar/esconder análise
     if (e.key === 'h' || e.key === 'H') {
         const aiAnalysis = document.getElementById('aiAnalysis');
         aiAnalysis.style.display = aiAnalysis.style.display === 'none' ? 'block' : 'none';
@@ -6448,15 +5568,15 @@ document.addEventListener('keydown', (e) => {
             gameState.godMode = false;
             document.getElementById('godModePanel').classList.remove('active');
             document.getElementById('playerBadge').classList.remove('god-mode');
-            document.getElementById('playerBadge').textContent = 'â™” MODO FERNANDO PRO â™”';
+            document.getElementById('playerBadge').textContent = '♔ MODO FERNANDO PRO ♔';
             document.getElementById('turnIndicator').classList.remove('god-suggestion');
-            showToast('ðŸ‘¤ Modo Deus Desativado', 'VocÃª estÃ¡ jogando normalmente agora.', 'normal', 3000);
+            showToast('👤 Modo Deus Desativado', 'Você está jogando normalmente agora.', 'normal', 3000);
         } else {
             activateGodMode();
         }
     }
     
-    // A - mostrar anÃ¡lise de intenÃ§Ãµes
+    // A - mostrar análise de intenções
     if (e.key === 'a' || e.key === 'A') {
         const panel = document.getElementById('opponentAnalysisPanel');
         if (panel.classList.contains('active')) {
@@ -6476,13 +5596,13 @@ document.addEventListener('keydown', (e) => {
         }
     }
     
-    // EspaÃ§o - executar jogada divina (sÃ³ funciona fora do chat)
+    // Espaço - executar jogada divina (só funciona fora do chat)
     if (e.key === ' ' && gameState.godMode && currentGodMove) {
         e.preventDefault();
         executeGodMove();
     }
     
-    // 1, 2, 3 - auto-jogar sugestÃ£o
+    // 1, 2, 3 - auto-jogar sugestão
     if (['1', '2', '3'].includes(e.key) && lastAnalysis && lastAnalysis.bestMoves.length >= parseInt(e.key)) {
         const move = lastAnalysis.bestMoves[parseInt(e.key) - 1];
         gameState.selectedSquare = move.from;
