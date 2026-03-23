@@ -1536,38 +1536,58 @@
                 <span class="nav-logo">♔</span>
                 <span class="nav-title">Xadrez Pro Ultra</span>
             </div>
-            
-            <div class="nav-user">
-                <div class="user-stats-mini">
-                    <div class="mini-stat">
-                        <div class="mini-stat-value" id="navRating">0</div>
-                        <div class="mini-stat-label">Pontos</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-value" id="navRank">-</div>
-                        <div class="mini-stat-label">Rank</div>
-                    </div>
-                </div>
-                
-                <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
-                    <div class="user-avatar" id="userAvatar" style="
-                        width: 42px; height: 42px; border-radius: 50%;
-                        background: linear-gradient(135deg, var(--gold), var(--purple));
-                        display: flex; align-items: center; justify-content: center;
-                        font-weight: 700; color: #000; font-size: 1.2em;
-                    ">?</div>
-                    <div class="user-details" style="text-align: right;">
-                        <div id="navUsername" style="font-weight: 600; font-size: 0.95em;">Carregando...</div>
-                        <div id="navStatus" style="font-size: 0.8em; color: var(--green);">
-                            <i class="fas fa-circle" style="font-size: 0.6em; margin-right: 5px;"></i>Online
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="btn btn-danger btn-sm" onclick="signOut()">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
+        <div class="nav-user">
+    <div class="user-stats-mini">
+        <div class="mini-stat">
+            <div class="mini-stat-value" id="navRating">0</div>
+            <div class="mini-stat-label">Pontos</div>
+        </div>
+        <div class="mini-stat">
+            <div class="mini-stat-value" id="navRank">-</div>
+            <div class="mini-stat-label">Rank</div>
+        </div>
+    </div>
+    
+    <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+        <div class="user-avatar" id="userAvatar" style="
+            width: 42px; height: 42px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--purple));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #000; font-size: 1.2em;
+        ">?</div>
+        <div class="user-details" style="text-align: right;">
+            <div id="navUsername" style="font-weight: 600; font-size: 0.95em;">Carregando...</div>
+            <div id="navStatus" style="font-size: 0.8em; color: var(--green);">
+                <i class="fas fa-circle" style="font-size: 0.6em; margin-right: 5px;"></i>Online
             </div>
+        </div>
+    </div>
+    
+    <!-- PAINEL ADMIN - SÓ APARECE PARA FERNANDO -->
+    <div class="admin-panel" id="adminPanel" style="
+        display: none;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 12px;
+        padding: 10px 15px;
+        margin-left: 15px;
+        align-items: center;
+        gap: 10px;
+    ">
+        <span style="font-size: 0.85em; color: var(--text-secondary);">Admin:</span>
+        <button class="btn btn-warning btn-sm" onclick="resetAllRatings()" style="padding: 8px 12px; font-size: 0.75em;">
+            <i class="fas fa-exclamation-triangle"></i> Zerar Todos
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="openDeleteUserModal()" style="padding: 8px 12px; font-size: 0.75em;">
+            <i class="fas fa-trash"></i> Deletar
+        </button>
+    </div>
+    
+    <button class="btn btn-danger btn-sm" onclick="signOut()" style="margin-left: 10px;">
+        <i class="fas fa-sign-out-alt"></i>
+    </button>
+</div>
+        
         </nav>
         
         <!-- Main Content -->
@@ -1700,6 +1720,31 @@
         <button class="cancel-btn" onclick="cancelQueue()">Cancelar</button>
     </div>
     
+<!-- MODAL: Deletar Usuário -->
+<div class="modal-overlay" id="deleteUserModal">
+    <div class="modal">
+        <div class="modal-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;">
+            <i class="fas fa-trash-alt"></i>
+        </div>
+        <h2>Deletar Jogador</h2>
+        <p>Digite o nome exato do jogador para confirmar:</p>
+        
+        <div class="input-group" style="margin-bottom: 20px;">
+            <input type="text" id="deleteUsernameInput" class="input-field" 
+                   placeholder="Nome do jogador" style="text-align: center;">
+        </div>
+        
+        <div class="modal-buttons">
+            <button class="btn btn-danger" onclick="deleteUserByUsername()">
+                <i class="fas fa-trash"></i> Deletar Permanentemente
+            </button>
+            <button class="btn btn-secondary" onclick="closeModal('deleteUserModal')">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
+
     <!-- JAVASCRIPT -->
     <script>
         // ==========================================
@@ -1978,7 +2023,7 @@ async function confirmUsername() {
         // ==========================================
         // DASHBOARD
         // ==========================================
-       function startDashboard() {
+     function startDashboard() {
     showScreen('dashboard');
     setupOnlinePresence();
     updateUserInfo();
@@ -1986,8 +2031,9 @@ async function confirmUsername() {
     listenForChallenges();
     
     // MOSTRAR PAINEL ADMIN APENAS PARA FERNANDO
-    if (userData.username.toLowerCase() === 'fernando') {
+    if (userData && userData.username && userData.username.toLowerCase() === 'fernando') {
         document.getElementById('adminPanel').style.display = 'flex';
+        console.log('Painel admin ativado para Fernando');
     }
 }
         
@@ -2898,6 +2944,63 @@ async function resetAllRatings() {
 // Expor funções globais
 window.resetAllRatings = resetAllRatings;
 window.resetUserRating = resetUserRating;
+
+// ==========================================
+// FUNÇÕES ADMIN - ADICIONAR NO FINAL
+// ==========================================
+
+function openDeleteUserModal() {
+    document.getElementById('deleteUsernameInput').value = '';
+    openModal('deleteUserModal');
+}
+
+async function deleteUserByUsername() {
+    const username = document.getElementById('deleteUsernameInput').value.trim();
+    
+    if (!username) {
+        showToast('Erro', 'Digite um nome de usuário', 'error');
+        return;
+    }
+    
+    if (username.toLowerCase() === 'fernando') {
+        showToast('Erro', 'Você não pode deletar a si mesmo!', 'error');
+        return;
+    }
+    
+    if (!confirm(`⚠️ ATENÇÃO!\n\nDeletar "${username}" permanentemente?\n\nTodos os dados serão perdidos!`)) {
+        return;
+    }
+    
+    try {
+        const snapshot = await db.collection('users')
+            .where('usernameLower', '==', username.toLowerCase())
+            .get();
+        
+        if (snapshot.empty) {
+            showToast('Erro', 'Jogador não encontrado', 'error');
+            return;
+        }
+        
+        const userDoc = snapshot.docs[0];
+        const uid = userDoc.id;
+        
+        const batch = db.batch();
+        batch.delete(db.collection('users').doc(uid));
+        batch.delete(db.collection('stats').doc(uid));
+        
+        await batch.commit();
+        
+        closeModal('deleteUserModal');
+        showToast('✅ Jogador Deletado', `"${username}" removido!`, 'success');
+        
+    } catch (error) {
+        showToast('❌ Erro', error.message, 'error');
+    }
+}
+
+// Expor funções
+window.openDeleteUserModal = openDeleteUserModal;
+window.deleteUserByUsername = deleteUserByUsername;
     </script>
 </body>
 </html>
