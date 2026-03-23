@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xadrez Pro Ultra - Login</title>
+    <title>Xadrez Pro Ultra - Dashboard Profissional</title>
     
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -11,26 +11,51 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <!-- Fontes -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
         :root {
             --gold: #ffd700;
+            --gold-light: #ffed4e;
+            --gold-dark: #b8860b;
             --purple: #8b5cf6;
+            --purple-light: #a78bfa;
+            --purple-dark: #6d28d9;
             --green: #10b981;
+            --green-light: #34d399;
             --red: #ef4444;
+            --red-light: #f87171;
+            --blue: #3b82f6;
+            --blue-light: #60a5fa;
+            --orange: #f59e0b;
             --dark: #0a0a0f;
+            --dark-light: #1a1a2e;
+            --dark-lighter: #2d2d44;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
         }
         
         body {
             font-family: 'Inter', sans-serif;
             background: var(--dark);
             min-height: 100vh;
-            color: white;
+            color: var(--text-primary);
             overflow-x: hidden;
+            line-height: 1.6;
         }
         
         body::before {
@@ -39,11 +64,30 @@
             top: 0; left: 0; width: 100%; height: 100%;
             background: 
                 radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+                radial-gradient(ellipse at 80% 80%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
             pointer-events: none;
             z-index: 0;
         }
         
+        /* Scrollbar Moderna */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--dark-light);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--purple), var(--gold-dark));
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--purple-light), var(--gold));
+        }
+        
+        /* Container Principal */
         .container {
             position: relative;
             z-index: 10;
@@ -54,71 +98,119 @@
             padding: 20px;
         }
         
+        /* Cards com Efeito Glass */
         .card {
-            background: rgba(255, 255, 255, 0.03);
+            background: var(--glass);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
-            padding: 50px;
+            padding: 40px;
             max-width: 480px;
             width: 100%;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.02);
             position: relative;
+            overflow: hidden;
         }
         
         .card::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--gold), var(--purple));
+            background: linear-gradient(90deg, var(--gold), var(--purple), var(--blue));
             border-radius: 24px 24px 0 0;
         }
         
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        /* Header */
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
         }
         
         .logo {
-            font-size: 4em;
+            font-size: 4.5em;
             margin-bottom: 15px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         
         .title {
             font-family: 'Cinzel', serif;
-            font-size: 2em;
-            background: linear-gradient(135deg, var(--gold), #fff);
+            font-size: 2.2em;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
+            font-weight: 900;
+            letter-spacing: 2px;
         }
         
         .subtitle {
-            color: #a1a1aa;
+            color: var(--text-secondary);
             font-size: 0.95em;
+            font-weight: 300;
+        }
+        
+        /* Botões */
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
         }
         
         .btn-google {
-            width: 100%;
-            padding: 16px;
-            background: white;
-            border: none;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+            color: #1f2937;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
-            font-size: 1em;
-            font-weight: 600;
-            color: #1f2937;
-            cursor: pointer;
-            transition: all 0.3s;
             margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
         }
         
         .btn-google:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
         }
         
         .btn-google i {
@@ -126,6 +218,52 @@
             font-size: 1.3em;
         }
         
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--glass-border);
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--purple);
+            background: rgba(139, 92, 246, 0.1);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--red) 0%, #dc2626 100%);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.85em;
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.8em;
+        }
+        
+        /* Inputs */
         .input-group {
             margin-bottom: 25px;
         }
@@ -133,24 +271,29 @@
         .input-label {
             display: block;
             margin-bottom: 8px;
-            font-size: 0.9em;
-            color: #a1a1aa;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .input-field {
             width: 100%;
-            padding: 16px;
+            padding: 16px 18px;
             background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--glass-border);
             border-radius: 12px;
-            color: white;
+            color: var(--text-primary);
             font-size: 1em;
             transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
         }
         
         .input-field:focus {
             outline: none;
             border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
         }
         
         .input-field.error {
@@ -169,16 +312,143 @@
             margin-top: 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
         
         .input-hint.valid { color: var(--green); }
         .input-hint.invalid { color: var(--red); }
+        .input-hint.info { color: var(--text-muted); }
         
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
+        /* Dashboard - NOVO DESIGN PROFISSIONAL */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+            background: var(--dark);
+        }
+        
+        .dashboard.active {
+            display: block;
+            animation: fadeIn 0.6s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Top Navigation Bar */
+        .top-nav {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .nav-logo {
+            font-size: 2em;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+        }
+        
+        .nav-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3em;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+        
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-stats-mini {
+            display: flex;
+            gap: 20px;
+            padding-right: 20px;
+            border-right: 1px solid var(--glass-border);
+        }
+        
+        .mini-stat {
+            text-align: center;
+        }
+        
+        .mini-stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        .mini-stat-label {
+            font-size: 0.7em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+        
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--purple), var(--gold));
+        }
+        
+        .welcome-info h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .welcome-info p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-action {
+            padding: 15px 30px;
             border-radius: 12px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
@@ -186,120 +456,96 @@
             letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--gold), #b8860b);
-            color: #000;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3);
-        }
-        
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            margin-top: 15px;
-        }
-        
-        .dashboard {
-            display: none;
-            padding: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .dashboard.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .user-info {
+            border: none;
             display: flex;
             align-items: center;
-            gap: 15px;
-        }
-        
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #000;
-        }
-        
-        .user-details h3 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2em;
-        }
-        
-        .user-details span {
-            color: #a1a1aa;
+            gap: 10px;
             font-size: 0.9em;
         }
         
-        .logout-btn {
-            padding: 10px 20px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid var(--red);
-            border-radius: 8px;
-            color: var(--red);
-            cursor: pointer;
-            transition: all 0.3s;
+        .btn-action.primary {
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
+            color: white;
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
         }
         
-        .logout-btn:hover {
-            background: var(--red);
-            color: white;
+        .btn-action.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
+        }
+        
+        .btn-action.secondary {
+            background: var(--glass);
+            border: 2px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .btn-action.secondary:hover {
+            border-color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        /* Stats Grid */
+        .stats-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+        
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 640px) {
+            .stats-grid { grid-template-columns: 1fr; }
         }
         
         .stat-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
             text-align: center;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: 0.5;
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
-            border-color: rgba(255, 215, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
+        
+        .stat-card.gold { color: var(--gold); }
+        .stat-card.green { color: var(--green); }
+        .stat-card.purple { color: var(--purple); }
+        .stat-card.blue { color: var(--blue); }
+        .stat-card.red { color: var(--red); }
         
         .stat-icon {
             width: 60px;
@@ -309,66 +555,116 @@
             align-items: center;
             justify-content: center;
             font-size: 1.8em;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
+            background: currentColor;
+            opacity: 0.15;
         }
         
-        .stat-icon.gold { background: rgba(255, 215, 0, 0.2); color: var(--gold); }
-        .stat-icon.green { background: rgba(16, 185, 129, 0.2); color: var(--green); }
-        .stat-icon.purple { background: rgba(139, 92, 246, 0.2); color: var(--purple); }
-        .stat-icon.blue { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .stat-icon i {
+            color: currentColor;
+            opacity: 1;
+        }
         
         .stat-value {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.5em;
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-size: 2.2em;
+            font-weight: 900;
+            margin-bottom: 5px;
+            color: var(--text-primary);
         }
         
         .stat-label {
-            color: #a1a1aa;
-            font-size: 0.95em;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            font-weight: 500;
         }
         
+        .stat-change {
+            font-size: 0.8em;
+            margin-top: 8px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 600;
+        }
+        
+        .stat-change.positive {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--green);
+        }
+        
+        .stat-change.negative {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--red);
+        }
+        
+        /* Content Grid */
         .content-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 380px;
             gap: 30px;
         }
         
-        @media (max-width: 1024px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 1200px) {
+            .content-grid { grid-template-columns: 1fr; }
         }
         
-        .section-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Ranking Section */
+        .ranking-section {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
-            padding: 30px;
+            padding: 25px;
         }
         
-        .section-header {
+        .ranking-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
         }
         
-        .section-title {
+        .ranking-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.3em;
             display: flex;
             align-items: center;
+            gap: 12px;
+        }
+        
+        .ranking-title i {
+            color: var(--gold);
+        }
+        
+        .ranking-filters {
+            display: flex;
             gap: 10px;
         }
         
-        .section-title i {
-            color: var(--gold);
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--purple);
+            border-color: var(--purple);
+            color: white;
         }
         
         .ranking-list {
             list-style: none;
+            max-height: 600px;
+            overflow-y: auto;
         }
         
         .ranking-item {
@@ -380,67 +676,172 @@
             margin-bottom: 10px;
             transition: all 0.3s;
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
         
         .ranking-item:hover {
             background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
         }
         
         .ranking-item.you {
-            background: rgba(255, 215, 0, 0.1);
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
         
+        .ranking-item.top-3 {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, transparent 100%);
+        }
+        
         .rank-number {
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
+            font-weight: 900;
+            font-size: 1.1em;
+            flex-shrink: 0;
         }
         
-        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #000; }
-        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); color: #000; }
-        .rank-3 { background: linear-gradient(135deg, #cd7f32, #daa520); color: #000; }
-        .rank-other { background: rgba(255, 255, 255, 0.1); color: #a1a1aa; }
+        .rank-1 { 
+            background: linear-gradient(135deg, #ffd700, #ffed4e); 
+            color: #000;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+        }
+        .rank-2 { 
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8); 
+            color: #000;
+            box-shadow: 0 5px 15px rgba(192, 192, 192, 0.3);
+        }
+        .rank-3 { 
+            background: linear-gradient(135deg, #cd7f32, #daa520); 
+            color: #000;
+            box-shadow: 0 5px 15px rgba(205, 127, 50, 0.3);
+        }
+        .rank-other { 
+            background: var(--dark-lighter); 
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+        }
         
         .rank-avatar {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--gold), var(--purple));
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.3em;
             font-weight: 700;
             color: #000;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .rank-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--purple));
+            z-index: -1;
+            opacity: 0.5;
         }
         
         .rank-info {
             flex: 1;
+            min-width: 0;
         }
         
         .rank-name {
             font-weight: 600;
-            margin-bottom: 3px;
+            font-size: 1.05em;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .rank-badge {
+            font-size: 0.7em;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: var(--purple);
+            color: white;
+            font-weight: 600;
         }
         
         .rank-stats {
             font-size: 0.85em;
-            color: #71717a;
+            color: var(--text-muted);
+            display: flex;
+            gap: 15px;
         }
         
         .rank-rating {
             font-family: 'Orbitron', sans-serif;
+            font-size: 1.4em;
             font-weight: 700;
             color: var(--gold);
+            text-align: right;
+        }
+        
+        .rank-trend {
+            font-size: 0.75em;
+            color: var(--text-muted);
+        }
+        
+        .rank-trend.up { color: var(--green); }
+        .rank-trend.down { color: var(--red); }
+        
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        /* Online Players */
+        .online-section {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-header h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .online-count {
+            background: var(--green);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
         }
         
         .online-list {
             list-style: none;
+            max-height: 400px;
+            overflow-y: auto;
         }
         
         .online-item {
@@ -452,21 +853,24 @@
             margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            border: 1px solid transparent;
         }
         
         .online-item:hover {
             background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
         }
         
         .online-avatar {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
-            background: var(--purple);
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
+            font-size: 1.1em;
             position: relative;
         }
         
@@ -479,10 +883,17 @@
             background: var(--green);
             border-radius: 50%;
             border: 2px solid var(--dark);
+            box-shadow: 0 0 5px var(--green);
         }
         
         .online-status.offline {
-            background: #71717a;
+            background: var(--text-muted);
+            box-shadow: none;
+        }
+        
+        .online-status.ingame {
+            background: var(--orange);
+            box-shadow: 0 0 5px var(--orange);
         }
         
         .online-info {
@@ -492,16 +903,30 @@
         .online-name {
             font-weight: 600;
             font-size: 0.95em;
+            margin-bottom: 2px;
         }
         
         .online-rating {
             font-size: 0.8em;
-            color: #71717a;
+            color: var(--text-muted);
+        }
+        
+        .online-status-text {
+            font-size: 0.75em;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--green);
+        }
+        
+        .online-status-text.busy {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--orange);
         }
         
         .challenge-btn {
             padding: 8px 16px;
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(16, 185, 129, 0.15);
             border: 1px solid var(--green);
             border-radius: 8px;
             color: var(--green);
@@ -511,57 +936,82 @@
             transition: all 0.3s;
         }
         
-        .challenge-btn:hover {
+        .challenge-btn:hover:not(:disabled) {
             background: var(--green);
             color: #000;
         }
         
-        .challenge-btn.offline {
-            background: rgba(113, 113, 122, 0.2);
-            border-color: #71717a;
-            color: #71717a;
+        .challenge-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: var(--text-muted);
+            color: var(--text-muted);
+            background: transparent;
         }
         
-        .quick-match {
-            margin-top: 30px;
+        /* Matchmaking Card */
+        .matchmaking-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
         }
         
-        .btn-quick {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 20px 50px;
-            background: linear-gradient(135deg, var(--purple), #6d28d9);
+        .matchmaking-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .matchmaking-card p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+        
+        .btn-match {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
             border: none;
-            border-radius: 16px;
+            border-radius: 12px;
             color: white;
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.2em;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1em;
+            box-shadow: 0 5px 20px rgba(139, 92, 246, 0.4);
         }
         
-        .btn-quick:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.5);
+        .btn-match:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5);
         }
         
+        /* Queue Box */
         .queue-box {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: rgba(10, 10, 15, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
             padding: 20px 25px;
             display: none;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            z-index: 100;
+            z-index: 1000;
+            min-width: 320px;
         }
         
         .queue-box.active {
@@ -575,9 +1025,9 @@
         }
         
         .queue-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(139, 92, 246, 0.3);
+            width: 45px;
+            height: 45px;
+            border: 3px solid rgba(139, 92, 246, 0.2);
             border-top-color: var(--purple);
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -587,15 +1037,27 @@
             to { transform: rotate(360deg); }
         }
         
+        .queue-info h4 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+        
+        .queue-info p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
         .cancel-btn {
-            padding: 8px 16px;
-            background: rgba(239, 68, 68, 0.2);
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.15);
             border: 1px solid var(--red);
             border-radius: 8px;
             color: var(--red);
             font-size: 0.85em;
             cursor: pointer;
             transition: all 0.3s;
+            font-weight: 600;
         }
         
         .cancel-btn:hover {
@@ -603,6 +1065,7 @@
             color: white;
         }
         
+        /* Toast Container */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -611,65 +1074,80 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            max-width: 400px;
         }
         
         .toast {
-            background: rgba(10, 10, 15, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
             border-radius: 16px;
             padding: 20px;
-            min-width: 300px;
             display: flex;
             align-items: flex-start;
             gap: 15px;
             animation: slideIn 0.4s;
-            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
         }
         
         @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
         
+        .toast::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0; width: 4px;
+        }
+        
+        .toast.success::before { background: var(--green); }
+        .toast.error::before { background: var(--red); }
+        .toast.info::before { background: var(--blue); }
+        .toast.warning::before { background: var(--orange); }
+        
         .toast-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2em;
+            font-size: 1.3em;
             flex-shrink: 0;
         }
         
-        .toast-success { background: rgba(16, 185, 129, 0.2); color: var(--green); }
-        .toast-error { background: rgba(239, 68, 68, 0.2); color: var(--red); }
-        .toast-info { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .toast.success .toast-icon { background: rgba(16, 185, 129, 0.15); color: var(--green); }
+        .toast.error .toast-icon { background: rgba(239, 68, 68, 0.15); color: var(--red); }
+        .toast.info .toast-icon { background: rgba(59, 130, 246, 0.15); color: var(--blue); }
+        .toast.warning .toast-icon { background: rgba(245, 158, 11, 0.15); color: var(--orange); }
         
         .toast-content h4 {
             margin-bottom: 5px;
+            font-size: 1em;
         }
         
         .toast-content p {
             font-size: 0.9em;
-            color: #a1a1aa;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
         
-        /* MODAIS */
+        /* Modais */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(10px);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
             opacity: 0;
             transition: opacity 0.3s;
+            padding: 20px;
         }
         
         .modal-overlay.active {
@@ -678,43 +1156,93 @@
         }
         
         .modal {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 40px;
-            max-width: 450px;
-            width: 90%;
+            max-width: 480px;
+            width: 100%;
             text-align: center;
             transform: scale(0.9);
             transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
         }
         
         .modal-overlay.active .modal {
             transform: scale(1);
         }
         
+        .modal::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--purple));
+        }
+        
         .modal-icon {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--gold), var(--purple));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2em;
-            margin: 0 auto 20px;
+            font-size: 2.5em;
+            margin: 0 auto 25px;
             color: #000;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
         }
         
         .modal h2 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.5em;
-            margin-bottom: 10px;
+            font-size: 1.6em;
+            margin-bottom: 12px;
         }
         
         .modal p {
-            color: #a1a1aa;
+            color: var(--text-secondary);
             margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .modal-player-info {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .modal-player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+        
+        .modal-player-details {
+            text-align: left;
+        }
+        
+        .modal-player-name {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .modal-player-rating {
+            color: var(--gold);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
         }
         
         .modal-buttons {
@@ -727,13 +1255,17 @@
         }
         
         .btn-accept {
-            background: linear-gradient(135deg, var(--green), #059669);
+            background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
             color: #000;
         }
         
+        .btn-accept:hover {
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+        
         .btn-reject {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid var(--red);
+            background: rgba(239, 68, 68, 0.15);
+            border: 2px solid var(--red);
             color: var(--red);
         }
         
@@ -742,15 +1274,138 @@
             color: white;
         }
         
+        /* Pontuação Info */
+        .points-info {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .points-info h4 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .points-info ul {
+            list-style: none;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+        
+        .points-info li {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .points-info .win { color: var(--green); }
+        .points-info .draw { color: var(--blue); }
+        .points-info .loss { color: var(--red); }
+        
+        /* Hidden */
         .hidden { display: none !important; }
         
+        /* Loading */
+        .loading-skeleton {
+            background: linear-gradient(90deg, var(--dark-lighter) 25%, var(--dark-light) 50%, var(--dark-lighter) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        .empty-state h4 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .card { padding: 30px 20px; }
-            .stats-grid { grid-template-columns: 1fr; }
-            .content-grid { grid-template-columns: 1fr; }
-            .dashboard { padding: 20px; }
-            .modal { padding: 30px 20px; }
-            .modal-buttons { flex-direction: column; }
+            .top-nav {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .nav-user {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .user-stats-mini {
+                display: none;
+            }
+            
+            .welcome-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .quick-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .modal {
+                padding: 30px 20px;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+            }
+            
+            .queue-box {
+                left: 20px;
+                right: 20px;
+                bottom: 20px;
+                min-width: auto;
+            }
+        }
+        
+        /* Animações adicionais */
+        .pulse-gold {
+            animation: pulseGold 2s infinite;
+        }
+        
+        @keyframes pulseGold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); }
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 20px currentColor;
         }
     </style>
 </head>
@@ -762,8 +1417,15 @@
     <div class="modal-overlay" id="challengeModal">
         <div class="modal">
             <div class="modal-icon">⚔️</div>
-            <h2>Desafiar <span id="challengeTargetName">Jogador</span>?</h2>
-            <p>Rating: <span id="challengeTargetRating">0</span> • <span id="challengeTargetStatus">Online</span></p>
+            <h2>Desafiar Jogador</h2>
+            <div class="modal-player-info">
+                <div class="modal-player-avatar" id="challengeTargetAvatar">?</div>
+                <div class="modal-player-details">
+                    <div class="modal-player-name" id="challengeTargetName">Jogador</div>
+                    <div class="modal-player-rating" id="challengeTargetRating">0 pts</div>
+                </div>
+            </div>
+            <p id="challengeTargetStatus">Online e pronto para jogar!</p>
             <div class="modal-buttons">
                 <button class="btn btn-accept" onclick="sendChallenge()">
                     <i class="fas fa-check"></i> Desafiar
@@ -778,9 +1440,16 @@
     <!-- MODAL: Receber Desafio -->
     <div class="modal-overlay" id="receiveChallengeModal">
         <div class="modal">
-            <div class="modal-icon" style="background: linear-gradient(135deg, var(--purple), #6d28d9); color: white;">🎯</div>
-            <h2>Desafio Recebido!</h2>
-            <p><strong id="challengerName">Jogador</strong> te desafiou para uma partida<br>Rating: <span id="challengerRating">0</span></p>
+            <div class="modal-icon" style="background: linear-gradient(135deg, var(--purple), var(--purple-dark)); color: white;">🎯</div>
+            <h2>Novo Desafio!</h2>
+            <div class="modal-player-info">
+                <div class="modal-player-avatar" id="challengerAvatar">?</div>
+                <div class="modal-player-details">
+                    <div class="modal-player-name" id="challengerName">Jogador</div>
+                    <div class="modal-player-rating" id="challengerRating">0 pts</div>
+                </div>
+            </div>
+            <p>Te desafiou para uma partida ranqueada!</p>
             <div class="modal-buttons">
                 <button class="btn btn-accept" onclick="acceptChallenge()">
                     <i class="fas fa-play"></i> Aceitar
@@ -801,12 +1470,24 @@
                 <p class="subtitle">Entre para jogar partidas ranqueadas</p>
             </div>
             
-            <button class="btn-google" onclick="signInWithGoogle()">
+            <button class="btn btn-google" onclick="signInWithGoogle()">
                 <i class="fab fa-google"></i>
                 <span>Continuar com Google</span>
             </button>
             
-            <p style="text-align: center; color: #71717a; font-size: 0.9em;">
+            <div class="points-info">
+                <h4><i class="fas fa-star"></i> Sistema de Pontuação</h4>
+                <ul>
+                    <li><span class="win">▲ +10 pontos</span> - Vitória</li>
+                    <li><span class="draw">● +5 pontos</span> - Empate (ambos)</li>
+                    <li><span class="loss">▼ -10 pontos</span> - Derrota</li>
+                    <li style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <i class="fas fa-shield-alt" style="color: var(--gold);"></i> Mínimo: 0 pontos (não fica negativo)
+                    </li>
+                </ul>
+            </div>
+            
+            <p style="text-align: center; color: var(--text-muted); font-size: 0.85em; margin-top: 20px;">
                 Ao entrar, você aceita os Termos de Serviço
             </p>
         </div>
@@ -829,8 +1510,9 @@
                     id="usernameInput" 
                     placeholder="Ex: MagnusCarlsen"
                     maxlength="20"
+                    autocomplete="off"
                 >
-                <div class="input-hint" id="usernameHint">
+                <div class="input-hint info" id="usernameHint">
                     <i class="fas fa-info-circle"></i>
                     <span>3-20 caracteres, apenas letras, números e _</span>
                 </div>
@@ -846,97 +1528,174 @@
         </div>
     </div>
     
-    <!-- TELA 3: DASHBOARD -->
+    <!-- TELA 3: DASHBOARD PROFISSIONAL -->
     <div class="dashboard" id="dashboardScreen">
-        <!-- Top Bar -->
-        <div class="top-bar">
-            <div class="user-info">
-                <div class="user-avatar" id="userAvatar">?</div>
-                <div class="user-details">
-                    <h3 id="userName">Carregando...</h3>
-                    <span id="userRating">Rating: 0</span>
-                </div>
-            </div>
-            <button class="logout-btn" onclick="signOut()">
-                <i class="fas fa-sign-out-alt"></i> Sair
-            </button>
-        </div>
-        
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon gold"><i class="fas fa-star"></i></div>
-                <div class="stat-value" id="statRating">0</div>
-                <div class="stat-label">Pontos</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon green"><i class="fas fa-trophy"></i></div>
-                <div class="stat-value" id="statWins">0</div>
-                <div class="stat-label">Vitórias</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon purple"><i class="fas fa-percentage"></i></div>
-                <div class="stat-value" id="statWinRate">0%</div>
-                <div class="stat-label">Taxa de Vitória</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon blue"><i class="fas fa-gamepad"></i></div>
-                <div class="stat-value" id="statGames">0</div>
-                <div class="stat-label">Partidas</div>
-            </div>
-        </div>
-        
-        <!-- Content -->
-        <div class="content-grid">
-            <!-- Ranking Global -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-crown"></i>
-                        Ranking Global
-                    </h3>
-                </div>
-                <ul class="ranking-list" id="rankingList">
-                    <li style="color: #71717a; text-align: center; padding: 40px;">
-                        Carregando ranking...
-                    </li>
-                </ul>
+        <!-- Top Navigation -->
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <span class="nav-logo">♔</span>
+                <span class="nav-title">Xadrez Pro Ultra</span>
             </div>
             
-            <!-- Jogadores -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">
-                        <i class="fas fa-users"></i>
-                        Jogadores
-                        <span style="color: var(--green); font-size: 0.7em; margin-left: 10px;">
-                            <i class="fas fa-circle" style="font-size: 0.5em;"></i>
-                            <span id="onlineCount">0</span> online
-                        </span>
-                    </h3>
+            <div class="nav-user">
+                <div class="user-stats-mini">
+                    <div class="mini-stat">
+                        <div class="mini-stat-value" id="navRating">0</div>
+                        <div class="mini-stat-label">Pontos</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-value" id="navRank">-</div>
+                        <div class="mini-stat-label">Rank</div>
+                    </div>
                 </div>
-                <ul class="online-list" id="onlineList">
-                    <li style="color: #71717a; text-align: center; padding: 20px;">
-                        Carregando jogadores...
-                    </li>
-                </ul>
                 
-                <div class="quick-match">
-                    <button class="btn-quick" onclick="startQuickMatch()">
-                        <i class="fas fa-bolt"></i>
-                        <span>Partida Rápida</span>
+                <div class="user-info" style="display: flex; align-items: center; gap: 12px;">
+                    <div class="user-avatar" id="userAvatar" style="
+                        width: 42px; height: 42px; border-radius: 50%;
+                        background: linear-gradient(135deg, var(--gold), var(--purple));
+                        display: flex; align-items: center; justify-content: center;
+                        font-weight: 700; color: #000; font-size: 1.2em;
+                    ">?</div>
+                    <div class="user-details" style="text-align: right;">
+                        <div id="navUsername" style="font-weight: 600; font-size: 0.95em;">Carregando...</div>
+                        <div id="navStatus" style="font-size: 0.8em; color: var(--green);">
+                            <i class="fas fa-circle" style="font-size: 0.6em; margin-right: 5px;"></i>Online
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-danger btn-sm" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="welcome-info">
+                    <h1>Olá, <span id="welcomeName">Jogador</span>! 👋</h1>
+                    <p>Pronto para sua próxima partida? O tabuleiro te espera!</p>
+                </div>
+                <div class="quick-actions">
+                    <button class="btn-action primary" onclick="startQuickMatch()">
+                        <i class="fas fa-bolt"></i> Partida Rápida
+                    </button>
+                    <button class="btn-action secondary" onclick="scrollToRanking()">
+                        <i class="fas fa-trophy"></i> Ver Ranking
                     </button>
                 </div>
             </div>
-        </div>
+            
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <h3 class="section-title"><i class="fas fa-chart-line"></i> Suas Estatísticas</h3>
+                <div class="stats-grid">
+                    <div class="stat-card gold">
+                        <div class="stat-icon"><i class="fas fa-star"></i></div>
+                        <div class="stat-value" id="statRating">0</div>
+                        <div class="stat-label">Pontos</div>
+                        <div class="stat-change" id="ratingChange"></div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-icon"><i class="fas fa-trophy"></i></div>
+                        <div class="stat-value" id="statWins">0</div>
+                        <div class="stat-label">Vitórias</div>
+                    </div>
+                    <div class="stat-card red">
+                        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                        <div class="stat-value" id="statLosses">0</div>
+                        <div class="stat-label">Derrotas</div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-icon"><i class="fas fa-handshake"></i></div>
+                        <div class="stat-value" id="statDraws">0</div>
+                        <div class="stat-label">Empates</div>
+                    </div>
+                    <div class="stat-card purple">
+                        <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                        <div class="stat-value" id="statWinRate">0%</div>
+                        <div class="stat-label">Aproveitamento</div>
+                    </div>
+                    <div class="stat-card gold">
+                        <div class="stat-icon"><i class="fas fa-gamepad"></i></div>
+                        <div class="stat-value" id="statGames">0</div>
+                        <div class="stat-label">Partidas</div>
+                    </div>
+                    <div class="stat-card green">
+                        <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                        <div class="stat-value" id="statStreak">0</div>
+                        <div class="stat-label">Sequência</div>
+                    </div>
+                    <div class="stat-card blue">
+                        <div class="stat-icon"><i class="fas fa-chart-bar"></i></div>
+                        <div class="stat-value" id="statBest">0</div>
+                        <div class="stat-label">Recorde</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Ranking Global -->
+                <div class="ranking-section" id="rankingSection">
+                    <div class="ranking-header">
+                        <h3 class="ranking-title">
+                            <i class="fas fa-crown"></i>
+                            Ranking Global
+                        </h3>
+                        <div class="ranking-filters">
+                            <button class="filter-btn active" onclick="filterRanking('all')">Todos</button>
+                            <button class="filter-btn" onclick="filterRanking('top10')">Top 10</button>
+                            <button class="filter-btn" onclick="filterRanking('friends')">Amigos</button>
+                        </div>
+                    </div>
+                    <ul class="ranking-list" id="rankingList">
+                        <li class="empty-state">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <h4>Carregando ranking...</h4>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <!-- Online Players -->
+                    <div class="online-section">
+                        <div class="section-header">
+                            <h3>
+                                <i class="fas fa-users"></i>
+                                Jogadores Online
+                            </h3>
+                            <span class="online-count" id="onlineCount">0</span>
+                        </div>
+                        <ul class="online-list" id="onlineList">
+                            <li class="empty-state" style="padding: 30px;">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Matchmaking -->
+                    <div class="matchmaking-card">
+                        <h3><i class="fas fa-bolt" style="color: var(--purple);"></i> Partida Rápida</h3>
+                        <p>Encontre um adversário automaticamente baseado no seu nível</p>
+                        <button class="btn-match" onclick="startQuickMatch()">
+                            <i class="fas fa-play"></i> Jogar Agora
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
     
     <!-- Fila de Espera -->
     <div class="queue-box" id="queueBox">
         <div class="queue-spinner"></div>
-        <div>
-            <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px;">Buscando Adversário</h4>
-            <p style="color: #a1a1aa; font-size: 0.9em;" id="queueTime">Tempo: 0s</p>
+        <div class="queue-info">
+            <h4>Buscando Adversário</h4>
+            <p id="queueTime">Tempo: 0s</p>
         </div>
         <button class="cancel-btn" onclick="cancelQueue()">Cancelar</button>
     </div>
@@ -972,6 +1731,8 @@
         let currentChallenge = null;
         let allPlayers = [];
         let pendingChallenges = new Map();
+        let currentRankingFilter = 'all';
+        let userRank = '-';
         
         // ==========================================
         // FUNÇÕES DE TELA
@@ -1014,6 +1775,11 @@
                 
                 if (userDoc.exists) {
                     userData = userDoc.data();
+                    // Garantir que rating não seja negativo
+                    if ((userData.rating || 0) < 0) {
+                        await resetUserRating(currentUser.uid);
+                        userData.rating = 0;
+                    }
                     startDashboard();
                 } else {
                     showScreen('username');
@@ -1022,6 +1788,61 @@
             } catch (error) {
                 showToast('Erro no login', error.message, 'error');
             }
+        }
+        
+        // ==========================================
+        // RESETAR PONTUAÇÃO (ZERAR TODOS)
+        // ==========================================
+        async function resetAllRatings() {
+            try {
+                const batch = db.batch();
+                
+                // Buscar todos os usuários
+                const usersSnapshot = await db.collection('users').get();
+                const statsSnapshot = await db.collection('stats').get();
+                
+                usersSnapshot.forEach(doc => {
+                    batch.update(doc.ref, {
+                        rating: 0,
+                        wins: 0,
+                        losses: 0,
+                        draws: 0,
+                        gamesPlayed: 0,
+                        winStreak: 0,
+                        bestWinStreak: 0,
+                        lastReset: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                
+                statsSnapshot.forEach(doc => {
+                    batch.update(doc.ref, {
+                        rating: 0,
+                        highestRating: 0,
+                        wins: 0,
+                        losses: 0,
+                        draws: 0,
+                        totalGames: 0,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                });
+                
+                await batch.commit();
+                showToast('Sistema Resetado', 'Todas as pontuações foram zeradas!', 'success');
+            } catch (error) {
+                console.error('Erro ao resetar:', error);
+                showToast('Erro', 'Não foi possível resetar as pontuações', 'error');
+            }
+        }
+        
+        async function resetUserRating(uid) {
+            await db.collection('users').doc(uid).update({
+                rating: 0,
+                lastReset: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            await db.collection('stats').doc(uid).update({
+                rating: 0,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
         }
         
         // ==========================================
@@ -1054,7 +1875,7 @@
             
             usernameInput.classList.remove('error');
             hint.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Verificando...</span>';
-            hint.className = 'input-hint';
+            hint.className = 'input-hint info';
             
             checkTimeout = setTimeout(async () => {
                 const snapshot = await db.collection('users')
@@ -1151,22 +1972,52 @@
             
             // GARANTE QUE RATING NUNCA SEJA NEGATIVO
             const safeRating = Math.max(0, userData.rating || 0);
+            const wins = userData.wins || 0;
+            const losses = userData.losses || 0;
+            const draws = userData.draws || 0;
+            const total = wins + losses + draws;
+            const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
+            const streak = userData.winStreak || 0;
+            const bestStreak = userData.bestWinStreak || 0;
             
             const initial = userData.username.charAt(0).toUpperCase();
             
+            // Nav
             document.getElementById('userAvatar').textContent = initial;
-            document.getElementById('userName').textContent = userData.username;
-            document.getElementById('userRating').textContent = `Pontos: ${safeRating}`;
+            document.getElementById('navUsername').textContent = userData.username;
+            document.getElementById('navRating').textContent = safeRating;
+            document.getElementById('navRank').textContent = userRank;
             
-            // MOSTRA RATING (SEMPRE 0 OU POSITIVO)
+            // Welcome
+            document.getElementById('welcomeName').textContent = userData.username;
+            
+            // Stats
             document.getElementById('statRating').textContent = safeRating;
-            document.getElementById('statWins').textContent = userData.wins || 0;
-            
-            const total = (userData.wins || 0) + (userData.losses || 0) + (userData.draws || 0);
-            const winRate = total > 0 ? Math.round((userData.wins || 0) / total * 100) : 0;
-            
+            document.getElementById('statWins').textContent = wins;
+            document.getElementById('statLosses').textContent = losses;
+            document.getElementById('statDraws').textContent = draws;
             document.getElementById('statWinRate').textContent = winRate + '%';
             document.getElementById('statGames').textContent = total;
+            document.getElementById('statStreak').textContent = streak;
+            document.getElementById('statBest').textContent = bestStreak;
+            
+            // Rating change indicator
+            const changeEl = document.getElementById('ratingChange');
+            if (userData.lastRatingChange) {
+                const change = userData.lastRatingChange;
+                if (change > 0) {
+                    changeEl.innerHTML = `<i class="fas fa-arrow-up"></i> +${change}`;
+                    changeEl.className = 'stat-change positive';
+                } else if (change < 0) {
+                    changeEl.innerHTML = `<i class="fas fa-arrow-down"></i> ${change}`;
+                    changeEl.className = 'stat-change negative';
+                } else {
+                    changeEl.innerHTML = '<i class="fas fa-minus"></i> 0';
+                    changeEl.className = 'stat-change';
+                }
+            } else {
+                changeEl.style.display = 'none';
+            }
         }
         
         // ==========================================
@@ -1194,7 +2045,7 @@
                     isOnline: true,
                     lastSeen: firebase.firestore.FieldValue.serverTimestamp()
                 });
-            } catch (e) {
+                       } catch (e) {
                 console.log('Erro ao atualizar status:', e);
             }
         }
@@ -1209,7 +2060,7 @@
                     if (doc.exists) {
                         userData = { ...userData, ...doc.data() };
                         // GARANTE RATING NÃO NEGATIVO
-                        if (userData.rating < 0) {
+                        if ((userData.rating || 0) < 0) {
                             userData.rating = 0;
                             db.collection('users').doc(currentUser.uid).update({ rating: 0 });
                         }
@@ -1218,17 +2069,26 @@
                 });
             listeners.push(userUnsub);
             
-            // Listener do ranking
+            // Listener do ranking global
             const rankingUnsub = db.collection('stats')
                 .orderBy('rating', 'desc')
-                .limit(20)
+                .limit(100)
                 .onSnapshot(snapshot => {
                     updateRanking(snapshot.docs);
                     allPlayers = snapshot.docs.map(doc => ({
                         uid: doc.data().uid,
                         username: doc.data().username,
-                        rating: Math.max(0, doc.data().rating || 0)
+                        rating: Math.max(0, doc.data().rating || 0),
+                        wins: doc.data().wins || 0,
+                        losses: doc.data().losses || 0,
+                        draws: doc.data().draws || 0,
+                        totalGames: doc.data().totalGames || 0
                     })).filter(p => p.uid !== currentUser.uid);
+                    
+                    // Calcular rank do usuário
+                    const userIndex = snapshot.docs.findIndex(doc => doc.data().uid === currentUser.uid);
+                    userRank = userIndex !== -1 ? `#${userIndex + 1}` : '-';
+                    document.getElementById('navRank').textContent = userRank;
                     
                     updatePlayersList();
                 });
@@ -1239,29 +2099,76 @@
             const list = document.getElementById('rankingList');
             
             if (docs.length === 0) {
-                list.innerHTML = '<li style="color: #71717a; text-align: center;">Nenhum jogador ainda</li>';
+                list.innerHTML = `
+                    <li class="empty-state">
+                        <i class="fas fa-chess-board"></i>
+                        <h4>Nenhum jogador ainda</h4>
+                        <p>Seja o primeiro a jogar!</p>
+                    </li>
+                `;
                 return;
             }
             
-            list.innerHTML = docs.map((doc, index) => {
+            let filteredDocs = docs;
+            if (currentRankingFilter === 'top10') {
+                filteredDocs = docs.slice(0, 10);
+            }
+            
+            list.innerHTML = filteredDocs.map((doc, index) => {
                 const data = doc.data();
                 const isYou = data.uid === currentUser.uid;
-                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-other';
-                const rankNum = index < 3 ? '' : (index + 1);
+                const rank = index + 1;
+                const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
+                const rankNum = rank <= 3 ? '' : rank;
                 const safeRating = Math.max(0, data.rating || 0);
+                const totalGames = data.totalGames || (data.wins || 0) + (data.losses || 0) + (data.draws || 0);
+                const winRate = totalGames > 0 ? Math.round((data.wins || 0) / totalGames * 100) : 0;
+                
+                // Determinar tendência (simulada baseada em win rate)
+                const trend = winRate > 55 ? 'up' : winRate < 45 ? 'down' : '';
+                const trendIcon = trend === 'up' ? '<i class="fas fa-arrow-up"></i>' : trend === 'down' ? '<i class="fas fa-arrow-down"></i>' : '';
                 
                 return `
-                    <li class="ranking-item ${isYou ? 'you' : ''}" onclick="openChallengeModal('${data.uid}', '${data.username}', ${safeRating}, ${isYou ? true : false})">
+                    <li class="ranking-item ${isYou ? 'you' : ''} ${rank <= 3 ? 'top-3' : ''}" onclick="openChallengeModal('${data.uid}', '${data.username}', ${safeRating}, ${!isYou})">
                         <div class="rank-number ${rankClass}">${rankNum}</div>
                         <div class="rank-avatar">${data.username.charAt(0).toUpperCase()}</div>
                         <div class="rank-info">
-                            <div class="rank-name">${data.username} ${isYou ? '(Você)' : ''}</div>
-                            <div class="rank-stats">${data.wins || 0} vitórias • ${data.totalGames || 0} jogos</div>
+                            <div class="rank-name">
+                                ${data.username} 
+                                ${isYou ? '<span class="rank-badge">VOCÊ</span>' : ''}
+                                ${rank === 1 ? '👑' : ''}
+                            </div>
+                            <div class="rank-stats">
+                                <span><i class="fas fa-trophy" style="color: var(--green);"></i> ${data.wins || 0}</span>
+                                <span><i class="fas fa-times-circle" style="color: var(--red);"></i> ${data.losses || 0}</span>
+                                <span><i class="fas fa-handshake" style="color: var(--blue);"></i> ${data.draws || 0}</span>
+                                <span><i class="fas fa-percentage"></i> ${winRate}%</span>
+                            </div>
                         </div>
-                        <div class="rank-rating">${safeRating}</div>
+                        <div class="rank-rating">
+                            ${safeRating} pts
+                            <div class="rank-trend ${trend}">${trendIcon}</div>
+                        </div>
                     </li>
                 `;
             }).join('');
+        }
+        
+        function filterRanking(filter) {
+            currentRankingFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Recarregar ranking com filtro
+            db.collection('stats')
+                .orderBy('rating', 'desc')
+                .limit(filter === 'top10' ? 10 : 100)
+                .get()
+                .then(snapshot => updateRanking(snapshot.docs));
+        }
+        
+        function scrollToRanking() {
+            document.getElementById('rankingSection').scrollIntoView({ behavior: 'smooth' });
         }
         
         async function updatePlayersList() {
@@ -1271,9 +2178,18 @@
                     .get();
                 
                 const onlineUids = new Set();
+                const inGameUids = new Set();
+                
                 onlineSnapshot.forEach(doc => {
                     if (doc.id !== currentUser.uid) {
                         onlineUids.add(doc.id);
+                        const data = doc.data();
+                        // Verificar se está em jogo (última atividade recente)
+                        const lastSeen = data.lastSeen?.toDate?.() || new Date();
+                        const minutesSinceActivity = (Date.now() - lastSeen.getTime()) / 60000;
+                        if (minutesSinceActivity < 2 && data.currentGame) {
+                            inGameUids.add(doc.id);
+                        }
                     }
                 });
                 
@@ -1282,30 +2198,43 @@
                 const list = document.getElementById('onlineList');
                 
                 if (allPlayers.length === 0) {
-                    list.innerHTML = '<li style="color: #71717a; text-align: center;">Nenhum jogador disponível</li>';
+                    list.innerHTML = `
+                        <li class="empty-state" style="padding: 30px;">
+                            <i class="fas fa-user-slash"></i>
+                            <h4>Nenhum jogador online</h4>
+                        </li>
+                    `;
                     return;
                 }
                 
+                // Ordenar: online primeiro, depois por rating
                 const sortedPlayers = [...allPlayers].sort((a, b) => {
                     const aOnline = onlineUids.has(a.uid);
                     const bOnline = onlineUids.has(b.uid);
-                    return bOnline - aOnline;
-                });
+                    if (aOnline !== bOnline) return bOnline - aOnline;
+                    return b.rating - a.rating;
+                }).slice(0, 15); // Mostrar apenas top 15
                 
                 list.innerHTML = sortedPlayers.map(player => {
                     const isOnline = onlineUids.has(player.uid);
+                    const isInGame = inGameUids.has(player.uid);
+                    const statusClass = isInGame ? 'ingame' : isOnline ? '' : 'offline';
+                    const statusText = isInGame ? 'Em jogo' : isOnline ? 'Disponível' : 'Offline';
+                    const statusBadgeClass = isInGame ? 'busy' : '';
+                    
                     return `
-                        <li class="online-item" onclick="openChallengeModal('${player.uid}', '${player.username}', ${player.rating}, ${isOnline})">
+                        <li class="online-item" onclick="openChallengeModal('${player.uid}', '${player.username}', ${player.rating}, ${isOnline && !isInGame})">
                             <div class="online-avatar">
                                 ${player.username.charAt(0).toUpperCase()}
-                                <span class="online-status ${isOnline ? '' : 'offline'}"></span>
+                                <span class="online-status ${statusClass}"></span>
                             </div>
                             <div class="online-info">
                                 <div class="online-name">${player.username}</div>
-                                <div class="online-rating">Pontos: ${player.rating} • ${isOnline ? 'Online' : 'Offline'}</div>
+                                <div class="online-rating">${player.rating} pts • ${player.totalGames || 0} jogos</div>
                             </div>
-                            <button class="challenge-btn ${isOnline ? '' : 'offline'}">
-                                Desafiar
+                            <span class="online-status-text ${statusBadgeClass}">${statusText}</span>
+                            <button class="challenge-btn" ${!isOnline || isInGame ? 'disabled' : ''}>
+                                ${isInGame ? 'Ocupado' : 'Desafiar'}
                             </button>
                         </li>
                     `;
@@ -1316,19 +2245,27 @@
         }
         
         // ==========================================
-        // SISTEMA DE DESAFIOS - CORRIGIDO (SEM PERMISSÃO NEGADA)
+        // SISTEMA DE DESAFIOS
         // ==========================================
-        function openChallengeModal(uid, username, rating, isOnline) {
+        function openChallengeModal(uid, username, rating, isAvailable) {
             if (uid === currentUser.uid) {
                 showToast('Erro', 'Você não pode desafiar a si mesmo', 'error');
                 return;
             }
             
-            selectedPlayer = { uid, username, rating, isOnline };
+            if (!isAvailable) {
+                showToast('Jogador indisponível', 'Este jogador está offline ou em partida', 'warning');
+                return;
+            }
+            
+            selectedPlayer = { uid, username, rating, isAvailable };
             document.getElementById('challengeTargetName').textContent = username;
-            document.getElementById('challengeTargetRating').textContent = rating;
-            document.getElementById('challengeTargetStatus').textContent = isOnline ? 'Online' : 'Offline (receberá notificação)';
-            document.getElementById('challengeTargetStatus').style.color = isOnline ? 'var(--green)' : '#71717a';
+            document.getElementById('challengeTargetRating').textContent = rating + ' pts';
+            document.getElementById('challengeTargetAvatar').textContent = username.charAt(0).toUpperCase();
+            
+            const statusText = isAvailable ? 'Online e pronto para jogar!' : 'Indisponível no momento';
+            document.getElementById('challengeTargetStatus').textContent = statusText;
+            
             openModal('challengeModal');
         }
         
@@ -1353,14 +2290,10 @@
             };
             
             try {
-                // CORREÇÃO: Cria apenas o challenge, sem tentar escrever no documento do outro usuário
-                // Isso evita erro de permissão
                 await db.collection('challenges').doc(challengeId).set(challengeData);
                 
                 showToast('Desafio Enviado!', 
-                    selectedPlayer.isOnline 
-                        ? `Aguardando ${selectedPlayer.username}...` 
-                        : `${selectedPlayer.username} receberá ao entrar`, 
+                    `Aguardando ${selectedPlayer.username}...`, 
                     'info');
                 
                 // ESCUTA RESPOSTA EM TEMPO REAL
@@ -1405,7 +2338,7 @@
             }
         }
         
-        // ESCUTA DESAFIOS RECEBIDOS - CORRIGIDO
+        // ESCUTA DESAFIOS RECEBIDOS
         function listenForChallenges() {
             if (!currentUser) return;
             
@@ -1413,7 +2346,6 @@
                 window.challengeListener();
             }
             
-            // ESCUTA DESAFIOS ONDE O USUÁRIO É O DESTINATÁRIO
             window.challengeListener = db.collection('challenges')
                 .where('toUid', '==', currentUser.uid)
                 .where('status', '==', 'pending')
@@ -1421,7 +2353,7 @@
                     snapshot.docChanges().forEach(change => {
                         if (change.type === 'added') {
                             const challenge = change.doc.data();
-                            // Verifica se não expirou
+                            // Verificar se não expirou
                             const expires = challenge.expiresAt?.toDate();
                             if (!expires || expires > new Date()) {
                                 challenge.docId = change.doc.id;
@@ -1446,7 +2378,8 @@
             
             currentChallenge = challenge;
             document.getElementById('challengerName').textContent = challenge.fromUsername;
-            document.getElementById('challengerRating').textContent = challenge.fromRating;
+            document.getElementById('challengerRating').textContent = challenge.fromRating + ' pts';
+            document.getElementById('challengerAvatar').textContent = challenge.fromUsername.charAt(0).toUpperCase();
             openModal('receiveChallengeModal');
         }
         
@@ -1530,7 +2463,6 @@
                 };
                 
                 sessionStorage.setItem('currentUser', JSON.stringify(userSessionData));
-                
                 sessionStorage.setItem('currentGame', JSON.stringify({
                     gameId: gameId,
                     timestamp: Date.now()
@@ -1546,24 +2478,76 @@
         }
         
         // ==========================================
-        // NOVO SISTEMA DE PONTUAÇÃO
+        // SISTEMA DE PONTUAÇÃO ATUALIZADO
         // ==========================================
-        // Função para atualizar pontuação após jogo (chamar no game.html)
+        // Função chamada pelo game.html quando termina a partida
         async function updateRatingAfterGame(gameId, winnerUid, loserUid, isDraw) {
             try {
                 const batch = db.batch();
                 
                 if (isDraw) {
-                    // Empate: ninguém ganha pontos
+                    // EMPATE: AMBOS GANHAM 5 PONTOS
                     const gameRef = db.collection('games').doc(gameId);
                     batch.update(gameRef, { 
                         status: 'finished',
                         result: 'draw',
                         finishedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
+                    
+                    // Atualizar ambos os jogadores com +5 pontos
+                    const [player1Doc, player2Doc] = await Promise.all([
+                        db.collection('users').doc(winnerUid).get(), // winnerUid é player1 em empate
+                        db.collection('users').doc(loserUid).get()   // loserUid é player2 em empate
+                    ]);
+                    
+                    // Player 1
+                    if (player1Doc.exists) {
+                        const p1Data = player1Doc.data();
+                        const p1Current = Math.max(0, p1Data.rating || 0);
+                        const p1New = p1Current + 5;
+                        
+                        batch.update(db.collection('users').doc(winnerUid), {
+                            rating: p1New,
+                            draws: (p1Data.draws || 0) + 1,
+                            gamesPlayed: (p1Data.gamesPlayed || 0) + 1,
+                            winStreak: 0, // Reset streak
+                            lastRatingChange: 5,
+                            lastGame: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        batch.update(db.collection('stats').doc(winnerUid), {
+                            rating: p1New,
+                            draws: (p1Data.draws || 0) + 1,
+                            totalGames: (p1Data.gamesPlayed || 0) + 1,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                    
+                    // Player 2
+                    if (player2Doc.exists) {
+                        const p2Data = player2Doc.data();
+                        const p2Current = Math.max(0, p2Data.rating || 0);
+                        const p2New = p2Current + 5;
+                        
+                        batch.update(db.collection('users').doc(loserUid), {
+                            rating: p2New,
+                            draws: (p2Data.draws || 0) + 1,
+                            gamesPlayed: (p2Data.gamesPlayed || 0) + 1,
+                            winStreak: 0, // Reset streak
+                            lastRatingChange: 5,
+                            lastGame: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        batch.update(db.collection('stats').doc(loserUid), {
+                            rating: p2New,
+                            draws: (p2Data.draws || 0) + 1,
+                            totalGames: (p2Data.gamesPlayed || 0) + 1,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                    
                 } else {
-                    // VITÓRIA: +10 pontos para vencedor
-                    // DERROTA: -10 pontos para perdedor (mínimo 0)
+                    // VITÓRIA/DERROTA: Vencedor +10, Perdedor -10 (mínimo 0)
                     
                     // Busca ratings atuais
                     const [winnerDoc, loserDoc] = await Promise.all([
@@ -1574,45 +2558,48 @@
                     const winnerData = winnerDoc.data();
                     const loserData = loserDoc.data();
                     
-                    const winnerCurrent = winnerData.rating || 0;
-                    const loserCurrent = loserData.rating || 0;
+                    const winnerCurrent = Math.max(0, winnerData.rating || 0);
+                    const loserCurrent = Math.max(0, loserData.rating || 0);
                     
                     // Vencedor ganha 10
                     const winnerNew = winnerCurrent + 10;
+                    const winnerStreak = (winnerData.winStreak || 0) + 1;
+                    const winnerBestStreak = Math.max(winnerStreak, winnerData.bestWinStreak || 0);
                     
                     // Perdedor perde 10, mas não fica negativo
                     const loserNew = Math.max(0, loserCurrent - 10);
+                    const loserChange = loserNew - loserCurrent; // Será 0 ou -10
                     
                     // Atualiza vencedor
-                    const winnerRef = db.collection('users').doc(winnerUid);
-                    batch.update(winnerRef, {
+                    batch.update(db.collection('users').doc(winnerUid), {
                         rating: winnerNew,
                         wins: (winnerData.wins || 0) + 1,
                         gamesPlayed: (winnerData.gamesPlayed || 0) + 1,
+                        winStreak: winnerStreak,
+                        bestWinStreak: winnerBestStreak,
+                        lastRatingChange: 10,
                         lastGame: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
-                    // Atualiza stats do vencedor
-                    const winnerStatsRef = db.collection('stats').doc(winnerUid);
-                    batch.update(winnerStatsRef, {
+                    batch.update(db.collection('stats').doc(winnerUid), {
                         rating: winnerNew,
                         wins: (winnerData.wins || 0) + 1,
                         totalGames: (winnerData.gamesPlayed || 0) + 1,
+                        highestRating: Math.max(winnerNew, winnerData.highestRating || 0),
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
                     // Atualiza perdedor
-                    const loserRef = db.collection('users').doc(loserUid);
-                    batch.update(loserRef, {
+                    batch.update(db.collection('users').doc(loserUid), {
                         rating: loserNew,
                         losses: (loserData.losses || 0) + 1,
                         gamesPlayed: (loserData.gamesPlayed || 0) + 1,
+                        winStreak: 0, // Reset streak
+                        lastRatingChange: loserChange,
                         lastGame: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
-                    // Atualiza stats do perdedor
-                    const loserStatsRef = db.collection('stats').doc(loserUid);
-                    batch.update(loserStatsRef, {
+                    batch.update(db.collection('stats').doc(loserUid), {
                         rating: loserNew,
                         losses: (loserData.losses || 0) + 1,
                         totalGames: (loserData.gamesPlayed || 0) + 1,
@@ -1655,6 +2642,7 @@
                 document.getElementById('queueTime').textContent = `Tempo: ${elapsed}s`;
             }, 1000);
             
+            // Simulação de matchmaking (em produção, isso seria um matchmaking real)
             setTimeout(() => {
                 const gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
                 
@@ -1686,7 +2674,6 @@
             };
             
             sessionStorage.setItem('currentUser', JSON.stringify(userSessionData));
-            
             sessionStorage.setItem('currentGame', JSON.stringify({
                 gameId: gameId,
                 timestamp: Date.now()
@@ -1734,20 +2721,21 @@
         // ==========================================
         // TOAST
         // ==========================================
-        function showToast(title, message, type = 'info') {
+        function showToast(title, message, type = 'info', duration = 5000) {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             
             const icons = {
-                success: 'fa-check',
-                error: 'fa-times',
-                info: 'fa-info'
+                success: 'fa-check-circle',
+                error: 'fa-times-circle',
+                info: 'fa-info-circle',
+                warning: 'fa-exclamation-triangle'
             };
             
-            toast.className = 'toast';
+            toast.className = `toast ${type}`;
             toast.innerHTML = `
-                <div class="toast-icon toast-${type}">
-                    <i class="fas ${icons[type]}"></i>
+                <div class="toast-icon">
+                    <i class="fas ${icons[type] || icons.info}"></i>
                 </div>
                 <div class="toast-content">
                     <h4>${title}</h4>
@@ -1760,7 +2748,7 @@
             setTimeout(() => {
                 toast.style.animation = 'slideIn 0.4s reverse';
                 setTimeout(() => toast.remove(), 400);
-            }, 5000);
+            }, duration);
         }
         
         // ==========================================
@@ -1772,7 +2760,8 @@
                 db.collection('users').doc(user.uid).get().then(doc => {
                     if (doc.exists) {
                         userData = doc.data();
-                        if (userData.rating < 0) {
+                        // Garantir rating não negativo
+                        if ((userData.rating || 0) < 0) {
                             userData.rating = 0;
                             db.collection('users').doc(user.uid).update({ rating: 0 });
                         }
@@ -1800,6 +2789,8 @@
         window.acceptChallenge = acceptChallenge;
         window.rejectChallenge = rejectChallenge;
         window.closeModal = closeModal;
+        window.filterRanking = filterRanking;
+        window.scrollToRanking = scrollToRanking;
     </script>
 </body>
 </html>
