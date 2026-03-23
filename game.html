@@ -2424,6 +2424,53 @@ let gameState = {
     opponentPsychology: null
 };
 
+        // Carregar dados do usuário do sessionStorage
+function loadUserData() {
+    try {
+        const savedUser = sessionStorage.getItem('currentUser');
+        if (savedUser) {
+            userData = JSON.parse(savedUser);
+            console.log('✅ UserData carregado do sessionStorage:', userData);
+            
+            // Se tiver dados do usuário, atualizar gameState
+            if (userData.username) {
+                gameState.myName = userData.username;
+                gameState.isFernando = userData.username.toLowerCase() === 'fernando';
+                if (userData.uid) gameState.userId = userData.uid;
+            }
+        } else {
+            console.log('⚠️ Nenhum userData no sessionStorage');
+            // Fallback: tentar recuperar do gameState salvo
+            const lastGameId = localStorage.getItem('chessLastGameId');
+            if (lastGameId) {
+                const savedState = localStorage.getItem('chessGameState_' + lastGameId);
+                if (savedState) {
+                    try {
+                        const parsed = JSON.parse(savedState);
+                        if (parsed.myName) {
+                            gameState.myName = parsed.myName;
+                            gameState.isFernando = parsed.isFernando || false;
+                            userData = {
+                                username: parsed.myName,
+                                uid: null,
+                                isFernando: parsed.isFernando || false
+                            };
+                            console.log('✅ UserData recuperado do localStorage:', userData);
+                        }
+                    } catch (e) {
+                        console.error('Erro ao parse savedState:', e);
+                    }
+                }
+            }
+        }
+    } catch (e) {
+        console.error('❌ Erro ao carregar userData:', e);
+    }
+}
+
+// Chamar imediatamente
+loadUserData();
+
 let gameRef = null;
 let unsubscribe = null;
 let chatUnsubscribe = null;
@@ -6252,40 +6299,71 @@ function updateTurnIndicator() {
 function showCheckmateAnimation(winner) {
     isCheckmateAnimating = true;
     
-    async function saveGameStats(winner) {
-        if (!userData || !userData.uid) return;
-        
-        const isWin = winner === gameState.myColor;
-        const updates = {};
-        
-        if (isWin) {
-            updates.wins = firebase.firestore.FieldValue.increment(1);
-            updates.winStreak = firebase.firestore.FieldValue.increment(1);
-        } else {
-            updates.losses = firebase.firestore.FieldValue.increment(1);
-            updates.winStreak = 0;
+        async function saveGameStats(winner) {
+        if (!userData || !userData.uid) {
+            console.log('Sem userData, pulando saveGameStats');
+            return;
         }
         
-        updates.gamesPlayed = firebase.firestore.FieldValue.increment(1);
-        updates.lastGameAt = firebase.firestore.FieldValue.serverTimestamp();
+        const isWin = winner === gameState.myColor;
+        const myUid = userData.uid;
+        const gameId = gameState.gameId;
         
+        // Determinar oponente
+        const opponentColor = gameState.myColor === 'white' ? 'black' : 'white';
+        const opponentData = gameState.players[opponentColor];
+        
+        console.log('🔍 Buscando oponente:', opponentColor, opponentData);
+        
+        // Buscar UID do oponente na collection users
+        let opponentUid = null;
+        if (opponentData && opponentData.name) {
+            try {
+                const oppSnapshot = await db.collection('users')
+                    .where('username', '==', opponentData.name)
+                    .get();
+                if (!oppSnapshot.empty) {
+                    opponentUid = oppSnapshot.docs[0].id;
+                    console.log('✅ Oponente encontrado:', opponentData.name, 'UID:', opponentUid);
+                } else {
+                    console.log('⚠️ Oponente não encontrado na collection users:', opponentData.name);
+                }
+            } catch (e) {
+                console.log('❌ Erro ao buscar oponente:', e);
+            }
+        }
+        
+        if (!opponentUid) {
+            console.log('❌ Não foi possível identificar oponente, abortando atualização de pontuação');
+            return;
+        }
+        
+        console.log('🏆 Fim de jogo:', {
+            winner: winner,
+            myColor: gameState.myColor,
+            myUid: myUid,
+            opponentUid: opponentUid,
+            isWin: isWin,
+            gameId: gameId
+        });
+        
+        // Chamar atualização de pontuação
         try {
-            await db.collection('users').doc(userData.uid).update(updates);
-            
-            const currentRating = userData.rating || 1200;
-            const newRating = calculateNewRating(currentRating, 1200, isWin ? 1 : 0);
-            
-            await db.collection('stats').doc(userData.uid).update({
-                totalGames: firebase.firestore.FieldValue.increment(1),
-                wins: isWin ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
-                losses: !isWin ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
-                rating: newRating,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            console.log('Stats salvo:', isWin ? 'VITÓRIA' : 'DERROTA', 'Rating:', newRating);
+            if (isWin) {
+                // Eu ganhei
+                console.log('✅ Chamando updateRatingAfterGame: VITÓRIA');
+                await updateRatingAfterGame(gameId, myUid, opponentUid, false);
+            } else if (winner === 'draw') {
+                // Empate
+                console.log('✅ Chamando updateRatingAfterGame: EMPATE');
+                await updateRatingAfterGame(gameId, myUid, opponentUid, true);
+            } else {
+                // Eu perdi (o oponente ganhou)
+                console.log('✅ Chamando updateRatingAfterGame: DERROTA');
+                await updateRatingAfterGame(gameId, opponentUid, myUid, false);
+            }
         } catch (error) {
-            console.error('Erro ao salvar stats:', error);
+            console.error('❌ Erro ao atualizar pontuação:', error);
         }
     }
     
@@ -6630,6 +6708,161 @@ document.addEventListener('keydown', (e) => {
         executeMove(move.from, {row: move.to.row, col: move.to.col}, move.to);
     }
 });
+
+        // ==========================================
+// ATUALIZAR PONTUAÇÃO APÓS JOGO
+// ==========================================
+async function updateRatingAfterGame(gameId, winnerUid, loserUid, isDraw) {
+    try {
+        const batch = db.batch();
+        
+        if (isDraw) {
+            // EMPATE: AMBOS GANHAM 5 PONTOS
+            const gameRef = db.collection('games').doc(gameId);
+            batch.update(gameRef, { 
+                status: 'finished',
+                result: 'draw',
+                finishedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Atualizar ambos os jogadores com +5 pontos
+            const [player1Doc, player2Doc] = await Promise.all([
+                db.collection('users').doc(winnerUid).get(), // winnerUid é player1 em empate
+                db.collection('users').doc(loserUid).get()   // loserUid é player2 em empate
+            ]);
+            
+            // Player 1
+            if (player1Doc.exists) {
+                const p1Data = player1Doc.data();
+                const p1Current = Math.max(0, p1Data.rating || 0);
+                const p1New = p1Current + 5;
+                
+                batch.update(db.collection('users').doc(winnerUid), {
+                    rating: p1New,
+                    draws: (p1Data.draws || 0) + 1,
+                    gamesPlayed: (p1Data.gamesPlayed || 0) + 1,
+                    winStreak: 0,
+                    lastRatingChange: 5,
+                    lastGame: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                batch.update(db.collection('stats').doc(winnerUid), {
+                    rating: p1New,
+                    draws: (p1Data.draws || 0) + 1,
+                    totalGames: (p1Data.gamesPlayed || 0) + 1,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            
+            // Player 2
+            if (player2Doc.exists) {
+                const p2Data = player2Doc.data();
+                const p2Current = Math.max(0, p2Data.rating || 0);
+                const p2New = p2Current + 5;
+                
+                batch.update(db.collection('users').doc(loserUid), {
+                    rating: p2New,
+                    draws: (p2Data.draws || 0) + 1,
+                    gamesPlayed: (p2Data.gamesPlayed || 0) + 1,
+                    winStreak: 0,
+                    lastRatingChange: 5,
+                    lastGame: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                batch.update(db.collection('stats').doc(loserUid), {
+                    rating: p2New,
+                    draws: (p2Data.draws || 0) + 1,
+                    totalGames: (p2Data.gamesPlayed || 0) + 1,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+            
+        } else {
+            // VITÓRIA/DERROTA: Vencedor +10, Perdedor -10 (mínimo 0)
+            
+            // Busca ratings atuais
+            const [winnerDoc, loserDoc] = await Promise.all([
+                db.collection('users').doc(winnerUid).get(),
+                db.collection('users').doc(loserUid).get()
+            ]);
+            
+            const winnerData = winnerDoc.data();
+            const loserData = loserDoc.data();
+            
+            const winnerCurrent = Math.max(0, winnerData.rating || 0);
+            const loserCurrent = Math.max(0, loserData.rating || 0);
+            
+            // Vencedor ganha 10
+            const winnerNew = winnerCurrent + 10;
+            const winnerStreak = (winnerData.winStreak || 0) + 1;
+            const winnerBestStreak = Math.max(winnerStreak, winnerData.bestWinStreak || 0);
+            
+            // Perdedor perde 10, mas não fica negativo
+            const loserNew = Math.max(0, loserCurrent - 10);
+            const loserChange = loserNew - loserCurrent;
+            
+            // Atualiza vencedor
+            batch.update(db.collection('users').doc(winnerUid), {
+                rating: winnerNew,
+                wins: (winnerData.wins || 0) + 1,
+                gamesPlayed: (winnerData.gamesPlayed || 0) + 1,
+                winStreak: winnerStreak,
+                bestWinStreak: winnerBestStreak,
+                lastRatingChange: 10,
+                lastGame: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            batch.update(db.collection('stats').doc(winnerUid), {
+                rating: winnerNew,
+                wins: (winnerData.wins || 0) + 1,
+                totalGames: (winnerData.gamesPlayed || 0) + 1,
+                highestRating: Math.max(winnerNew, winnerData.highestRating || 0),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Atualiza perdedor
+            batch.update(db.collection('users').doc(loserUid), {
+                rating: loserNew,
+                losses: (loserData.losses || 0) + 1,
+                gamesPlayed: (loserData.gamesPlayed || 0) + 1,
+                winStreak: 0,
+                lastRatingChange: loserChange,
+                lastGame: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            batch.update(db.collection('stats').doc(loserUid), {
+                rating: loserNew,
+                losses: (loserData.losses || 0) + 1,
+                totalGames: (loserData.gamesPlayed || 0) + 1,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            
+            // Atualiza jogo
+            const gameRef = db.collection('games').doc(gameId);
+            batch.update(gameRef, {
+                status: 'finished',
+                winner: winnerUid,
+                loser: loserUid,
+                winnerPoints: winnerNew,
+                loserPoints: loserNew,
+                pointsExchanged: 10,
+                finishedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+        
+        await batch.commit();
+        console.log('✅ Pontuação atualizada com sucesso!');
+        showToast('Pontuação Atualizada!', 'Seus pontos foram atualizados no ranking.', 'success', 5000);
+        
+    } catch (error) {
+        console.error('❌ Erro ao atualizar pontuação:', error);
+        showToast('Erro', 'Não foi possível atualizar pontuação: ' + error.message, 'error');
+    }
+}
+
+// Expor função global
+window.updateRatingAfterGame = updateRatingAfterGame;
+        
 </script>
     
 </body>
