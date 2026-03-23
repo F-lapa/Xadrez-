@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -2058,6 +2059,7 @@
             display: block;
         }
     </style>
+<base target="_blank">
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
@@ -5806,7 +5808,7 @@ function showFinalPosition() {
     miniBoard.className = 'checkmate-board';
     
     for (let r = 0; r < 8; r++) {
-        for (let c = 0; c <Script 8; c++) {
+        for (let c = 0; c < 8; c++) {
             const square = document.createElement('div');
             square.className = `checkmate-square ${(r + c) % 2 === 0 ? 'light' : 'dark'}`;
             
@@ -5973,7 +5975,7 @@ document.addEventListener('keydown', (e) => {
         executeMove(move.from, {row: move.to.row, col: move.to.col}, move.to);
     }
 });
-</Script>
+</script>
     
 </body>
 </html>
