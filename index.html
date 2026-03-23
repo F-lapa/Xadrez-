@@ -1765,31 +1765,49 @@
         // ==========================================
         // LOGIN COM GOOGLE
         // ==========================================
-        async function signInWithGoogle() {
-            try {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                const result = await auth.signInWithPopup(provider);
-                currentUser = result.user;
-                
-                const userDoc = await db.collection('users').doc(currentUser.uid).get();
-                
-                if (userDoc.exists) {
-                    userData = userDoc.data();
-                    // Garantir que rating não seja negativo
-                    if ((userData.rating || 0) < 0) {
-                        await resetUserRating(currentUser.uid);
-                        userData.rating = 0;
-                    }
-                    startDashboard();
-                } else {
-                    showScreen('username');
-                    document.getElementById('usernameInput').focus();
-                }
-            } catch (error) {
-                showToast('Erro no login', error.message, 'error');
-            }
-        }
+       // ==========================================
+// LOGIN COM GOOGLE - CORRIGIDO
+// ==========================================
+async function signInWithGoogle() {
+    try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const result = await auth.signInWithPopup(provider);
+        currentUser = result.user;
         
+        // VERIFICA SE É NOVO USUÁRIO
+        const isNewUser = result.additionalUserInfo?.isNewUser || false;
+        
+        const userDoc = await db.collection('users').doc(currentUser.uid).get();
+        
+        if (userDoc.exists) {
+            userData = userDoc.data();
+            
+            // FORÇAR RESET SE VEIO DE SISTEMA ANTIGO (rating > 100 ou negativo)
+            const currentRating = parseInt(userData.rating) || 0;
+            if (currentRating > 100 || currentRating < 0 || isNewUser) {
+                console.log('Resetando usuário para rating 0...');
+                await resetUserRating(currentUser.uid);
+                userData = {
+                    ...userData,
+                    rating: 0,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0,
+                    gamesPlayed: 0,
+                    winStreak: 0,
+                    bestWinStreak: 0,
+                    lastRatingChange: 0
+                };
+            }
+            startDashboard();
+        } else {
+            showScreen('username');
+            document.getElementById('usernameInput').focus();
+        }
+    } catch (error) {
+        showToast('Erro no login', error.message, 'error');
+    }
+} 
         // ==========================================
         // RESETAR PONTUAÇÃO (ZERAR TODOS)
         // ==========================================
@@ -1895,77 +1913,83 @@
         });
         
         // ==========================================
-        // CONFIRMAR NOME - RATING 0 (ZERADO)
-        // ==========================================
-        async function confirmUsername() {
-            const username = usernameInput.value.trim();
-            const btn = document.getElementById('confirmBtn');
-            
-            if (!username || btn.disabled) return;
-            
-            btn.disabled = true;
-            btn.textContent = 'Criando...';
-            
-            try {
-                // CRIA USUÁRIO COM RATING 0 (ZERADO)
-                const userDataToSave = {
-                    uid: currentUser.uid,
-                    email: currentUser.email,
-                    displayName: currentUser.displayName,
-                    username: username,
-                    usernameLower: username.toLowerCase(),
-                    photoURL: currentUser.photoURL,
-                    rating: 0, // <<<< RATING ZERO
-                    wins: 0,
-                    losses: 0,
-                    draws: 0,
-                    gamesPlayed: 0,
-                    winStreak: 0,
-                    bestWinStreak: 0,
-                    isOnline: true,
-                    lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                
-                await db.collection('users').doc(currentUser.uid).set(userDataToSave);
-                
-                // STATS TAMBÉM COM RATING 0
-                await db.collection('stats').doc(currentUser.uid).set({
-                    uid: currentUser.uid,
-                    username: username,
-                    rating: 0, // <<<< RATING ZERO
-                    highestRating: 0,
-                    totalGames: 0,
-                    wins: 0,
-                    losses: 0,
-                    draws: 0,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                userData = userDataToSave;
-                
-                showToast('Bem-vindo!', 'Conta criada! Pontos iniciais: 0', 'success');
-                startDashboard();
-                
-            } catch (error) {
-                console.error('Erro ao criar conta:', error);
-                showToast('Erro', 'Não foi possível criar conta: ' + error.message, 'error');
-                btn.disabled = false;
-                btn.textContent = 'Confirmar';
-            }
-        }
+// CONFIRMAR NOME - RATING 0 GARANTIDO
+// ==========================================
+async function confirmUsername() {
+    const username = usernameInput.value.trim();
+    const btn = document.getElementById('confirmBtn');
+    
+    if (!username || btn.disabled) return;
+    
+    btn.disabled = true;
+    btn.textContent = 'Criando...';
+    
+    try {
+        // CRIA USUÁRIO COM RATING 0 (ZERADO) - GARANTIDO
+        const userDataToSave = {
+            uid: currentUser.uid,
+            email: currentUser.email,
+            displayName: currentUser.displayName,
+            username: username,
+            usernameLower: username.toLowerCase(),
+            photoURL: currentUser.photoURL,
+            rating: 0, // <<<< RATING ZERO GARANTIDO
+            wins: 0,
+            losses: 0,
+            draws: 0,
+            gamesPlayed: 0,
+            winStreak: 0,
+            bestWinStreak: 0,
+            lastRatingChange: 0,
+            isOnline: true,
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        await db.collection('users').doc(currentUser.uid).set(userDataToSave);
+        
+        // STATS TAMBÉM COM RATING 0
+        await db.collection('stats').doc(currentUser.uid).set({
+            uid: currentUser.uid,
+            username: username,
+            rating: 0, // <<<< RATING ZERO GARANTIDO
+            highestRating: 0,
+            totalGames: 0,
+            wins: 0,
+            losses: 0,
+            draws: 0,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        userData = userDataToSave;
+        
+        showToast('Bem-vindo!', 'Conta criada! Pontos iniciais: 0', 'success');
+        startDashboard();
+        
+    } catch (error) {
+        console.error('Erro ao criar conta:', error);
+        showToast('Erro', 'Não foi possível criar conta: ' + error.message, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Confirmar';
+    }
+}
         
         // ==========================================
         // DASHBOARD
         // ==========================================
-        function startDashboard() {
-            showScreen('dashboard');
-            setupOnlinePresence();
-            updateUserInfo();
-            startListeners();
-            listenForChallenges();
-        }
+       function startDashboard() {
+    showScreen('dashboard');
+    setupOnlinePresence();
+    updateUserInfo();
+    startListeners();
+    listenForChallenges();
+    
+    // MOSTRAR PAINEL ADMIN APENAS PARA FERNANDO
+    if (userData.username.toLowerCase() === 'fernando') {
+        document.getElementById('adminPanel').style.display = 'flex';
+    }
+}
         
         function updateUserInfo() {
             if (!userData) return;
@@ -2791,6 +2815,89 @@
         window.closeModal = closeModal;
         window.filterRanking = filterRanking;
         window.scrollToRanking = scrollToRanking;
+
+        // ==========================================
+// FUNÇÕES DE RESET - ADICIONAR NO FINAL
+// ==========================================
+
+// Reset usuário individual
+async function resetUserRating(uid) {
+    try {
+        const batch = db.batch();
+        
+        batch.update(db.collection('users').doc(uid), {
+            rating: 0,
+            wins: 0,
+            losses: 0,
+            draws: 0,
+            gamesPlayed: 0,
+            winStreak: 0,
+            bestWinStreak: 0,
+            lastRatingChange: 0,
+            lastReset: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        batch.update(db.collection('stats').doc(uid), {
+            rating: 0,
+            highestRating: 0,
+            wins: 0,
+            losses: 0,
+            draws: 0,
+            totalGames: 0,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        await batch.commit();
+        return true;
+    } catch (error) {
+        console.error('Erro ao resetar:', error);
+        return false;
+    }
+}
+
+// Reset TODOS os usuários
+async function resetAllRatings() {
+    if (!confirm('⚠️ ATENÇÃO!\n\nIsso vai ZERAR a pontuação de TODOS os jogadores!\n\nTem certeza?')) return;
+    if (!confirm('Confirmação final: Todos ficarão com 0 pontos. Continuar?')) return;
+    
+    try {
+        showToast('Resetando...', 'Zerando todos', 'info', 3000);
+        
+        const usersSnapshot = await db.collection('users').get();
+        const statsSnapshot = await db.collection('stats').get();
+        
+        let batch = db.batch();
+        let count = 0;
+        
+        for (const doc of usersSnapshot.docs) {
+            batch.update(doc.ref, {
+                rating: 0, wins: 0, losses: 0, draws: 0,
+                gamesPlayed: 0, winStreak: 0, bestWinStreak: 0,
+                lastReset: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            if (++count >= 400) { await batch.commit(); batch = db.batch(); count = 0; }
+        }
+        
+        for (const doc of statsSnapshot.docs) {
+            batch.update(doc.ref, {
+                rating: 0, highestRating: 0, wins: 0, losses: 0,
+                draws: 0, totalGames: 0, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            if (++count >= 400) { await batch.commit(); batch = db.batch(); count = 0; }
+        }
+        
+        if (count > 0) await batch.commit();
+        
+        showToast('✅ Reset Completo!', 'Todos zerados!', 'success', 5000);
+        if (userData) { userData.rating = 0; updateUserInfo(); }
+    } catch (error) {
+        showToast('❌ Erro', error.message, 'error');
+    }
+}
+
+// Expor funções globais
+window.resetAllRatings = resetAllRatings;
+window.resetUserRating = resetUserRating;
     </script>
 </body>
 </html>
