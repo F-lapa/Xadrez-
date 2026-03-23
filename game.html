@@ -2058,6 +2058,49 @@
         .overlay-backdrop.show {
             display: block;
         }
+
+        /* Animação de loading para IA */
+.loading-spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Animação de pulso para alertas críticos */
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+}
+
+/* Melhorias no painel de análise */
+.god-reasoning {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.god-reasoning::-webkit-scrollbar {
+    width: 6px;
+}
+
+.god-reasoning::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.3);
+    border-radius: 3px;
+}
+
+.god-reasoning::-webkit-scrollbar-thumb {
+    background: var(--gold);
+    border-radius: 3px;
+}
     </style>
 <base target="_blank">
 </head>
@@ -2153,34 +2196,37 @@
             </div>
         </div>
 
-        <!-- PAINEL DO MODO DEUS -->
-        <div class="god-mode-panel" id="godModePanel">
-            <div class="god-title">👑 MODO DEUS ATIVO 👑</div>
-            <div class="god-move-display" id="godMoveDisplay">
-                <span class="god-move-piece" id="godPieceIcon">♔</span>
-                <div class="god-move-text" id="godMoveText">Analisando...</div>
-            </div>
-            <div class="god-reasoning" id="godReasoning">
-                Calculando a jogada perfeita...
-            </div>
-            <div class="god-stats" id="godStats">
-                <div class="god-stat">
-                    <div class="god-stat-value" id="godEval">0.0</div>
-                    <div class="god-stat-label">Avaliação</div>
-                </div>
-                <div class="god-stat">
-                    <div class="god-stat-value" id="godDepth">6</div>
-                    <div class="god-stat-label">Profundidade</div>
-                </div>
-                <div class="god-stat">
-                    <div class="god-stat-value" id="godTime">0s</div>
-                    <div class="god-stat-label">Tempo</div>
-                </div>
-            </div>
-            <button class="god-execute-btn" id="godExecuteBtn" onclick="executeGodMove()" style="display:none;">
-                ✨ EXECUTAR JOGADA PERFEITA ✨
-            </button>
+        <!-- PAINEL DO MODO DEUS ULTRA -->
+<div class="god-mode-panel" id="godModePanel">
+    <div class="god-title">👑 MODO DEUS ULTRA 👑</div>
+    <div style="text-align:center; color:#aaa; font-size:0.85em; margin-bottom:15px; font-family:Orbitron;">
+        IA Profundidade 4 • Alpha-Beta Pruning • Defesa Proativa
+    </div>
+    <div class="god-move-display" id="godMoveDisplay">
+        <span class="god-move-piece" id="godPieceIcon">♔</span>
+        <div class="god-move-text" id="godMoveText">Analisando...</div>
+    </div>
+    <div class="god-reasoning" id="godReasoning">
+        Inicializando motor de xadrez ultra-inteligente...
+    </div>
+    <div class="god-stats" id="godStats">
+        <div class="god-stat">
+            <div class="god-stat-value" id="godEval">0.00</div>
+            <div class="god-stat-label">Avaliação</div>
         </div>
+        <div class="god-stat">
+            <div class="god-stat-value" id="godDepth">4</div>
+            <div class="god-stat-label">Profundidade</div>
+        </div>
+        <div class="god-stat">
+            <div class="god-stat-value" id="godTime">0s</div>
+            <div class="god-stat-label">Tempo</div>
+        </div>
+    </div>
+    <button class="god-execute-btn" id="godExecuteBtn" onclick="executeGodMove()" style="display:none;">
+        ✨ EXECUTAR JOGADA ULTRA ✨
+    </button>
+</div>
 
         <div class="board-container" id="boardContainer">
             <div id="chessboard"></div>
@@ -4455,64 +4501,13 @@ function calculateGodMove() {
     const timeEl = document.getElementById('godTime');
     const executeBtn = document.getElementById('godExecuteBtn');
     
-    moveText.textContent = '🔮 Analisando 15+ intenções do adversário...';
+    moveText.textContent = '🔮 Analisando com IA Ultra-Profunda...';
     pieceIcon.textContent = '⚡';
-    reasoning.textContent = 'Consultando oráculo divino... Processando perfil psicológico...';
+    reasoning.innerHTML = '<div class="loading-spinner"></div>Calculando 4 camadas de profundidade...<br>Analisando todas as ameaças do oponente...';
     executeBtn.style.display = 'none';
     
+    // Usar a nova análise ultra-inteligente
     const analysis = generatePredictiveAnalysis(gameState.myColor);
-    
-    if (gameState.opponentIntentions && gameState.opponentIntentions.length > 0) {
-        analysis.bestMoves.forEach(move => {
-            const testBoard = simulateMove(gameState.board, {from: move.from, to: move.to});
-            
-            let intentionScore = 0;
-            
-            gameState.opponentIntentions.forEach(intention => {
-                const blocked = doesMoveBlockIntention(testBoard, move, intention);
-                if (blocked) {
-                    intentionScore += intention.probability * 2;
-                }
-                
-                const counter = doesMoveCounterIntention(testBoard, move, intention);
-                if (counter) {
-                    intentionScore += intention.probability;
-                }
-            });
-            
-            const criticalIgnored = gameState.opponentIntentions
-                .filter(i => i.priority === 'critical' && i.probability > 70)
-                .some(i => !doesMoveBlockIntention(testBoard, move, i));
-            
-            if (criticalIgnored) {
-                move.score -= 300;
-            }
-            
-            move.score += intentionScore;
-        });
-        
-        analysis.bestMoves.sort((a, b) => b.score - a.score);
-    }
-    
-    if (gameState.opponentPsychology) {
-        const psych = gameState.opponentPsychology;
-        
-        analysis.bestMoves.forEach(move => {
-            if (psych.preferredStyle === 'muito agressivo') {
-                if (move.safety && move.safety.kingSafety > 0) move.score += 50;
-            } else if (psych.preferredStyle === 'defensivo') {
-                if (move.safety && move.safety.positionalAdvantage > 30) move.score += 30;
-            }
-            
-            if (psych.blunderProne > 30) {
-                if (move.safety && move.safety.tacticalMotifs && move.safety.tacticalMotifs.list.length > 0) {
-                    move.score += 40;
-                }
-            }
-        });
-        
-        analysis.bestMoves.sort((a, b) => b.score - a.score);
-    }
     
     if (analysis.bestMoves.length === 0) {
         moveText.textContent = '❌ Sem movimentos válidos';
@@ -4534,76 +4529,736 @@ function calculateGodMove() {
     moveText.innerHTML = `${fromSq} <span style="color:#00ffff">→</span> ${toSq}`;
     
     const evalScore = analysis.evaluation;
-    evalEl.textContent = (evalScore > 0 ? '+' : '') + evalScore.toFixed(1);
-    evalEl.style.color = evalScore > 0 ? '#00ff00' : evalScore < 0 ? '#ff6666' : '#ffff00';
+    evalEl.textContent = (evalScore > 0 ? '+' : '') + evalScore.toFixed(2);
+    evalEl.style.color = evalScore > 1 ? '#00ff00' : evalScore > 0.5 ? '#88ff00' : evalScore > -0.5 ? '#ffff00' : evalScore > -1 ? '#ff8800' : '#ff0000';
     
-    let reasonText = '';
+    // Construir explicação detalhada
+    let reasonHTML = '';
+    const d = bestMove.details;
     
-    if (bestMove.to.capture) {
+    // Alerta de defesa prioritária
+    if (analysis.opponentThreats && analysis.opponentThreats.length > 0) {
+        const critical = analysis.opponentThreats.filter(t => t.severity === 'critical');
+        if (critical.length > 0) {
+            reasonHTML += `<div style="background:rgba(255,0,0,0.3); border:2px solid #ff0000; padding:10px; border-radius:10px; margin-bottom:15px;">
+                <strong style="color:#ff6666;">🚨 DEFESA PRIORITÁRIA!</strong><br>
+                ${critical.map(t => `• ${t.description}`).join('<br>')}
+            </div>`;
+        }
+    }
+    
+    // Breakdown da avaliação
+    reasonHTML += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.9em; margin-bottom:15px;">`;
+    
+    if (d.defense > 0) {
+        reasonHTML += `<div style="color:#00ff00;">🛡️ Defesa: +${Math.round(d.defense)}</div>`;
+    }
+    if (d.tactical > 0) {
+        reasonHTML += `<div style="color:#ff00ff;">⚡ Tático: +${Math.round(d.tactical)}</div>`;
+    }
+    reasonHTML += `<div style="color:#00ffff;">🔍 Busca: ${d.search > 0 ? '+' : ''}${Math.round(d.search)}</div>`;
+    reasonHTML += `<div style="color:#ffd700;">📐 Posição: ${d.positional > 0 ? '+' : ''}${Math.round(d.positional)}</div>`;
+    reasonHTML += `<div style="color:#ff8800;">👑 Rei: ${d.kingSafety > 0 ? '+' : ''}${Math.round(d.kingSafety)}</div>`;
+    reasonHTML += `<div style="color:#88ff00;">🎯 Centro: ${d.center > 0 ? '+' : ''}${Math.round(d.center)}</div>`;
+    reasonHTML += `</div>`;
+    
+    // Motivo principal
+    if (bestMove.capture) {
         const target = gameState.board[bestMove.to.row][bestMove.to.col];
-        reasonText += `🎯 Captura de ${PIECES[target]} (+${PIECE_VALUES[target.toLowerCase()]/100})<br>`;
+        reasonHTML += `<div style="color:#00ff00; font-weight:bold; margin-bottom:10px;">
+            🎯 CAPTURA: ${PIECES[target]} (+${PIECE_VALUES[target.toLowerCase()]/100})
+        </div>`;
     }
     
-    if (bestMove.safety.tacticalMotifs && bestMove.safety.tacticalMotifs.list.length > 0) {
-        reasonText += `⚡ ${bestMove.safety.tacticalMotifs.list[0]}<br>`;
+    if (bestMove.to.promotion) {
+        reasonHTML += `<div style="color:#ffd700; font-weight:bold; margin-bottom:10px;">
+            👑 PROMOÇÃO IMINENTE!
+        </div>`;
     }
     
-    if (gameState.opponentIntentions) {
-        const blockedIntentions = gameState.opponentIntentions.filter(i => 
-            doesMoveBlockIntention(gameState.board, bestMove, i)
-        );
-        
-        if (blockedIntentions.length > 0) {
-            reasonText += `<br><span style="color:#00ff00;">🛡️ Bloqueia intenções do adversário:</span><br>`;
-            blockedIntentions.slice(0, 2).forEach(i => {
-                const typeInfo = INTENTION_TYPES[i.type];
-                reasonText += `   • ${typeInfo.icon} ${typeInfo.name} (${i.probability}%)<br>`;
-            });
-        }
-        
-        const criticalNotBlocked = gameState.opponentIntentions
-            .filter(i => i.priority === 'critical' && !doesMoveBlockIntention(gameState.board, bestMove, i));
-        
-        if (criticalNotBlocked.length > 0) {
-            reasonText += `<br><span style="color:#ff6666;">⚠️ ATENÇÃO: Intenções críticas não bloqueadas:</span><br>`;
-            criticalNotBlocked.forEach(i => {
-                const typeInfo = INTENTION_TYPES[i.type];
-                reasonText += `   • ${typeInfo.icon} ${typeInfo.name}<br>`;
-            });
-        }
+    // Linha principal calculada
+    reasonHTML += `<div style="background:rgba(0,0,0,0.4); padding:10px; border-radius:8px; margin-top:10px;">
+        <strong style="color:#00ffff;">📊 Análise:</strong><br>
+        <span style="font-size:0.9em;">Profundidade: ${analysis.depth} ply | Nós avaliados: ~${Math.pow(20, analysis.depth).toLocaleString()}</span>
+    </div>`;
+    
+    // Alertas especiais
+    if (analysis.isCheckmate) {
+        reasonHTML += `<div style="color:#ff0000; font-weight:bold; font-size:1.2em; margin-top:10px; animation:pulse 1s infinite;">
+            ☠️ XEQUE-MATE DETECTADO! JOGO ACABADO!
+        </div>`;
     }
     
-    if (gameState.opponentPsychology) {
-        const psych = gameState.opponentPsychology;
-        reasonText += `<br><span style="color:#ff00ff;">📊 Perfil do adversário: ${psych.preferredStyle}</span>`;
-        if (psych.blunderProne > 20) {
-            reasonText += `<br><span style="color:#ffaa00;">💡 Adversário propenso a erros (${psych.blunderProne}%) - considere complicações</span>`;
-        }
-    }
-    
-    const advantage = bestMove.score > 0 ? `+${Math.round(bestMove.score)}` : Math.round(bestMove.score);
-    reasonText += `<br><br><strong style="color:#ffd700">Score: ${advantage} pontos</strong>`;
-    
-    reasoning.innerHTML = reasonText;
+    reasoning.innerHTML = reasonHTML;
     
     executeBtn.style.display = 'block';
+    executeBtn.innerHTML = '✨ EXECUTAR JOGADA ULTRA ✨';
     
     highlightGodMove(bestMove.from, bestMove.to);
     
-    const captureText = bestMove.to.capture ? ` (captura ${PIECES[gameState.board[bestMove.to.row][bestMove.to.col]]})` : '';
-    const blockedCount = gameState.opponentIntentions ? 
-        gameState.opponentIntentions.filter(i => doesMoveBlockIntention(gameState.board, bestMove, i)).length : 0;
+    // Notificação
+    const captureText = bestMove.capture ? ` (captura ${PIECES[gameState.board[bestMove.to.row][bestMove.to.col]]})` : '';
+    const defenseText = d.defense > 0 ? ` - Defende ${Math.round(d.defense/100)} ameaças!` : '';
     
     showToast(
-        '👑 Jogada Divina Calculada!', 
-        `Mova ${PIECES[piece]} de ${fromSq} para ${toSq}${captureText}${blockedCount > 0 ? ` - Bloqueia ${blockedCount} intenções!` : ''}`,
+        '👑 IA Ultra Calculou!', 
+        `Melhor jogada: ${fromSq}→${toSq}${captureText}${defenseText}`,
         'god',
         6000
     );
     
     const turnIndicator = document.getElementById('turnIndicator');
-    turnIndicator.textContent = '⚡ SUA VEZ - MODO DEUS ATIVO ⚡';
+    turnIndicator.textContent = '⚡ SUA VEZ - IA ULTRA ATIVA ⚡';
     turnIndicator.classList.add('god-suggestion');
+}
+function quiescenceSearch(board, alpha, beta, color, originalColor, depth) {
+    const standPat = evaluateBoard(board, originalColor);
+    
+    if (depth === 0) {
+        return standPat;
+    }
+    
+    if (standPat >= beta) {
+        return beta;
+    }
+    if (alpha < standPat) {
+        alpha = standPat;
+    }
+    
+    // Apenas movimentos de captura e xeque na quiescence
+    const moves = generateAllMoves(board, color).filter(m => 
+        m.capture || m.promotion || givesCheck(board, m, color)
+    );
+    
+    const orderedMoves = orderMoves(moves, board, color);
+    
+    for (let move of orderedMoves) {
+        // Delta pruning - ignorar capturas claramente ruins
+        if (move.capture) {
+            const targetValue = PIECE_VALUES[move.capture.toLowerCase()];
+            const attackerValue = PIECE_VALUES[move.piece.toLowerCase()];
+            if (standPat + targetValue + 200 < alpha) {
+                continue; // Provavelmente não vale a pena
+            }
+        }
+        
+        const newBoard = simulateMove(board, move);
+        const score = -quiescenceSearch(newBoard, -beta, -alpha, color === 'white' ? 'black' : 'white', originalColor, depth - 1);
+        
+        if (score >= beta) {
+            return beta;
+        }
+        if (score > alpha) {
+            alpha = score;
+        }
+    }
+    
+    return alpha;
+}
+
+function orderMoves(moves, board, color) {
+    return moves.sort((a, b) => {
+        let scoreA = 0, scoreB = 0;
+        
+        // MVV-LVA (Most Valuable Victim - Least Valuable Aggressor)
+        if (a.capture) scoreA += PIECE_VALUES[a.capture.toLowerCase()] * 10 - PIECE_VALUES[a.piece.toLowerCase()];
+        if (b.capture) scoreB += PIECE_VALUES[b.capture.toLowerCase()] * 10 - PIECE_VALUES[b.piece.toLowerCase()];
+        
+        // Promoções
+        if (a.promotion) scoreA += 800;
+        if (b.promotion) scoreB += 800;
+        
+        // Xeques
+        if (givesCheck(board, a, color)) scoreA += 200;
+        if (givesCheck(board, b, color)) scoreB += 200;
+        
+        return scoreB - scoreA;
+    });
+}
+
+function givesCheck(board, move, color) {
+    const testBoard = simulateMove(board, move);
+    const opponentColor = color === 'white' ? 'black' : 'white';
+    const kingPos = findKing(testBoard, opponentColor);
+    if (!kingPos) return false;
+    return isSquareAttacked(kingPos.row, kingPos.col, opponentColor, testBoard);
+}
+
+function evaluateBoard(board, color) {
+    let score = 0;
+    
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const piece = board[r] && board[r][c];
+            if (!piece) continue;
+            
+            const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
+            const type = piece.toLowerCase();
+            const value = PIECE_VALUES[type];
+            
+            // Valor material
+            let pieceScore = value;
+            
+            // Tabela de peças-quadrados
+            if (PST[type]) {
+                const row = pieceColor === 'white' ? 7 - r : r;
+                pieceScore += PST[type][row][c];
+            }
+            
+            // Bônus para peças ativas (próximas do centro)
+            const centerDist = Math.abs(r - 3.5) + Math.abs(c - 3.5);
+            pieceScore += Math.max(0, (7 - centerDist) * 5);
+            
+            // Penalidade para peças bloqueadas
+            if (type === 'n' || type === 'b') {
+                const moves = getValidMoves(r, c, board, pieceColor);
+                if (moves.length < 3) pieceScore -= 20;
+            }
+            
+            if (pieceColor === color) {
+                score += pieceScore;
+            } else {
+                score -= pieceScore;
+            }
+        }
+    }
+    
+    return score;
+}
+
+function analyzeOpponentThreats(board, opponentColor) {
+    const threats = [];
+    const myColor = opponentColor === 'white' ? 'black' : 'white';
+    
+    // 1. Ameaças de mate
+    const mateThreats = findMateThreats(board, opponentColor);
+    mateThreats.forEach(t => {
+        threats.push({
+            type: 'mate',
+            severity: 'critical',
+            move: t,
+            description: 'Ameaça de xeque-mate!',
+            value: 99999
+        });
+    });
+    
+    // 2. Capturas de peças valiosas
+    const captures = findCaptureMoves(board, opponentColor);
+    captures.filter(c => c.value >= 300).forEach(c => {
+        threats.push({
+            type: 'capture',
+            severity: c.value >= 500 ? 'critical' : 'high',
+            move: c,
+            description: `Captura de ${PIECES[c.target]} (+${c.value/100})`,
+            value: c.value
+        });
+    });
+    
+    // 3. Garfos (forks)
+    const tacticalMoves = findTacticalMoves(board, opponentColor);
+    tacticalMoves.filter(t => t.description.includes('Garfo')).forEach(t => {
+        threats.push({
+            type: 'fork',
+            severity: 'high',
+            move: t,
+            description: t.description,
+            value: t.score
+        });
+    });
+    
+    // 4. Ataques ao rei
+    const kingAttacks = findKingAttackMoves(board, opponentColor);
+    kingAttacks.forEach(k => {
+        threats.push({
+            type: 'king_attack',
+            severity: k.severity >= 3 ? 'critical' : 'high',
+            move: k,
+            description: k.description,
+            value: k.severity * 100
+        });
+    });
+    
+    // 5. Descobertos
+    tacticalMoves.filter(t => t.description.includes('Descoberto')).forEach(t => {
+        threats.push({
+            type: 'discovered',
+            severity: 'medium',
+            move: t,
+            description: 'Ataque descoberto',
+            value: 150
+        });
+    });
+    
+    // 6. Peões passados
+    const pawnMoves = findPawnPushMoves(board, opponentColor);
+    pawnMoves.filter(p => p.promotionThreat).forEach(p => {
+        threats.push({
+            type: 'promotion',
+            severity: 'high',
+            move: p,
+            description: 'Peão ameaça promoção!',
+            value: 800
+        });
+    });
+    
+    return threats.sort((a, b) => b.value - a.value);
+}
+
+function evaluateDefense(board, move, threats, color) {
+    let score = 0;
+    const testBoard = simulateMove(gameState.board, move);
+    
+    for (let threat of threats) {
+        // Verifica se o movimento bloqueia a ameaça
+        const blocked = doesMoveBlockThreat(testBoard, threat, color);
+        if (blocked) {
+            score += threat.value * 2; // Bônus alto por defender
+        }
+        
+        // Verifica se captura a peça ameaçadora
+        if (threat.move && 
+            move.to.row === threat.move.to.row && 
+            move.to.col === threat.move.to.col) {
+            score += threat.value * 1.5; // Bônus por capturar atacante
+        }
+        
+        // Verifica se move a peça ameaçada para segurança
+        if (threat.type === 'capture' && threat.move) {
+            const threatenedPiece = gameState.board[threat.move.to.row][threat.move.to.col];
+            if (threatenedPiece && 
+                move.from.row === threat.move.to.row && 
+                move.from.col === threat.move.to.col) {
+                // Estamos movendo a peça ameaçada
+                if (!willPieceBeHanging(testBoard, move.to, color)) {
+                    score += threat.value; // Salvou a peça
+                }
+            }
+        }
+    }
+    
+    return score;
+}
+
+function doesMoveBlockThreat(board, threat, color) {
+    if (!threat.move) return false;
+    
+    // Verifica se o rei ainda está em xeque (para ameaças de mate)
+    if (threat.type === 'mate' || threat.type === 'king_attack') {
+        const kingPos = findKing(board, color);
+        if (kingPos && !isSquareAttacked(kingPos.row, kingPos.col, color, board)) {
+            return true; // Rei não está mais atacado
+        }
+    }
+    
+    // Verifica se a peça ameaçadora foi capturada ou bloqueada
+    const threatTo = threat.move.to;
+    const pieceThere = board[threatTo.row] && board[threatTo.row][threatTo.col];
+    
+    // Se a peça ameaçadora não está mais na casa de destino (foi capturada ou bloqueada)
+    if (threat.type === 'capture') {
+        const target = threat.move.target;
+        // Verifica se nossa peça ainda está lá
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                if (board[r] && board[r][c] === target) {
+                    // A peça ainda existe, verifica se está defendida agora
+                    if (isSquareDefended(r, c, color, board).length > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    
+    return false;
+}
+
+function willPieceBeHanging(board, pos, color) {
+    const piece = board[pos.row] && board[pos.row][pos.col];
+    if (!piece) return false;
+    
+    const isAttacked = isSquareAttacked(pos.row, pos.col, color, board);
+    const isDefended = isSquareDefended(pos.row, pos.col, color, board).length > 0;
+    
+    return isAttacked && !isDefended;
+}
+
+function ultraPositionalEvaluation(board, color, move) {
+    let score = 0;
+    const opponentColor = color === 'white' ? 'black' : 'white';
+    
+    // Controle de arquivos abertos
+    for (let c = 0; c < 8; c++) {
+        let hasPawn = false;
+        for (let r = 0; r < 8; r++) {
+            const p = board[r] && board[r][c];
+            if (p && p.toLowerCase() === 'p') {
+                hasPawn = true;
+                break;
+            }
+        }
+        if (!hasPawn) {
+            // Arquivo aberto - torres e damas são mais valiosas aqui
+            for (let r = 0; r < 8; r++) {
+                const p = board[r] && board[r][c];
+                if (p && (p.toLowerCase() === 'r' || p.toLowerCase() === 'q')) {
+                    const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+                    if (pieceColor === color) score += 25;
+                    else score -= 25;
+                }
+            }
+        }
+    }
+    
+    // Pares de bispos
+    const myBishops = countPieces(board, color, 'b');
+    const oppBishops = countPieces(board, opponentColor, 'b');
+    if (myBishops >= 2) score += 50;
+    if (oppBishops >= 2) score -= 50;
+    
+    // Cavaleiros fortes (outposts)
+    const myOutposts = findOutposts(board, color);
+    const oppOutposts = findOutposts(board, opponentColor);
+    score += myOutposts.length * 30;
+    score -= oppOutposts.length * 30;
+    
+    // Espaço (peões avançados)
+    const mySpace = calculateSpace(board, color);
+    const oppSpace = calculateSpace(board, opponentColor);
+    score += (mySpace - oppSpace) * 10;
+    
+    return score;
+}
+
+function countPieces(board, color, type) {
+    let count = 0;
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const p = board[r] && board[r][c];
+            if (p && p.toLowerCase() === type) {
+                const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+                if (pieceColor === color) count++;
+            }
+        }
+    }
+    return count;
+}
+
+function findOutposts(board, color) {
+    const outposts = [];
+    const opponentColor = color === 'white' ? 'black' : 'white';
+    const pawnDir = color === 'white' ? -1 : 1;
+    
+    for (let r = 1; r < 7; r++) {
+        for (let c = 0; c < 8; c++) {
+            const p = board[r] && board[r][c];
+            if (!p || p.toLowerCase() !== 'n') continue;
+            const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+            if (pieceColor !== color) continue;
+            
+            // Verifica se é protegido por peão
+            let protectedByPawn = false;
+            for (let dc of [-1, 1]) {
+                const pr = r - pawnDir;
+                const pc = c + dc;
+                if (isValid(pr, pc)) {
+                    const pawn = board[pr] && board[pr][pc];
+                    if (pawn && pawn.toLowerCase() === 'p' && 
+                        (color === 'white' ? pawn === pawn.toUpperCase() : pawn === pawn.toLowerCase())) {
+                        protectedByPawn = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!protectedByPawn) continue;
+            
+            // Verifica se não pode ser atacado por peões inimigos
+            let canBeAttacked = false;
+            for (let dc of [-1, 1]) {
+                const pr = r + pawnDir;
+                const pc = c + dc;
+                if (isValid(pr, pc)) {
+                    const enemyPawn = board[pr] && board[pr][pc];
+                    if (enemyPawn && enemyPawn.toLowerCase() === 'p' &&
+                        (opponentColor === 'white' ? enemyPawn === enemyPawn.toUpperCase() : enemyPawn === enemyPawn.toLowerCase())) {
+                        canBeAttacked = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!canBeAttacked) {
+                outposts.push({row: r, col: c});
+            }
+        }
+    }
+    
+    return outposts;
+}
+
+function calculateSpace(board, color) {
+    let space = 0;
+    const backRank = color === 'white' ? 6 : 1;
+    const direction = color === 'white' ? -1 : 1;
+    
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const p = board[r] && board[r][c];
+            if (p && p.toLowerCase() === 'p') {
+                const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+                if (pieceColor === color) {
+                    const advancement = color === 'white' ? 6 - r : r - 1;
+                    space += advancement;
+                }
+            }
+        }
+    }
+    
+    return space;
+}
+
+function evaluateTacticalMotifs(board, move, color) {
+    let score = 0;
+    const opponentColor = color === 'white' ? 'black' : 'white';
+    const piece = board[move.to.row] && board[move.to.row][move.to.col];
+    
+    if (!piece) return 0;
+    
+    // Garfo
+    const attacks = getAttacks(move.to.row, move.to.col, board, piece);
+    let highValueAttacks = 0;
+    for (let att of attacks) {
+        const target = board[att.row] && board[att.row][att.col];
+        if (target && isEnemy(piece, target) && PIECE_VALUES[target.toLowerCase()] >= 300) {
+            highValueAttacks++;
+        }
+    }
+    if (highValueAttacks >= 2) {
+        score += 200;
+    }
+    
+    // Pin (enlace simplificado)
+    // Verifica se a jogada cria um enlace
+    
+    // Skewer (espeto)
+    
+    // Bateria (bateria de peças)
+    
+    return score;
+}
+
+function evaluateKingSafety(board, color) {
+    let score = 0;
+    const kingPos = findKing(board, color);
+    if (!kingPos) return -500;
+    
+    const opponentColor = color === 'white' ? 'black' : 'white';
+    
+    // Penalidade se o rei está exposto
+    const pawnShield = countPawnShield(board, kingPos, color);
+    score += pawnShield * 15;
+    
+    // Penalidade por arquivos abertos perto do rei
+    const openFilesNearKing = countOpenFilesNearKing(board, kingPos);
+    score -= openFilesNearKing * 30;
+    
+    // Penalidade se o rei está em xeque
+    if (isSquareAttacked(kingPos.row, kingPos.col, color, board)) {
+        score -= 100;
+    }
+    
+    // Bônus para roque realizado
+    if (hasCastled(board, color, kingPos)) {
+        score += 50;
+    }
+    
+    return score;
+}
+
+function countPawnShield(board, kingPos, color) {
+    let count = 0;
+    const direction = color === 'white' ? -1 : 1;
+    const shieldRows = [kingPos.row + direction, kingPos.row + 2 * direction];
+    
+    for (let r of shieldRows) {
+        if (r < 0 || r > 7) continue;
+        for (let c = Math.max(0, kingPos.col - 1); c <= Math.min(7, kingPos.col + 1); c++) {
+            const p = board[r] && board[r][c];
+            if (p && p.toLowerCase() === 'p') {
+                const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+                if (pieceColor === color) count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+function countOpenFilesNearKing(board, kingPos) {
+    let count = 0;
+    const files = [kingPos.col - 1, kingPos.col, kingPos.col + 1].filter(c => c >= 0 && c < 8);
+    
+    for (let c of files) {
+        let hasPawn = false;
+        for (let r = 0; r < 8; r++) {
+            const p = board[r] && board[r][c];
+            if (p && p.toLowerCase() === 'p') {
+                hasPawn = true;
+                break;
+            }
+        }
+        if (!hasPawn) count++;
+    }
+    
+    return count;
+}
+
+function hasCastled(board, color, kingPos) {
+    const backRank = color === 'white' ? 7 : 0;
+    // Rei na posição de roque (g1/g8 ou c1/c8)
+    return kingPos.row === backRank && (kingPos.col === 6 || kingPos.col === 2);
+}
+
+function evaluateCenterControl(board, color) {
+    const center = [{r: 3, c: 3}, {r: 3, c: 4}, {r: 4, c: 3}, {r: 4, c: 4}];
+    const extendedCenter = [{r: 2, c: 2}, {r: 2, c: 3}, {r: 2, c: 4}, {r: 2, c: 5},
+                           {r: 3, c: 2}, {r: 3, c: 5},
+                           {r: 4, c: 2}, {r: 4, c: 5},
+                           {r: 5, c: 2}, {r: 5, c: 3}, {r: 5, c: 4}, {r: 5, c: 5}];
+    
+    let score = 0;
+    
+    // Controle do centro (peões)
+    for (let sq of center) {
+        const p = board[sq.r] && board[sq.r][sq.c];
+        if (p) {
+            const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+            if (pieceColor === color) score += 30;
+            else score -= 30;
+        }
+    }
+    
+    // Controle estendido
+    for (let sq of extendedCenter) {
+        const attacks = countAttacksOnSquare(board, sq.r, sq.c, color);
+        const oppAttacks = countAttacksOnSquare(board, sq.r, sq.c, color === 'white' ? 'black' : 'white');
+        score += (attacks - oppAttacks) * 5;
+    }
+    
+    return score;
+}
+
+function countAttacksOnSquare(board, row, col, color) {
+    let count = 0;
+    
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const p = board[r] && board[r][c];
+            if (!p) continue;
+            const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+            if (pieceColor !== color) continue;
+            
+            const attacks = getAttacks(r, c, board, p);
+            if (attacks.some(a => a.row === row && a.col === col)) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+function evaluateMobility(board, color) {
+    let mobility = 0;
+    
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const p = board[r] && board[r][c];
+            if (!p) continue;
+            const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+            if (pieceColor !== color) continue;
+            
+            const moves = getValidMoves(r, c, board, color);
+            mobility += moves.length;
+        }
+    }
+    
+    return mobility * 2; // Peso da mobilidade
+}
+
+function evaluatePawnStructure(board, color) {
+    let score = 0;
+    const pawns = [];
+    
+    // Coletar todos os peões
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const p = board[r] && board[r][c];
+            if (p && p.toLowerCase() === 'p') {
+                const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+                if (pieceColor === color) {
+                    pawns.push({r, c});
+                }
+            }
+        }
+    }
+    
+    // Penalidade por peões isolados
+    for (let pawn of pawns) {
+        let hasNeighbor = false;
+        for (let other of pawns) {
+            if (other === pawn) continue;
+            if (Math.abs(other.c - pawn.c) === 1) {
+                hasNeighbor = true;
+                break;
+            }
+        }
+        if (!hasNeighbor) {
+            score -= 20;
+        }
+    }
+    
+    // Penalidade por peões duplicados
+    for (let c = 0; c < 8; c++) {
+        let count = 0;
+        for (let pawn of pawns) {
+            if (pawn.c === c) count++;
+        }
+        if (count > 1) {
+            score -= (count - 1) * 15;
+        }
+    }
+    
+    // Bônus por peões passados
+    for (let pawn of pawns) {
+        if (isPassedPawn(board, pawn, color)) {
+            const advancement = color === 'white' ? 6 - pawn.r : pawn.r - 1;
+            score += 20 + advancement * 10;
+        }
+    }
+    
+    return score;
+}
+
+function isPassedPawn(board, pawn, color) {
+    const direction = color === 'white' ? -1 : 1;
+    const opponentColor = color === 'white' ? 'black' : 'white';
+    
+    // Verifica se não há peões inimigos à frente na mesma coluna ou adjacentes
+    for (let r = pawn.r + direction; r >= 0 && r < 8; r += direction) {
+        for (let c = Math.max(0, pawn.c - 1); c <= Math.min(7, pawn.c + 1); c++) {
+            const p = board[r] && board[r][c];
+            if (p && p.toLowerCase() === 'p') {
+                const pieceColor = p === p.toUpperCase() ? 'white' : 'black';
+                if (pieceColor === opponentColor) {
+                    return false;
+                }
+            }
+        }
+    }
+    
+    return true;
 }
 
 function doesMoveBlockIntention(board, move, intention) {
