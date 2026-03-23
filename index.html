@@ -1,1 +1,1805 @@
-1
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xadrez Pro Ultra - Login</title>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Fontes -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Orbitron:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --gold: #ffd700;
+            --purple: #8b5cf6;
+            --green: #10b981;
+            --red: #ef4444;
+            --dark: #0a0a0f;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 50px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--purple));
+            border-radius: 24px 24px 0 0;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+        
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            background: linear-gradient(135deg, var(--gold), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #a1a1aa;
+            font-size: 0.95em;
+        }
+        
+        .btn-google {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #1f2937;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .btn-google:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-google i {
+            color: #4285f4;
+            font-size: 1.3em;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #a1a1aa;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        
+        .input-field.error {
+            border-color: var(--red);
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .input-hint {
+            font-size: 0.8em;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .input-hint.valid { color: var(--green); }
+        .input-hint.invalid { color: var(--red); }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), #b8860b);
+            color: #000;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            margin-top: 15px;
+        }
+        
+        .dashboard {
+            display: none;
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .user-details h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+        }
+        
+        .user-details span {
+            color: #a1a1aa;
+            font-size: 0.9em;
+        }
+        
+        .logout-btn {
+            padding: 10px 20px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--red);
+            border-radius: 8px;
+            color: var(--red);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: var(--red);
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            margin: 0 auto 20px;
+        }
+        
+        .stat-icon.gold { background: rgba(255, 215, 0, 0.2); color: var(--gold); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+        .stat-icon.purple { background: rgba(139, 92, 246, 0.2); color: var(--purple); }
+        .stat-icon.blue { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #a1a1aa;
+            font-size: 0.95em;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--gold);
+        }
+        
+        .ranking-list {
+            list-style: none;
+        }
+        
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .ranking-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .ranking-item.you {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .rank-number {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+        
+        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #000; }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); color: #000; }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32, #daa520); color: #000; }
+        .rank-other { background: rgba(255, 255, 255, 0.1); color: #a1a1aa; }
+        
+        .rank-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .rank-info {
+            flex: 1;
+        }
+        
+        .rank-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .rank-stats {
+            font-size: 0.85em;
+            color: #71717a;
+        }
+        
+        .rank-rating {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        .online-list {
+            list-style: none;
+        }
+        
+        .online-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .online-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+        
+        .online-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .online-status {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background: var(--green);
+            border-radius: 50%;
+            border: 2px solid var(--dark);
+        }
+        
+        .online-status.offline {
+            background: #71717a;
+        }
+        
+        .online-info {
+            flex: 1;
+        }
+        
+        .online-name {
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        .online-rating {
+            font-size: 0.8em;
+            color: #71717a;
+        }
+        
+        .challenge-btn {
+            padding: 8px 16px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--green);
+            border-radius: 8px;
+            color: var(--green);
+            font-size: 0.8em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .challenge-btn:hover {
+            background: var(--green);
+            color: #000;
+        }
+        
+        .challenge-btn.offline {
+            background: rgba(113, 113, 122, 0.2);
+            border-color: #71717a;
+            color: #71717a;
+        }
+        
+        .quick-match {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .btn-quick {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px 50px;
+            background: linear-gradient(135deg, var(--purple), #6d28d9);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+        }
+        
+        .btn-quick:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.5);
+        }
+        
+        .queue-box {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px 25px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        
+        .queue-box.active {
+            display: flex;
+            animation: slideUp 0.4s;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .queue-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(139, 92, 246, 0.3);
+            border-top-color: var(--purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .cancel-btn {
+            padding: 8px 16px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--red);
+            border-radius: 8px;
+            color: var(--red);
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .cancel-btn:hover {
+            background: var(--red);
+            color: white;
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .toast {
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            min-width: 300px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            animation: slideIn 0.4s;
+            backdrop-filter: blur(20px);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        
+        .toast-success { background: rgba(16, 185, 129, 0.2); color: var(--green); }
+        .toast-error { background: rgba(239, 68, 68, 0.2); color: var(--red); }
+        .toast-info { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        
+        .toast-content h4 {
+            margin-bottom: 5px;
+        }
+        
+        .toast-content p {
+            font-size: 0.9em;
+            color: #a1a1aa;
+        }
+        
+        /* MODAIS */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .modal {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+        
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            margin: 0 auto 20px;
+            color: #000;
+        }
+        
+        .modal h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .modal p {
+            color: #a1a1aa;
+            margin-bottom: 30px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .modal-buttons .btn {
+            flex: 1;
+        }
+        
+        .btn-accept {
+            background: linear-gradient(135deg, var(--green), #059669);
+            color: #000;
+        }
+        
+        .btn-reject {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+        
+        .btn-reject:hover {
+            background: var(--red);
+            color: white;
+        }
+        
+        .hidden { display: none !important; }
+        
+        @media (max-width: 768px) {
+            .card { padding: 30px 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .content-grid { grid-template-columns: 1fr; }
+            .dashboard { padding: 20px; }
+            .modal { padding: 30px 20px; }
+            .modal-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- MODAL: Desafiar Jogador -->
+    <div class="modal-overlay" id="challengeModal">
+        <div class="modal">
+            <div class="modal-icon">⚔️</div>
+            <h2>Desafiar <span id="challengeTargetName">Jogador</span>?</h2>
+            <p>Rating: <span id="challengeTargetRating">0</span> • <span id="challengeTargetStatus">Online</span></p>
+            <div class="modal-buttons">
+                <button class="btn btn-accept" onclick="sendChallenge()">
+                    <i class="fas fa-check"></i> Desafiar
+                </button>
+                <button class="btn btn-secondary" onclick="closeModal('challengeModal')">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: Receber Desafio -->
+    <div class="modal-overlay" id="receiveChallengeModal">
+        <div class="modal">
+            <div class="modal-icon" style="background: linear-gradient(135deg, var(--purple), #6d28d9); color: white;">🎯</div>
+            <h2>Desafio Recebido!</h2>
+            <p><strong id="challengerName">Jogador</strong> te desafiou para uma partida<br>Rating: <span id="challengerRating">0</span></p>
+            <div class="modal-buttons">
+                <button class="btn btn-accept" onclick="acceptChallenge()">
+                    <i class="fas fa-play"></i> Aceitar
+                </button>
+                <button class="btn btn-reject" onclick="rejectChallenge()">
+                    <i class="fas fa-times"></i> Recusar
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TELA 1: LOGIN -->
+    <div class="container" id="loginScreen">
+        <div class="card">
+            <div class="header">
+                <div class="logo">♔</div>
+                <h1 class="title">Xadrez Pro Ultra</h1>
+                <p class="subtitle">Entre para jogar partidas ranqueadas</p>
+            </div>
+            
+            <button class="btn-google" onclick="signInWithGoogle()">
+                <i class="fab fa-google"></i>
+                <span>Continuar com Google</span>
+            </button>
+            
+            <p style="text-align: center; color: #71717a; font-size: 0.9em;">
+                Ao entrar, você aceita os Termos de Serviço
+            </p>
+        </div>
+    </div>
+    
+    <!-- TELA 2: ESCOLHER NOME -->
+    <div class="container hidden" id="usernameScreen">
+        <div class="card">
+            <div class="header">
+                <div class="logo">👤</div>
+                <h1 class="title" style="font-size: 1.8em;">Escolha seu Nome</h1>
+                <p class="subtitle">Este será seu nome público no jogo</p>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">Nome de Usuário</label>
+                <input 
+                    type="text" 
+                    class="input-field" 
+                    id="usernameInput" 
+                    placeholder="Ex: MagnusCarlsen"
+                    maxlength="20"
+                >
+                <div class="input-hint" id="usernameHint">
+                    <i class="fas fa-info-circle"></i>
+                    <span>3-20 caracteres, apenas letras, números e _</span>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" id="confirmBtn" onclick="confirmUsername()" disabled>
+                Confirmar
+            </button>
+            
+            <button class="btn btn-secondary" onclick="signOut()">
+                Cancelar
+            </button>
+        </div>
+    </div>
+    
+    <!-- TELA 3: DASHBOARD -->
+    <div class="dashboard" id="dashboardScreen">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <div class="user-details">
+                    <h3 id="userName">Carregando...</h3>
+                    <span id="userRating">Rating: 0</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="signOut()">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+        </div>
+        
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon gold"><i class="fas fa-star"></i></div>
+                <div class="stat-value" id="statRating">0</div>
+                <div class="stat-label">Pontos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-trophy"></i></div>
+                <div class="stat-value" id="statWins">0</div>
+                <div class="stat-label">Vitórias</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple"><i class="fas fa-percentage"></i></div>
+                <div class="stat-value" id="statWinRate">0%</div>
+                <div class="stat-label">Taxa de Vitória</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-gamepad"></i></div>
+                <div class="stat-value" id="statGames">0</div>
+                <div class="stat-label">Partidas</div>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content-grid">
+            <!-- Ranking Global -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <i class="fas fa-crown"></i>
+                        Ranking Global
+                    </h3>
+                </div>
+                <ul class="ranking-list" id="rankingList">
+                    <li style="color: #71717a; text-align: center; padding: 40px;">
+                        Carregando ranking...
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Jogadores -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <i class="fas fa-users"></i>
+                        Jogadores
+                        <span style="color: var(--green); font-size: 0.7em; margin-left: 10px;">
+                            <i class="fas fa-circle" style="font-size: 0.5em;"></i>
+                            <span id="onlineCount">0</span> online
+                        </span>
+                    </h3>
+                </div>
+                <ul class="online-list" id="onlineList">
+                    <li style="color: #71717a; text-align: center; padding: 20px;">
+                        Carregando jogadores...
+                    </li>
+                </ul>
+                
+                <div class="quick-match">
+                    <button class="btn-quick" onclick="startQuickMatch()">
+                        <i class="fas fa-bolt"></i>
+                        <span>Partida Rápida</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fila de Espera -->
+    <div class="queue-box" id="queueBox">
+        <div class="queue-spinner"></div>
+        <div>
+            <h4 style="font-family: 'Orbitron', sans-serif; margin-bottom: 5px;">Buscando Adversário</h4>
+            <p style="color: #a1a1aa; font-size: 0.9em;" id="queueTime">Tempo: 0s</p>
+        </div>
+        <button class="cancel-btn" onclick="cancelQueue()">Cancelar</button>
+    </div>
+    
+    <!-- JAVASCRIPT -->
+    <script>
+        // ==========================================
+        // CONFIGURAÇÃO FIREBASE
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDCjrg7g-E_sxQz3cUZyg_W_75ZKsqpaYw",
+            authDomain: "xadrez-3a4af.firebaseapp.com",
+            projectId: "xadrez-3a4af",
+            storageBucket: "xadrez-3a4af.firebasestorage.app",
+            messagingSenderId: "595655273304",
+            appId: "1:595655273304:web:a29cf5845830151e34532d",
+            measurementId: "G-7T8GW789VC"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // ==========================================
+        // VARIÁVEIS GLOBAIS
+        // ==========================================
+        let currentUser = null;
+        let userData = null;
+        let queueInterval = null;
+        let queueStartTime = null;
+        let listeners = [];
+        let selectedPlayer = null;
+        let currentChallenge = null;
+        let allPlayers = [];
+        let pendingChallenges = new Map();
+        
+        // ==========================================
+        // FUNÇÕES DE TELA
+        // ==========================================
+        function showScreen(screenName) {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('usernameScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('active');
+            
+            if (screenName === 'login') {
+                document.getElementById('loginScreen').classList.remove('hidden');
+            } else if (screenName === 'username') {
+                document.getElementById('usernameScreen').classList.remove('hidden');
+            } else if (screenName === 'dashboard') {
+                document.getElementById('dashboardScreen').classList.add('active');
+            }
+        }
+        
+        // ==========================================
+        // MODAIS
+        // ==========================================
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // ==========================================
+        // LOGIN COM GOOGLE
+        // ==========================================
+        async function signInWithGoogle() {
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                currentUser = result.user;
+                
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                
+                if (userDoc.exists) {
+                    userData = userDoc.data();
+                    startDashboard();
+                } else {
+                    showScreen('username');
+                    document.getElementById('usernameInput').focus();
+                }
+            } catch (error) {
+                showToast('Erro no login', error.message, 'error');
+            }
+        }
+        
+        // ==========================================
+        // VALIDAÇÃO DE NOME
+        // ==========================================
+        const usernameInput = document.getElementById('usernameInput');
+        let checkTimeout = null;
+        
+        usernameInput.addEventListener('input', (e) => {
+            const value = e.target.value.trim();
+            const hint = document.getElementById('usernameHint');
+            const btn = document.getElementById('confirmBtn');
+            
+            clearTimeout(checkTimeout);
+            btn.disabled = true;
+            
+            if (value.length < 3) {
+                hint.innerHTML = '<i class="fas fa-times"></i> <span>Mínimo 3 caracteres</span>';
+                hint.className = 'input-hint invalid';
+                usernameInput.classList.add('error');
+                return;
+            }
+            
+            if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+                hint.innerHTML = '<i class="fas fa-times"></i> <span>Apenas letras, números e _</span>';
+                hint.className = 'input-hint invalid';
+                usernameInput.classList.add('error');
+                return;
+            }
+            
+            usernameInput.classList.remove('error');
+            hint.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Verificando...</span>';
+            hint.className = 'input-hint';
+            
+            checkTimeout = setTimeout(async () => {
+                const snapshot = await db.collection('users')
+                    .where('usernameLower', '==', value.toLowerCase())
+                    .get();
+                
+                if (!snapshot.empty) {
+                    hint.innerHTML = '<i class="fas fa-times"></i> <span>Nome já em uso</span>';
+                    hint.className = 'input-hint invalid';
+                    usernameInput.classList.add('error');
+                } else {
+                    hint.innerHTML = '<i class="fas fa-check"></i> <span>Nome disponível!</span>';
+                    hint.className = 'input-hint valid';
+                    btn.disabled = false;
+                }
+            }, 500);
+        });
+        
+        // ==========================================
+        // CONFIRMAR NOME - RATING 0 (ZERADO)
+        // ==========================================
+        async function confirmUsername() {
+            const username = usernameInput.value.trim();
+            const btn = document.getElementById('confirmBtn');
+            
+            if (!username || btn.disabled) return;
+            
+            btn.disabled = true;
+            btn.textContent = 'Criando...';
+            
+            try {
+                // CRIA USUÁRIO COM RATING 0 (ZERADO)
+                const userDataToSave = {
+                    uid: currentUser.uid,
+                    email: currentUser.email,
+                    displayName: currentUser.displayName,
+                    username: username,
+                    usernameLower: username.toLowerCase(),
+                    photoURL: currentUser.photoURL,
+                    rating: 0, // <<<< RATING ZERO
+                    wins: 0,
+                    losses: 0,
+                    draws: 0,
+                    gamesPlayed: 0,
+                    winStreak: 0,
+                    bestWinStreak: 0,
+                    isOnline: true,
+                    lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                await db.collection('users').doc(currentUser.uid).set(userDataToSave);
+                
+                // STATS TAMBÉM COM RATING 0
+                await db.collection('stats').doc(currentUser.uid).set({
+                    uid: currentUser.uid,
+                    username: username,
+                    rating: 0, // <<<< RATING ZERO
+                    highestRating: 0,
+                    totalGames: 0,
+                    wins: 0,
+                    losses: 0,
+                    draws: 0,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                userData = userDataToSave;
+                
+                showToast('Bem-vindo!', 'Conta criada! Pontos iniciais: 0', 'success');
+                startDashboard();
+                
+            } catch (error) {
+                console.error('Erro ao criar conta:', error);
+                showToast('Erro', 'Não foi possível criar conta: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Confirmar';
+            }
+        }
+        
+        // ==========================================
+        // DASHBOARD
+        // ==========================================
+        function startDashboard() {
+            showScreen('dashboard');
+            setupOnlinePresence();
+            updateUserInfo();
+            startListeners();
+            listenForChallenges();
+        }
+        
+        function updateUserInfo() {
+            if (!userData) return;
+            
+            // GARANTE QUE RATING NUNCA SEJA NEGATIVO
+            const safeRating = Math.max(0, userData.rating || 0);
+            
+            const initial = userData.username.charAt(0).toUpperCase();
+            
+            document.getElementById('userAvatar').textContent = initial;
+            document.getElementById('userName').textContent = userData.username;
+            document.getElementById('userRating').textContent = `Pontos: ${safeRating}`;
+            
+            // MOSTRA RATING (SEMPRE 0 OU POSITIVO)
+            document.getElementById('statRating').textContent = safeRating;
+            document.getElementById('statWins').textContent = userData.wins || 0;
+            
+            const total = (userData.wins || 0) + (userData.losses || 0) + (userData.draws || 0);
+            const winRate = total > 0 ? Math.round((userData.wins || 0) / total * 100) : 0;
+            
+            document.getElementById('statWinRate').textContent = winRate + '%';
+            document.getElementById('statGames').textContent = total;
+        }
+        
+        // ==========================================
+        // SISTEMA DE PRESENÇA ONLINE
+        // ==========================================
+        function setupOnlinePresence() {
+            updateOnlineStatus();
+            setInterval(updateOnlineStatus, 10000);
+            
+            window.addEventListener('beforeunload', () => {
+                if (currentUser) {
+                    db.collection('users').doc(currentUser.uid).update({
+                        isOnline: false,
+                        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+            });
+        }
+        
+        async function updateOnlineStatus() {
+            if (!currentUser) return;
+            
+            try {
+                await db.collection('users').doc(currentUser.uid).update({
+                    isOnline: true,
+                    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (e) {
+                console.log('Erro ao atualizar status:', e);
+            }
+        }
+        
+        // ==========================================
+        // LISTENERS
+        // ==========================================
+        function startListeners() {
+            // Listener do próprio usuário
+            const userUnsub = db.collection('users').doc(currentUser.uid)
+                .onSnapshot(doc => {
+                    if (doc.exists) {
+                        userData = { ...userData, ...doc.data() };
+                        // GARANTE RATING NÃO NEGATIVO
+                        if (userData.rating < 0) {
+                            userData.rating = 0;
+                            db.collection('users').doc(currentUser.uid).update({ rating: 0 });
+                        }
+                        updateUserInfo();
+                    }
+                });
+            listeners.push(userUnsub);
+            
+            // Listener do ranking
+            const rankingUnsub = db.collection('stats')
+                .orderBy('rating', 'desc')
+                .limit(20)
+                .onSnapshot(snapshot => {
+                    updateRanking(snapshot.docs);
+                    allPlayers = snapshot.docs.map(doc => ({
+                        uid: doc.data().uid,
+                        username: doc.data().username,
+                        rating: Math.max(0, doc.data().rating || 0)
+                    })).filter(p => p.uid !== currentUser.uid);
+                    
+                    updatePlayersList();
+                });
+            listeners.push(rankingUnsub);
+        }
+        
+        function updateRanking(docs) {
+            const list = document.getElementById('rankingList');
+            
+            if (docs.length === 0) {
+                list.innerHTML = '<li style="color: #71717a; text-align: center;">Nenhum jogador ainda</li>';
+                return;
+            }
+            
+            list.innerHTML = docs.map((doc, index) => {
+                const data = doc.data();
+                const isYou = data.uid === currentUser.uid;
+                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-other';
+                const rankNum = index < 3 ? '' : (index + 1);
+                const safeRating = Math.max(0, data.rating || 0);
+                
+                return `
+                    <li class="ranking-item ${isYou ? 'you' : ''}" onclick="openChallengeModal('${data.uid}', '${data.username}', ${safeRating}, ${isYou ? true : false})">
+                        <div class="rank-number ${rankClass}">${rankNum}</div>
+                        <div class="rank-avatar">${data.username.charAt(0).toUpperCase()}</div>
+                        <div class="rank-info">
+                            <div class="rank-name">${data.username} ${isYou ? '(Você)' : ''}</div>
+                            <div class="rank-stats">${data.wins || 0} vitórias • ${data.totalGames || 0} jogos</div>
+                        </div>
+                        <div class="rank-rating">${safeRating}</div>
+                    </li>
+                `;
+            }).join('');
+        }
+        
+        async function updatePlayersList() {
+            try {
+                const onlineSnapshot = await db.collection('users')
+                    .where('isOnline', '==', true)
+                    .get();
+                
+                const onlineUids = new Set();
+                onlineSnapshot.forEach(doc => {
+                    if (doc.id !== currentUser.uid) {
+                        onlineUids.add(doc.id);
+                    }
+                });
+                
+                document.getElementById('onlineCount').textContent = onlineUids.size;
+                
+                const list = document.getElementById('onlineList');
+                
+                if (allPlayers.length === 0) {
+                    list.innerHTML = '<li style="color: #71717a; text-align: center;">Nenhum jogador disponível</li>';
+                    return;
+                }
+                
+                const sortedPlayers = [...allPlayers].sort((a, b) => {
+                    const aOnline = onlineUids.has(a.uid);
+                    const bOnline = onlineUids.has(b.uid);
+                    return bOnline - aOnline;
+                });
+                
+                list.innerHTML = sortedPlayers.map(player => {
+                    const isOnline = onlineUids.has(player.uid);
+                    return `
+                        <li class="online-item" onclick="openChallengeModal('${player.uid}', '${player.username}', ${player.rating}, ${isOnline})">
+                            <div class="online-avatar">
+                                ${player.username.charAt(0).toUpperCase()}
+                                <span class="online-status ${isOnline ? '' : 'offline'}"></span>
+                            </div>
+                            <div class="online-info">
+                                <div class="online-name">${player.username}</div>
+                                <div class="online-rating">Pontos: ${player.rating} • ${isOnline ? 'Online' : 'Offline'}</div>
+                            </div>
+                            <button class="challenge-btn ${isOnline ? '' : 'offline'}">
+                                Desafiar
+                            </button>
+                        </li>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Erro ao atualizar lista:', error);
+            }
+        }
+        
+        // ==========================================
+        // SISTEMA DE DESAFIOS - CORRIGIDO (SEM PERMISSÃO NEGADA)
+        // ==========================================
+        function openChallengeModal(uid, username, rating, isOnline) {
+            if (uid === currentUser.uid) {
+                showToast('Erro', 'Você não pode desafiar a si mesmo', 'error');
+                return;
+            }
+            
+            selectedPlayer = { uid, username, rating, isOnline };
+            document.getElementById('challengeTargetName').textContent = username;
+            document.getElementById('challengeTargetRating').textContent = rating;
+            document.getElementById('challengeTargetStatus').textContent = isOnline ? 'Online' : 'Offline (receberá notificação)';
+            document.getElementById('challengeTargetStatus').style.color = isOnline ? 'var(--green)' : '#71717a';
+            openModal('challengeModal');
+        }
+        
+        async function sendChallenge() {
+            if (!selectedPlayer) return;
+            
+            closeModal('challengeModal');
+            
+            const challengeId = db.collection('challenges').doc().id;
+            
+            const challengeData = {
+                challengeId: challengeId,
+                fromUid: currentUser.uid,
+                fromUsername: userData.username,
+                fromRating: Math.max(0, userData.rating || 0),
+                toUid: selectedPlayer.uid,
+                toUsername: selectedPlayer.username,
+                toRating: selectedPlayer.rating,
+                status: 'pending',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                expiresAt: new Date(Date.now() + 60 * 1000)
+            };
+            
+            try {
+                // CORREÇÃO: Cria apenas o challenge, sem tentar escrever no documento do outro usuário
+                // Isso evita erro de permissão
+                await db.collection('challenges').doc(challengeId).set(challengeData);
+                
+                showToast('Desafio Enviado!', 
+                    selectedPlayer.isOnline 
+                        ? `Aguardando ${selectedPlayer.username}...` 
+                        : `${selectedPlayer.username} receberá ao entrar`, 
+                    'info');
+                
+                // ESCUTA RESPOSTA EM TEMPO REAL
+                const unsubscribe = db.collection('challenges').doc(challengeId)
+                    .onSnapshot(doc => {
+                        if (!doc.exists) return;
+                        
+                        const data = doc.data();
+                        
+                        if (data.status === 'accepted') {
+                            unsubscribe();
+                            pendingChallenges.delete(challengeId);
+                            startGameWithPlayer(data, 'white');
+                        } else if (data.status === 'rejected') {
+                            unsubscribe();
+                            pendingChallenges.delete(challengeId);
+                            showToast('Desafio Recusado', `${selectedPlayer.username} recusou`, 'error');
+                            cleanupChallenge(challengeId);
+                        }
+                    });
+                
+                pendingChallenges.set(challengeId, unsubscribe);
+                
+                // Timeout de 60 segundos
+                setTimeout(() => {
+                    db.collection('challenges').doc(challengeId).get().then(doc => {
+                        if (doc.exists && doc.data().status === 'pending') {
+                            db.collection('challenges').doc(challengeId).update({ status: 'expired' });
+                            if (pendingChallenges.has(challengeId)) {
+                                pendingChallenges.get(challengeId)();
+                                pendingChallenges.delete(challengeId);
+                            }
+                            showToast('Desafio Expirado', 'Tempo esgotado', 'error');
+                            cleanupChallenge(challengeId);
+                        }
+                    });
+                }, 60000);
+                
+            } catch (error) {
+                console.error('Erro ao enviar desafio:', error);
+                showToast('Erro', 'Não foi possível enviar desafio: ' + error.message, 'error');
+            }
+        }
+        
+        // ESCUTA DESAFIOS RECEBIDOS - CORRIGIDO
+        function listenForChallenges() {
+            if (!currentUser) return;
+            
+            if (window.challengeListener) {
+                window.challengeListener();
+            }
+            
+            // ESCUTA DESAFIOS ONDE O USUÁRIO É O DESTINATÁRIO
+            window.challengeListener = db.collection('challenges')
+                .where('toUid', '==', currentUser.uid)
+                .where('status', '==', 'pending')
+                .onSnapshot(snapshot => {
+                    snapshot.docChanges().forEach(change => {
+                        if (change.type === 'added') {
+                            const challenge = change.doc.data();
+                            // Verifica se não expirou
+                            const expires = challenge.expiresAt?.toDate();
+                            if (!expires || expires > new Date()) {
+                                challenge.docId = change.doc.id;
+                                receiveChallenge(challenge);
+                            }
+                        }
+                    });
+                }, error => {
+                    console.error('Erro no listener de desafios:', error);
+                });
+        }
+        
+        function receiveChallenge(challenge) {
+            if (currentChallenge && currentChallenge.challengeId === challenge.challengeId) {
+                return;
+            }
+            
+            if (document.getElementById('receiveChallengeModal').classList.contains('active')) {
+                setTimeout(() => receiveChallenge(challenge), 1000);
+                return;
+            }
+            
+            currentChallenge = challenge;
+            document.getElementById('challengerName').textContent = challenge.fromUsername;
+            document.getElementById('challengerRating').textContent = challenge.fromRating;
+            openModal('receiveChallengeModal');
+        }
+        
+        async function acceptChallenge() {
+            if (!currentChallenge) return;
+            
+            closeModal('receiveChallengeModal');
+            
+            try {
+                const challengeId = currentChallenge.docId || currentChallenge.challengeId;
+                
+                await db.collection('challenges').doc(challengeId).update({
+                    status: 'accepted',
+                    acceptedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                setTimeout(() => cleanupChallenge(challengeId), 2000);
+                startGameWithPlayer(currentChallenge, 'black');
+                
+            } catch (error) {
+                console.error('Erro ao aceitar:', error);
+                showToast('Erro', 'Não foi possível aceitar: ' + error.message, 'error');
+            }
+        }
+        
+        async function rejectChallenge() {
+            if (!currentChallenge) return;
+            
+            closeModal('receiveChallengeModal');
+            
+            try {
+                const challengeId = currentChallenge.docId || currentChallenge.challengeId;
+                
+                await db.collection('challenges').doc(challengeId).update({
+                    status: 'rejected',
+                    rejectedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                setTimeout(() => cleanupChallenge(challengeId), 2000);
+                
+            } catch (error) {
+                console.error('Erro ao rejeitar:', error);
+            }
+            
+            currentChallenge = null;
+        }
+        
+        async function cleanupChallenge(challengeId) {
+            try {
+                await db.collection('challenges').doc(challengeId).delete();
+            } catch (e) {}
+        }
+        
+        // ==========================================
+        // INICIAR JOGO
+        // ==========================================
+        function startGameWithPlayer(challengeData, color) {
+            const gameId = challengeData.challengeId;
+            
+            const whiteRating = Math.max(0, color === 'white' ? challengeData.fromRating : (userData.rating || 0));
+            const blackRating = Math.max(0, color === 'black' ? challengeData.fromRating : (userData.rating || 0));
+            
+            db.collection('games').doc(gameId).set({
+                gameId: gameId,
+                whitePlayer: color === 'white' ? challengeData.fromUid : currentUser.uid,
+                whiteUsername: color === 'white' ? challengeData.fromUsername : userData.username,
+                whiteRating: whiteRating,
+                blackPlayer: color === 'black' ? challengeData.fromUid : currentUser.uid,
+                blackUsername: color === 'black' ? challengeData.fromUsername : userData.username,
+                blackRating: blackRating,
+                status: 'playing',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                // SALVAR DADOS DO USUÁRIO NO SESSION STORAGE
+                const userSessionData = {
+                    uid: currentUser.uid,
+                    username: userData.username,
+                    rating: Math.max(0, userData.rating || 0),
+                    color: color,
+                    isFernando: userData.username.toLowerCase() === 'fernando'
+                };
+                
+                sessionStorage.setItem('currentUser', JSON.stringify(userSessionData));
+                
+                sessionStorage.setItem('currentGame', JSON.stringify({
+                    gameId: gameId,
+                    timestamp: Date.now()
+                }));
+                
+                stopAllListeners();
+                window.location.href = `game.html?game=${gameId}`;
+                
+            }).catch(error => {
+                console.error('Erro ao criar jogo:', error);
+                showToast('Erro', 'Não foi possível iniciar o jogo', 'error');
+            });
+        }
+        
+        // ==========================================
+        // NOVO SISTEMA DE PONTUAÇÃO
+        // ==========================================
+        // Função para atualizar pontuação após jogo (chamar no game.html)
+        async function updateRatingAfterGame(gameId, winnerUid, loserUid, isDraw) {
+            try {
+                const batch = db.batch();
+                
+                if (isDraw) {
+                    // Empate: ninguém ganha pontos
+                    const gameRef = db.collection('games').doc(gameId);
+                    batch.update(gameRef, { 
+                        status: 'finished',
+                        result: 'draw',
+                        finishedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } else {
+                    // VITÓRIA: +10 pontos para vencedor
+                    // DERROTA: -10 pontos para perdedor (mínimo 0)
+                    
+                    // Busca ratings atuais
+                    const [winnerDoc, loserDoc] = await Promise.all([
+                        db.collection('users').doc(winnerUid).get(),
+                        db.collection('users').doc(loserUid).get()
+                    ]);
+                    
+                    const winnerData = winnerDoc.data();
+                    const loserData = loserDoc.data();
+                    
+                    const winnerCurrent = winnerData.rating || 0;
+                    const loserCurrent = loserData.rating || 0;
+                    
+                    // Vencedor ganha 10
+                    const winnerNew = winnerCurrent + 10;
+                    
+                    // Perdedor perde 10, mas não fica negativo
+                    const loserNew = Math.max(0, loserCurrent - 10);
+                    
+                    // Atualiza vencedor
+                    const winnerRef = db.collection('users').doc(winnerUid);
+                    batch.update(winnerRef, {
+                        rating: winnerNew,
+                        wins: (winnerData.wins || 0) + 1,
+                        gamesPlayed: (winnerData.gamesPlayed || 0) + 1,
+                        lastGame: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Atualiza stats do vencedor
+                    const winnerStatsRef = db.collection('stats').doc(winnerUid);
+                    batch.update(winnerStatsRef, {
+                        rating: winnerNew,
+                        wins: (winnerData.wins || 0) + 1,
+                        totalGames: (winnerData.gamesPlayed || 0) + 1,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Atualiza perdedor
+                    const loserRef = db.collection('users').doc(loserUid);
+                    batch.update(loserRef, {
+                        rating: loserNew,
+                        losses: (loserData.losses || 0) + 1,
+                        gamesPlayed: (loserData.gamesPlayed || 0) + 1,
+                        lastGame: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Atualiza stats do perdedor
+                    const loserStatsRef = db.collection('stats').doc(loserUid);
+                    batch.update(loserStatsRef, {
+                        rating: loserNew,
+                        losses: (loserData.losses || 0) + 1,
+                        totalGames: (loserData.gamesPlayed || 0) + 1,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Atualiza jogo
+                    const gameRef = db.collection('games').doc(gameId);
+                    batch.update(gameRef, {
+                        status: 'finished',
+                        winner: winnerUid,
+                        loser: loserUid,
+                        winnerPoints: winnerNew,
+                        loserPoints: loserNew,
+                        pointsExchanged: 10,
+                        finishedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                await batch.commit();
+                console.log('Pontuação atualizada com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao atualizar pontuação:', error);
+            }
+        }
+        
+        // Expõe função global para usar no game.html
+        window.updateRatingAfterGame = updateRatingAfterGame;
+        
+        // ==========================================
+        // MATCHMAKING RÁPIDO
+        // ==========================================
+        function startQuickMatch() {
+            document.getElementById('queueBox').classList.add('active');
+            queueStartTime = Date.now();
+            
+            queueInterval = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - queueStartTime) / 1000);
+                document.getElementById('queueTime').textContent = `Tempo: ${elapsed}s`;
+            }, 1000);
+            
+            setTimeout(() => {
+                const gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
+                
+                db.collection('games').doc(gameId).set({
+                    gameId: gameId,
+                    whitePlayer: currentUser.uid,
+                    whiteUsername: userData.username,
+                    whiteRating: Math.max(0, userData.rating || 0),
+                    status: 'waiting',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                cancelQueue();
+                enterGame(gameId);
+            }, 3000);
+        }
+        
+        function cancelQueue() {
+            document.getElementById('queueBox').classList.remove('active');
+            clearInterval(queueInterval);
+        }
+        
+        function enterGame(gameId) {
+            const userSessionData = {
+                uid: currentUser.uid,
+                username: userData.username,
+                rating: Math.max(0, userData.rating || 0),
+                isFernando: userData.username.toLowerCase() === 'fernando'
+            };
+            
+            sessionStorage.setItem('currentUser', JSON.stringify(userSessionData));
+            
+            sessionStorage.setItem('currentGame', JSON.stringify({
+                gameId: gameId,
+                timestamp: Date.now()
+            }));
+            
+            stopAllListeners();
+            window.location.href = `game.html?game=${gameId}`;
+        }
+        
+        // ==========================================
+        // LIMPEZA
+        // ==========================================
+        function stopAllListeners() {
+            listeners.forEach(unsub => unsub());
+            listeners = [];
+            
+            if (window.challengeListener) {
+                window.challengeListener();
+                window.challengeListener = null;
+            }
+            
+            pendingChallenges.forEach((unsub, id) => {
+                unsub();
+            });
+            pendingChallenges.clear();
+        }
+        
+        // ==========================================
+        // LOGOUT
+        // ==========================================
+        async function signOut() {
+            stopAllListeners();
+            
+            if (currentUser) {
+                await db.collection('users').doc(currentUser.uid).update({
+                    isOnline: false,
+                    lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+                }).catch(() => {});
+            }
+            
+            await auth.signOut();
+            location.reload();
+        }
+        
+        // ==========================================
+        // TOAST
+        // ==========================================
+        function showToast(title, message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const icons = {
+                success: 'fa-check',
+                error: 'fa-times',
+                info: 'fa-info'
+            };
+            
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <div class="toast-icon toast-${type}">
+                    <i class="fas ${icons[type]}"></i>
+                </div>
+                <div class="toast-content">
+                    <h4>${title}</h4>
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.4s reverse';
+                setTimeout(() => toast.remove(), 400);
+            }, 5000);
+        }
+        
+        // ==========================================
+        // INICIALIZAÇÃO
+        // ==========================================
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                db.collection('users').doc(user.uid).get().then(doc => {
+                    if (doc.exists) {
+                        userData = doc.data();
+                        if (userData.rating < 0) {
+                            userData.rating = 0;
+                            db.collection('users').doc(user.uid).update({ rating: 0 });
+                        }
+                        startDashboard();
+                    } else {
+                        showScreen('username');
+                    }
+                }).catch(error => {
+                    console.error('Erro ao carregar usuário:', error);
+                    showToast('Erro', 'Erro ao carregar dados', 'error');
+                });
+            } else {
+                showScreen('login');
+            }
+        });
+        
+        // Expõe funções globais
+        window.signInWithGoogle = signInWithGoogle;
+        window.confirmUsername = confirmUsername;
+        window.signOut = signOut;
+        window.startQuickMatch = startQuickMatch;
+        window.cancelQueue = cancelQueue;
+        window.openChallengeModal = openChallengeModal;
+        window.sendChallenge = sendChallenge;
+        window.acceptChallenge = acceptChallenge;
+        window.rejectChallenge = rejectChallenge;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>
