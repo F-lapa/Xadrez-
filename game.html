@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>♔ Xadrez Pro Ultra - Modo Fernando Análise ♚</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -42,7 +41,6 @@
             position: relative;
         }
 
-        /* Background animado */
         body::before {
             content: '';
             position: fixed;
@@ -64,7 +62,6 @@
             50% { opacity: 0.8; transform: scale(1.1); }
         }
 
-        /* Login Screen Glassmorphism */
         .login-screen {
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
@@ -260,7 +257,6 @@
             50% { opacity: 0.8; box-shadow: 0 0 40px currentColor; }
         }
 
-        /* Game Screen */
         .game-screen {
             display: none;
             flex-direction: column;
@@ -396,7 +392,6 @@
             50% { box-shadow: 0 0 80px rgba(255, 0, 255, 1), 0 0 160px rgba(0, 255, 255, 1); }
         }
 
-        /* God Mode Panel */
         .god-mode-panel {
             display: none;
             background: var(--glass-bg);
@@ -578,7 +573,6 @@
             box-shadow: 0 0 80px rgba(16, 185, 129, 1);
         }
 
-        /* 3D Chess Board Container */
         .board-container {
             position: relative;
             margin: 20px 0;
@@ -609,6 +603,15 @@
             box-shadow: 
                 0 30px 60px rgba(0,0,0,0.8),
                 0 0 40px rgba(0,0,0,0.5);
+        }
+
+        /* INVERTER TABULEIRO PARA PRETAS */
+        #chessboard.black-perspective {
+            transform: rotateX(5deg) rotate(180deg);
+        }
+
+        #chessboard.black-perspective .square {
+            transform: rotate(180deg);
         }
 
         .square {
@@ -650,6 +653,11 @@
             transform: translateZ(10px) scale(1.05);
             z-index: 10;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Ajuste para peças quando tabuleiro está invertido */
+        #chessboard.black-perspective .square:hover {
+            transform: rotate(180deg) translateZ(10px) scale(1.05);
         }
 
         .selected {
@@ -724,7 +732,6 @@
             }
         }
 
-        /* Sistema de Análise do Adversário - NOVO */
         .opponent-analysis-panel {
             display: none;
             background: var(--glass-bg);
@@ -916,7 +923,6 @@
             font-family: 'Orbitron', sans-serif;
         }
 
-        /* Danger Zones - Onde não pode jogar */
         .danger-zone-highlight {
             position: absolute;
             width: 100%;
@@ -962,7 +968,6 @@
             50% { transform: translate(-50%, -50%) translateY(-8px); }
         }
 
-        /* Checkmate Animation */
         .checkmate-animation {
             position: absolute;
             top: 0;
@@ -1046,7 +1051,6 @@
             100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
         }
 
-        /* God Mode Highlights */
         .god-best-move {
             animation: godBestPulse 1s infinite !important;
             box-shadow: 
@@ -1087,7 +1091,6 @@
             }
         }
 
-        /* Hint System */
         .hint-glow {
             position: absolute;
             width: 100%;
@@ -1171,7 +1174,6 @@
             opacity: 0.8;
         }
 
-        /* Threat Indicator */
         .threat-indicator {
             position: absolute;
             width: 100%;
@@ -1187,7 +1189,6 @@
             50% { opacity: 0.6; transform: scale(1.15); }
         }
 
-        /* AI Analysis Panel */
         .ai-analysis {
             margin-top: 20px;
             padding: 25px;
@@ -1306,7 +1307,6 @@
             transition: left 0.5s ease;
         }
 
-        /* Coordinates */
         .coordinates {
             display: flex;
             justify-content: space-around;
@@ -1317,6 +1317,11 @@
             font-family: 'Orbitron', sans-serif;
             font-size: 1.1em;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Coordenadas invertidas para pretas */
+        #chessboard.black-perspective ~ .coordinates {
+            flex-direction: row-reverse;
         }
 
         .game-info {
@@ -1351,7 +1356,6 @@
             transform: scale(1.3);
         }
 
-        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1436,7 +1440,6 @@
             box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
         }
 
-        /* Toast Notifications */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -1538,7 +1541,6 @@
             transform: scale(1.2);
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .login-screen { padding: 30px 20px; }
             .login-screen h1 { font-size: 2.5em; }
@@ -1553,7 +1555,6 @@
             .intention-header { flex-direction: column; gap: 5px; }
         }
 
-        /* Special Effects */
         .victory-shine {
             position: absolute;
             width: 200%;
@@ -1578,7 +1579,6 @@
             transform: scale(1.1);
         }
 
-        /* Suggestion List */
         .suggestion-list {
             margin-top: 20px;
             max-height: 250px;
@@ -1637,7 +1637,6 @@
             font-weight: bold;
         }
 
-        /* Checkmate Position Display */
         .checkmate-position {
             margin-top: 25px;
             padding: 25px;
@@ -1674,7 +1673,6 @@
             line-height: 1.6;
         }
 
-        /* Loading Animation */
         .loading-spinner {
             width: 50px;
             height: 50px;
@@ -1689,7 +1687,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ==================== SISTEMA DE CHAT ==================== */
         .chat-container {
             position: fixed;
             bottom: 20px;
@@ -1702,7 +1699,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             z-index: 100;
-            display: none; /* Inicialmente escondido */
+            display: none;
             flex-direction: column;
             transition: all 0.3s ease;
             overflow: hidden;
@@ -1770,7 +1767,6 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* Botão flutuante do chat quando minimizado/escondido */
         .chat-floating-btn {
             position: fixed;
             bottom: 20px;
@@ -1819,7 +1815,7 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding:             15px;
+            padding: 15px;
             max-height: 350px;
             display: flex;
             flex-direction: column;
@@ -1835,7 +1831,7 @@
         }
 
         .chat-messages::-webkit-scrollbar-thumb {
-            background: var(--gold);
+                       background: var(--gold);
             border-radius: 3px;
         }
 
@@ -1953,7 +1949,6 @@
             display: block;
         }
 
-        /* Mobile Chat Adjustments */
         @media (max-width: 768px) {
             .chat-container {
                 width: calc(100% - 40px);
@@ -1968,7 +1963,6 @@
             }
         }
 
-        /* Nova Intenção Badge */
         .new-intention-badge {
             position: absolute;
             top: -8px;
@@ -1988,7 +1982,6 @@
             50% { transform: scale(1.2); }
         }
 
-        /* Intention Detail Modal */
         .intention-detail-modal {
             display: none;
             position: fixed;
@@ -2058,13 +2051,51 @@
         .overlay-backdrop.show {
             display: block;
         }
+
+        /* Loading overlay para entrada automática */
+        .auto-login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 5000;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        .auto-login-overlay.show {
+            display: flex;
+        }
+
+        .auto-login-text {
+            font-size: 1.5em;
+            color: var(--gold);
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 20px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
-<base target="_blank">
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Botão flutuante do chat (aparece quando chat está minimizado/escondido) -->
+    <!-- Overlay para entrada automática -->
+    <div class="auto-login-overlay" id="autoLoginOverlay">
+        <div class="loading-spinner"></div>
+        <div class="auto-login-text">Conectando ao jogo...</div>
+    </div>
+
+    <!-- Botão flutuante do chat -->
     <button class="chat-floating-btn" id="chatFloatingBtn" onclick="showChat()">
         💬
         <span class="new-intention-badge" id="floatingBadge" style="display:none;">!</span>
@@ -2848,13 +2879,20 @@ function getValidMoves(row, col, board = gameState.board, color = gameState.curr
     });
 }
 
-// ==================== FUNÇÃO RENDERBOARD (CRÍTICA - DEFINIDA ANTES DAS OUTRAS) ====================
+// ==================== FUNÇÃO RENDERBOARD (COM INVERSÃO PARA PRETAS) ====================
 
 function renderBoard() {
     const boardEl = document.getElementById('chessboard');
     if (!boardEl) return;
     
     boardEl.innerHTML = '';
+    
+    // Aplicar classe de perspectiva para pretas
+    if (gameState.myColor === 'black') {
+        boardEl.classList.add('black-perspective');
+    } else {
+        boardEl.classList.remove('black-perspective');
+    }
     
     for (let row = 0; row < 8; row++) {
         for (let col = 0; col < 8; col++) {
@@ -3456,7 +3494,7 @@ function evaluatePositionalGain(board, move) {
 }
 
 function isKingExposed(board, color) {
-    const kingPos = findKing(board, color);
+        const kingPos = findKing(board, color);
     if (!kingPos) return false;
     
     const centerDist = Math.abs(kingPos.row - 3.5) + Math.abs(kingPos.col - 3.5);
@@ -3539,6 +3577,456 @@ function calculateAttackSeverity(board, attacks, color) {
     
     return severity;
 }
+
+// ==================== NOVA INTELIGÊNCIA AVANÇADA PARA FERNANDO ====================
+
+// Padrões de checkmate conhecidos
+const CHECKMATE_PATTERNS = {
+    // Mate do corredor (Back rank mate)
+    BACK_RANK: {
+        name: 'Mate do Corredor',
+        check: (board, color) => {
+            const opponentColor = color === 'white' ? 'black' : 'white';
+            const oppKing = findKing(board, opponentColor);
+            if (!oppKing) return null;
+            
+            const backRank = opponentColor === 'white' ? 7 : 0;
+            if (oppKing.row !== backRank) return null;
+            
+            // Verificar se o rei está confinado
+            const escapeSquares = [];
+            for (let dr of [-1, 0, 1]) {
+                for (let dc of [-1, 0, 1]) {
+                    if (dr === 0 && dc === 0) continue;
+                    const nr = oppKing.row + dr, nc = oppKing.col + dc;
+                    if (isValid(nr, nc)) {
+                        const testBoard = board.map(r => [...r]);
+                        testBoard[nr][nc] = testBoard[oppKing.row][oppKing.col];
+                        testBoard[oppKing.row][oppKing.col] = null;
+                        if (!isSquareAttacked(nr, nc, opponentColor, testBoard)) {
+                            escapeSquares.push({row: nr, col: nc});
+                        }
+                    }
+                }
+            }
+            
+            if (escapeSquares.length > 0) return null;
+            
+            // Procurar torre ou dama que pode dar mate
+            const myPieces = color === 'white' ? 
+                ['R', 'Q'] : ['r', 'q'];
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    const piece = board[r][c];
+                    if (!myPieces.includes(piece)) continue;
+                    
+                    // Verificar se pode atacar a back rank
+                    if (piece.toLowerCase() === 'r' && r === backRank) {
+                        // Verificar caminho livre até o rei
+                        const minCol = Math.min(c, oppKing.col);
+                        const maxCol = Math.max(c, oppKing.col);
+                        let clear = true;
+                        for (let tc = minCol + 1; tc < maxCol; tc++) {
+                            if (board[r][tc]) { clear = false; break; }
+                        }
+                        if (clear) {
+                            return {
+                                from: {row: r, col: c},
+                                to: {row: backRank, col: oppKing.col},
+                                piece: piece,
+                                priority: 1000
+                            };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    },
+    
+    // Mate do louco (Fool's mate pattern evoluído)
+    FoolsMate: {
+        name: 'Padrão de Mate Rápido',
+        check: (board, color) => {
+            // Análise de vulnerabilidades f7/f2
+            const targetRow = color === 'white' ? 1 : 6;
+            const targetCol = color === 'white' ? 5 : 2; // f7 ou f2
+            
+            const kingPos = findKing(board, color === 'white' ? 'black' : 'white');
+            if (!kingPos) return null;
+            
+            // Verificar se dama pode dar checkmate
+            const queenChar = color === 'white' ? 'Q' : 'q';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r][c] === queenChar) {
+                        // Verificar se pode mover para h5 ou h4
+                        const targetSquares = color === 'white' ? 
+                            [{row: 3, col: 7}, {row: 4, col: 7}] : // h5, h4
+                            [{row: 4, col: 7}, {row: 3, col: 7}];
+                        
+                        for (let target of targetSquares) {
+                            const moves = getValidMoves(r, c, board, color);
+                            if (moves.some(m => m.row === target.row && m.col === target.col)) {
+                                const testBoard = simulateMove(board, {
+                                    from: {row: r, col: c},
+                                    to: target
+                                });
+                                const oppColor = color === 'white' ? 'black' : 'white';
+                                const oppKing = findKing(testBoard, oppColor);
+                                if (oppKing && isCheckmateAfterMove(testBoard, oppColor)) {
+                                    return {
+                                        from: {row: r, col: c},
+                                        to: target,
+                                        piece: queenChar,
+                                        priority: 10000
+                                    };
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    },
+    
+    // Mate com cavalo e dama
+    KNIGHT_QUEEN_MATE: {
+        name: 'Mate Cavalo-Dama',
+        check: (board, color) => {
+            const queenChar = color === 'white' ? 'Q' : 'q';
+            const knightChar = color === 'white' ? 'N' : 'n';
+            
+            let queenPos = null, knightPos = null;
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r][c] === queenChar) queenPos = {row: r, col: c};
+                    if (board[r][c] === knightChar) knightPos = {row: r, col: c};
+                }
+            }
+            
+            if (!queenPos || !knightPos) return null;
+            
+            const oppColor = color === 'white' ? 'black' : 'white';
+            const oppKing = findKing(board, oppColor);
+            if (!oppKing) return null;
+            
+            // Padrões clássicos de mate com cavalo e dama
+            const matePatterns = [
+                // Dama entrega mate com cavalo protegendo
+                {qMove: {dr: -1, dc: 0}, requiresKnight: true}, // Dama dá mate na diagonal
+                {qMove: {dr: 0, dc: -1}, requiresKnight: true}, // Dama dá mate na fileira
+            ];
+            
+            for (let pattern of matePatterns) {
+                const targetRow = oppKing.row + pattern.qMove.dr;
+                const targetCol = oppKing.col + pattern.qMove.dc;
+                
+                if (!isValid(targetRow, targetCol)) continue;
+                
+                const qMoves = getValidMoves(queenPos.row, queenPos.col, board, color);
+                if (!qMoves.some(m => m.row === targetRow && m.col === targetCol)) continue;
+                
+                const testBoard = simulateMove(board, {
+                    from: queenPos,
+                    to: {row: targetRow, col: targetCol}
+                });
+                
+                if (isCheckmateAfterMove(testBoard, oppColor)) {
+                    return {
+                        from: queenPos,
+                        to: {row: targetRow, col: targetCol},
+                        piece: queenChar,
+                        priority: 5000
+                    };
+                }
+            }
+            return null;
+        }
+    },
+    
+    // Smothered mate (Mate abafado)
+    SMOTHERED_MATE: {
+        name: 'Mate Abafado',
+        check: (board, color) => {
+            const knightChar = color === 'white' ? 'N' : 'n';
+            const oppColor = color === 'white' ? 'black' : 'white';
+            const oppKing = findKing(board, oppColor);
+            
+            if (!oppKing) return null;
+            
+            // Verificar se rei está cercado por peças próprias
+            let surroundedByOwn = true;
+            let emptySquares = [];
+            
+            for (let dr of [-1, 0, 1]) {
+                for (let dc of [-1, 0, 1]) {
+                    if (dr === 0 && dc === 0) continue;
+                    const nr = oppKing.row + dr, nc = oppKing.col + dc;
+                    if (isValid(nr, nc)) {
+                        const piece = board[nr][nc];
+                        if (!piece) emptySquares.push({row: nr, col: nc});
+                        else if ((oppColor === 'white' ? piece !== piece.toUpperCase() : piece === piece.toUpperCase())) {
+                            // É peça do oponente, não está cercado
+                            surroundedByOwn = false;
+                        }
+                    }
+                }
+            }
+            
+            if (!surroundedByOwn || emptySquares.length !== 1) return null;
+            
+            // Verificar se cavalo pode dar mate no único quadrado vazio
+            const target = emptySquares[0];
+            
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < 8; c++) {
+                    if (board[r][c] === knightChar) {
+                        const moves = getValidMoves(r, c, board, color);
+                        if (moves.some(m => m.row === target.row && m.col === target.col)) {
+                            const testBoard = simulateMove(board, {
+                                from: {row: r, col: c},
+                                to: target
+                            });
+                            if (isCheckmateAfterMove(testBoard, oppColor)) {
+                                return {
+                                    from: {row: r, col: c},
+                                    to: target,
+                                    piece: knightChar,
+                                    priority: 8000
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+};
+
+// Sistema de defesa inteligente
+function findDefensiveResources(board, color) {
+    const resources = {
+        blocks: [],
+        captures: [],
+        kingMoves: [],
+        interpositions: [],
+        counterAttacks: []
+    };
+    
+    if (!isInCheck(color, board)) return resources;
+    
+    const kingPos = findKing(board, color);
+    if (!kingPos) return resources;
+    
+    // Encontrar quem está dando xeque
+    const attackers = [];
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const piece = board[r][c];
+            if (!piece) continue;
+            const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
+            if (pieceColor !== color && isSquareAttacked(kingPos.row, kingPos.col, color, board)) {
+                // Verificar se esta peça específica está atacando
+                const attacks = getAttacks(r, c, board, piece);
+                if (attacks.some(a => a.row === kingPos.row && a.col === kingPos.col)) {
+                    attackers.push({row: r, col: c, piece: piece});
+                }
+            }
+        }
+    }
+    
+    // Para cada atacante, encontrar defesas
+    for (let attacker of attackers) {
+        // 1. Capturar o atacante
+        for (let r = 0; r < 8; r++) {
+            for (let c = 0; c < 8; c++) {
+                const piece = board[r][c];
+                if (!piece) continue;
+                const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
+                if (pieceColor !== color) continue;
+                
+                const moves = getValidMoves(r, c, board, color);
+                if (moves.some(m => m.row === attacker.row && m.col === attacker.col)) {
+                    const testBoard = simulateMove(board, {
+                        from: {row: r, col: c},
+                        to: {row: attacker.row, col: attacker.col, capture: true}
+                    });
+                    if (!isInCheck(color, testBoard)) {
+                        resources.captures.push({
+                            from: {row: r, col: c},
+                            to: {row: attacker.row, col: attacker.col},
+                            piece: piece,
+                            value: PIECE_VALUES[attacker.piece.toLowerCase()]
+                        });
+                    }
+                }
+            }
+        }
+        
+        // 2. Bloquear (se for ataque de torre, bispo ou dama)
+        const attackerType = attacker.piece.toLowerCase();
+        if (['r', 'b', 'q'].includes(attackerType)) {
+            const dr = Math.sign(kingPos.row - attacker.row);
+            const dc = Math.sign(kingPos.col - attacker.col);
+            
+            let br = attacker.row + dr, bc = attacker.col + dc;
+            while (br !== kingPos.row || bc !== kingPos.col) {
+                // Tentar bloquear nesta casa
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const piece = board[r][c];
+                        if (!piece) continue;
+                        const pieceColor = piece === piece.toUpperCase() ? 'white' : 'black';
+                        if (pieceColor !== color) continue;
+                        if (piece.toLowerCase() === 'k') continue; // Rei não bloqueia
+                        
+                        const moves = getValidMoves(r, c, board, color);
+                        if (moves.some(m => m.row === br && m.col === bc)) {
+                            const testBoard = simulateMove(board, {
+                                from: {row: r, col: c},
+                                to: {row: br, col: bc}
+                            });
+                            if (!isInCheck(color, testBoard)) {
+                                resources.blocks.push({
+                                    from: {row: r, col: c},
+                                    to: {row: br, col: bc},
+                                    piece: piece,
+                                    blockSquare: {row: br, col: bc}
+                                });
+                            }
+                        }
+                    }
+                }
+                br += dr;
+                bc += dc;
+            }
+        }
+    }
+    
+    // 3. Mover o rei
+    const kingMoves = getValidMoves(kingPos.row, kingPos.col, board, color);
+    for (let move of kingMoves) {
+        const testBoard = simulateMove(board, {
+            from: kingPos,
+            to: move
+        });
+        if (!isInCheck(color, testBoard)) {
+            resources.kingMoves.push({
+                from: kingPos,
+                to: move,
+                piece: color === 'white' ? 'K' : 'k'
+            });
+        }
+    }
+    
+    // 4. Contra-ataque (desperado)
+    const allMoves = generateAllMoves(board, color);
+    for (let move of allMoves) {
+        const testBoard = simulateMove(board, move);
+        const oppColor = color === 'white' ? 'black' : 'white';
+        const oppKing = findKing(testBoard, oppColor);
+        if (oppKing && isSquareAttacked(oppKing.row, oppKing.col, oppColor, testBoard)) {
+            resources.counterAttacks.push({
+                ...move,
+                givesCheck: true
+            });
+        }
+    }
+    
+    return resources;
+}
+
+// Avaliação de segurança do rei avançada
+function evaluateKingSafety(board, color) {
+    const kingPos = findKing(board, color);
+    if (!kingPos) return { score: 0, details: {} };
+    
+    let score = 0;
+    const details = {
+        pawnShield: 0,
+        openFiles: 0,
+        kingExposure: 0,
+        attackerProximity: 0,
+        pieceActivity: 0
+    };
+    
+    // Escudo de peões
+    const pawnShieldRow = color === 'white' ? kingPos.row - 1 : kingPos.row + 1;
+    for (let dc of [-1, 0, 1]) {
+        const pc = kingPos.col + dc;
+        if (isValid(pawnShieldRow, pc)) {
+            const piece = board[pawnShieldRow][pc];
+            if (piece && piece.toLowerCase() === 'p' && 
+                (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase())) {
+                details.pawnShield += 20;
+                score += 20;
+            }
+        }
+    }
+    
+    // Arquivos abertos
+    for (let dc of [-1, 0, 1]) {
+        const file = kingPos.col + dc;
+        if (file < 0 || file > 7) continue;
+        
+        let openFile = true;
+        for (let r = 0; r < 8; r++) {
+            const piece = board[r][file];
+            if (piece && piece.toLowerCase() === 'p') {
+                openFile = false;
+                break;
+            }
+        }
+        if (openFile) {
+            details.openFiles++;
+            score -= 30;
+        }
+    }
+    
+    // Proximidade de atacantes
+    const oppColor = color === 'white' ? 'black' : 'white';
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const piece = board[r][c];
+            if (!piece) continue;
+            if (color === 'white' ? piece === piece.toUpperCase() : piece === piece.toLowerCase()) continue;
+            
+            const dist = Math.abs(r - kingPos.row) + Math.abs(c - kingPos.col);
+            if (dist <= 4) {
+                const pieceValue = PIECE_VALUES[piece.toLowerCase()];
+                details.attackerProximity += pieceValue / (dist + 1);
+                score -= pieceValue / (dist * 2);
+            }
+        }
+    }
+    
+    // Exposição do rei
+    const centerDist = Math.abs(kingPos.row - 3.5) + Math.abs(kingPos.col - 3.5);
+    if (centerDist < 3 && !hasCastled(board, color)) {
+        details.kingExposure = 40;
+        score -= 40;
+    }
+    
+    return { score, details };
+}
+
+function hasCastled(board, color) {
+    const kingPos = findKing(board, color);
+    if (!kingPos) return false;
+    
+    const homeRow = color === 'white' ? 7 : 0;
+    if (kingPos.row !== homeRow) return false;
+    
+    // Rei na coluna 6 (roque pequeno) ou 2 (roque grande)
+    return kingPos.col === 6 || kingPos.col === 2;
+}
+
+// ==================== FUNÇÕES DE UI E DISPLAY ====================
 
 function analyzeOpponentIntentions() {
     const opponentColor = gameState.myColor === 'white' ? 'black' : 'white';
@@ -3884,7 +4372,7 @@ function analyzeOpponentPsychology() {
     if (avgRecentTime < 5000) metrics.timePattern = 'joga rápido';
     else if (avgRecentTime > 20000) metrics.timePattern = 'pensativo';
     
-        let blunderCount = 0;
+    let blunderCount = 0;
     for (let move of history) {
         if (move.materialLoss && move.materialLoss > 200) blunderCount++;
     }
@@ -4415,7 +4903,7 @@ function showToast(title, message, type = 'normal', duration = 5000) {
     return toast;
 }
 
-// ==================== MODO DEUS ====================
+// ==================== MODO DEUS COM INTELIGÊNCIA AVANÇADA ====================
 
 function activateGodMode() {
     if (!gameState.isFernando) return;
@@ -4443,6 +4931,48 @@ function activateGodMode() {
     }
 }
 
+// NOVA FUNÇÃO: Buscar padrões de checkmate
+function findCheckmateOpportunities(board, color) {
+    const opportunities = [];
+    
+    for (let patternName in CHECKMATE_PATTERNS) {
+        const pattern = CHECKMATE_PATTERNS[patternName];
+        const result = pattern.check(board, color);
+        if (result) {
+            opportunities.push({
+                ...result,
+                patternName: pattern.name,
+                patternKey: patternName
+            });
+        }
+    }
+    
+    return opportunities.sort((a, b) => b.priority - a.priority);
+}
+
+// NOVA FUNÇÃO: Avaliar defesa quando em xeque ou ameaçado
+function evaluateDefensiveNeeds(board, color) {
+    const needs = {
+        inCheck: isInCheck(color, board),
+        kingSafety: evaluateKingSafety(board, color),
+        threatenedPieces: findThreatenedPieces(board, color),
+        defensiveResources: null,
+        priority: 0
+    };
+    
+    if (needs.inCheck) {
+        needs.defensiveResources = findDefensiveResources(board, color);
+        needs.priority = 1000;
+    } else if (needs.kingSafety.score < -50) {
+        needs.priority = 500;
+    } else if (needs.threatenedPieces.length > 0) {
+        const totalThreat = needs.threatenedPieces.reduce((sum, p) => sum + p.value, 0);
+        needs.priority = totalThreat / 100;
+    }
+    
+    return needs;
+}
+
 function calculateGodMove() {
     if (!gameState.godMode || gameState.currentPlayer !== gameState.myColor) return;
     
@@ -4460,11 +4990,235 @@ function calculateGodMove() {
     reasoning.textContent = 'Consultando oráculo divino... Processando perfil psicológico...';
     executeBtn.style.display = 'none';
     
-    const analysis = generatePredictiveAnalysis(gameState.myColor);
+    const board = gameState.board;
+    const color = gameState.myColor;
+    
+    // 1. PRIMEIRO: Verificar se há ameaças imediatas que precisam de defesa
+    const defensiveNeeds = evaluateDefensiveNeeds(board, color);
+    
+    if (defensiveNeeds.inCheck) {
+        // ESTAMOS EM XEQUE - prioridade máxima para defesa
+        const resources = defensiveNeeds.defensiveResources;
+        let bestDefense = null;
+        let bestDefenseScore = -999999;
+        
+        // Prioridade: capturar atacante > bloquear > mover rei > contra-ataque desesperado
+        const defensePriority = [
+            ...resources.captures.sort((a, b) => b.value - a.value),
+            ...resources.blocks,
+            ...resources.kingMoves.map(m => ({...m, isKingMove: true})),
+            ...resources.counterAttacks.map(m => ({...m, isCounterAttack: true}))
+        ];
+        
+        for (let defense of defensePriority) {
+            const testBoard = simulateMove(board, {
+                from: defense.from,
+                to: defense.to
+            });
+            
+            if (!isInCheck(color, testBoard)) {
+                let score = 0;
+                if (defense.value) score += defense.value; // Captura valiosa
+                if (defense.isKingMove) score -= 50; // Mover rei é último recurso
+                if (defense.isCounterAttack) score -= 100; // Contra-ataque é arriscado
+                
+                // Verificar se a defesa melhora a posição
+                const newSafety = evaluateKingSafety(testBoard, color);
+                score += newSafety.score;
+                
+                if (score > bestDefenseScore) {
+                    bestDefenseScore = score;
+                    bestDefense = defense;
+                }
+            }
+        }
+        
+        if (bestDefense) {
+            currentGodMove = {
+                from: bestDefense.from,
+                to: bestDefense.to,
+                piece: board[bestDefense.from.row][bestDefense.from.col],
+                score: bestDefenseScore,
+                isDefense: true,
+                defenseType: bestDefense.value ? 'capture' : bestDefense.isKingMove ? 'kingMove' : 'block'
+            };
+            
+            const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+            timeEl.textContent = elapsed + 's';
+            
+            const piece = currentGodMove.piece;
+            pieceIcon.textContent = PIECES[piece];
+            
+            const fromSq = String.fromCharCode(97 + currentGodMove.from.col) + (8 - currentGodMove.from.row);
+            const toSq = String.fromCharCode(97 + currentGodMove.to.col) + (8 - currentGodMove.to.row);
+            
+            moveText.innerHTML = `<span style="color:#ff0000">🛡️ DEFESA:</span> ${fromSq} → ${toSq}`;
+            
+            evalEl.textContent = 'DEF';
+            evalEl.style.color = '#ff6600';
+            
+            let reasonText = `<span style="color:#ff0000; font-size:1.2em;">⚠️ REI EM XEQUE! ⚠️</span><br><br>`;
+            reasonText += `Avaliando ${resources.captures.length} capturas, ${resources.blocks.length} bloqueios, ${resources.kingMoves.length} fugas...<br><br>`;
+            
+            if (currentGodMove.defenseType === 'capture') {
+                reasonText += `<strong style="color:#00ff00;">✓ Melhor defesa: Capturar o atacante!</strong><br>`;
+                reasonText += `Elimina a ameaça e ganha material.`;
+            } else if (currentGodMove.defenseType === 'block') {
+                reasonText += `<strong style="color:#00ff00;">✓ Bloqueio selecionado</strong><br>`;
+                reasonText += `Interposição entre rei e atacante.`;
+            } else {
+                reasonText += `<strong style="color:#ffaa00;">⚠ Fuga do rei (último recurso)</strong><br>`;
+                reasonText += `Outras defesas não eram seguras.`;
+            }
+            
+            // Verificar se após defesa há contra-ataque
+            const afterDefense = simulateMove(board, {
+                from: currentGodMove.from,
+                to: currentGodMove.to
+            });
+            
+            const counterAttacks = findCheckmateOpportunities(afterDefense, color);
+            if (counterAttacks.length > 0) {
+                reasonText += `<br><br><span style="color:#ff00ff;">🔥 CONTRA-ATAQUE DETECTADO após defesa!</span>`;
+            }
+            
+            reasoning.innerHTML = reasonText;
+            executeBtn.style.display = 'block';
+            executeBtn.textContent = '🛡️ EXECUTAR DEFESA';
+            executeBtn.style.background = 'linear-gradient(135deg, #ff6600, #ff0000)';
+            
+            highlightGodMove(currentGodMove.from, currentGodMove.to);
+            
+            showToast(
+                '🚨 DEFESA PRIORITÁRIA!', 
+                `Rei em xeque! Jogue ${PIECES[piece]} ${fromSq}→${toSq} para salvar o rei!`,
+                'opponent',
+                10000
+            );
+            
+            return;
+        }
+    }
+    
+    // 2. SEGUNDO: Verificar oportunidades de checkmate imediato
+    const mateOpportunities = findCheckmateOpportunities(board, color);
+    
+    if (mateOpportunities.length > 0) {
+        const bestMate = mateOpportunities[0];
+        currentGodMove = {
+            from: bestMate.from,
+            to: bestMate.to,
+            piece: bestMate.piece,
+            score: bestMate.priority,
+            isCheckmate: true,
+            patternName: bestMate.patternName
+        };
+        
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        timeEl.textContent = elapsed + 's';
+        
+        const piece = currentGodMove.piece;
+        pieceIcon.textContent = PIECES[piece];
+        
+        const fromSq = String.fromCharCode(97 + currentGodMove.from.col) + (8 - currentGodMove.from.row);
+        const toSq = String.fromCharCode(97 + currentGodMove.to.col) + (8 - currentGodMove.to.row);
+        
+        moveText.innerHTML = `<span style="color:#ff00ff; font-size:1.3em;">👑 CHECKMATE!</span><br>${fromSq} → ${toSq}`;
+        
+        evalEl.textContent = 'MATE';
+        evalEl.style.color = '#ff00ff';
+        
+        reasoning.innerHTML = `
+            <span style="color:#ff00ff; font-size:1.3em;">🏆 Padrão de Mate Detectado: ${bestMate.patternName}</span><br><br>
+            <strong>Análise:</strong> Esta jogada força xeque-mate imediato!<br>
+            O rei adversário não tem escapatória.<br><br>
+            <span style="color:#00ff00;">✓ Vitória garantida - execute agora!</span>
+        `;
+        
+        executeBtn.style.display = 'block';
+        executeBtn.textContent = '👑 EXECUTAR CHECKMATE 👑';
+        executeBtn.style.background = 'linear-gradient(135deg, #ff00ff, #ffd700, #ff00ff)';
+        executeBtn.style.animation = 'godBtnPulse 0.5s infinite';
+        
+        highlightGodMove(currentGodMove.from, currentGodMove.to);
+        
+        // Efeito especial para checkmate
+        showToast(
+            '🏆 CHECKMATE ENCONTRADO!', 
+            `${bestMate.patternName}! Jogue ${PIECES[piece]} ${fromSq}→${toSq} para vencer!`,
+            'god',
+            15000
+        );
+        
+        // Som visual extra
+        const boardEl = document.getElementById('chessboard');
+        boardEl.style.animation = 'none';
+        setTimeout(() => {
+            boardEl.style.animation = 'godTurnGlow 1s infinite';
+        }, 10);
+        
+        return;
+    }
+    
+    // 3. TERCEIRO: Análise normal com prioridade para ata    que criam ameaças de mate
+    const analysis = generatePredictiveAnalysis(color);
+    
+    // 4. QUARTO: Avaliar segurança do rei antes de atacar
+    const kingSafety = evaluateKingSafety(board, color);
+    const opponentThreats = findMyThreats(board, color === 'white' ? 'black' : 'white');
+    
+    // Se rei está inseguro e há ameaças reais, priorizar defesa
+    if (kingSafety.score < -80 && opponentThreats.length > 0) {
+        // Procurar movimentos que melhorem segurança do rei
+        const safetyMoves = analysis.bestMoves.filter(move => {
+            const testBoard = simulateMove(board, move);
+            const newSafety = evaluateKingSafety(testBoard, color);
+            return newSafety.score > kingSafety.score + 20;
+        });
+        
+        if (safetyMoves.length > 0) {
+            analysis.bestMoves = safetyMoves.concat(analysis.bestMoves.filter(m => !safetyMoves.includes(m)));
+        }
+    }
+    
+    // 5. QUINTO: Verificar se movimento cria ameaças de mate futuras
+    analysis.bestMoves.forEach(move => {
+        const testBoard = simulateMove(board, move);
+        const futureMates = findCheckmateOpportunities(testBoard, color);
+        if (futureMates.length > 0) {
+            move.createsMateThreat = true;
+            move.mateThreatCount = futureMates.length;
+            move.score += 200; // Bônus significativo por criar ameaça de mate
+        }
+        
+        // Verificar se fortalece ataque ao rei adversário
+        const oppKingPos = findKing(testBoard, color === 'white' ? 'black' : 'white');
+        if (oppKingPos) {
+            const attackPotential = evaluateAttackPotential(testBoard, oppKingPos, color);
+            move.kingAttackScore = attackPotential;
+            move.score += attackPotential * 10;
+        }
+    });
+    
+    // Reordenar considerando todos os fatores
+    analysis.bestMoves.sort((a, b) => {
+        // Prioridade máxima para movimentos que criam ameaças de mate
+        if (a.createsMateThreat && !b.createsMateThreat) return -1;
+        if (!a.createsMateThreat && b.createsMateThreat) return 1;
+        
+        // Segunda prioridade: segurança do rei
+        const aImprovesSafety = a.safety && a.safety.score > 0;
+        const bImprovesSafety = b.safety && b.safety.score > 0;
+        if (aImprovesSafety && !bImprovesSafety) return -1;
+        if (!aImprovesSafety && bImprovesSafety) return 1;
+        
+        // Terceira prioridade: score geral
+        return b.score - a.score;
+    });
     
     if (gameState.opponentIntentions && gameState.opponentIntentions.length > 0) {
         analysis.bestMoves.forEach(move => {
-            const testBoard = simulateMove(gameState.board, {from: move.from, to: move.to});
+            const testBoard = simulateMove(board, {from: move.from, to: move.to});
             
             let intentionScore = 0;
             
@@ -4525,7 +5279,7 @@ function calculateGodMove() {
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
     timeEl.textContent = elapsed + 's';
     
-    const piece = gameState.board[bestMove.from.row][bestMove.from.col];
+    const piece = board[bestMove.from.row][bestMove.from.col];
     pieceIcon.textContent = PIECES[piece];
     
     const fromSq = String.fromCharCode(97 + bestMove.from.col) + (8 - bestMove.from.row);
@@ -4539,8 +5293,13 @@ function calculateGodMove() {
     
     let reasonText = '';
     
+    // Indicar se cria ameaça de mate
+    if (bestMove.createsMateThreat) {
+        reasonText += `<span style="color:#ff00ff; font-size:1.2em;">🔥 Cria ${bestMove.mateThreatCount} ameaça(s) de mate futura(s)!</span><br><br>`;
+    }
+    
     if (bestMove.to.capture) {
-        const target = gameState.board[bestMove.to.row][bestMove.to.col];
+        const target = board[bestMove.to.row][bestMove.to.col];
         reasonText += `🎯 Captura de ${PIECES[target]} (+${PIECE_VALUES[target.toLowerCase()]/100})<br>`;
     }
     
@@ -4548,9 +5307,21 @@ function calculateGodMove() {
         reasonText += `⚡ ${bestMove.safety.tacticalMotifs.list[0]}<br>`;
     }
     
+    if (bestMove.kingAttackScore && bestMove.kingAttackScore > 3) {
+        reasonText += `👑 Fortalece ataque ao rei adversário (+${bestMove.kingAttackScore})<br>`;
+    }
+    
+    // Análise de segurança do rei
+    if (kingSafety.score < -30) {
+        reasonText += `<br><span style="color:#ffaa00;">⚠️ Atenção: Seu rei está exposto (${kingSafety.score.toFixed(0)})</span><br>`;
+        if (bestMove.safety && bestMove.safety.kingSafety > 0) {
+            reasonText += `<span style="color:#00ff00;">✓ Esta jogada melhora a segurança do rei</span><br>`;
+        }
+    }
+    
     if (gameState.opponentIntentions) {
         const blockedIntentions = gameState.opponentIntentions.filter(i => 
-            doesMoveBlockIntention(gameState.board, bestMove, i)
+            doesMoveBlockIntention(board, bestMove, i)
         );
         
         if (blockedIntentions.length > 0) {
@@ -4562,7 +5333,7 @@ function calculateGodMove() {
         }
         
         const criticalNotBlocked = gameState.opponentIntentions
-            .filter(i => i.priority === 'critical' && !doesMoveBlockIntention(gameState.board, bestMove, i));
+            .filter(i => i.priority === 'critical' && !doesMoveBlockIntention(board, bestMove, i));
         
         if (criticalNotBlocked.length > 0) {
             reasonText += `<br><span style="color:#ff6666;">⚠️ ATENÇÃO: Intenções críticas não bloqueadas:</span><br>`;
@@ -4587,16 +5358,23 @@ function calculateGodMove() {
     reasoning.innerHTML = reasonText;
     
     executeBtn.style.display = 'block';
+    executeBtn.textContent = '✨ EXECUTAR JOGADA PERFEITA ✨';
+    executeBtn.style.background = 'linear-gradient(135deg, var(--green), #059669)';
+    executeBtn.style.animation = 'godBtnPulse 1.5s infinite';
     
     highlightGodMove(bestMove.from, bestMove.to);
     
-    const captureText = bestMove.to.capture ? ` (captura ${PIECES[gameState.board[bestMove.to.row][bestMove.to.col]]})` : '';
+    const captureText = bestMove.to.capture ? ` (captura ${PIECES[board[bestMove.to.row][bestMove.to.col]]})` : '';
     const blockedCount = gameState.opponentIntentions ? 
-        gameState.opponentIntentions.filter(i => doesMoveBlockIntention(gameState.board, bestMove, i)).length : 0;
+        gameState.opponentIntentions.filter(i => doesMoveBlockIntention(board, bestMove, i)).length : 0;
+    
+    let toastMessage = `Mova ${PIECES[piece]} de ${fromSq} para ${toSq}${captureText}`;
+    if (blockedCount > 0) toastMessage += ` - Bloqueia ${blockedCount} intenções!`;
+    if (bestMove.createsMateThreat) toastMessage += ` - Cria ameaça de mate!`;
     
     showToast(
         '👑 Jogada Divina Calculada!', 
-        `Mova ${PIECES[piece]} de ${fromSq} para ${toSq}${captureText}${blockedCount > 0 ? ` - Bloqueia ${blockedCount} intenções!` : ''}`,
+        toastMessage,
         'god',
         6000
     );
@@ -4656,7 +5434,13 @@ function executeGodMove() {
     
     setTimeout(() => {
         executeMove(gameState.selectedSquare, {row: move.to.row, col: move.to.col}, move.to);
-        showToast('✨ Jogada Divina Executada!', 'Os deuses sorriem para você!', 'god', 3000);
+        
+        let message = '✨ Jogada Divina Executada!';
+        if (move.isCheckmate) message = '🏆 CHECKMATE EXECUTADO!';
+        else if (move.isDefense) message = '🛡️ Defesa Executada!';
+        else if (move.createsMateThreat) message = '🔥 Ameaça de Mate Criada!';
+        
+        showToast(message, 'Os deuses sorriem para você!', 'god', 3000);
         
         if (gameState.opponentIntentions && gameState.opponentIntentions.length > 0) {
             const blocked = gameState.opponentIntentions.filter(i => 
@@ -5047,7 +5831,281 @@ function autoPlayMove(index) {
     executeMove(move.from, {row: move.to.row, col: move.to.col}, move.to);
 }
 
-// ==================== FUNÇÕES DE CONEXÃO ====================
+// ==================== SISTEMA DE ENTRADA AUTOMÁTICA ====================
+
+// Verificar se há dados de usuário logado no sessionStorage (vindo do index.html)
+function checkAutoLogin() {
+    const sessionUser = sessionStorage.getItem('currentUser');
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameId = urlParams.get('game');
+    const challengeFrom = urlParams.get('challenge');
+    
+    if (sessionUser && gameId) {
+        try {
+            const userData = JSON.parse(sessionUser);
+            
+            // Mostrar overlay de carregamento
+            document.getElementById('autoLoginOverlay').classList.add('show');
+            document.getElementById('loginScreen').style.display = 'none';
+            
+            // Preencher dados do usuário
+            gameState.myName = userData.username || userData.name;
+            gameState.isFernando = (gameState.myName || '').toLowerCase() === 'fernando';
+            gameState.gameId = gameId;
+            
+            // Se veio de um desafio, configurar corretamente
+            if (challengeFrom) {
+                // Quem aceita o desafio entra automaticamente
+                gameState.userId = userData.uid;
+                gameState.userData = userData;
+                
+                // Conectar diretamente sem mostrar modal
+                setTimeout(() => {
+                    connectToGameAuto();
+                }, 500);
+            } else {
+                // Criador do jogo - aguardar
+                document.getElementById('autoLoginOverlay').classList.remove('show');
+                document.getElementById('loginScreen').style.display = 'block';
+                
+                // Preencher nome automaticamente
+                document.getElementById('playerName').value = gameState.myName;
+                
+                // Entrar automaticamente
+                setTimeout(() => {
+                    joinGame();
+                }, 500);
+            }
+            
+            return true;
+        } catch (e) {
+            console.error('Erro no auto-login:', e);
+            return false;
+        }
+    }
+    
+    return false;
+}
+
+function connectToGameAuto() {
+    gameRef = db.collection('games').doc(gameState.gameId);
+    
+    gameRef.get().then(doc => {
+        if (!doc.exists) {
+            // Jogo não existe, criar como desafiado
+            gameState.amPlayer1 = false;
+            gameState.myColor = 'black';
+            createNewGameAuto();
+        } else {
+            const game = doc.data();
+            const hasWhite = game.players && game.players.white;
+            const hasBlack = game.players && game.players.black;
+            
+            if (hasWhite && !hasBlack) {
+                // Entrar como pretas
+                gameState.amPlayer1 = false;
+                gameState.myColor = 'black';
+                joinExistingGameAuto(game);
+            } else if (!hasWhite && hasBlack) {
+                // Entrar como brancas
+                gameState.amPlayer1 = true;
+                gameState.myColor = 'white';
+                joinAsWhitePlayerAuto(game);
+            } else if (hasWhite && hasBlack) {
+                // Jogo cheio - verificar se sou um dos jogadores
+                if (game.players.white.name === gameState.myName) {
+                    gameState.amPlayer1 = true;
+                    gameState.myColor = 'white';
+                    restorePlayerState(game);
+                } else if (game.players.black.name === gameState.myName) {
+                    gameState.amPlayer1 = false;
+                    gameState.myColor = 'black';
+                    restorePlayerState(game);
+                } else {
+                    // Jogo realmente cheio
+                    document.getElementById('autoLoginOverlay').classList.remove('show');
+                    document.getElementById('loginScreen').style.display = 'block';
+                    showStatus('Jogo já está cheio. Crie um novo desafio.', 'error');
+                }
+            } else {
+                // Jogo vazio (não deveria acontecer se foi desafio)
+                gameState.amPlayer1 = false;
+                gameState.myColor = 'black';
+                createNewGameAuto();
+            }
+        }
+    }).catch(error => {
+        console.error('Erro na conexão automática:', error);
+        document.getElementById('autoLoginOverlay').classList.remove('show');
+        document.getElementById('loginScreen').style.display = 'block';
+        showStatus('Erro de conexão: ' + error.message, 'error');
+    });
+}
+
+function createNewGameAuto() {
+    const initialBoard = [
+        ['r','n','b','q','k','b','n','r'],
+        ['p','p','p','p','p','p','p','p'],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        [null,null,null,null,null,null,null,null],
+        ['P','P','P','P','P','P','P','P'],
+        ['R','N','B','Q','K','B','N','R']
+    ];
+
+    const boardObj = boardToFirestore(initialBoard);
+    const capturedObj = capturedPiecesToFirestore({ white: [], black: [] });
+
+    const gameData = {
+        board: boardObj,
+        currentPlayer: 'white',
+        players: {
+            white: gameState.myColor === 'white' ? {
+                name: gameState.myName,
+                isFernando: gameState.isFernando,
+                connected: true,
+                joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+            } : null,
+            black: gameState.myColor === 'black' ? {
+                name: gameState.myName,
+                isFernando: gameState.isFernando,
+                connected: true,
+                joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+            } : null
+        },
+        status: gameState.myColor === 'white' ? 'waiting' : 'playing',
+        castlingRights: { 
+            white: {kingSide: true, queenSide: true}, 
+            black: {kingSide: true, queenSide: true} 
+        },
+        enPassantTarget: null,
+        lastMove: null,
+        capturedPieces: capturedObj,
+        kingPositions: { 
+            white: {row: 7, col: 4},
+            black: {row: 0, col: 4}
+        },
+        moveHistory: [],
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    gameRef.set(gameData).then(() => {
+        document.getElementById('autoLoginOverlay').classList.remove('show');
+        setupGameListener();
+        setupChatListener();
+        
+        if (gameState.myColor === 'white') {
+            // Aguardando adversário
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            updatePlayerDisplay();
+            renderBoard();
+            showToast('✅ Desafio criado!', `Aguardando ${new URLSearchParams(window.location.search).get('challenge') || 'adversário'}...`, 'normal', 5000);
+        } else {
+            // Entrou direto como pretas
+            gameState.board = initialBoard;
+            startGame();
+        }
+        
+        saveLocalState();
+        updateChatVisibility();
+    }).catch(error => {
+        console.error('Erro ao criar jogo:', error);
+        document.getElementById('autoLoginOverlay').classList.remove('show');
+        document.getElementById('loginScreen').style.display = 'block';
+        showStatus('Erro ao criar jogo: ' + error.message, 'error');
+    });
+}
+
+function joinExistingGameAuto(game) {
+    const updates = {
+        'players.black': { 
+            name: gameState.myName, 
+            isFernando: gameState.isFernando,
+            connected: true,
+            joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        status: 'playing',
+        startedAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    gameRef.update(updates).then(() => {
+        document.getElementById('autoLoginOverlay').classList.remove('show');
+        
+        gameState.board = boardFromFirestore(game.board);
+        gameState.currentPlayer = game.currentPlayer || 'white';
+        gameState.castlingRights = game.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
+        gameState.capturedPieces = capturedPiecesFromFirestore(game.capturedPieces);
+        gameState.kingPositions = game.kingPositions || { white: {row: 7, col: 4}, black: {row: 0, col: 4} };
+        gameState.moveHistory = game.moveHistory || [];
+        gameState.players = {
+            white: game.players.white,
+            black: { name: gameState.myName, isFernando: gameState.isFernando }
+        };
+        
+        saveLocalState();
+        setupGameListener();
+        setupChatListener();
+        startGame();
+        
+        setTimeout(() => {
+            addSystemMessage(`🎮 ${gameState.myName} aceitou o desafio!`);
+        }, 1500);
+        
+        updateChatVisibility();
+    }).catch(error => {
+        console.error('Erro ao entrar:', error);
+        document.getElementById('autoLoginOverlay').classList.remove('show');
+        document.getElementById('loginScreen').style.display = 'block';
+        showStatus('Erro ao entrar no jogo: ' + error.message, 'error');
+    });
+}
+
+function joinAsWhitePlayerAuto(game) {
+    const updates = {
+        'players.white': { 
+            name: gameState.myName, 
+            isFernando: gameState.isFernando,
+            connected: true,
+            joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        status: 'playing'
+    };
+
+    gameRef.update(updates).then(() => {
+        document.getElementById('autoLoginOverlay').classList.remove('show');
+        
+        gameState.board = boardFromFirestore(game.board);
+        gameState.currentPlayer = game.currentPlayer || 'white';
+        gameState.castlingRights = game.castlingRights || { white: {kingSide: true, queenSide: true}, black: {kingSide: true, queenSide: true} };
+        gameState.capturedPieces = capturedPiecesFromFirestore(game.capturedPieces);
+        gameState.kingPositions = game.kingPositions || { white: {row: 7, col: 4}, black: {row: 0, col: 4} };
+        gameState.moveHistory = game.moveHistory || [];
+        gameState.players = {
+            white: { name: gameState.myName, isFernando: gameState.isFernando },
+            black: game.players.black
+        };
+        
+        saveLocalState();
+        setupGameListener();
+        setupChatListener();
+        startGame();
+        
+        setTimeout(() => {
+            addSystemMessage(`🎮 ${gameState.myName} entrou na partida!`);
+        }, 1500);
+        
+        updateChatVisibility();
+    }).catch(error => {
+        console.error('Erro ao entrar:', error);
+        document.getElementById('autoLoginOverlay').classList.remove('show');
+        document.getElementById('loginScreen').style.display = 'block';
+        showStatus('Erro ao entrar no jogo: ' + error.message, 'error');
+    });
+}
+
+// ==================== FUNÇÕES DE CONEXÃO ORIGINAIS ====================
 
 function joinGame() {
     if (typeof userData !== 'undefined' && userData && userData.username) {
@@ -5681,7 +6739,7 @@ function showCheckmateAnimation(winner) {
         `;
     } else {
         text.innerHTML = `
-            <span style="color:#ff0000             text-shadow: 0 0 30px #ff0000;">💀 CHECKMATE 💀</span><br>
+            <span style="color:#ff0000; text-shadow: 0 0 30px #ff0000;">💀 CHECKMATE 💀</span><br>
             <span style="font-size:0.5em; color:#ff6666; text-shadow: 0 0 20px #ff6666;">Você Perdeu!</span>
         `;
     }
@@ -5892,18 +6950,24 @@ window.onbeforeunload = () => {
     saveLocalState();
 };
 
+// Inicialização automática ao carregar
 window.onload = () => {
     const savedName = localStorage.getItem('chessPlayerName');
     if (savedName) {
         document.getElementById('playerName').value = savedName;
     }
     
-    const savedState = loadLocalState();
-    if (savedState) {
-        const statusMsg = document.getElementById('statusMessage');
-        statusMsg.textContent = `🎮 Jogo anterior detectado (${savedState.gameId})`;
-        statusMsg.className = 'status-message waiting';
-        statusMsg.style.display = 'block';
+    // Tentar auto-login primeiro
+    const autoLoginSuccess = checkAutoLogin();
+    
+    if (!autoLoginSuccess) {
+        const savedState = loadLocalState();
+        if (savedState) {
+            const statusMsg = document.getElementById('statusMessage');
+            statusMsg.textContent = `🎮 Jogo anterior detectado (${savedState.gameId})`;
+            statusMsg.className = 'status-message waiting';
+            statusMsg.style.display = 'block';
+        }
     }
 };
 
@@ -5975,7 +7039,6 @@ document.addEventListener('keydown', (e) => {
         executeMove(move.from, {row: move.to.row, col: move.to.col}, move.to);
     }
 });
-</script>
-    
+    </script>
 </body>
 </html>
