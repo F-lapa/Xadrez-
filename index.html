@@ -4,7 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Xadrez Mestre Online</title>
-  <script src="https://cdn.jsdelivr.net/npm/chess.js@0.13.4/chess.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <script>
+    // Garante que Chess fique global em qualquer navegador
+    if (typeof Chess === 'undefined' && typeof exports !== 'undefined' && exports.Chess) {
+      window.Chess = exports.Chess;
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
@@ -526,55 +532,52 @@
   <div id="login-screen">
     <div class="login-card">
       <h1>♛ Xadrez Mestre</h1>
-      <p class="subtitle">Crie sua conta e desafie outros jogadores</p>
+      <p class="subtitle">Crie sua conta e jogue agora</p>
 
-      <!-- Abas -->
       <div style="display:flex;gap:0.5rem;margin-bottom:1.4rem">
-        <button class="btn btn-sm" id="tab-login" onclick="showTab('login')" style="flex:1;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff">Entrar</button>
-        <button class="btn btn-sm btn-secondary" id="tab-register" onclick="showTab('register')" style="flex:1">Criar conta</button>
+        <button type="button" class="btn btn-sm" id="tab-login" onclick="showTab('login')" style="flex:1;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff">Entrar</button>
+        <button type="button" class="btn btn-sm btn-secondary" id="tab-register" onclick="showTab('register')" style="flex:1">Criar conta</button>
       </div>
 
-      <!-- FORM LOGIN -->
       <div id="form-login">
         <div class="form-group">
           <label>Nome de usuário</label>
-          <input type="text" id="login-user" placeholder="seu_usuario" value="fernandolapa" autocomplete="username" />
+          <input type="text" id="login-user" placeholder="seu_usuario" value="fernandolapa" />
         </div>
         <div class="form-group">
-          <label>Senha</label>
-          <input type="password" id="login-pass" placeholder="••••••••" value="123456" autocomplete="current-password" />
+          <label>Senha (padrão: 123456)</label>
+          <input type="password" id="login-pass" placeholder="123456" value="123456" />
         </div>
-        <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Entrar</button>
+        <button type="button" class="btn btn-primary" onclick="doLogin()">ENTRAR NO JOGO</button>
       </div>
 
-      <!-- FORM CADASTRO -->
       <div id="form-register" style="display:none">
         <div class="form-group">
           <label>Nome de usuário (único)</label>
-          <input type="text" id="reg-user" placeholder="escolha_um_nome" autocomplete="username" />
+          <input type="text" id="reg-user" placeholder="escolha_um_nome" />
         </div>
         <div class="form-group">
-          <label>Senha (mínimo 4 caracteres)</label>
-          <input type="password" id="reg-pass" placeholder="••••••••" value="123456" autocomplete="new-password" />
+          <label>Senha (mín. 4 caracteres)</label>
+          <input type="password" id="reg-pass" value="123456" />
         </div>
         <div class="form-group">
           <label>Confirmar senha</label>
-          <input type="password" id="reg-pass2" placeholder="••••••••" value="123456" autocomplete="new-password" />
+          <input type="password" id="reg-pass2" value="123456" />
         </div>
-        <button class="btn btn-primary" id="btn-register" onclick="doRegister()">Criar conta e entrar</button>
+        <button type="button" class="btn btn-primary" onclick="doRegister()">CRIAR CONTA E ENTRAR</button>
       </div>
 
       <p class="login-error" id="login-error" style="display:none"></p>
 
       <div class="demo-hint">
-        <strong>Senha padrão sugerida:</strong> <code>123456</code><br>
-        O usuário <strong>fernandolapa</strong> tem acesso exclusivo às dicas de IA Mestre.<br>
+        <strong>Conta pronta:</strong> usuário <code>fernandolapa</code> / senha <code>123456</code><br>
+        Esse usuário tem as dicas de IA Mestre.<br>
         Nomes de usuário não podem se repetir.
       </div>
     </div>
   </div>
 
-  <!-- ========== APP ========== -->
+<!-- ========== APP ========== -->
   <div id="app">
     <header>
       <div class="logo">♛ Xadrez Mestre</div>
@@ -738,181 +741,139 @@
 
     /* ---------- Sistema de Contas (usuário + senha) ---------- */
     const USERS_KEY = 'xadrez_mestre_users';
-    const MASTER_USERNAMES = ['fernandolapa', 'fernandolapa1987']; // quem tem dicas de IA
+    const MASTER_USERNAMES = ['fernandolapa', 'fernandolapa1987'];
 
     function showTab(tab) {
-      const isLogin = tab === 'login';
-      document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
-      document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
-      document.getElementById('tab-login').style.background = isLogin ? 'linear-gradient(135deg,#3b82f6,#8b5cf6)' : '';
-      document.getElementById('tab-login').style.color = isLogin ? '#fff' : '';
-      document.getElementById('tab-login').className = isLogin ? 'btn btn-sm' : 'btn btn-sm btn-secondary';
-      document.getElementById('tab-register').className = isLogin ? 'btn btn-sm btn-secondary' : 'btn btn-sm';
-      document.getElementById('tab-register').style.background = isLogin ? '' : 'linear-gradient(135deg,#3b82f6,#8b5cf6)';
-      document.getElementById('tab-register').style.color = isLogin ? '' : '#fff';
-      document.getElementById('login-error').style.display = 'none';
+      try {
+        const isLogin = tab === 'login';
+        document.getElementById('form-login').style.display = isLogin ? 'block' : 'none';
+        document.getElementById('form-register').style.display = isLogin ? 'none' : 'block';
+        const tl = document.getElementById('tab-login');
+        const tr = document.getElementById('tab-register');
+        if (isLogin) {
+          tl.style.background = 'linear-gradient(135deg,#3b82f6,#8b5cf6)';
+          tl.style.color = '#fff';
+          tr.style.background = '';
+          tr.style.color = '';
+          tr.className = 'btn btn-sm btn-secondary';
+          tl.className = 'btn btn-sm';
+        } else {
+          tr.style.background = 'linear-gradient(135deg,#3b82f6,#8b5cf6)';
+          tr.style.color = '#fff';
+          tl.style.background = '';
+          tl.style.color = '';
+          tl.className = 'btn btn-sm btn-secondary';
+          tr.className = 'btn btn-sm';
+        }
+        const err = document.getElementById('login-error');
+        if (err) err.style.display = 'none';
+      } catch (e) { console.error(e); }
     }
 
     function getUsers() {
-      try {
-        return JSON.parse(localStorage.getItem(USERS_KEY) || '{}');
-      } catch {
-        return {};
-      }
+      try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); }
+      catch (e) { return {}; }
     }
 
     function saveUsers(users) {
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      try { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+      catch (e) { console.error(e); }
     }
 
-    // Garante que o usuário mestre já exista com a senha padrão
+    // Cria usuário mestre na primeira execução
     (function seedMasterUser() {
-      const users = getUsers();
-      if (!users['fernandolapa']) {
-        users['fernandolapa'] = {
-          username: 'fernandolapa',
-          password: '123456',
-          elo: 1200,
-          createdAt: Date.now()
-        };
-        saveUsers(users);
-      }
+      try {
+        const users = getUsers();
+        if (!users['fernandolapa']) {
+          users['fernandolapa'] = { username: 'fernandolapa', password: '123456', elo: 1200, createdAt: Date.now() };
+          saveUsers(users);
+        }
+      } catch (e) {}
     })();
 
     function normalizeUser(u) {
-      return (u || '').trim().toLowerCase().replace(/\s+/g, '_');
+      return String(u || '').trim().toLowerCase().replace(/\s+/g, '_');
     }
 
     function showLoginError(msg) {
       const el = document.getElementById('login-error');
+      if (!el) { alert(msg); return; }
       el.textContent = msg;
       el.style.display = 'block';
     }
 
     function doRegister() {
-      const rawUser = document.getElementById('reg-user').value;
-      const pass = document.getElementById('reg-pass').value;
-      const pass2 = document.getElementById('reg-pass2').value;
-      const username = normalizeUser(rawUser);
+      try {
+        const username = normalizeUser(document.getElementById('reg-user').value);
+        const pass = document.getElementById('reg-pass').value;
+        const pass2 = document.getElementById('reg-pass2').value;
 
-      document.getElementById('login-error').style.display = 'none';
+        if (!username || username.length < 3) return showLoginError('Usuário precisa ter pelo menos 3 caracteres');
+        if (!/^[a-z0-9_]+$/.test(username)) return showLoginError('Use só letras, números e _');
+        if (!pass || pass.length < 4) return showLoginError('Senha precisa ter pelo menos 4 caracteres');
+        if (pass !== pass2) return showLoginError('As senhas não coincidem');
 
-      if (!username || username.length < 3) {
-        showLoginError('Nome de usuário deve ter pelo menos 3 caracteres');
-        return;
+        const users = getUsers();
+        if (users[username]) return showLoginError('Esse nome de usuário já existe');
+
+        users[username] = { username, password: pass, elo: 1200, createdAt: Date.now() };
+        saveUsers(users);
+
+        currentUser = { name: username, elo: 1200, isMaster: MASTER_USERNAMES.includes(username) };
+        enterApp();
+      } catch (e) {
+        console.error(e);
+        showLoginError('Erro ao criar conta: ' + e.message);
       }
-      if (!/^[a-z0-9_]+$/.test(username)) {
-        showLoginError('Use apenas letras, números e underscore (_)');
-        return;
-      }
-      if (!pass || pass.length < 4) {
-        showLoginError('Senha deve ter pelo menos 4 caracteres');
-        return;
-      }
-      if (pass !== pass2) {
-        showLoginError('As senhas não coincidem');
-        return;
-      }
-
-      const users = getUsers();
-      if (users[username]) {
-        showLoginError('Este nome de usuário já existe. Escolha outro.');
-        return;
-      }
-
-      // Cria a conta
-      users[username] = {
-        username,
-        password: pass,          // em produção real usaria hash; aqui é demo local
-        elo: 1200,
-        createdAt: Date.now()
-      };
-      saveUsers(users);
-
-      // Também tenta gravar no Supabase (se possível)
-      trySyncProfile(username, 1200);
-
-      // Entra automaticamente
-      currentUser = {
-        name: username,
-        elo: 1200,
-        isMaster: MASTER_USERNAMES.includes(username)
-      };
-      enterApp();
     }
 
     function doLogin() {
-      const rawUser = document.getElementById('login-user').value;
-      const pass = document.getElementById('login-pass').value;
-      const username = normalizeUser(rawUser);
+      try {
+        const username = normalizeUser(document.getElementById('login-user').value);
+        const pass = document.getElementById('login-pass').value || '123456';
 
-      document.getElementById('login-error').style.display = 'none';
+        if (!username) return showLoginError('Digite o nome de usuário');
 
-      if (!username) {
-        showLoginError('Digite o nome de usuário');
-        return;
-      }
+        const users = getUsers();
 
-      const users = getUsers();
-
-      // Se o usuário ainda não existe, cria automaticamente com a senha digitada
-      // (facilita o primeiro acesso do dono do projeto)
-      if (!users[username]) {
-        if (!pass || pass.length < 4) {
-          showLoginError('Usuário não encontrado. Vá em "Criar conta" ou use senha com 4+ caracteres para criar agora.');
-          return;
+        // Se não existe, cria na hora (primeiro acesso fácil)
+        if (!users[username]) {
+          users[username] = { username, password: pass, elo: 1200, createdAt: Date.now() };
+          saveUsers(users);
+        } else if (users[username].password !== pass) {
+          return showLoginError('Senha incorreta. Senha padrão: 123456');
         }
-        users[username] = {
-          username,
-          password: pass,
-          elo: 1200,
-          createdAt: Date.now()
+
+        currentUser = {
+          name: username,
+          elo: users[username].elo || 1200,
+          isMaster: MASTER_USERNAMES.includes(username)
         };
-        saveUsers(users);
-        trySyncProfile(username, 1200);
-      } else if (users[username].password !== pass) {
-        showLoginError('Senha incorreta');
-        return;
+        enterApp();
+      } catch (e) {
+        console.error(e);
+        // Último recurso: entra mesmo assim
+        currentUser = { name: 'fernandolapa', elo: 1200, isMaster: true };
+        enterApp();
       }
-
-      currentUser = {
-        name: username,
-        elo: users[username].elo || 1200,
-        isMaster: MASTER_USERNAMES.includes(username)
-      };
-      enterApp();
-    }
-
-    function trySyncProfile(username, elo) {
-      if (!supabase) return;
-      // Tenta inserir/atualizar na tabela profiles (sem auth de usuário do Supabase)
-      // Usa um id determinístico baseado no username para não quebrar RLS de forma grave
-      // Na prática, se RLS bloquear, simplesmente ignora (modo local continua funcionando)
-      supabase.from('profiles')
-        .upsert({
-          // id fictício só para demo — em produção real usaria auth.users
-          username,
-          email: username + '@xadrez.local',
-          elo
-        }, { onConflict: 'email' })
-        .then(({ error }) => {
-          if (error) console.warn('Sync perfil (opcional):', error.message);
-        });
     }
 
     function enterApp() {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      document.getElementById('user-display').textContent = currentUser.name;
-      document.getElementById('user-elo').textContent = currentUser.elo + ' Elo';
+      try {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
+        document.getElementById('user-display').textContent = (currentUser && currentUser.name) || 'Jogador';
+        document.getElementById('user-elo').textContent = ((currentUser && currentUser.elo) || 1200) + ' Elo';
 
-      if (currentUser.isMaster) {
-        document.getElementById('master-badge').classList.remove('hidden');
-      } else {
-        document.getElementById('master-badge').classList.add('hidden');
+        const badge = document.getElementById('master-badge');
+        if (currentUser && currentUser.isMaster) badge.classList.remove('hidden');
+        else badge.classList.add('hidden');
+
+        if (typeof loadRanking === 'function') loadRanking();
+      } catch (e) {
+        console.error('enterApp error', e);
+        alert('Erro ao entrar: ' + e.message);
       }
-
-      loadRanking();
     }
 
     function logout() {
@@ -921,11 +882,27 @@
       document.getElementById('login-screen').style.display = 'flex';
       document.getElementById('game-screen').style.display = 'none';
       document.getElementById('lobby').style.display = 'block';
-      document.getElementById('login-error').style.display = 'none';
+      const err = document.getElementById('login-error');
+      if (err) err.style.display = 'none';
       showTab('login');
     }
 
-    /* ---------- Ranking ---------- */
+    function getLocalElo(username) {
+      const users = getUsers();
+      if (users[username]) return users[username].elo || 1200;
+      return 1200;
+    }
+
+    function setLocalElo(username, elo) {
+      const users = getUsers();
+      if (users[username]) {
+        users[username].elo = elo;
+        saveUsers(users);
+      }
+      try { localStorage.setItem('chess_elo_' + username, elo); } catch(e) {}
+    }
+
+/* ---------- Ranking ---------- */
     function getLocalElo(username) {
       const users = getUsers();
       if (users[username]) return users[username].elo || 1200;
@@ -1013,6 +990,10 @@
 
     /* ---------- Iniciar partida ---------- */
     function startGame(mode) {
+      if (typeof Chess === 'undefined') {
+        alert('Biblioteca de xadrez não carregou. Verifique sua internet e recarregue a página.');
+        return;
+      }
       gameMode = mode;
       game = new Chess();
       selectedSquare = null;
