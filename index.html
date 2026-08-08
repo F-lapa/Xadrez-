@@ -537,15 +537,18 @@
         <input type="password" id="login-password" placeholder="••••••••" value="demo123" />
       </div>
 
-      <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
-      <p class="login-error" id="login-error">E-mail ou senha inválidos</p>
+      <button class="btn btn-primary" id="btn-login" onclick="doLogin()">Entrar</button>
+      <button class="btn btn-secondary" style="width:100%;margin-top:0.7rem" onclick="forceLocalLogin()">
+        Entrar em modo local (recomendado agora)
+      </button>
+      <p class="login-error" id="login-error" style="display:none"></p>
 
       <div class="demo-hint">
         <strong>Supabase conectado</strong> (inzkuohrnvxbzwrdxekw)<br>
-        Use qualquer e-mail + senha. Se a conta não existir, ela será criada automaticamente.<br>
         O e-mail <strong>fernandolapa1987@gmail.com</strong> recebe as dicas exclusivas de IA Mestre.<br><br>
-        <strong>Se não entrar:</strong> no painel do Supabase vá em<br>
-        Authentication → Providers → Email → desmarque <em>Confirm email</em>.
+        <strong>Se o botão Entrar não funcionar</strong>, clique em<br>
+        <strong>“Entrar em modo local”</strong> — você joga normalmente.<br><br>
+        Depois, no Supabase: Authentication → Users → apague o usuário antigo e tente de novo.
       </div>
     </div>
   </div>
@@ -714,27 +717,32 @@
     /* ---------- Login / Auth ---------- */
     function enterLocalMode(email) {
       currentUser = {
-        email,
-        name: email.split('@')[0],
-        elo: getLocalElo(email),
-        isMaster: email === MASTER_EMAIL
+        email: email || 'jogador@local.com',
+        name: (email || 'jogador').split('@')[0],
+        elo: getLocalElo(email || 'jogador@local.com'),
+        isMaster: (email || '').toLowerCase() === MASTER_EMAIL
       };
       enterApp();
+    }
+
+    // Botão de emergência — sempre funciona
+    function forceLocalLogin() {
+      const email = document.getElementById('login-email').value.trim().toLowerCase() || 'fernandolapa1987@gmail.com';
+      enterLocalMode(email);
     }
 
     function doLogin() {
       const email = document.getElementById('login-email').value.trim().toLowerCase();
       const password = document.getElementById('login-password').value;
       const errEl = document.getElementById('login-error');
-      errEl.style.display = 'none';
+      if (errEl) errEl.style.display = 'none';
 
-      if (!email || !password) {
-        showLoginError('Preencha e-mail e senha');
+      if (!email) {
+        showLoginError('Digite um e-mail');
         return;
       }
 
-      // Botão fica desabilitado enquanto tenta
-      const btn = document.querySelector('.btn-primary');
+      const btn = document.getElementById('btn-login');
       if (btn) {
         btn.disabled = true;
         btn.textContent = 'Entrando...';
@@ -747,90 +755,89 @@
         }
       };
 
-      // Sem Supabase → modo local direto
+      // Sem cliente Supabase → local
       if (!supabase) {
         restoreBtn();
         enterLocalMode(email);
         return;
       }
 
-      // 1) Tenta login
-      supabase.auth.signInWithPassword({ email, password })
+      // Timeout de segurança: se em 4 segundos não entrar, força modo local
+      const safetyTimer = setTimeout(() => {
+        console.warn('Timeout de login — entrando em modo local');
+        restoreBtn();
+        enterLocalMode(email);
+      }, 4000);
+
+      supabase.auth.signInWithPassword({ email, password: password || 'demo123' })
         .then(async ({ data, error }) => {
-          // Sucesso no login
+          clearTimeout(safetyTimer);
+
           if (!error && data?.user) {
-            const profile = await ensureProfile(data.user);
-            currentUser = {
-              id: data.user.id,
-              email: data.user.email,
-              name: (profile && profile.username) || data.user.email.split('@')[0],
-              elo: (profile && profile.elo) || getLocalElo(data.user.email),
-              isMaster: data.user.email.toLowerCase() === MASTER_EMAIL
-            };
-            setLocalElo(data.user.email, currentUser.elo);
+            try {
+              const profile = await ensureProfile(data.user);
+              currentUser = {
+                id: data.user.id,
+                email: data.user.email,
+                name: (profile && profile.username) || data.user.email.split('@')[0],
+                elo: (profile && profile.elo) || getLocalElo(data.user.email),
+                isMaster: data.user.email.toLowerCase() === MASTER_EMAIL
+              };
+              setLocalElo(data.user.email, currentUser.elo);
+            } catch (e) {
+              enterLocalMode(email);
+              restoreBtn();
+              return;
+            }
             restoreBtn();
             enterApp();
             return;
           }
 
-          // E-mail não confirmado → entra em modo local imediatamente
-          if (error && (error.message || '').toLowerCase().includes('email not confirmed')) {
-            showLoginError('E-mail ainda não confirmado no Supabase. Entrando em modo local...');
-            setTimeout(() => {
+          // Qualquer erro (email not confirmed, invalid login, etc.) → tenta signup
+          const msg = (error && error.message) ? error.message.toLowerCase() : '';
+
+          if (msg.includes('email not confirmed')) {
+            showLoginError('Usuário antigo ainda não confirmado. Entrando em modo local...');
+            setTimeout(() => { restoreBtn(); enterLocalMode(email); }, 800);
+            return;
+          }
+
+          // Tenta criar conta nova
+          try {
+            const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+              email,
+              password: password || 'demo123',
+              options: { data: { username: email.split('@')[0] } }
+            });
+
+            if (!signUpError && signUpData?.user && signUpData?.session) {
+              const profile = await ensureProfile(signUpData.user);
+              currentUser = {
+                id: signUpData.user.id,
+                email: signUpData.user.email,
+                name: (profile && profile.username) || signUpData.user.email.split('@')[0],
+                elo: (profile && profile.elo) || 1200,
+                isMaster: signUpData.user.email.toLowerCase() === MASTER_EMAIL
+              };
+              setLocalElo(signUpData.user.email, currentUser.elo);
               restoreBtn();
-              enterLocalMode(email);
-            }, 900);
-            return;
+              enterApp();
+              return;
+            }
+          } catch (e) {
+            console.warn(e);
           }
 
-          // Conta não existe ou senha errada → tenta criar conta
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email,
-            password,
-            options: { data: { username: email.split('@')[0] } }
-          });
-
-          if (signUpError) {
-            // Qualquer erro de cadastro → modo local
-            console.warn('signUp error:', signUpError);
-            showLoginError((signUpError.message || 'Erro no cadastro') + ' — entrando em modo local...');
-            setTimeout(() => {
-              restoreBtn();
-              enterLocalMode(email);
-            }, 1000);
-            return;
-          }
-
-          // Cadastro ok e já veio sessão (confirmação desativada)
-          if (signUpData?.session && signUpData?.user) {
-            const profile = await ensureProfile(signUpData.user);
-            currentUser = {
-              id: signUpData.user.id,
-              email: signUpData.user.email,
-              name: (profile && profile.username) || signUpData.user.email.split('@')[0],
-              elo: (profile && profile.elo) || 1200,
-              isMaster: signUpData.user.email.toLowerCase() === MASTER_EMAIL
-            };
-            setLocalElo(signUpData.user.email, currentUser.elo);
-            restoreBtn();
-            enterApp();
-            return;
-          }
-
-          // Cadastro ok mas precisa confirmar e-mail
-          showLoginError('Conta criada! Confirme o e-mail ou desative "Confirm email" no Supabase. Entrando em modo local...');
-          setTimeout(() => {
-            restoreBtn();
-            enterLocalMode(email);
-          }, 1200);
+          // Fallback final
+          showLoginError('Não foi possível autenticar no Supabase. Entrando em modo local...');
+          setTimeout(() => { restoreBtn(); enterLocalMode(email); }, 800);
         })
         .catch(err => {
-          console.error('Erro de autenticação:', err);
-          showLoginError((err.message || 'Erro no login') + ' — entrando em modo local...');
-          setTimeout(() => {
-            restoreBtn();
-            enterLocalMode(email);
-          }, 1000);
+          clearTimeout(safetyTimer);
+          console.error(err);
+          showLoginError('Erro de conexão. Entrando em modo local...');
+          setTimeout(() => { restoreBtn(); enterLocalMode(email); }, 800);
         });
     }
 
