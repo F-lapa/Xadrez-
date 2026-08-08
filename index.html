@@ -710,10 +710,10 @@
     const SUPABASE_URL = 'https://inzkuohrnvxbzwrdxekw.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 
-    let supabase = null;
+    let sbClient = null;
     try {
       if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         console.log('Supabase conectado:', SUPABASE_URL);
       }
     } catch (e) {
@@ -970,8 +970,8 @@
       }
 
       // Tenta enriquecer com Supabase
-      if (supabase) {
-        supabase.from('profiles')
+      if (sbClient) {
+        sbClient.from('profiles')
           .select('username, elo')
           .order('elo', { ascending: false })
           .limit(20)
@@ -1316,8 +1316,8 @@
       document.getElementById('user-elo').textContent = currentUser.elo + ' Elo';
 
       // Tenta sincronizar no Supabase (opcional)
-      if (supabase) {
-        supabase.from('profiles')
+      if (sbClient) {
+        sbClient.from('profiles')
           .update({ elo: currentUser.elo })
           .eq('username', currentUser.name)
           .then(({ error }) => {
