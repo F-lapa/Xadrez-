@@ -11,20 +11,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 :root{
-  --bg:#04060c;--card:rgba(16,22,38,.92);--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);
-  --text:#f4f7ff;--muted:#93a4c3;--blue:#5b9dff;--violet:#a78bfa;--cyan:#22d3ee;
+  --bg:#06080f;--card:rgba(14,18,32,.88);--line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.13);
+  --text:#f5f7fb;--muted:#8b9bb8;--blue:#5b9dff;--violet:#a78bfa;--cyan:#22d3ee;
   --gold:#f5c542;--green:#34d399;--red:#fb7185;--sq-l:#f0d9b5;--sq-d:#b58863;
+  --radius:20px;--shadow:0 20px 60px rgba(0,0,0,.45);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
-  font-family:Inter,Segoe UI,system-ui,sans-serif;color:var(--text);
+  font-family:'Inter',Segoe UI,system-ui,sans-serif;color:var(--text);
   background:
-    radial-gradient(1000px 520px at -10% -20%,rgba(91,157,255,.2),transparent 55%),
-    radial-gradient(900px 480px at 110% 0%,rgba(167,139,250,.14),transparent 50%),
-    #04060c;
+    radial-gradient(900px 500px at 0% -10%,rgba(91,157,255,.18),transparent 55%),
+    radial-gradient(800px 420px at 100% 0%,rgba(167,139,250,.12),transparent 50%),
+    radial-gradient(600px 400px at 50% 100%,rgba(34,211,238,.05),transparent 55%),
+    #06080f;
   min-height:100vh;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
 }
 body::before{content:'';position:fixed;inset:-15%;background:radial-gradient(circle at 30% 20%,rgba(91,157,255,.1),transparent 40%),radial-gradient(circle at 70% 70%,rgba(167,139,250,.08),transparent 42%);animation:floaty 14s ease-in-out infinite;pointer-events:none;z-index:0}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
@@ -54,7 +58,7 @@ input{border:none;outline:none}
 .err{color:var(--red);text-align:center;font-size:.85rem;margin-top:.7rem;min-height:1.1rem}
 .hint{margin-top:1rem;padding:.85rem;border-radius:12px;text-align:center;font-size:.8rem;line-height:1.5;color:var(--muted);background:rgba(91,157,255,.08);border:1px solid rgba(91,157,255,.12)}
 #app{display:none;min-height:100vh;flex-direction:column}
-header{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:.55rem;flex-wrap:wrap;padding:.7rem 1rem;background:rgba(6,10,20,.82);backdrop-filter:blur(16px);border-bottom:1px solid var(--line)}
+header{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:.55rem;flex-wrap:wrap;padding:.75rem 1.15rem;background:rgba(6,8,15,.78);backdrop-filter:blur(20px) saturate(1.2);border-bottom:1px solid var(--line);box-shadow:0 8px 32px rgba(0,0,0,.25)}
 .logo{font-weight:900;font-size:1.1rem;background:linear-gradient(135deg,#9ec1ff,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:shimmer 5s linear infinite}
 .hdr-right{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
 .chip{display:flex;align-items:center;gap:.35rem;padding:.32rem .65rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:.84rem;font-weight:700}
@@ -62,10 +66,11 @@ header{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-
 .pts{padding:.32rem .65rem;border-radius:999px;background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.28);color:var(--gold);font-weight:900;font-size:.84rem}
 .online-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
 .btn-out{padding:.38rem .7rem;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:.8rem;font-weight:700}
-nav{display:flex;gap:.2rem;padding:.5rem 1rem 0;overflow-x:auto}
-nav button{padding:.5rem .95rem;border-radius:12px 12px 0 0;color:var(--muted);font-weight:800;font-size:.86rem;border-bottom:2px solid transparent;white-space:nowrap}
-nav button.on{color:var(--text);border-bottom-color:var(--blue);background:linear-gradient(180deg,rgba(91,157,255,.12),transparent)}
-main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
+nav{display:flex;gap:.25rem;padding:.55rem 1.15rem 0;overflow-x:auto;max-width:1180px;margin:0 auto;width:100%}
+nav button{padding:.55rem 1.05rem;border-radius:12px 12px 0 0;color:var(--muted);font-weight:800;font-size:.86rem;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s, background .15s}
+nav button:hover{color:var(--text)}
+nav button.on{color:var(--text);border-bottom-color:var(--blue);background:linear-gradient(180deg,rgba(91,157,255,.14),transparent)}
+main{flex:1;padding:1.05rem 1.15rem 1.5rem;max-width:1180px;width:100%;margin:0 auto}
 .card{
   background:linear-gradient(165deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
   border:1px solid var(--line);
@@ -329,6 +334,15 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 .board-frame.board-midnight{--sq-l:#3d4f66;--sq-d:#0d1520}
 .board-frame.board-rose{--sq-l:#ffe4e8;--sq-d:#c91d45}
 .board-frame.board-walnut{--sq-l:#e8d4b0;--sq-d:#6b3e24}
+.board-frame.board-coral{--sq-l:#ffe8dc;--sq-d:#d4644a}
+.board-frame.board-slate{--sq-l:#e2e8f0;--sq-d:#475569}
+.board-frame.board-grape{--sq-l:#f3e8ff;--sq-d:#7c3aed}
+.board-frame.board-sand{--sq-l:#faf3e0;--sq-d:#c2a878}
+.board-frame.board-ice{--sq-l:#e8f4ff;--sq-d:#5b8fb9}
+.board-frame.board-chesscom{--sq-l:#eeeed2;--sq-d:#769656}
+.badge.watch{background:rgba(91,157,255,.16);color:#93c5fd;border:1px solid rgba(91,157,255,.35);cursor:pointer}
+.player-row.watchable{cursor:pointer;opacity:1}
+.player-row.watchable:hover{border-color:rgba(91,157,255,.55);background:rgba(91,157,255,.1);transform:translateX(3px)}
 .board-frame .cell.l{
   background:
     linear-gradient(145deg, rgba(255,255,255,.22), transparent 42%),
@@ -834,7 +848,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   <div class="auth-card">
     <div class="brand">♛</div>
     <h1>Xadrez Mestre</h1>
-    <p class="sub">Stockfish · Elo · Contas seguras no Supabase</p>
+    <p class="sub">Stockfish · Pontos · Contas seguras no Supabase</p>
     <div class="tabs">
       <button type="button" class="on" id="t-in" onclick="tab('in')">Entrar</button>
       <button type="button" id="t-up" onclick="tab('up')">Criar conta</button>
@@ -861,7 +875,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     <div class="hdr-right">
       <span class="conn" id="conn-status">conectando…</span>
       <div class="chip"><span id="h-name">—</span><span class="tag-m hidden" id="h-master">MESTRE</span></div>
-      <span class="pts" id="h-pts">1200 Elo</span>
+      <span class="pts" id="h-pts">1200 pts</span>
       <button type="button" class="btn-out" onclick="logout()">Sair</button>
     </div>
   </header>
@@ -876,7 +890,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
       <div class="home-banner">
         <div>
           <div class="hb-title">Pronto para jogar</div>
-          <div class="hb-sub">Desafie online, treine com Stockfish ou resolva puzzles (+10 Elo)</div>
+          <div class="hb-sub">Desafie online, treine com Stockfish ou resolva puzzles (+10 pts)</div>
         </div>
         <div class="stats" id="home-stats" style="min-width:min(100%,280px);grid-template-columns:repeat(4,1fr)"></div>
       </div>
@@ -892,9 +906,9 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
         <div class="card">
           <h2>🎯 Treino local</h2>
           <div class="modes">
-            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Stockfish · não altera Elo online</div></div></div>
+            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Stockfish · não altera pontos online</div></div></div>
             <div class="mode" onclick="startLocal('local')"><div class="i">👥</div><div><div class="t">Dois jogadores</div><div class="d">Mesmo dispositivo</div></div></div>
-            <div class="mode" onclick="startPuzzle()"><div class="i">🧩</div><div><div class="t">Puzzles</div><div class="d">Táticas · +10 Elo ao resolver</div></div></div>
+            <div class="mode" onclick="startPuzzle()"><div class="i">🧩</div><div><div class="t">Puzzles</div><div class="d">Táticas · +10 pts ao resolver</div></div></div>
           </div>
           <div class="section-label" style="margin-top:1rem">Dificuldade da IA</div>
           <div class="diff-row">
@@ -922,7 +936,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
         </div>
         <div class="dash-elo-pill">
           <b id="dash-elo">1200</b>
-          <span>Elo</span>
+          <span>Pontos</span>
         </div>
       </div>
       <div class="kpi" id="dash-kpis"></div>
@@ -937,9 +951,9 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
           <div class="stats" id="ai-stats" style="margin-top:.85rem"></div>
         </div>
         <div class="card">
-          <div class="panel-title"><h2>🧩 Puzzles</h2><span class="chip-soft">+10 Elo</span></div>
+          <div class="panel-title"><h2>🧩 Puzzles</h2><span class="chip-soft">+10 pts</span></div>
           <div class="kpi" id="puzzle-kpis" style="margin-bottom:.5rem;grid-template-columns:1fr 1fr"></div>
-          <p class="note" style="margin-top:.4rem">Resolvidos neste aparelho. Acertos somam Elo no ranking.</p>
+          <p class="note" style="margin-top:.4rem">Resolvidos neste aparelho. Acertos somam pontos no ranking.</p>
         </div>
       </div>
       <div class="grid-2" style="margin-top:1.1rem">
@@ -957,7 +971,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     <div id="v-rank" class="hidden">
       <div class="card">
         <div class="panel-title">
-          <h2>🏆 Ranking Elo global</h2>
+          <h2>🏆 Ranking de pontos</h2>
           <span class="chip-soft">Supabase</span>
         </div>
         <div class="rank-podium" id="rank-podium"></div>
@@ -984,11 +998,17 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
               <label>Estilo do tabuleiro</label>
               <select id="sel-board" onchange="setBoardTheme(this.value)">
                 <option value="classic">Clássico madeira</option>
+                <option value="chesscom">Verde clássico</option>
                 <option value="emerald">Esmeralda</option>
                 <option value="ocean">Oceano</option>
+                <option value="ice">Gelo</option>
                 <option value="midnight">Meia-noite</option>
+                <option value="slate">Ardósia</option>
                 <option value="rose">Rosa</option>
+                <option value="coral">Coral</option>
+                <option value="grape">Uva</option>
                 <option value="walnut">Nogueira</option>
+                <option value="sand">Areia</option>
               </select>
             </div>
             <div>
@@ -1000,6 +1020,12 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
                 <option value="merida">Merida</option>
                 <option value="staunty">Staunty</option>
                 <option value="caliente">Caliente</option>
+                <option value="cardinal">Cardinal</option>
+                <option value="companion">Companion</option>
+                <option value="fantasy">Fantasy</option>
+                <option value="fresca">Fresca</option>
+                <option value="gioco">Gioco</option>
+                <option value="icpieces">IC Pieces</option>
               </select>
             </div>
             <div>
@@ -1173,13 +1199,13 @@ create policy "players_insert" on public.players for insert with check (
   points = 1200 and games = 0 and wins = 0 and losses = 0 and draws = 0
 );
 -- Update: permitido (app single-page). Para produção real use Supabase Auth +
--- policy: using (auth.uid() = id) e Edge Function para Elo/puzzles.
+-- policy: using (auth.uid() = id) e Edge Function para pontos/puzzles.
 create policy "players_update" on public.players for update using (true);
 
 -- RECOMENDADO EM PRODUÇÃO:
 -- 1) Migrar login para supabase.auth
 -- 2) Trocar update para: using (auth.uid() = id)
--- 3) Mover Elo e +10 puzzles para Edge Function com service role
+-- 3) Mover pontos e +10 puzzles para Edge Function com service role
 
 insert into public.players (username, password, points)
 values ('fernandolapa', '123456', 1200)
@@ -1204,7 +1230,13 @@ const PIECE_SETS={
   cburnett:{base:'https://lichess1.org/assets/piece/cburnett/',ext:'.svg'},
   merida:{base:'https://lichess1.org/assets/piece/merida/',ext:'.svg'},
   staunty:{base:'https://lichess1.org/assets/piece/staunty/',ext:'.svg'},
-  caliente:{base:'https://lichess1.org/assets/piece/caliente/',ext:'.svg'}
+  caliente:{base:'https://lichess1.org/assets/piece/caliente/',ext:'.svg'},
+  cardinal:{base:'https://lichess1.org/assets/piece/cardinal/',ext:'.svg'},
+  companion:{base:'https://lichess1.org/assets/piece/companion/',ext:'.svg'},
+  fantasy:{base:'https://lichess1.org/assets/piece/fantasy/',ext:'.svg'},
+  fresca:{base:'https://lichess1.org/assets/piece/fresca/',ext:'.svg'},
+  gioco:{base:'https://lichess1.org/assets/piece/gioco/',ext:'.svg'},
+  icpieces:{base:'https://lichess1.org/assets/piece/icpieces/',ext:'.svg'}
 };
 function currentPieceSet(){
   var key=(prefs&&prefs.pieces)||'wikipedia';
@@ -1295,7 +1327,7 @@ const OPENINGS={
   'd4 Nf6':'Índia','d4 Nf6 c4':'Índia','d4 Nf6 c4 g6':'Índia do Rei',
   'd4 Nf6 c4 e6':'Nimzo/Ortodoxa','c4':'Abertura Inglesa','Nf3':'Abertura Reti','f4':'Bird'
 };
-// Puzzles — solução em UCI. +10 Elo ao resolver
+// Puzzles — solução em UCI. +10 pts ao resolver
 const PUZZLES=[
   {title:'Mate em 1 — Corredor', fen:'6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre sobe na coluna e'},
   {title:'Mate em 1 — Dama na 8ª', fen:'7k/5ppp/8/8/8/8/5PPP/4Q1K1 w - - 0 1', sol:['e1e8'], hint:'Dama na última fileira'},
@@ -1738,7 +1770,7 @@ function enter(userObj){
   document.getElementById('auth').style.display='none';
   document.getElementById('app').style.display='flex';
   document.getElementById('h-name').textContent=me.name;
-  document.getElementById('h-pts').textContent=me.points+' Elo';
+  document.getElementById('h-pts').textContent=me.points+' pts';
   document.getElementById('h-master').classList.toggle('hidden',!me.isMaster);
   if(!sb) initSupabase();
   joinLobby();
@@ -1762,7 +1794,7 @@ async function reloadMe(){
     var row=await dbGetPlayer(me.name);
     if(row){
       me=rowToMe(row);
-      document.getElementById('h-pts').textContent=me.points+' Elo';
+      document.getElementById('h-pts').textContent=me.points+' pts';
     }
   }catch(e){}
 }
@@ -1807,10 +1839,12 @@ async function joinLobby(){
     else if(status==='CHANNEL_ERROR')setConn(false,'erro canal');
   });
 }
-async function setPresence(status){
+async function setPresence(status, gid){
   presenceStatus=status;
   if(!lobbyCh||!me)return;
-  try{await lobbyCh.track({user:me.name,status:status,points:me.points||0,at:Date.now()})}catch(e){}
+  var payload={user:me.name,status:status,points:me.points||0,at:Date.now()};
+  if(status==='in_game' && (gid||gameId)) payload.gameId = gid||gameId;
+  try{await lobbyCh.track(payload)}catch(e){}
 }
 function renderOnline(){
   var el=document.getElementById('online-list');
@@ -1820,10 +1854,17 @@ function renderOnline(){
   if(!others.length){el.innerHTML='<div class="empty">Nenhum outro jogador online agora.</div>';return}
   el.innerHTML=others.map(function(p){
     var busy=p.status==='in_game';
-    return '<div class="player-row '+(busy?'busy':'available')+'" '+(busy?'':'onclick="challengePlayer(\''+p.user+'\')"')+'>'+
+    var canWatch = busy && p.gameId;
+    var click = busy
+      ? (canWatch ? 'onclick="spectateGame(\''+p.user+'\',\''+p.gameId+'\')"' : '')
+      : 'onclick="challengePlayer(\''+p.user+'\')"';
+    var badge = busy
+      ? (canWatch ? '<span class="badge watch">👁 Assistir</span>' : '<span class="badge busy">Em partida</span>')
+      : '<span class="badge ok">Disponível</span>';
+    return '<div class="player-row '+(busy?(canWatch?'watchable':'busy'):'available')+'" '+click+'>'+
       '<div class="avatar">'+(p.user||'?')[0].toUpperCase()+'</div>'+
-      '<div class="p-info"><div class="p-name">'+p.user+'</div><div class="p-meta">'+(p.points||0)+' Elo</div></div>'+
-      (busy?'<span class="badge busy">Em partida</span>':'<span class="badge ok">Disponível</span>')+
+      '<div class="p-info"><div class="p-name">'+p.user+'</div><div class="p-meta">'+(p.points||0)+' pts</div></div>'+
+      badge+
       '</div>';
   }).join('');
 }
@@ -1860,7 +1901,7 @@ async function startOnlineGame(id,opponent,color){
   gameId=id;oppName=opponent;myColor=color;mode='online';boardFlipped=false;
   lastEndMode='online'; lastEndResult=null;
   chess=new Chess();sel=null;legal=[];last=null;hist=[];capW=[];capB=[];chatMsgs=[];
-  await setPresence('in_game');
+  await setPresence('in_game', id);
   openGameUI();
   document.getElementById('n-w').textContent=color==='w'?(me.name+' (você)'):oppName;
   document.getElementById('n-b').textContent=color==='b'?(me.name+' (você)'):oppName;
@@ -1869,34 +1910,112 @@ async function startOnlineGame(id,opponent,color){
   document.getElementById('chat').classList.add('on');
   chatMsgs=[{who:'Sistema',text:'Partida online iniciada.'}];renderChat();
   setupCoach();render();status();movesUI();updateCaps();initClocks();saveActiveGame();
-  joinGameChannel(id);
+  joinGameChannel(id, false);
 }
-async function joinGameChannel(id){
+async function spectateGame(user, gid){
+  if(!sb||!gid) return toast('Partida indisponível');
+  if(presenceStatus==='in_game' && mode==='online') return toast('Termine sua partida primeiro');
+  gameId=gid; oppName=user; myColor='w'; mode='spectate'; boardFlipped=false;
+  lastEndMode='spectate'; lastEndResult=null;
+  chess=new Chess(); sel=null; legal=[]; last=null; hist=[]; capW=[]; capB=[]; chatMsgs=[];
+  await setPresence('available'); // espectador continua disponível
+  openGameUI();
+  document.getElementById('n-w').textContent='Brancas';
+  document.getElementById('n-b').textContent='Pretas';
+  document.getElementById('btn-undo').style.display='none';
+  var bd=document.getElementById('btn-draw'); if(bd) bd.classList.add('hidden');
+  document.getElementById('chat').classList.add('on');
+  chatMsgs=[{who:'Sistema',text:'Modo espectador · assistindo '+user}];renderChat();
+  setupCoach();
+  var st=document.getElementById('status');
+  if(st){ st.className='side-status'; st.textContent='👁 Assistindo · sincronizando…'; }
+  stopClock(); clockW=0; clockB=0; updateClocksUI();
+  render(); movesUI(); updateCaps();
+  joinGameChannel(gid, true);
+  toast('Assistindo partida de '+user);
+}
+async function joinGameChannel(id, asSpectator){
   if(!sb)return;
   if(gameCh){try{await sb.removeChannel(gameCh)}catch(e){}}
   gameCh=sb.channel('xm_game_'+id);
   gameCh.on('broadcast',{event:'move'},function(payload){
-    var data=payload.payload||{};if(data.by===me.name)return;applyRemoteMove(data);
+    var data=payload.payload||{};
+    if(mode==='spectate'){
+      applyRemoteMove(data);
+      return;
+    }
+    if(data.by===me.name)return;
+    applyRemoteMove(data);
   });
   gameCh.on('broadcast',{event:'chat'},function(payload){
     var data=payload.payload||{};if(data.by===me.name)return;
     chatMsgs.push({who:data.by,text:data.text});renderChat();
   });
   gameCh.on('broadcast',{event:'resign'},function(payload){
-    var data=payload.payload||{};if(data.by===me.name)return;
+    var data=payload.payload||{};
+    if(mode==='spectate'){
+      toast((data.by||'Jogador')+' desistiu');
+      showEnd('Fim', (data.by||'Jogador')+' desistiu · transmissão encerrada');
+      return;
+    }
+    if(data.by===me.name)return;
     finishOnline('win',data.by+' desistiu. Você venceu!');
+  });
+  gameCh.on('broadcast',{event:'state'},function(payload){
+    if(mode!=='spectate') return;
+    var data=payload.payload||{};
+    try{
+      if(data.fen) chess.load(data.fen);
+      if(data.hist && data.hist.length){
+        hist = data.hist;
+        if(hist.length){ var lastMv=hist[hist.length-1]; last={from:lastMv.from,to:lastMv.to}; }
+      }
+      if(data.nW) document.getElementById('n-w').textContent=data.nW;
+      if(data.nB) document.getElementById('n-b').textContent=data.nB;
+      if(typeof data.clockW==='number') clockW=data.clockW;
+      if(typeof data.clockB==='number') clockB=data.clockB;
+      if(typeof data.timeControl==='number') timeControl=data.timeControl;
+      capW=data.capW||[]; capB=data.capB||[];
+      render(); status(); movesUI(); updateCaps(); updateClocksUI();
+      if(timeControl>0) startClockTick();
+      toast('Sincronizado');
+    }catch(e){ console.error(e); }
+  });
+  gameCh.on('broadcast',{event:'state_request'},function(payload){
+    if(mode!=='online'||!chess) return;
+    // jogadores respondem com o estado atual
+    gameCh.send({type:'broadcast',event:'state',payload:{
+      by:me.name,
+      fen:chess.fen(),
+      hist:hist.map(function(m){return {from:m.from,to:m.to,san:m.san,promotion:m.promotion,captured:m.captured,color:m.color}}),
+      nW:document.getElementById('n-w').textContent,
+      nB:document.getElementById('n-b').textContent,
+      clockW:clockW, clockB:clockB, timeControl:timeControl,
+      capW:capW, capB:capB
+    }});
   });
   gameCh.on('broadcast',{event:'draw_offer'},function(payload){
     var data=payload.payload||{};if(data.by===me.name)return;
+    if(mode==='spectate') return;
     document.getElementById('draw-text').textContent=data.by+' oferece empate.';
     document.getElementById('ov-draw').style.display='flex';
   });
   gameCh.on('broadcast',{event:'draw_response'},function(payload){
     var data=payload.payload||{};if(data.by===me.name)return;
+    if(mode==='spectate'){
+      if(data.accept) showEnd('Empate','Empate acordado · transmissão encerrada');
+      return;
+    }
     if(data.accept) finishOnline('draw','Empate acordado.');
     else toast(data.by+' recusou o empate');
   });
-  gameCh.subscribe();
+  gameCh.subscribe(function(status){
+    if(status==='SUBSCRIBED' && asSpectator){
+      setTimeout(function(){
+        try{ gameCh.send({type:'broadcast',event:'state_request',payload:{by:me.name}}); }catch(e){}
+      }, 400);
+    }
+  });
 }
 function applyRemoteMove(data){
   if(!chess||chess.game_over())return;
@@ -1921,7 +2040,16 @@ function applyRemoteMove(data){
     if(chess.game_over()){
       stopClock();
       if(chess.in_checkmate()) sfxWin();
-      setTimeout(endOnlineFromBoard,200);
+      if(mode==='spectate'){
+        setTimeout(function(){
+          var msg = chess.in_checkmate()
+            ? ('Xeque-mate · '+(chess.turn()==='w'?'Pretas':'Brancas')+' vencem')
+            : 'Partida empatada';
+          showEnd('Fim da partida', msg);
+        }, 250);
+      } else {
+        setTimeout(endOnlineFromBoard,200);
+      }
     }
   });
 }
@@ -1963,7 +2091,7 @@ function paintHome(){
   var el=document.getElementById('home-stats');
   if(!el) return;
   el.innerHTML=
-    '<div class="stat gold"><b>'+me.points+'</b><span>Elo</span></div>'+
+    '<div class="stat gold"><b>'+me.points+'</b><span>Pontos</span></div>'+
     '<div class="stat blue"><b>'+s.games+'</b><span>Online</span></div>'+
     '<div class="stat green"><b>'+s.wins+'</b><span>Vitórias</span></div>'+
     '<div class="stat red"><b>'+s.losses+'</b><span>Derrotas</span></div>';
@@ -1984,7 +2112,7 @@ function paintDash(){
   var de=document.getElementById('dash-elo'); if(de) de.textContent=me.points;
 
   document.getElementById('dash-kpis').innerHTML=
-    '<div class="stat gold"><b>'+me.points+'</b><span>Elo</span></div>'+
+    '<div class="stat gold"><b>'+me.points+'</b><span>Pontos</span></div>'+
     '<div class="stat green"><b>'+wr+'%</b><span>Win online</span></div>'+
     '<div class="stat blue"><b>'+s.streak+'</b><span>Sequência</span></div>'+
     '<div class="stat"><b>'+(s.trainGames||ai.games)+'</b><span>Treinos</span></div>';
@@ -2009,7 +2137,7 @@ function paintDash(){
   }
   document.getElementById('dash-details').innerHTML=
     '<p><strong style="color:var(--text)">Usuário:</strong> '+me.name+'</p>'+
-    '<p><strong style="color:var(--text)">Elo atual:</strong> '+me.points+'</p>'+
+    '<p><strong style="color:var(--text)">Pontos:</strong> '+me.points+'</p>'+
     '<p><strong style="color:var(--text)">Online:</strong> '+s.wins+'V · '+s.draws+'E · '+s.losses+'D</p>'+
     '<p><strong style="color:var(--text)">vs Computador:</strong> '+ai.wins+'V · '+ai.draws+'E · '+ai.losses+'D</p>'+
     '<p><strong style="color:var(--text)">Puzzles:</strong> '+pz.solved+' ok · taxa '+pzRate+'% · seq. '+pz.streak+'</p>';
@@ -2052,14 +2180,14 @@ async function paintRank(){
         var i = order===1?0:order===0?1:2;
         var p=list[i];
         if(!p) return '<div class="podium-card"></div>';
-        return '<div class="podium-card '+medals[i]+'"><div class="place">'+places[i]+'</div><div class="who">'+p.username+'</div><div class="pts">'+(p.points||0)+' Elo</div></div>';
+        return '<div class="podium-card '+medals[i]+'"><div class="place">'+places[i]+'</div><div class="who">'+p.username+'</div><div class="pts">'+(p.points||0)+' pts</div></div>';
       }).join('');
     }
     el.innerHTML=list.map(function(p,i){
       var c=i===0?'g':i===1?'s':i===2?'b':'';
       var you=me&&p.username===me.name?' (você)':'';
       return '<li><span class="pos '+c+'">'+(i+1)+'</span><span class="nm">'+p.username+you+
-        '</span><span class="el">'+(p.points||0)+' Elo</span></li>';
+        '</span><span class="el">'+(p.points||0)+' pts</span></li>';
     }).join('');
   }catch(e){
     el.innerHTML='<li class="empty">Erro ao carregar ranking. Confira a tabela players.</li>';
@@ -2475,8 +2603,8 @@ async function awardPuzzlePoints(){
     var solved=(row.puzzles_solved||0)+1;
     var updated=await dbUpdatePlayer(me.name,{points:pts, puzzles_solved:solved});
     me=rowToMe(updated);
-    document.getElementById('h-pts').textContent=me.points+' Elo';
-    toast('+'+PUZZLE_REWARD+' Elo pelo puzzle!');
+    document.getElementById('h-pts').textContent=me.points+' pts';
+    toast('+'+PUZZLE_REWARD+' pts pelo puzzle!');
   }catch(e){
     // se coluna puzzles_solved não existir, tenta só points
     try{
@@ -2484,8 +2612,8 @@ async function awardPuzzlePoints(){
       var pts2=Math.max(100,(row2.points||ELO_START)+PUZZLE_REWARD);
       var updated2=await dbUpdatePlayer(me.name,{points:pts2});
       me=rowToMe(updated2);
-      document.getElementById('h-pts').textContent=me.points+' Elo';
-      toast('+'+PUZZLE_REWARD+' Elo pelo puzzle!');
+      document.getElementById('h-pts').textContent=me.points+' pts';
+      toast('+'+PUZZLE_REWARD+' pts pelo puzzle!');
     }catch(e2){ console.error(e2); }
   }
 }
@@ -2510,9 +2638,9 @@ function checkPuzzleMove(from,to,pr){
     lastEndResult='win';
     recordPuzzleAttempt(true);
     awardPuzzlePoints();
-    toast('Puzzle resolvido! +'+PUZZLE_REWARD+' Elo');
+    toast('Puzzle resolvido! +'+PUZZLE_REWARD+' pts');
     setTimeout(function(){
-      showEnd('🧩 Puzzle resolvido!', puzzleActive.title+' — +'+PUZZLE_REWARD+' Elo no ranking!');
+      showEnd('🧩 Puzzle resolvido!', puzzleActive.title+' — +'+PUZZLE_REWARD+' pts no ranking!');
     }, 500);
   } else {
     var st=document.getElementById('status');
@@ -2554,7 +2682,7 @@ function render(){
       // drag & drop
       (function(s, pieceEl, pieceObj){
         cell.addEventListener('pointerdown', function(e){
-          if(!chess||chess.game_over()) return;
+          if(!chess||chess.game_over()||mode==='spectate') return;
           if((mode==='ai'||mode==='online')&&chess.turn()!==myColor) return;
           if(pieceObj.color!==chess.turn()) return;
           e.preventDefault();
@@ -2627,7 +2755,7 @@ document.addEventListener('pointerup', function(e){
   sel=null; legal=[]; render();
 });
 function click(sq){
-  if(!chess||chess.game_over())return;
+  if(!chess||chess.game_over()||mode==='spectate')return;
   if((mode==='ai'||mode==='online')&&chess.turn()!==myColor)return;
   if(sel){
     var mv=null;for(var i=0;i<legal.length;i++)if(legal[i].to===sq)mv=legal[i];
@@ -2875,9 +3003,9 @@ async function applyRank(result){
     var newElo = Math.max(100, myElo + delta);
     var updated=await dbUpdatePlayer(me.name,{games:games,wins:wins,losses:losses,draws:draws,streak:streak,best_streak:best,points:newElo});
     me=rowToMe(updated);
-    document.getElementById('h-pts').textContent=me.points+' Elo';
-    toast((delta>=0?'+':'')+delta+' Elo  →  '+newElo);
-  }catch(e){console.error(e);toast('Falha ao salvar Elo no banco')}
+    document.getElementById('h-pts').textContent=me.points+' pts';
+    toast((delta>=0?'+':'')+delta+' pts  →  '+newElo);
+  }catch(e){console.error(e);toast('Falha ao salvar pontos no banco')}
 }
 async function recordTrain(){
   if(!me||!sb)return;
@@ -2927,10 +3055,13 @@ function sendChat(){
 }
 function updateMatchInfo(){
   var el=document.getElementById('side-match-info'); if(!el||!me) return;
-  var txt='Modo: '+(mode==='online'?'Online':mode==='ai'?'vs Computador':'Local');
+  var label = mode==='online'?'Online':mode==='ai'?'vs Computador':mode==='spectate'?'Espectador':mode==='puzzle'?'Puzzle':'Local';
+  var txt='Modo: <strong style="color:var(--text)">'+label+'</strong>';
   if(mode==='online') txt+='<br>Adversário: <strong style="color:var(--text)">'+(oppName||'—')+'</strong>';
+  if(mode==='spectate') txt+='<br>Assistindo: <strong style="color:var(--text)">'+(oppName||'partida')+'</strong>';
   if(mode==='ai') txt+='<br>Nível: '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');
-  txt+='<br>Você joga: <strong style="color:var(--text)">'+(myColor==='w'?'Brancas':'Pretas')+'</strong>';
+  if(mode!=='spectate' && mode!=='puzzle')
+    txt+='<br>Você joga: <strong style="color:var(--text)">'+(myColor==='w'?'Brancas':'Pretas')+'</strong>';
   el.innerHTML=txt;
 }
 function coachPlan(){
@@ -3014,8 +3145,8 @@ document.addEventListener('keydown',function(e){
 
 var tutStep=0;
 var TUTORIAL_STEPS=[
-  {t:'Crie ou entre na sua conta. O ranking Elo fica salvo no Supabase e funciona em qualquer aparelho.'},
-  {t:'Em Jogar você desafia quem está online, treina contra o computador (Stockfish) ou resolve puzzles (+10 Elo).'},
+  {t:'Crie ou entre na sua conta. O ranking de pontos fica salvo no Supabase e funciona em qualquer aparelho.'},
+  {t:'Em Jogar você desafia quem está online, treina contra o computador (Stockfish) ou resolve puzzles (+10 pts).'},
   {t:'Durante a partida: arraste as peças, use o Coach Supremo, vire o tabuleiro e exporte o PGN.'},
   {t:'Em Temas escolha tabuleiro e conjunto de peças (Wikipedia, Alpha, USCF, Staunty, Merida…).'},
   {t:'No Dashboard veja estatísticas, puzzles resolvidos e o histórico local. Bom jogo!'}
