@@ -215,6 +215,44 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
   .chat-col{display:none!important}
 }
 
+
+/* ===== THEMES & SETTINGS ===== */
+body.theme-midnight{--bg:#03050a;--card:rgba(12,18,32,.94)}
+body.theme-royal{--bg:#0b0614;--card:rgba(28,18,48,.92);--blue:#8b5cf6;--violet:#c084fc}
+body.theme-forest{--bg:#06110c;--card:rgba(14,28,22,.92);--blue:#34d399;--violet:#6ee7b7}
+body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet:#f472b6}
+
+.board-frame.board-classic{--sq-l:#f0d9b5;--sq-d:#b58863}
+.board-frame.board-emerald{--sq-l:#eaf0d8;--sq-d:#6a994e}
+.board-frame.board-ocean{--sq-l:#dbeafe;--sq-d:#3b82f6}
+.board-frame.board-midnight{--sq-l:#334155;--sq-d:#0f172a}
+.board-frame.board-rose{--sq-l:#ffe4e6;--sq-d:#e11d48}
+.board-frame.board-walnut{--sq-l:#ecd8b8;--sq-d:#7c4a2d}
+.board-frame .cell.l{background:var(--sq-l)!important}
+.board-frame .cell.d{background:var(--sq-d)!important}
+
+.pieces-classic .pc.w{color:#fffef7;filter:drop-shadow(0 1px 1px rgba(0,0,0,.65))}
+.pieces-classic .pc.b{color:#1a120b;filter:drop-shadow(0 0 .5px rgba(255,255,255,.28))}
+.pieces-neon .pc.w{color:#e0f2fe;text-shadow:0 0 8px rgba(56,189,248,.9)}
+.pieces-neon .pc.b{color:#f472b6;text-shadow:0 0 8px rgba(244,114,182,.7)}
+.pieces-mono .pc.w{color:#f8fafc;filter:none}
+.pieces-mono .pc.b{color:#111827;filter:none}
+.pieces-gold .pc.w{color:#fef3c7;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.pieces-gold .pc.b{color:#78350f;filter:drop-shadow(0 0 1px rgba(255,255,255,.2))}
+
+.settings-grid{display:grid;gap:.85rem}
+.settings-grid label{display:block;font-size:.78rem;color:var(--muted);font-weight:700;margin-bottom:.35rem}
+.settings-grid select{
+  width:100%;padding:.65rem .8rem;border-radius:12px;background:rgba(0,0,0,.3);
+  border:1px solid var(--line);color:var(--text);font-weight:700;font-size:.9rem;
+}
+.theme-swatches{display:flex;flex-wrap:wrap;gap:.4rem}
+.theme-swatches button{
+  width:34px;height:34px;border-radius:10px;border:2px solid transparent;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);
+}
+.theme-swatches button.on{border-color:#fff;transform:scale(1.08)}
+
 </style>
 </head>
 <body>
@@ -257,6 +295,7 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
     <button type="button" class="on" data-v="home" onclick="go('home')">Jogar</button>
     <button type="button" data-v="dash" onclick="go('dash')">Dashboard</button>
     <button type="button" data-v="rank" onclick="go('rank')">Ranking</button>
+    <button type="button" data-v="settings" onclick="go('settings')">Temas</button>
   </nav>
   <main>
     <div id="v-home">
@@ -294,11 +333,59 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
     <div id="v-rank" class="hidden">
       <div class="card"><h2>Ranking global (Supabase)</h2><ul class="list" id="rank-list"></ul></div>
     </div>
+    
+    <div id="v-settings" class="hidden">
+      <div class="grid-2">
+        <div class="card">
+          <h2>🎨 Aparência</h2>
+          <div class="settings-grid">
+            <div>
+              <label>Tema do sistema</label>
+              <div class="theme-swatches" id="ui-theme-swatches">
+                <button type="button" title="Escuro" data-ui="dark" style="background:#0b1220" onclick="setUiTheme('dark')"></button>
+                <button type="button" title="Meia-noite" data-ui="midnight" style="background:#03050a" onclick="setUiTheme('midnight')"></button>
+                <button type="button" title="Real" data-ui="royal" style="background:linear-gradient(135deg,#4c1d95,#7c3aed)" onclick="setUiTheme('royal')"></button>
+                <button type="button" title="Floresta" data-ui="forest" style="background:linear-gradient(135deg,#064e3b,#34d399)" onclick="setUiTheme('forest')"></button>
+                <button type="button" title="Pôr do sol" data-ui="sunset" style="background:linear-gradient(135deg,#9a3412,#fb923c)" onclick="setUiTheme('sunset')"></button>
+              </div>
+            </div>
+            <div>
+              <label>Estilo do tabuleiro</label>
+              <select id="sel-board" onchange="setBoardTheme(this.value)">
+                <option value="classic">Clássico madeira</option>
+                <option value="emerald">Esmeralda</option>
+                <option value="ocean">Oceano</option>
+                <option value="midnight">Meia-noite</option>
+                <option value="rose">Rosa</option>
+                <option value="walnut">Nogueira</option>
+              </select>
+            </div>
+            <div>
+              <label>Estilo das peças</label>
+              <select id="sel-pieces" onchange="setPieceTheme(this.value)">
+                <option value="classic">Clássico</option>
+                <option value="neon">Neon</option>
+                <option value="mono">Mono</option>
+                <option value="gold">Ouro / Madeira</option>
+              </select>
+            </div>
+          </div>
+          <p class="note">Suas preferências são salvas neste aparelho.</p>
+        </div>
+        <div class="card">
+          <h2>👁️ Prévia</h2>
+          <div class="board-frame board-classic pieces-classic" id="preview-board" style="width:min(100%,280px);margin:0 auto">
+            <div id="preview-grid" style="width:100%;height:100%;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="game">
       <div class="game-layout">
         <div class="board-wrap">
           <div class="pbar" id="bar-b"><div class="pbar-top"><span id="n-b">Pretas</span><span id="i-b"></span></div><div class="caps" id="caps-b"></div></div>
-          <div class="board-frame"><div id="board"></div></div>
+          <div class="board-frame board-classic pieces-classic" id="board-frame"><div id="board"></div></div>
           <div class="pbar on" id="bar-w"><div class="pbar-top"><span id="n-w">Brancas</span><span id="i-w"></span></div><div class="caps" id="caps-w"></div></div>
           <div class="acts">
             <button type="button" id="btn-undo" onclick="undo()">↩ Desfazer</button>
@@ -531,6 +618,104 @@ function rowToMe(row){
       streak:row.streak||0,bestStreak:row.best_streak||0,trainGames:row.train_games||0
     }
   };
+}
+
+
+/* ===== PREFS / THEMES ===== */
+const PREFS_KEY='xm_prefs_v1';
+let prefs={ui:'dark',board:'classic',pieces:'classic'};
+function loadPrefs(){
+  try{prefs=Object.assign(prefs, JSON.parse(localStorage.getItem(PREFS_KEY)||'{}'))}catch(e){}
+  applyPrefs();
+}
+function savePrefs(){localStorage.setItem(PREFS_KEY, JSON.stringify(prefs))}
+function applyPrefs(){
+  document.body.classList.remove('theme-midnight','theme-royal','theme-forest','theme-sunset');
+  if(prefs.ui && prefs.ui!=='dark') document.body.classList.add('theme-'+prefs.ui);
+  var bf=document.getElementById('board-frame');
+  if(bf){
+    bf.className='board-frame board-'+(prefs.board||'classic')+' pieces-'+(prefs.pieces||'classic');
+  }
+  var selB=document.getElementById('sel-board'); if(selB) selB.value=prefs.board||'classic';
+  var selP=document.getElementById('sel-pieces'); if(selP) selP.value=prefs.pieces||'classic';
+  document.querySelectorAll('#ui-theme-swatches button').forEach(function(b){
+    b.classList.toggle('on', b.getAttribute('data-ui')===(prefs.ui||'dark'));
+  });
+  paintPreview();
+}
+function setUiTheme(t){prefs.ui=t;savePrefs();applyPrefs()}
+function setBoardTheme(t){prefs.board=t;savePrefs();applyPrefs()}
+function setPieceTheme(t){prefs.pieces=t;savePrefs();applyPrefs()}
+function paintPreview(){
+  var grid=document.getElementById('preview-grid'); if(!grid) return;
+  var wrap=document.getElementById('preview-board');
+  if(wrap) wrap.className='board-frame board-'+(prefs.board||'classic')+' pieces-'+(prefs.pieces||'classic');
+  var files=['a','b','c','d','e','f','g','h'], ranks=[8,7,6,5,4,3,2,1];
+  var sample={a8:'br',b8:'bn',c8:'bb',d8:'bq',e8:'bk',f8:'bb',g8:'bn',h8:'br',a7:'bp',b7:'bp',c7:'bp',d7:'bp',e7:'bp',f7:'bp',g7:'bp',h7:'bp',a2:'wp',b2:'wp',c2:'wp',d2:'wp',e2:'wp',f2:'wp',g2:'wp',h2:'wp',a1:'wr',b1:'wn',c1:'wb',d1:'wq',e1:'wk',f1:'wb',g1:'wn',h1:'wr'};
+  grid.innerHTML='';
+  for(var r=0;r<8;r++)for(var f=0;f<8;f++){
+    var sq=files[f]+ranks[r];
+    var cell=document.createElement('div');
+    cell.className='cell '+((r+f)%2===0?'l':'d');
+    var code=sample[sq];
+    if(code){
+      var sp=document.createElement('span');
+      sp.className='pc '+(code[0]==='w'?'w':'b');
+      sp.textContent=GL[code]||'';
+      sp.style.fontSize='clamp(1rem,3.5vw,1.5rem)';
+      cell.appendChild(sp);
+    }
+    grid.appendChild(cell);
+  }
+}
+
+/* ===== STOCKFISH COACH (quando disponível) ===== */
+let sf=null, sfReady=false, sfQueue=null;
+function initStockfish(){
+  if(sf) return;
+  function wire(worker){
+    sf=worker;
+    sf.onmessage=function(e){
+      var line=String((e && e.data!==undefined)?e.data:e||'');
+      if(line.indexOf('uciok')!==-1){ sfReady=true; return; }
+      if(line.indexOf('readyok')!==-1){ sfReady=true; return; }
+      if(line.indexOf('bestmove')===0 && sfQueue){
+        var parts=line.split(/\s+/);
+        var best=parts[1];
+        var cb=sfQueue; sfQueue=null;
+        if(best && best!=='(none)') cb(best); else cb(null);
+      }
+    };
+    sf.onerror=function(){ sf=null; sfReady=false; };
+    try{
+      sf.postMessage('uci');
+      sf.postMessage('isready');
+    }catch(e){ sf=null; sfReady=false; }
+  }
+  try{
+    // 1) tentativa worker CDN
+    var urls=[
+      'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js',
+      'https://unpkg.com/stockfish.js@10.0.2/stockfish.js'
+    ];
+    var ok=false;
+    for(var i=0;i<urls.length && !ok;i++){
+      try{ wire(new Worker(urls[i])); ok=!!sf; }catch(e){ sf=null; }
+    }
+  }catch(e){ sf=null; sfReady=false; }
+}
+function stockfishBest(fen, depth, cb){
+  if(!sf || !sfReady){ cb(null); return; }
+  sfQueue=cb;
+  sf.postMessage('ucinewgame');
+  sf.postMessage('position fen '+fen);
+  sf.postMessage('go depth '+(depth||12));
+  // timeout fallback
+  setTimeout(function(){ if(sfQueue===cb){ sfQueue=null; cb(null);} }, 4000);
+}
+function uciToMove(uci){
+  if(!uci || uci.length<4) return null;
+  return {from:uci.slice(0,2), to:uci.slice(2,4), promotion: uci.length>4 ? uci[4] : undefined};
 }
 
 function initSupabase(){
@@ -783,10 +968,13 @@ function applyRemoteMove(data){
 }
 
 function go(v){
-  ['home','dash','rank'].forEach(function(k){document.getElementById('v-'+k).classList.toggle('hidden',k!==v)});
+  ['home','dash','rank','settings'].forEach(function(k){
+    var el=document.getElementById('v-'+k); if(el) el.classList.toggle('hidden',k!==v);
+  });
   document.getElementById('game').style.display='none';
   document.getElementById('nav').style.display='flex';
   document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.v===v)});
+  if(v==='settings') paintPreview();
   paintAll();
 }
 async function paintAll(){
@@ -920,9 +1108,8 @@ function startLocal(m){
   setupCoach();render();status();movesUI();updateCaps();saveActiveGame();
 }
 function openGameUI(){
-  document.getElementById('v-home').classList.add('hidden');
-  document.getElementById('v-dash').classList.add('hidden');
-  document.getElementById('v-rank').classList.add('hidden');
+  applyPrefs();
+  ['v-home','v-dash','v-rank','v-settings'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.add('hidden')});
   document.getElementById('game').style.display='block';
   document.getElementById('nav').style.display='none';
   document.getElementById('ov-end').style.display='none';
@@ -1124,56 +1311,55 @@ function coachBest(auto){
     document.getElementById('coach-text').textContent='Aguarde a sua vez para analisar.';
     return;
   }
-  // Coach usa profundidade maior que a IA adversária
-  var nMoves=chess.moves().length;
-  var depth=4;
-  if(nMoves>40) depth=3;
-  if(nMoves>55) depth=2;
-  if(auto) depth=Math.min(depth,3); // auto após lance um pouco mais leve
-  var res=searchBest(chess,depth);
-  if(!res||!res.move)return;
-  var m=res.move;
-  // verifica se o lance parece entregar material: testa respostas
-  var safe=true; var danger='';
-  chess.move(m);
-  if(!chess.game_over()){
-    var replies=orderMoves(chess).slice(0,12);
-    for(var i=0;i<replies.length;i++){
-      if(replies[i].captured===m.piece && (VAL[replies[i].captured]||0)>=(VAL[m.piece]||0)){
-        // pode estar pendurada — busca alternativa
-        safe=false; danger='Peça pode ficar pendurada.'; break;
+  document.getElementById('coach-move').textContent='…';
+  document.getElementById('coach-text').textContent='Analisando posição (motor forte)…';
+
+  function applyMoveObj(m, engineName){
+    if(!m)return;
+    // valida lance legal
+    var legalMoves=chess.moves({verbose:true});
+    var found=null;
+    for(var i=0;i<legalMoves.length;i++){
+      if(legalMoves[i].from===m.from && legalMoves[i].to===m.to){
+        if(!m.promotion || legalMoves[i].promotion===m.promotion){ found=legalMoves[i]; break; }
       }
     }
-  }
-  chess.undo();
-  if(!safe){
-    // tenta segundo melhor
-    var moves=orderMoves(chess);
-    var maxSide=chess.turn()==='w';
-    var candidates=[];
-    for(var i=0;i<Math.min(moves.length,18);i++){
-      chess.move(moves[i]);
-      var sc=minimax(chess,Math.max(1,depth-2),-1e9,1e9,!maxSide);
-      chess.undo();
-      candidates.push({move:moves[i],score:sc});
+    if(!found){
+      // fallback search local
+      var res=searchBest(chess,3);
+      if(res&&res.move) found=res.move; else return;
+      engineName='análise local';
     }
-    candidates.sort(function(a,b){return maxSide?b.score-a.score:a.score-b.score});
-    if(candidates[1]) { m=candidates[0].move; res={move:m,score:candidates[0].score}; }
+    document.getElementById('coach-move').textContent=found.san+'   '+found.from.toUpperCase()+' → '+found.to.toUpperCase();
+    var why='Sugestão do motor ('+engineName+').';
+    if(found.san.indexOf('#')!==-1) why='Mate! Finalize a partida.';
+    else if(found.captured) why='Captura forte segundo o motor.';
+    else if(found.san.indexOf('+')!==-1) why='Xeque ativo — força resposta do rival.';
+    else if(found.san.indexOf('O-O')!==-1) why='Roque: rei seguro e torre ativada.';
+    else if(found.piece==='n'||found.piece==='b') why='Desenvolvimento/atividade de peça menor.';
+    else if(found.piece==='p') why='Lance de peão: espaço, centro ou estrutura.';
+    else why='Melhor continuação encontrada pelo motor.';
+    document.getElementById('coach-text').textContent=why;
+    sel=found.from; legal=[{to:found.to}]; last={from:found.from,to:found.to}; render();
   }
-  var side=res.score*(chess.turn()==='w'?1:-1);
-  document.getElementById('coach-move').textContent=m.san+'   '+m.from.toUpperCase()+' → '+m.to.toUpperCase();
-  var why='Lance principal da análise.';
-  if(m.san.indexOf('#')!==-1) why='Mate! Finalize agora.';
-  else if(m.captured) why='Captura com boa avaliação. Confira se não há contra-tática.';
-  else if(m.san.indexOf('+')!==-1) why='Xeque: força resposta e pode ganhar tempo.';
-  else if(m.san.indexOf('O-O')!==-1) why='Roque: rei seguro e torre ativada.';
-  else if(side>200) why='Mantém vantagem clara. Continue pressionando sem liberar contra-jogo.';
-  else if(side<-200) why='Posição difícil. Priorize defesa e evite criar novas fraquezas.';
-  else if(m.piece==='n'||m.piece==='b') why='Melhora peça menor e controle de casas-chave.';
-  else if(m.piece==='p') why='Lance de peão: espaço/centro ou melhoria de estrutura.';
-  if(danger) why+=' '+danger;
-  document.getElementById('coach-text').textContent=why;
-  sel=m.from;legal=[{to:m.to}];last={from:m.from,to:m.to};render();
+
+  initStockfish();
+  var fen=chess.fen();
+  stockfishBest(fen, auto?10:14, function(uci){
+    if(uci){
+      applyMoveObj(uciToMove(uci), 'Stockfish');
+      return;
+    }
+    // fallback minimax profundo
+    var nMoves=chess.moves().length;
+    var depth= nMoves>45?3 : 4;
+    var res=searchBest(chess, depth);
+    if(res&&res.move) applyMoveObj(res.move, 'busca local profunda');
+    else {
+      document.getElementById('coach-move').textContent='—';
+      document.getElementById('coach-text').textContent='Sem lance disponível.';
+    }
+  });
 }
 
 document.addEventListener('keydown',function(e){
@@ -1186,6 +1372,8 @@ document.addEventListener('keydown',function(e){
 });
 
 window.addEventListener('DOMContentLoaded',async function(){
+  loadPrefs();
+  initStockfish();
   initSupabase();
   if(sb){try{await ensureMaster()}catch(e){}}
   var u=getSession();
