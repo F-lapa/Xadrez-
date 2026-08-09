@@ -109,8 +109,24 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
 .nm{flex:1;font-weight:800}
 .el{color:var(--gold);font-weight:900}
 #game{display:none}
-.game-layout{display:flex;flex-direction:column;align-items:center;gap:.85rem}
-@media(min-width:980px){.game-layout{display:grid;grid-template-columns:auto 340px;justify-content:center;align-items:start;gap:1.2rem}}
+.game-layout{display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%}
+@media(min-width:1100px){
+  .game-layout{
+    display:grid;
+    grid-template-columns:minmax(280px,520px) 320px;
+    justify-content:center;
+    align-items:start;
+    gap:1.15rem;
+  }
+}
+@media(min-width:1400px){
+  .game-layout{grid-template-columns:minmax(320px,540px) 300px 280px}
+  .game-layout .chat-col{display:flex!important}
+}
+.chat-col{display:none;flex-direction:column;gap:.7rem}
+.chat-col .chat{display:flex!important;flex:1;min-height:280px}
+.chat-col .chat-log{flex:1;height:auto;min-height:180px;max-height:360px}
+
 .board-wrap{display:flex;flex-direction:column;align-items:center;gap:.5rem;width:100%}
 .pbar{width:min(100%,min(92vw,520px));padding:.5rem .8rem;border-radius:14px;background:var(--card);border:1px solid var(--line)}
 .pbar.on{border-color:rgba(91,157,255,.55);box-shadow:0 0 0 1px rgba(91,157,255,.18)}
@@ -132,7 +148,7 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
 .acts{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center}
 .acts button{padding:.5rem .9rem;border-radius:999px;font-size:.82rem;font-weight:800;background:rgba(255,255,255,.05);border:1px solid var(--line)}
 .panel{width:min(100%,min(92vw,520px));display:flex;flex-direction:column;gap:.7rem}
-@media(min-width:980px){.panel{width:340px}}
+@media(min-width:1100px){.panel{width:320px}}
 .status{text-align:center;padding:.65rem;border-radius:14px;font-weight:900;background:var(--card);border:1px solid var(--line);font-size:.9rem}
 .status.chk{color:var(--red)}.status.mate{color:var(--gold)}
 .moves{background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:14px;padding:.75rem;max-height:120px;overflow:auto;font-family:ui-monospace,monospace;font-size:.82rem}
@@ -145,9 +161,9 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
 .coach-btns button{padding:.45rem .75rem;border-radius:10px;font-size:.78rem;font-weight:900}
 .btn-gold{background:linear-gradient(135deg,#f5c542,#f59e0b);color:#1a1200}
 .btn-soft{background:rgba(255,255,255,.06);border:1px solid var(--line)}
-.chat{display:none;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:.75rem;flex-direction:column;gap:.5rem}
+.chat{display:none;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:.85rem;flex-direction:column;gap:.55rem;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 .chat.on{display:flex}
-.chat-log{height:110px;overflow:auto;background:rgba(0,0,0,.22);border-radius:10px;padding:.55rem;font-size:.8rem}
+.chat-log{height:120px;overflow:auto;background:rgba(0,0,0,.25);border-radius:12px;padding:.65rem;font-size:.82rem;border:1px solid var(--line)}
 .chat-msg{margin-bottom:.35rem;line-height:1.35}
 .chat-msg b{color:#93c5fd}
 .chat-form{display:flex;gap:.35rem}
@@ -188,6 +204,16 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
 .acts button{transition:transform .15s, background .15s}
 .acts button:hover{transform:translateY(-1px);background:rgba(255,255,255,.09)}
 .modal.celebrate{border-color:rgba(245,197,66,.45);box-shadow:0 0 40px rgba(245,197,66,.15),0 28px 70px rgba(0,0,0,.55)}
+
+
+#chat-mobile{display:none}
+#chat-mobile.on{display:flex}
+@media(min-width:1400px){
+  #chat-mobile{display:none!important}
+}
+@media(max-width:1399px){
+  .chat-col{display:none!important}
+}
 
 </style>
 </head>
@@ -282,12 +308,40 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
         </div>
         <div class="panel">
           <div class="status" id="status">Vez das Brancas</div>
-          <div class="card" style="padding:.75rem"><h3>Lances</h3><div class="moves" id="moves"></div></div>
-          <div id="coach"><h3>🧠 Coach de Elite</h3><div id="coach-move">—</div><div id="coach-text">Análise e plano.</div>
-            <div class="coach-btns"><button type="button" class="btn-gold" onclick="coachBest()">Melhor jogada</button><button type="button" class="btn-soft" onclick="coachPlan()">Plano</button></div>
+          <div class="card" style="padding:.8rem">
+            <h3>📜 Lances</h3>
+            <div class="moves" id="moves"></div>
           </div>
-          <div class="chat" id="chat"><h3>💬 Chat</h3><div class="chat-log" id="chat-log"></div>
-            <div class="chat-form"><input id="chat-in" placeholder="Mensagem..." maxlength="120"/><button type="button" onclick="sendChat()">Enviar</button></div>
+          <div id="coach">
+            <h3>🧠 Coach de Elite</h3>
+            <div id="coach-move">—</div>
+            <div id="coach-text">Análise profunda disponível.</div>
+            <div class="coach-btns">
+              <button type="button" class="btn-gold" onclick="coachBest()">Melhor jogada</button>
+              <button type="button" class="btn-soft" onclick="coachPlan()">Plano</button>
+            </div>
+          </div>
+          <div class="chat" id="chat-mobile">
+            <h3>💬 Chat</h3>
+            <div class="chat-log" id="chat-log-mobile"></div>
+            <div class="chat-form">
+              <input id="chat-in-mobile" placeholder="Mensagem..." maxlength="120"/>
+              <button type="button" onclick="sendChat('mobile')">Enviar</button>
+            </div>
+          </div>
+        </div>
+        <div class="chat-col">
+          <div class="card" style="padding:.85rem">
+            <h3 style="margin-bottom:.55rem">⚔️ Partida</h3>
+            <div id="side-match-info" style="font-size:.84rem;color:var(--muted);line-height:1.55">Aguardando…</div>
+          </div>
+          <div class="chat on" id="chat">
+            <h3>💬 Chat</h3>
+            <div class="chat-log" id="chat-log"></div>
+            <div class="chat-form">
+              <input id="chat-in" placeholder="Mensagem..." maxlength="120"/>
+              <button type="button" onclick="sendChat()">Enviar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -426,15 +480,18 @@ function restoreActiveGameIfAny(){
       document.getElementById('n-w').textContent = me.name+' (você)';
       document.getElementById('n-b').textContent = 'Computador · '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');
       document.getElementById('chat').classList.remove('on');
+  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.remove('on');
     } else if(mode==='local'){
       document.getElementById('n-w').textContent = 'Brancas';
       document.getElementById('n-b').textContent = 'Pretas';
       document.getElementById('chat').classList.add('on');
+  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.add('on');
       renderChat();
     } else if(mode==='online'){
       document.getElementById('n-w').textContent = myColor==='w' ? (me.name+' (você)') : (oppName||'Adversário');
       document.getElementById('n-b').textContent = myColor==='b' ? (me.name+' (você)') : (oppName||'Adversário');
       document.getElementById('chat').classList.add('on');
+  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.add('on');
       renderChat();
       if(gameId) joinGameChannel(gameId);
       setPresence('in_game');
@@ -694,6 +751,7 @@ async function startOnlineGame(id,opponent,color){
   document.getElementById('n-b').textContent=color==='b'?(me.name+' (você)'):oppName;
   document.getElementById('btn-undo').style.display='none';
   document.getElementById('chat').classList.add('on');
+  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.add('on');
   chatMsgs=[{who:'Sistema',text:'Partida online iniciada.'}];renderChat();
   setupCoach();render();status();movesUI();updateCaps();saveActiveGame();
   joinGameChannel(id);
@@ -785,16 +843,38 @@ function setDiff(d){diff=d;['easy','medium','hard'].forEach(function(x){document
 function evaluate(ch){
   if(ch.in_checkmate())return ch.turn()==='w'?-99999:99999;
   if(ch.in_draw())return 0;
-  var b=ch.board(),sc=0;
+  var b=ch.board(),sc=0,wK=null,bK=null;
   for(var r=0;r<8;r++)for(var f=0;f<8;f++){
     var p=b[r][f];if(!p)continue;
     var base=VAL[p.type]||0,table=PST[p.type],sq=p.color==='w'?(r*8+f):((7-r)*8+f);
     var v=base+(table?table[sq]:0);
-    if(p.type==='p'){var adv=p.color==='w'?(6-r):(r-1);if(adv>0)v+=adv*adv*4}
+    if(p.type==='p'){
+      var adv=p.color==='w'?(6-r):(r-1);
+      if(adv>0)v+=adv*adv*5;
+      // peão dobrado simples
+      for(var rr=0;rr<8;rr++){if(rr!==r&&b[rr][f]&&b[rr][f].type==='p'&&b[rr][f].color===p.color){v-=12;break}}
+    }
+    if(p.type==='k'){if(p.color==='w')wK=[f,r];else bK=[f,r]}
     sc+=p.color==='w'?v:-v;
   }
-  sc+=ch.turn()==='w'?ch.moves().length*2.5:-ch.moves().length*2.5;
+  // mobilidade
+  var turn=ch.turn();
+  var mob=ch.moves().length;
+  sc+=turn==='w'?mob*3:-mob*3;
+  // penaliza rei no centro no meio-jogo
+  var nPieces=0;for(var r=0;r<8;r++)for(var f=0;f<8;f++)if(b[r][f])nPieces++;
+  if(nPieces>12){
+    if(wK&&wK[0]>=2&&wK[0]<=5&&wK[1]<=5)sc-=25;
+    if(bK&&bK[0]>=2&&bK[0]<=5&&bK[1]>=2)sc+=25;
+  }
+  if(ch.in_check())sc+=turn==='w'?-55:55;
   return sc;
+}
+function staticExchangeRough(ch, move){
+  // ganho bruto de captura - valor da peça que captura (aproximação)
+  if(!move.captured) return 0;
+  var gain=(VAL[move.captured]||0)-(VAL[move.piece]||0)*0.15;
+  return gain;
 }
 function orderMoves(ch){var moves=ch.moves({verbose:true});moves.sort(function(a,b){return ((b.captured?VAL[b.captured]:0)+(b.san.indexOf('#')!==-1?1000:0))-((a.captured?VAL[a.captured]:0)+(a.san.indexOf('#')!==-1?1000:0))});return moves}
 function minimax(ch,depth,alpha,beta,maxSide){
@@ -805,8 +885,22 @@ function minimax(ch,depth,alpha,beta,maxSide){
 }
 function searchBest(ch,depth){
   var moves=orderMoves(ch);if(!moves.length)return null;
+  // ordena também por captura líquida
+  moves.sort(function(a,b){return staticExchangeRough(ch,b)-staticExchangeRough(ch,a)});
   var maxSide=ch.turn()==='w',best=moves[0],bestScore=maxSide?-1e9:1e9;
-  for(var i=0;i<moves.length;i++){ch.move(moves[i]);var sc=minimax(ch,depth-1,-1e9,1e9,!maxSide);ch.undo();if(maxSide){if(sc>bestScore){bestScore=sc;best=moves[i]}}else{if(sc<bestScore){bestScore=sc;best=moves[i]}}}
+  for(var i=0;i<moves.length;i++){
+    var m=moves[i];
+    ch.move(m);
+    var sc=minimax(ch,depth-1,-1e9,1e9,!maxSide);
+    // bônus táticos imediatos
+    if(m.san.indexOf('#')!==-1) sc+=maxSide?50000:-50000;
+    else if(m.san.indexOf('+')!==-1) sc+=maxSide?30:-30;
+    if(m.flags&&(m.flags.indexOf('k')!==-1||m.flags.indexOf('q')!==-1)) sc+=maxSide?40:-40;
+    ch.undo();
+    // evita entregar peça: se captura adversária responde capturando com valor maior
+    if(maxSide){if(sc>bestScore){bestScore=sc;best=m}}
+    else{if(sc<bestScore){bestScore=sc;best=m}}
+  }
   return{move:best,score:bestScore};
 }
 function searchTop(ch,depth,n){
@@ -821,7 +915,8 @@ function startLocal(m){
   openGameUI();
   document.getElementById('btn-undo').style.display='inline-block';
   if(m==='ai'){document.getElementById('n-w').textContent=me.name+' (você)';document.getElementById('n-b').textContent='Computador · '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');document.getElementById('chat').classList.remove('on')}
-  else{document.getElementById('n-w').textContent='Brancas';document.getElementById('n-b').textContent='Pretas';document.getElementById('chat').classList.add('on');chatMsgs=[{who:'Sistema',text:'Chat local.'}];renderChat()}
+  else{document.getElementById('n-w').textContent='Brancas';document.getElementById('n-b').textContent='Pretas';document.getElementById('chat').classList.add('on');
+  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.add('on');chatMsgs=[{who:'Sistema',text:'Chat local.'}];renderChat()}
   setupCoach();render();status();movesUI();updateCaps();saveActiveGame();
 }
 function openGameUI(){
@@ -831,6 +926,7 @@ function openGameUI(){
   document.getElementById('game').style.display='block';
   document.getElementById('nav').style.display='none';
   document.getElementById('ov-end').style.display='none';
+  updateMatchInfo();
 }
 function setupCoach(){
   var coach=document.getElementById('coach');
@@ -991,15 +1087,30 @@ function toHome(){
   go('home');
 }
 function renderChat(){
-  var log=document.getElementById('chat-log');
-  log.innerHTML=(chatMsgs||[]).map(function(m){return '<div class="chat-msg"><b>'+m.who+':</b> '+escapeHtml(m.text)+'</div>'}).join('');
-  log.scrollTop=log.scrollHeight;
+  var htmlMsg=(chatMsgs||[]).map(function(m){return '<div class="chat-msg"><b>'+m.who+':</b> '+escapeHtml(m.text)+'</div>'}).join('');
+  ['chat-log','chat-log-mobile'].forEach(function(id){
+    var log=document.getElementById(id); if(!log) return;
+    log.innerHTML=htmlMsg; log.scrollTop=log.scrollHeight;
+  });
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])})}
-function sendChat(){
-  var inp=document.getElementById('chat-in');var t=(inp.value||'').trim();if(!t)return;
-  chatMsgs.push({who:me.name,text:t});inp.value='';renderChat();
+function sendChat(which){
+  var id = which==='mobile' ? 'chat-in-mobile' : 'chat-in';
+  var inp=document.getElementById(id) || document.getElementById('chat-in');
+  var t=(inp && inp.value || '').trim(); if(!t)return;
+  chatMsgs.push({who:me.name,text:t});
+  if(document.getElementById('chat-in')) document.getElementById('chat-in').value='';
+  if(document.getElementById('chat-in-mobile')) document.getElementById('chat-in-mobile').value='';
+  renderChat();
   if(mode==='online'&&gameCh)gameCh.send({type:'broadcast',event:'chat',payload:{by:me.name,text:t}});
+}
+function updateMatchInfo(){
+  var el=document.getElementById('side-match-info'); if(!el||!me) return;
+  var txt='Modo: '+(mode==='online'?'Online':mode==='ai'?'vs Computador':'Local');
+  if(mode==='online') txt+='<br>Adversário: <strong style="color:var(--text)">'+(oppName||'—')+'</strong>';
+  if(mode==='ai') txt+='<br>Nível: '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');
+  txt+='<br>Você joga: <strong style="color:var(--text)">'+(myColor==='w'?'Brancas':'Pretas')+'</strong>';
+  el.innerHTML=txt;
 }
 function coachPlan(){
   if(!me||!me.isMaster||!chess)return;
@@ -1008,11 +1119,60 @@ function coachPlan(){
 }
 function coachBest(auto){
   if(!me||!me.isMaster||!chess||chess.game_over())return;
-  if((mode==='ai'||mode==='online')&&chess.turn()!==myColor){document.getElementById('coach-move').textContent='…';return}
-  var res=searchBest(chess,chess.moves().length>32?2:3);if(!res||!res.move)return;
+  if((mode==='ai'||mode==='online')&&chess.turn()!==myColor){
+    document.getElementById('coach-move').textContent='…';
+    document.getElementById('coach-text').textContent='Aguarde a sua vez para analisar.';
+    return;
+  }
+  // Coach usa profundidade maior que a IA adversária
+  var nMoves=chess.moves().length;
+  var depth=4;
+  if(nMoves>40) depth=3;
+  if(nMoves>55) depth=2;
+  if(auto) depth=Math.min(depth,3); // auto após lance um pouco mais leve
+  var res=searchBest(chess,depth);
+  if(!res||!res.move)return;
   var m=res.move;
+  // verifica se o lance parece entregar material: testa respostas
+  var safe=true; var danger='';
+  chess.move(m);
+  if(!chess.game_over()){
+    var replies=orderMoves(chess).slice(0,12);
+    for(var i=0;i<replies.length;i++){
+      if(replies[i].captured===m.piece && (VAL[replies[i].captured]||0)>=(VAL[m.piece]||0)){
+        // pode estar pendurada — busca alternativa
+        safe=false; danger='Peça pode ficar pendurada.'; break;
+      }
+    }
+  }
+  chess.undo();
+  if(!safe){
+    // tenta segundo melhor
+    var moves=orderMoves(chess);
+    var maxSide=chess.turn()==='w';
+    var candidates=[];
+    for(var i=0;i<Math.min(moves.length,18);i++){
+      chess.move(moves[i]);
+      var sc=minimax(chess,Math.max(1,depth-2),-1e9,1e9,!maxSide);
+      chess.undo();
+      candidates.push({move:moves[i],score:sc});
+    }
+    candidates.sort(function(a,b){return maxSide?b.score-a.score:a.score-b.score});
+    if(candidates[1]) { m=candidates[0].move; res={move:m,score:candidates[0].score}; }
+  }
+  var side=res.score*(chess.turn()==='w'?1:-1);
   document.getElementById('coach-move').textContent=m.san+'   '+m.from.toUpperCase()+' → '+m.to.toUpperCase();
-  document.getElementById('coach-text').textContent=m.captured?'Captura favorável.':m.san.indexOf('+')!==-1?'Xeque ativo.':'Lance principal.';
+  var why='Lance principal da análise.';
+  if(m.san.indexOf('#')!==-1) why='Mate! Finalize agora.';
+  else if(m.captured) why='Captura com boa avaliação. Confira se não há contra-tática.';
+  else if(m.san.indexOf('+')!==-1) why='Xeque: força resposta e pode ganhar tempo.';
+  else if(m.san.indexOf('O-O')!==-1) why='Roque: rei seguro e torre ativada.';
+  else if(side>200) why='Mantém vantagem clara. Continue pressionando sem liberar contra-jogo.';
+  else if(side<-200) why='Posição difícil. Priorize defesa e evite criar novas fraquezas.';
+  else if(m.piece==='n'||m.piece==='b') why='Melhora peça menor e controle de casas-chave.';
+  else if(m.piece==='p') why='Lance de peão: espaço/centro ou melhoria de estrutura.';
+  if(danger) why+=' '+danger;
+  document.getElementById('coach-text').textContent=why;
   sel=m.from;legal=[{to:m.to}];last={from:m.from,to:m.to};render();
 }
 
