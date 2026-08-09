@@ -194,6 +194,19 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
 
 /* ===== GAME POLISH & MOVE ANIMS ===== */
 @keyframes piece-land{0%{transform:scale(.75);opacity:.5}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.slide-piece{
+  position:fixed;
+  pointer-events:none;
+  z-index:150;
+  transition:left .22s cubic-bezier(.2,.8,.3,1), top .22s cubic-bezier(.2,.8,.3,1);
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,.45));
+}
+.slide-piece img{width:100%;height:100%;object-fit:contain;display:block}
+.puzzle-badge{
+  text-align:center;padding:.55rem .8rem;border-radius:12px;font-weight:800;font-size:.88rem;
+  background:linear-gradient(135deg,rgba(167,139,250,.2),rgba(91,157,255,.12));
+  border:1px solid rgba(167,139,250,.35);color:#c4b5fd;margin-bottom:.5rem;
+}
 @keyframes move-flash{0%{box-shadow:inset 0 0 0 999px rgba(91,157,255,.0)}30%{box-shadow:inset 0 0 0 999px rgba(91,157,255,.45)}100%{box-shadow:inset 0 0 0 999px rgba(245,197,66,.28)}}
 @keyframes end-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
 @keyframes slide-panel{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
@@ -745,6 +758,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
           <div class="modes">
             <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Stockfish real · sem Elo de ranking</div></div></div>
             <div class="mode" onclick="startLocal('local')"><div class="i">👥</div><div><div class="t">Dois jogadores</div><div class="d">Mesmo dispositivo</div></div></div>
+            <div class="mode" onclick="startPuzzle()"><div class="i">🧩</div><div><div class="t">Puzzles</div><div class="d">Mate em 1 · táticas · treino</div></div></div>
           </div>
           <div style="margin-top:.85rem">
             <div style="font-size:.78rem;color:var(--muted);font-weight:700;margin-bottom:.35rem">Dificuldade da IA</div>
@@ -1058,6 +1072,20 @@ const OPENINGS={
   'd4 Nf6':'Índia','d4 Nf6 c4':'Índia','d4 Nf6 c4 g6':'Índia do Rei',
   'd4 Nf6 c4 e6':'Nimzo/Ortodoxa','c4':'Abertura Inglesa','Nf3':'Abertura Reti','f4':'Bird'
 };
+// Puzzles verificados — solução em UCI. side opcional ('w' default)
+const PUZZLES=[
+  {title:'Mate em 1 — Corredor', fen:'6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre sobe na coluna e'},
+  {title:'Mate em 1 — Dama na 8ª', fen:'7k/5ppp/8/8/8/8/5PPP/4Q1K1 w - - 0 1', sol:['e1e8'], hint:'Dama na última fileira'},
+  {title:'Mate em 1 — Back rank', fen:'3r2k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre na 8ª — rei sem fuga'},
+  {title:'Mate em 1 — Dois bispos', fen:'6k1/6p1/6Pp/8/8/8/4B3/4B1K1 w - - 0 1', sol:['e2c4'], hint:'Bispo para c4 fecha a rede'},
+  {title:'Mate em 1 — Cavalo', fen:'5k2/5ppp/8/4N3/8/8/5PPP/6K1 w - - 0 1', sol:['e5d7'], hint:'Cavalo dá cheque decisivo'},
+  {title:'Tática — Garfo', fen:'r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R w KQkq - 4 4', sol:['g5f7'], hint:'Cavalo ataca rei e torre/dama'},
+  {title:'Tática — Mate do pastor (final)', fen:'r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 4', sol:['f7f8'], hint:'Já quase mate — complete se necessário'},
+  {title:'Mate em 1 — Torre lateral', fen:'6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1', sol:['a1a8'], hint:'Torre na coluna a'},
+  {title:'Mate em 1 — Dama e rei', fen:'8/8/8/4k3/8/4Q3/8/4K3 w - - 0 1', sol:['e3e4'], hint:'Aproxime a dama com suporte'},
+  {title:'Mate em 1 — Bispo longo', fen:'5k2/5ppp/8/8/8/8/5PPP/2B3K1 w - - 0 1', sol:['c1a3'], hint:'Diagonal até o rei'}
+];
+let puzzleIdx=0, puzzleSolStep=0, puzzleActive=null;
 
 function norm(s){return String(s||'').trim().toLowerCase().replace(/\s+/g,'_')}
 function setSession(u){localStorage.setItem(SESSION,u)}
@@ -1588,17 +1616,25 @@ async function joinGameChannel(id){
 }
 function applyRemoteMove(data){
   if(!chess||chess.game_over())return;
+  var before=chess.get(data.from);
+  var color=before?before.color:'w', type=before?before.type:'p';
   var mv=chess.move({from:data.from,to:data.to,promotion:data.promotion||'q'});if(!mv)return;
   if(mv.captured){var glyph=GL[(mv.color==='w'?'b':'w')+mv.captured];if(mv.color==='w')capW.push(glyph);else capB.push(glyph); sfxCapture()}
   else sfxMove();
   if(chess.in_check()) sfxCheck();
-  last={from:mv.from,to:mv.to};hist.push(mv);render();status();movesUI();updateCaps();saveActiveGame();
-  if(timeControl>0){ lastClockTick=Date.now(); updateClocksUI(); }
-  if(chess.game_over()){
-    stopClock();
-    if(chess.in_checkmate()) sfxWin();
-    setTimeout(endOnlineFromBoard,200);
-  }
+  last={from:mv.from,to:mv.to};hist.push(mv);
+  render();
+  var destCell=document.querySelector('.cell[data-sq="'+mv.to+'"]');
+  if(destCell){ var img=destCell.querySelector('.pc-img, .pc'); if(img) img.style.opacity='0'; }
+  animateSlide(mv.from, mv.to, color, type, function(){
+    render(); status(); movesUI(); updateCaps(); saveActiveGame();
+    if(timeControl>0){ lastClockTick=Date.now(); updateClocksUI(); }
+    if(chess.game_over()){
+      stopClock();
+      if(chess.in_checkmate()) sfxWin();
+      setTimeout(endOnlineFromBoard,200);
+    }
+  });
 }
 
 function go(v){
@@ -1778,10 +1814,10 @@ function respondDraw(accept){
 }
 function rematch(){
   document.getElementById('ov-end').style.display='none';
+  if(lastEndMode==='puzzle'){ nextPuzzle(); return; }
   if(lastEndMode==='ai') startLocal('ai');
   else if(lastEndMode==='local') startLocal('local');
   else if(lastEndMode==='online' && oppName){
-    // re-challenge
     challengePlayer(oppName);
   } else toHome();
 }
@@ -1877,6 +1913,7 @@ function searchTop(ch,depth,n){
 function startLocal(m){
   if(typeof Chess==='undefined'){alert('Recarregue');return}
   mode=m;chess=new Chess();sel=null;legal=[];last=null;hist=[];capW=[];capB=[];chatMsgs=[];myColor='w';oppName='';gameId='';boardFlipped=false;
+  puzzleActive=null; puzzleSolStep=0;
   lastEndMode=m; lastEndResult=null;
   openGameUI();
   document.getElementById('btn-undo').style.display='inline-block';
@@ -1885,6 +1922,73 @@ function startLocal(m){
   else{document.getElementById('n-w').textContent='Brancas';document.getElementById('n-b').textContent='Pretas';document.getElementById('chat').classList.add('on');
   chatMsgs=[{who:'Sistema',text:'Chat local.'}];renderChat()}
   setupCoach();render();status();movesUI();updateCaps();initClocks();saveActiveGame();
+}
+function startPuzzle(){
+  if(typeof Chess==='undefined'){alert('Recarregue');return}
+  if(!PUZZLES.length) return toast('Sem puzzles');
+  puzzleIdx = Math.floor(Math.random()*PUZZLES.length);
+  loadPuzzle(puzzleIdx);
+}
+function loadPuzzle(idx){
+  puzzleIdx=idx % PUZZLES.length;
+  puzzleActive=PUZZLES[puzzleIdx];
+  puzzleSolStep=0;
+  mode='puzzle';
+  chess=new Chess(puzzleActive.fen);
+  sel=null; legal=[]; last=null; hist=[]; capW=[]; capB=[]; chatMsgs=[];
+  myColor = (puzzleActive.side==='b') ? 'b' : 'w';
+  if(chess.turn()!==myColor){
+    // se FEN não estiver na vez do jogador, força orientação
+    myColor = chess.turn();
+  }
+  oppName=''; gameId=''; boardFlipped=(myColor==='b');
+  lastEndMode='puzzle'; lastEndResult=null;
+  openGameUI();
+  document.getElementById('btn-undo').style.display='inline-block';
+  var bd=document.getElementById('btn-draw'); if(bd) bd.classList.add('hidden');
+  document.getElementById('n-w').textContent = myColor==='w' ? (me.name+' (você)') : 'Brancas';
+  document.getElementById('n-b').textContent = myColor==='b' ? (me.name+' (você)') : 'Pretas';
+  document.getElementById('chat').classList.remove('on');
+  setupCoach();
+  // badge de puzzle no status
+  render(); status(); movesUI(); updateCaps();
+  stopClock(); clockW=0; clockB=0; updateClocksUI();
+  var st=document.getElementById('status');
+  if(st){ st.className='side-status'; st.innerHTML='🧩 <strong>'+puzzleActive.title+'</strong><br><span style="font-weight:600;opacity:.85">'+(puzzleActive.hint||'Encontre o melhor lance')+'</span>'; }
+  toast('Puzzle '+(puzzleIdx+1)+'/'+PUZZLES.length);
+  saveActiveGame();
+}
+function checkPuzzleMove(from,to,pr){
+  if(!puzzleActive) return;
+  var uci = from+to+(pr||'');
+  var expected = puzzleActive.sol[puzzleSolStep];
+  if(!expected){ return; }
+  // aceitar com ou sem promoção explícita
+  var ok = (uci===expected) || (uci===expected+'q') || (expected.indexOf(from+to)===0);
+  if(!ok){
+    toast('Lance incorreto — tente de novo');
+    // desfaz
+    chess.undo(); hist.pop(); last=hist.length?{from:hist[hist.length-1].from,to:hist[hist.length-1].to}:null;
+    render(); status(); movesUI(); updateCaps();
+    var st=document.getElementById('status');
+    if(st){ st.className='side-status chk'; st.innerHTML='❌ Incorreto. Dica: '+(puzzleActive.hint||'Tente outra casa'); }
+    return;
+  }
+  puzzleSolStep++;
+  sfxWin();
+  if(puzzleSolStep >= puzzleActive.sol.length){
+    lastEndResult='win';
+    toast('Puzzle resolvido!');
+    setTimeout(function(){
+      showEnd('🧩 Puzzle resolvido!', puzzleActive.title+' — muito bem!');
+    }, 400);
+  } else {
+    var st=document.getElementById('status');
+    if(st){ st.className='side-status'; st.textContent='✓ Continuação… lance '+(puzzleSolStep+1)+'/'+puzzleActive.sol.length; }
+  }
+}
+function nextPuzzle(){
+  loadPuzzle(puzzleIdx+1);
 }
 function openGameUI(){
   applyPrefs();
@@ -2000,23 +2104,73 @@ function click(sq){
   }else{var p2=chess.get(sq);if(p2&&p2.color===chess.turn())pick(sq)}
 }
 function pick(sq){sel=sq;legal=chess.moves({square:sq,verbose:true});render()}
+function cellRect(sq){
+  var board=document.getElementById('board'); if(!board) return null;
+  var cell=board.querySelector('.cell[data-sq="'+sq+'"]');
+  if(!cell) return null;
+  return cell.getBoundingClientRect();
+}
+function animateSlide(from, to, color, type, cb){
+  var r0=cellRect(from), r1=cellRect(to);
+  if(!r0 || !r1){ if(cb) cb(); return; }
+  var size=Math.min(r0.width, r0.height)*0.88;
+  var el=document.createElement('div');
+  el.className='slide-piece';
+  el.style.width=size+'px'; el.style.height=size+'px';
+  var url=pieceImgUrl(color, type);
+  if(url) el.innerHTML='<img src="'+url+'" alt=""/>';
+  else { el.textContent=GL[color+type]||''; el.style.fontSize=(size*0.8)+'px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; }
+  el.style.left=(r0.left + r0.width/2 - size/2)+'px';
+  el.style.top=(r0.top + r0.height/2 - size/2)+'px';
+  document.body.appendChild(el);
+  // force reflow then move
+  el.offsetHeight;
+  el.style.left=(r1.left + r1.width/2 - size/2)+'px';
+  el.style.top=(r1.top + r1.height/2 - size/2)+'px';
+  var done=false;
+  function finish(){
+    if(done) return; done=true;
+    if(el.parentNode) el.parentNode.removeChild(el);
+    if(cb) cb();
+  }
+  el.addEventListener('transitionend', finish);
+  setTimeout(finish, 280);
+}
 function play(from,to,pr){
+  var before=chess.get(from);
+  var color=before?before.color:'w', type=before?before.type:(pr||'q');
   var mv=chess.move({from:from,to:to,promotion:pr||'q'});if(!mv)return;
   if(mv.captured){var glyph=GL[(mv.color==='w'?'b':'w')+mv.captured];if(mv.color==='w')capW.push(glyph);else capB.push(glyph); sfxCapture()}
   else sfxMove();
   if(chess.in_check()) sfxCheck();
   last={from:from,to:to};sel=null;legal=[];hist.push(mv);
-  render();status();movesUI();updateCaps();saveActiveGame();
-  if(timeControl>0){ lastClockTick=Date.now(); updateClocksUI(); }
-  if(mode==='online'&&gameCh)gameCh.send({type:'broadcast',event:'move',payload:{by:me.name,from:from,to:to,promotion:pr||'q'}});
-  
-  if(chess.game_over()){
-    stopClock();
-    if(chess.in_checkmate()) sfxWin();
-    if(mode==='online')setTimeout(endOnlineFromBoard,200);else setTimeout(endLocal,200);return
+
+  // esconde peça de destino temporariamente durante o deslize
+  var skipRenderPiece = to;
+  function afterAnim(){
+    render(); status(); movesUI(); updateCaps(); saveActiveGame();
+    if(timeControl>0){ lastClockTick=Date.now(); updateClocksUI(); }
+    if(mode==='online'&&gameCh)gameCh.send({type:'broadcast',event:'move',payload:{by:me.name,from:from,to:to,promotion:pr||'q'}});
+
+    if(mode==='puzzle'){ checkPuzzleMove(from,to,pr); return; }
+
+    if(chess.game_over()){
+      stopClock();
+      if(chess.in_checkmate()) sfxWin();
+      if(mode==='online')setTimeout(endOnlineFromBoard,200);else setTimeout(endLocal,200);return
+    }
+    if(mode==='ai'&&chess.turn()!==myColor)setTimeout(aiPlay,280);
+    else if(me&&me.isMaster&&chess.turn()===myColor) setTimeout(function(){coachBest(true)},200);
   }
-  if(mode==='ai'&&chess.turn()!==myColor)setTimeout(aiPlay,280);
-  else if(me&&me.isMaster&&chess.turn()===myColor) setTimeout(function(){coachBest(true)},200);
+  // render sem a peça no destino, anima, depois render completo
+  render();
+  // ocultar peça que acabou de chegar
+  var destCell=document.querySelector('.cell[data-sq="'+to+'"]');
+  if(destCell){
+    var img=destCell.querySelector('.pc-img, .pc');
+    if(img) img.style.opacity='0';
+  }
+  animateSlide(from, to, color, type, afterAnim);
 }
 function promo(p){document.getElementById('ov-promo').style.display='none';if(pend){play(pend.from,pend.to,p);pend=null}}
 function aiPlay(){
