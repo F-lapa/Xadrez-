@@ -253,6 +253,111 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 }
 .theme-swatches button.on{border-color:#fff;transform:scale(1.08)}
 
+
+/* ===== GAME REDESIGN ===== */
+.game-shell{
+  width:100%;
+  max-width:1100px;
+  margin:0 auto;
+  display:grid;
+  gap:1rem;
+}
+@media(min-width:960px){
+  .game-shell{
+    grid-template-columns: minmax(300px,560px) 1fr;
+    align-items:start;
+  }
+}
+.game-main{display:flex;flex-direction:column;align-items:center;gap:.65rem}
+.game-side{
+  display:flex;flex-direction:column;gap:.75rem;
+  width:100%;
+  min-width:0;
+}
+.board-hero{
+  width:min(92vw,560px);
+  aspect-ratio:1/1;
+  border-radius:18px;
+  padding:10px;
+  background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  border:1px solid var(--line2);
+  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.04) inset;
+}
+.board-hero .board-frame{
+  width:100%;height:100%;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+}
+.player-card{
+  width:min(92vw,560px);
+  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+  padding:.7rem .9rem;border-radius:16px;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  backdrop-filter:blur(10px);
+}
+.player-card.active{
+  border-color:rgba(91,157,255,.55);
+  box-shadow:0 0 0 1px rgba(91,157,255,.2),0 10px 30px rgba(91,157,255,.08);
+}
+.player-card .who{font-weight:900;font-size:.92rem}
+.player-card .caps{font-size:1.05rem;opacity:.95}
+.game-actions{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;width:min(92vw,560px)}
+.game-actions button{
+  padding:.55rem 1rem;border-radius:999px;font-size:.84rem;font-weight:800;
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  transition:.15s;
+}
+.game-actions button:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.side-status{
+  text-align:center;padding:.8rem;border-radius:16px;font-weight:900;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  border:1px solid var(--line);font-size:.95rem;
+}
+.side-status.chk{color:var(--red)}
+.side-status.mate{color:var(--gold)}
+.side-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  border:1px solid var(--line);border-radius:18px;padding:.9rem;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+.side-card h3{font-size:.88rem;font-weight:900;margin-bottom:.55rem;color:#dbe4ff}
+.moves-box{
+  max-height:130px;overflow:auto;font-family:ui-monospace,monospace;font-size:.84rem;
+  background:rgba(0,0,0,.22);border-radius:12px;padding:.7rem;border:1px solid var(--line);
+}
+.chat-modern{
+  display:none;flex-direction:column;gap:.55rem;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  border:1px solid var(--line);border-radius:18px;padding:.9rem;
+  min-height:220px;
+}
+.chat-modern.on{display:flex}
+.chat-modern .head{display:flex;align-items:center;justify-content:space-between}
+.chat-modern .head h3{margin:0;font-size:.9rem;font-weight:900}
+.chat-modern .log{
+  flex:1;min-height:120px;max-height:200px;overflow:auto;
+  background:rgba(0,0,0,.25);border-radius:14px;padding:.7rem;
+  border:1px solid var(--line);font-size:.84rem;
+}
+.chat-modern .msg{margin-bottom:.4rem;line-height:1.4;padding:.35rem .5rem;border-radius:10px;background:rgba(255,255,255,.03)}
+.chat-modern .msg b{color:#93c5fd}
+.chat-modern .form{display:flex;gap:.4rem}
+.chat-modern .form input{
+  flex:1;padding:.65rem .8rem;border-radius:12px;
+  background:rgba(0,0,0,.28);border:1px solid var(--line);color:var(--text);font-size:.88rem;
+}
+.chat-modern .form button{
+  padding:.65rem .9rem;border-radius:12px;font-weight:900;font-size:.82rem;color:#fff;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+}
+#coach{
+  background:linear-gradient(165deg,rgba(60,42,12,.95),rgba(18,20,32,.96))!important;
+  border:1px solid rgba(245,197,66,.4)!important;
+  border-radius:18px!important;padding:1rem!important;
+}
+
 </style>
 </head>
 <body>
@@ -308,15 +413,15 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
         <div class="card">
           <h2>Treino local</h2>
           <div class="modes">
-            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Treino · sem pontos</div></div></div>
+            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Motor Stockfish · sem pontos de ranking</div></div></div>
             <div class="mode" onclick="startLocal('local')"><div class="i">👥</div><div><div class="t">Dois jogadores</div><div class="d">Mesmo dispositivo</div></div></div>
           </div>
           <div style="margin-top:.85rem">
             <div style="font-size:.78rem;color:var(--muted);font-weight:700;margin-bottom:.35rem">Dificuldade da IA</div>
             <div class="diff-row">
-              <button type="button" id="d-easy" onclick="setDiff('easy')">Fácil</button>
-              <button type="button" id="d-medium" class="on" onclick="setDiff('medium')">Médio</button>
-              <button type="button" id="d-hard" onclick="setDiff('hard')">Difícil</button>
+              <button type="button" id="d-easy" onclick="setDiff('easy')">Mestre (rápido)</button>
+              <button type="button" id="d-medium" class="on" onclick="setDiff('medium')">Mestre</button>
+              <button type="button" id="d-hard" onclick="setDiff('hard')">Grande Mestre</button>
             </div>
           </div>
           <div class="stats" id="home-stats" style="margin-top:1rem"></div>
@@ -382,58 +487,54 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     </div>
 
     <div id="game">
-      <div class="game-layout">
-        <div class="board-wrap">
-          <div class="pbar" id="bar-b"><div class="pbar-top"><span id="n-b">Pretas</span><span id="i-b"></span></div><div class="caps" id="caps-b"></div></div>
-          <div class="board-frame board-classic pieces-classic" id="board-frame"><div id="board"></div></div>
-          <div class="pbar on" id="bar-w"><div class="pbar-top"><span id="n-w">Brancas</span><span id="i-w"></span></div><div class="caps" id="caps-w"></div></div>
-          <div class="acts">
+      <div class="game-shell">
+        <div class="game-main">
+          <div class="player-card" id="bar-b">
+            <div class="who" id="n-b">Pretas</div>
+            <div class="caps" id="caps-b"></div>
+          </div>
+          <div class="board-hero">
+            <div class="board-frame board-classic pieces-classic" id="board-frame">
+              <div id="board"></div>
+            </div>
+          </div>
+          <div class="player-card active" id="bar-w">
+            <div class="who" id="n-w">Brancas</div>
+            <div class="caps" id="caps-w"></div>
+          </div>
+          <div class="game-actions">
             <button type="button" id="btn-undo" onclick="undo()">↩ Desfazer</button>
             <button type="button" onclick="resign()">Desistir</button>
             <button type="button" onclick="toHome()">Lobby</button>
           </div>
         </div>
-        <div class="panel">
-          <div class="status" id="status">Vez das Brancas</div>
-          <div class="card" style="padding:.8rem">
+        <div class="game-side">
+          <div class="side-status" id="status">Vez das Brancas</div>
+          <div class="side-card">
             <h3>📜 Lances</h3>
-            <div class="moves" id="moves"></div>
+            <div class="moves-box moves" id="moves"></div>
           </div>
           <div id="coach">
             <h3>🧠 Coach de Elite</h3>
             <div id="coach-move">—</div>
-            <div id="coach-text">Análise profunda disponível.</div>
+            <div id="coach-text">Análise disponível.</div>
             <div class="coach-btns">
               <button type="button" class="btn-gold" onclick="coachBest()">Melhor jogada</button>
               <button type="button" class="btn-soft" onclick="coachPlan()">Plano</button>
             </div>
           </div>
-          <div class="chat" id="chat-mobile">
-            <h3>💬 Chat</h3>
-            <div class="chat-log" id="chat-log-mobile"></div>
-            <div class="chat-form">
-              <input id="chat-in-mobile" placeholder="Mensagem..." maxlength="120"/>
-              <button type="button" onclick="sendChat('mobile')">Enviar</button>
-            </div>
-          </div>
-        </div>
-        <div class="chat-col">
-          <div class="card" style="padding:.85rem">
-            <h3 style="margin-bottom:.55rem">⚔️ Partida</h3>
-            <div id="side-match-info" style="font-size:.84rem;color:var(--muted);line-height:1.55">Aguardando…</div>
-          </div>
-          <div class="chat on" id="chat">
-            <h3>💬 Chat</h3>
-            <div class="chat-log" id="chat-log"></div>
-            <div class="chat-form">
-              <input id="chat-in" placeholder="Mensagem..." maxlength="120"/>
+          <div class="chat-modern" id="chat">
+            <div class="head"><h3>💬 Chat</h3></div>
+            <div class="log chat-log" id="chat-log"></div>
+            <div class="form chat-form">
+              <input id="chat-in" placeholder="Escreva uma mensagem..." maxlength="120"/>
               <button type="button" onclick="sendChat()">Enviar</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </main>
+</main>
 </div>
 
 <div class="overlay" id="ov-challenge"><div class="modal"><h2>⚔️ Desafio!</h2><p id="challenge-text">Desafio recebido.</p>
@@ -567,18 +668,15 @@ function restoreActiveGameIfAny(){
       document.getElementById('n-w').textContent = me.name+' (você)';
       document.getElementById('n-b').textContent = 'Computador · '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');
       document.getElementById('chat').classList.remove('on');
-  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.remove('on');
     } else if(mode==='local'){
       document.getElementById('n-w').textContent = 'Brancas';
       document.getElementById('n-b').textContent = 'Pretas';
       document.getElementById('chat').classList.add('on');
-  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.add('on');
       renderChat();
     } else if(mode==='online'){
       document.getElementById('n-w').textContent = myColor==='w' ? (me.name+' (você)') : (oppName||'Adversário');
       document.getElementById('n-b').textContent = myColor==='b' ? (me.name+' (você)') : (oppName||'Adversário');
       document.getElementById('chat').classList.add('on');
-  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.add('on');
       renderChat();
       if(gameId) joinGameChannel(gameId);
       setPresence('in_game');
@@ -669,53 +767,70 @@ function paintPreview(){
   }
 }
 
-/* ===== STOCKFISH COACH (quando disponível) ===== */
-let sf=null, sfReady=false, sfQueue=null;
-function initStockfish(){
-  if(sf) return;
-  function wire(worker){
-    sf=worker;
-    sf.onmessage=function(e){
-      var line=String((e && e.data!==undefined)?e.data:e||'');
-      if(line.indexOf('uciok')!==-1){ sfReady=true; return; }
-      if(line.indexOf('readyok')!==-1){ sfReady=true; return; }
-      if(line.indexOf('bestmove')===0 && sfQueue){
+
+/* ===== STOCKFISH MASTER ENGINE (Web Worker) ===== */
+let sfWorker=null, sfReady=false, sfBusy=false, sfCb=null, sfTimer=null;
+function initMasterEngine(){
+  if(sfWorker) return;
+  var urls=[
+    'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js',
+    'https://unpkg.com/stockfish.js@10.0.2/stockfish.js'
+  ];
+  function attach(w){
+    sfWorker=w;
+    sfWorker.onmessage=function(e){
+      var line=String(e.data||'');
+      if(line==='uciok' || line.indexOf('uciok')!==-1){ sfReady=true; return; }
+      if(line==='readyok'){ sfReady=true; return; }
+      if(line.indexOf('bestmove')===0){
         var parts=line.split(/\s+/);
         var best=parts[1];
-        var cb=sfQueue; sfQueue=null;
-        if(best && best!=='(none)') cb(best); else cb(null);
+        var cb=sfCb; sfCb=null; sfBusy=false;
+        if(sfTimer){clearTimeout(sfTimer);sfTimer=null}
+        if(cb) cb(best && best!=='(none)' ? best : null);
       }
     };
-    sf.onerror=function(){ sf=null; sfReady=false; };
+    sfWorker.onerror=function(err){
+      console.warn('Stockfish worker error', err);
+      sfReady=false; sfBusy=false;
+      if(sfCb){ var cb=sfCb; sfCb=null; cb(null); }
+    };
     try{
-      sf.postMessage('uci');
-      sf.postMessage('isready');
-    }catch(e){ sf=null; sfReady=false; }
+      sfWorker.postMessage('uci');
+      sfWorker.postMessage('isready');
+    }catch(e){ sfWorker=null; sfReady=false; }
   }
+  // Blob worker evita CORS em muitos casos
+  function tryBlob(url, next){
+    fetch(url).then(function(r){return r.text()}).then(function(code){
+      var blob=new Blob([code],{type:'application/javascript'});
+      var obj=URL.createObjectURL(blob);
+      attach(new Worker(obj));
+    }).catch(function(){ if(next) next(); });
+  }
+  tryBlob(urls[0], function(){ tryBlob(urls[1], function(){
+    try{ attach(new Worker(urls[0])); }catch(e){ sfWorker=null; }
+  })});
+}
+function engineBestMove(fen, depth, movetime, cb){
+  initMasterEngine();
+  if(!sfWorker){ cb(null); return; }
+  if(sfBusy){ cb(null); return; }
+  sfBusy=true; sfCb=cb;
+  if(sfTimer) clearTimeout(sfTimer);
+  sfTimer=setTimeout(function(){
+    if(sfCb===cb){ sfCb=null; sfBusy=false; cb(null); }
+  }, (movetime||3000)+2000);
   try{
-    // 1) tentativa worker CDN
-    var urls=[
-      'https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js',
-      'https://unpkg.com/stockfish.js@10.0.2/stockfish.js'
-    ];
-    var ok=false;
-    for(var i=0;i<urls.length && !ok;i++){
-      try{ wire(new Worker(urls[i])); ok=!!sf; }catch(e){ sf=null; }
-    }
-  }catch(e){ sf=null; sfReady=false; }
+    sfWorker.postMessage('ucinewgame');
+    sfWorker.postMessage('position fen '+fen);
+    if(movetime) sfWorker.postMessage('go movetime '+movetime);
+    else sfWorker.postMessage('go depth '+(depth||14));
+  }catch(e){ sfBusy=false; sfCb=null; cb(null); }
 }
-function stockfishBest(fen, depth, cb){
-  if(!sf || !sfReady){ cb(null); return; }
-  sfQueue=cb;
-  sf.postMessage('ucinewgame');
-  sf.postMessage('position fen '+fen);
-  sf.postMessage('go depth '+(depth||12));
-  // timeout fallback
-  setTimeout(function(){ if(sfQueue===cb){ sfQueue=null; cb(null);} }, 4000);
-}
-function uciToMove(uci){
-  if(!uci || uci.length<4) return null;
-  return {from:uci.slice(0,2), to:uci.slice(2,4), promotion: uci.length>4 ? uci[4] : undefined};
+function uciToParts(uci){
+  if(!uci||uci.length<4) return null;
+  return {from:uci.slice(0,2), to:uci.slice(2,4), promotion: uci.length>4?uci[4]:undefined};
 }
 
 function initSupabase(){
@@ -936,7 +1051,6 @@ async function startOnlineGame(id,opponent,color){
   document.getElementById('n-b').textContent=color==='b'?(me.name+' (você)'):oppName;
   document.getElementById('btn-undo').style.display='none';
   document.getElementById('chat').classList.add('on');
-  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.add('on');
   chatMsgs=[{who:'Sistema',text:'Partida online iniciada.'}];renderChat();
   setupCoach();render();status();movesUI();updateCaps();saveActiveGame();
   joinGameChannel(id);
@@ -963,7 +1077,7 @@ function applyRemoteMove(data){
   var mv=chess.move({from:data.from,to:data.to,promotion:data.promotion||'q'});if(!mv)return;
   if(mv.captured){var glyph=GL[(mv.color==='w'?'b':'w')+mv.captured];if(mv.color==='w')capW.push(glyph);else capB.push(glyph)}
   last={from:mv.from,to:mv.to};hist.push(mv);render();status();movesUI();updateCaps();saveActiveGame();
-  if(me.isMaster)setTimeout(function(){coachBest(true)},100);
+  
   if(chess.game_over())setTimeout(endOnlineFromBoard,200);
 }
 
@@ -1104,7 +1218,7 @@ function startLocal(m){
   document.getElementById('btn-undo').style.display='inline-block';
   if(m==='ai'){document.getElementById('n-w').textContent=me.name+' (você)';document.getElementById('n-b').textContent='Computador · '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');document.getElementById('chat').classList.remove('on')}
   else{document.getElementById('n-w').textContent='Brancas';document.getElementById('n-b').textContent='Pretas';document.getElementById('chat').classList.add('on');
-  var cm=document.getElementById('chat-mobile'); if(cm) cm.classList.add('on');chatMsgs=[{who:'Sistema',text:'Chat local.'}];renderChat()}
+  chatMsgs=[{who:'Sistema',text:'Chat local.'}];renderChat()}
   setupCoach();render();status();movesUI();updateCaps();saveActiveGame();
 }
 function openGameUI(){
@@ -1159,25 +1273,42 @@ function play(from,to,pr){
   last={from:from,to:to};sel=null;legal=[];hist.push(mv);
   render();status();movesUI();updateCaps();saveActiveGame();
   if(mode==='online'&&gameCh)gameCh.send({type:'broadcast',event:'move',payload:{by:me.name,from:from,to:to,promotion:pr||'q'}});
-  if(me.isMaster)setTimeout(function(){coachBest(true)},100);
+  
   if(chess.game_over()){if(mode==='online')setTimeout(endOnlineFromBoard,200);else setTimeout(endLocal,200);return}
   if(mode==='ai'&&chess.turn()!==myColor)setTimeout(aiPlay,240);
 }
 function promo(p){document.getElementById('ov-promo').style.display='none';if(pend){play(pend.from,pend.to,p);pend=null}}
 function aiPlay(){
   if(!chess||chess.game_over())return;
-  if(diff==='easy'){var top=searchTop(chess,1,Math.min(6,chess.moves().length));var pick=top[Math.floor(Math.random()*top.length)]||top[0];if(pick)play(pick.move.from,pick.move.to,pick.move.promotion||'q');return}
-  if(diff==='medium'){var top2=searchTop(chess,2,3);var pick2=top2[Math.floor(Math.random()*Math.min(2,top2.length))]||top2[0];if(pick2)play(pick2.move.from,pick2.move.to,pick2.move.promotion||'q');return}
-  var res=searchBest(chess,3);if(res&&res.move)play(res.move.from,res.move.to,res.move.promotion||'q');
+  if(mode!=='ai')return;
+  var el=document.getElementById('status');
+  if(el) el.textContent='Computador pensando…';
+  var fen=chess.fen();
+  // nível mestre: depth alto / tempo de pensamento
+  var depth = diff==='easy' ? 8 : (diff==='medium' ? 12 : 16);
+  var mt = diff==='easy' ? 500 : (diff==='medium' ? 1200 : 2500);
+  engineBestMove(fen, depth, mt, function(uci){
+    if(!chess||chess.game_over()||mode!=='ai')return;
+    var parts=uciToParts(uci);
+    if(parts){
+      // valida
+      var ok=chess.moves({verbose:true}).some(function(m){return m.from===parts.from&&m.to===parts.to});
+      if(ok){ play(parts.from, parts.to, parts.promotion||'q'); return; }
+    }
+    // fallback local se motor falhar
+    var res=searchBest(chess, diff==='hard'?3:2);
+    if(res&&res.move) play(res.move.from, res.move.to, res.move.promotion||'q');
+    else status();
+  });
 }
 function status(){
-  var el=document.getElementById('status');el.className='status';
+  var el=document.getElementById('status');el.className='side-status';
   if(chess.in_checkmate()){el.textContent='Xeque-mate! '+(chess.turn()==='w'?'Pretas':'Brancas')+' vencem';el.classList.add('mate')}
   else if(chess.in_draw())el.textContent='Empate';
   else if(chess.in_check()){el.textContent='Xeque! Vez das '+(chess.turn()==='w'?'Brancas':'Pretas');el.classList.add('chk')}
   else el.textContent='Vez das '+(chess.turn()==='w'?'Brancas':'Pretas');
-  document.getElementById('bar-w').classList.toggle('on',chess.turn()==='w');
-  document.getElementById('bar-b').classList.toggle('on',chess.turn()==='b');
+  document.getElementById('bar-w').classList.toggle('active',chess.turn()==='w');
+  document.getElementById('bar-b').classList.toggle('active',chess.turn()==='b');
 }
 function movesUI(){
   var box=document.getElementById('moves'),h='';
@@ -1274,22 +1405,18 @@ function toHome(){
   go('home');
 }
 function renderChat(){
-  var htmlMsg=(chatMsgs||[]).map(function(m){return '<div class="chat-msg"><b>'+m.who+':</b> '+escapeHtml(m.text)+'</div>'}).join('');
-  ['chat-log','chat-log-mobile'].forEach(function(id){
-    var log=document.getElementById(id); if(!log) return;
-    log.innerHTML=htmlMsg; log.scrollTop=log.scrollHeight;
-  });
+  var log=document.getElementById('chat-log'); if(!log) return;
+  log.innerHTML=(chatMsgs||[]).map(function(m){
+    return '<div class="msg"><b>'+m.who+':</b> '+escapeHtml(m.text)+'</div>';
+  }).join('');
+  log.scrollTop=log.scrollHeight;
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])})}
-function sendChat(which){
-  var id = which==='mobile' ? 'chat-in-mobile' : 'chat-in';
-  var inp=document.getElementById(id) || document.getElementById('chat-in');
-  var t=(inp && inp.value || '').trim(); if(!t)return;
-  chatMsgs.push({who:me.name,text:t});
-  if(document.getElementById('chat-in')) document.getElementById('chat-in').value='';
-  if(document.getElementById('chat-in-mobile')) document.getElementById('chat-in-mobile').value='';
-  renderChat();
-  if(mode==='online'&&gameCh)gameCh.send({type:'broadcast',event:'chat',payload:{by:me.name,text:t}});
+function sendChat(){
+  var inp=document.getElementById('chat-in'); if(!inp) return;
+  var t=(inp.value||'').trim(); if(!t) return;
+  chatMsgs.push({who:me.name,text:t}); inp.value=''; renderChat();
+  if(mode==='online'&&gameCh) gameCh.send({type:'broadcast',event:'chat',payload:{by:me.name,text:t}});
 }
 function updateMatchInfo(){
   var el=document.getElementById('side-match-info'); if(!el||!me) return;
@@ -1308,57 +1435,40 @@ function coachBest(auto){
   if(!me||!me.isMaster||!chess||chess.game_over())return;
   if((mode==='ai'||mode==='online')&&chess.turn()!==myColor){
     document.getElementById('coach-move').textContent='…';
-    document.getElementById('coach-text').textContent='Aguarde a sua vez para analisar.';
+    document.getElementById('coach-text').textContent='Aguarde a sua vez.';
     return;
   }
   document.getElementById('coach-move').textContent='…';
-  document.getElementById('coach-text').textContent='Analisando posição (motor forte)…';
-
-  function applyMoveObj(m, engineName){
-    if(!m)return;
-    // valida lance legal
-    var legalMoves=chess.moves({verbose:true});
+  document.getElementById('coach-text').textContent='Motor mestre analisando…';
+  var fen=chess.fen();
+  engineBestMove(fen, 16, 2000, function(uci){
+    var parts=uciToParts(uci);
     var found=null;
-    for(var i=0;i<legalMoves.length;i++){
-      if(legalMoves[i].from===m.from && legalMoves[i].to===m.to){
-        if(!m.promotion || legalMoves[i].promotion===m.promotion){ found=legalMoves[i]; break; }
+    if(parts){
+      var legalMoves=chess.moves({verbose:true});
+      for(var i=0;i<legalMoves.length;i++){
+        if(legalMoves[i].from===parts.from&&legalMoves[i].to===parts.to){
+          if(!parts.promotion||legalMoves[i].promotion===parts.promotion){found=legalMoves[i];break;}
+        }
       }
     }
     if(!found){
-      // fallback search local
       var res=searchBest(chess,3);
-      if(res&&res.move) found=res.move; else return;
-      engineName='análise local';
+      if(res) found=res.move;
     }
-    document.getElementById('coach-move').textContent=found.san+'   '+found.from.toUpperCase()+' → '+found.to.toUpperCase();
-    var why='Sugestão do motor ('+engineName+').';
-    if(found.san.indexOf('#')!==-1) why='Mate! Finalize a partida.';
-    else if(found.captured) why='Captura forte segundo o motor.';
-    else if(found.san.indexOf('+')!==-1) why='Xeque ativo — força resposta do rival.';
-    else if(found.san.indexOf('O-O')!==-1) why='Roque: rei seguro e torre ativada.';
-    else if(found.piece==='n'||found.piece==='b') why='Desenvolvimento/atividade de peça menor.';
-    else if(found.piece==='p') why='Lance de peão: espaço, centro ou estrutura.';
-    else why='Melhor continuação encontrada pelo motor.';
-    document.getElementById('coach-text').textContent=why;
-    sel=found.from; legal=[{to:found.to}]; last={from:found.from,to:found.to}; render();
-  }
-
-  initStockfish();
-  var fen=chess.fen();
-  stockfishBest(fen, auto?10:14, function(uci){
-    if(uci){
-      applyMoveObj(uciToMove(uci), 'Stockfish');
+    if(!found){
+      document.getElementById('coach-move').textContent='—';
+      document.getElementById('coach-text').textContent='Não foi possível analisar agora.';
       return;
     }
-    // fallback minimax profundo
-    var nMoves=chess.moves().length;
-    var depth= nMoves>45?3 : 4;
-    var res=searchBest(chess, depth);
-    if(res&&res.move) applyMoveObj(res.move, 'busca local profunda');
-    else {
-      document.getElementById('coach-move').textContent='—';
-      document.getElementById('coach-text').textContent='Sem lance disponível.';
-    }
+    document.getElementById('coach-move').textContent=found.san+'   '+found.from.toUpperCase()+' → '+found.to.toUpperCase();
+    var why='Jogada de nível mestre.';
+    if(found.san.indexOf('#')!==-1) why='Mate forçado.';
+    else if(found.captured) why='Melhor captura/continuação do motor.';
+    else if(found.san.indexOf('+')!==-1) why='Xeque na linha principal.';
+    else if(found.san.indexOf('O-O')!==-1) why='Roque na linha principal.';
+    document.getElementById('coach-text').textContent=why;
+    sel=found.from; legal=[{to:found.to}]; last={from:found.from,to:found.to}; render();
   });
 }
 
@@ -1373,7 +1483,7 @@ document.addEventListener('keydown',function(e){
 
 window.addEventListener('DOMContentLoaded',async function(){
   loadPrefs();
-  initStockfish();
+  initMasterEngine();
   initSupabase();
   if(sb){try{await ensureMaster()}catch(e){}}
   var u=getSession();
