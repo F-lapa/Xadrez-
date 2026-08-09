@@ -164,6 +164,77 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
 .empty{color:var(--muted);text-align:center;padding:1.1rem;font-size:.88rem}
 .toast{position:fixed;left:50%;bottom:1.15rem;transform:translateX(-50%) translateY(120%);background:rgba(18,26,44,.96);border:1px solid var(--line2);color:var(--text);padding:.65rem .95rem;border-radius:12px;font-size:.84rem;font-weight:700;z-index:120;transition:.25s;max-width:90vw}
 .toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ===== ANIMAÇÕES E EFEITOS ===== */
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(91,157,255,.15)}50%{box-shadow:0 0 40px rgba(91,157,255,.35)}}
+@keyframes fade-up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scale-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+@keyframes soft-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes board-in{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes piece-pop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+@keyframes chip-shine{0%{filter:brightness(1)}50%{filter:brightness(1.15)}100%{filter:brightness(1)}}
+
+body::before{
+  content:'';position:fixed;inset:-20%;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(91,157,255,.12),transparent 40%),
+    radial-gradient(circle at 80% 30%,rgba(167,139,250,.1),transparent 42%),
+    radial-gradient(circle at 50% 80%,rgba(34,211,238,.06),transparent 40%);
+  animation:floaty 12s ease-in-out infinite;
+  pointer-events:none;z-index:0;
+}
+#auth,#app{position:relative;z-index:1}
+
+.auth-card{animation:scale-in .45s cubic-bezier(.2,.8,.2,1)}
+.brand{animation:floaty 4s ease-in-out infinite, pulse-glow 3s ease-in-out infinite}
+.auth-card h1{
+  background-size:200% auto;
+  animation:shimmer 4s linear infinite;
+}
+
+.card,.mode,.stat,.pbar,.status,#coach,.chat{
+  transition:transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+}
+.mode:hover,.stat:hover{
+  transform:translateY(-3px);
+}
+.btn-go,.btn-main,.btn-gold{
+  transition:transform .15s ease, filter .15s ease, box-shadow .2s ease;
+}
+.btn-go:hover,.btn-main:hover,.btn-gold:hover{transform:translateY(-1px) scale(1.01);filter:brightness(1.08)}
+.btn-go:active,.btn-main:active{transform:scale(.98)}
+
+nav button{transition:color .15s, background .2s, border-color .2s}
+.chip,.pts{animation:chip-shine 5s ease-in-out infinite}
+
+.board-frame{animation:board-in .4s cubic-bezier(.2,.8,.2,1)}
+.cell{transition:box-shadow .15s ease, outline-color .15s ease}
+.pc{animation:piece-pop .25s ease-out}
+.cell.sel{animation:pulse-glow 1.5s ease-in-out infinite}
+
+#game .panel > *{animation:fade-up .35s ease both}
+#game .panel > *:nth-child(1){animation-delay:.05s}
+#game .panel > *:nth-child(2){animation-delay:.1s}
+#game .panel > *:nth-child(3){animation-delay:.15s}
+#game .panel > *:nth-child(4){animation-delay:.2s}
+
+.toast{backdrop-filter:blur(10px)}
+.overlay{animation:fade-up .2s ease}
+.modal{animation:scale-in .28s cubic-bezier(.2,.8,.2,1)}
+
+header{transition:background .3s ease}
+.logo{
+  background-size:200% auto;
+  animation:shimmer 5s linear infinite;
+}
+
+/* glass stronger */
+.card,.auth-card,.pbar,.status{
+  backdrop-filter:blur(14px);
+}
+
 </style>
 </head>
 <body>
@@ -177,18 +248,18 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
       <button type="button" id="t-up" onclick="tab('up')">Criar conta</button>
     </div>
     <div id="p-in">
-      <div class="fld"><label>Usuário</label><input id="in-u" value="fernandolapa"/></div>
-      <div class="fld"><label>Senha</label><input id="in-p" type="password" value="123456"/></div>
+      <div class="fld"><label>Usuário</label><input id="in-u" value="" placeholder="seu usuário" autocomplete="username"/></div>
+      <div class="fld"><label>Senha</label><input id="in-p" type="password" value="" placeholder="sua senha" autocomplete="current-password"/></div>
       <button type="button" class="btn-go" onclick="login()">Entrar</button>
     </div>
     <div id="p-up" class="hidden">
-      <div class="fld"><label>Usuário</label><input id="up-u" placeholder="seu_nome"/></div>
-      <div class="fld"><label>Senha</label><input id="up-p" type="password" value="123456"/></div>
-      <div class="fld"><label>Confirmar</label><input id="up-p2" type="password" value="123456"/></div>
+      <div class="fld"><label>Usuário</label><input id="up-u" placeholder="escolha um nome" autocomplete="username"/></div>
+      <div class="fld"><label>Senha</label><input id="up-p" type="password" value="" placeholder="mín. 4 caracteres" autocomplete="new-password"/></div>
+      <div class="fld"><label>Confirmar</label><input id="up-p2" type="password" value="" placeholder="repita a senha" autocomplete="new-password"/></div>
       <button type="button" class="btn-go" onclick="register()">Criar e entrar</button>
     </div>
     <p class="err" id="err"></p>
-    <div class="hint">Conta: <strong>fernandolapa</strong> / <strong>123456</strong><br>Sessão e partida em andamento são salvas.</div>
+    <div class="hint">Crie sua conta ou entre para jogar.<br>Sua sessão e partida em andamento são salvas automaticamente.</div>
   </div>
 </div>
 
@@ -373,8 +444,9 @@ function register(){
   d[u]={username:u,password:p,...blank(),createdAt:Date.now()};saveDB(d);enter(u);
 }
 function login(){
-  var u=norm(document.getElementById('in-u').value),p=document.getElementById('in-p').value||'123456';
+  var u=norm(document.getElementById('in-u').value),p=document.getElementById('in-p').value;
   if(!u)return err('Digite o usuário');
+  if(!p)return err('Digite a senha');
   var d=loadDB();if(!d[u])return err('Usuário não encontrado');
   if(d[u].password!==p)return err('Senha incorreta');
   enter(u);
