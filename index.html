@@ -1333,6 +1333,12 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 <div class="overlay" id="ov-challenge"><div class="modal"><h2>⚔️ Desafio!</h2><p id="challenge-text">Desafio recebido.</p>
   <div class="modal-actions"><button type="button" class="btn-decline" onclick="respondChallenge(false)">Recusar</button><button type="button" class="btn-accept" onclick="respondChallenge(true)">Aceitar</button></div>
 </div></div>
+<div class="overlay" id="ov-friend"><div class="modal"><h2>🤝 Amizade</h2><p id="friend-text">Pedido de amizade recebido.</p>
+  <div class="modal-actions">
+    <button type="button" class="btn-decline" onclick="respondFriendFromModal(false)">Recusar</button>
+    <button type="button" class="btn-accept" onclick="respondFriendFromModal(true)">Aceitar</button>
+  </div>
+</div></div>
 <div class="overlay" id="ov-wait"><div class="modal"><h2>⏳ Aguardando…</h2><p id="wait-text">Esperando resposta…</p><button type="button" class="btn-main" onclick="cancelChallenge()">Cancelar</button></div></div>
 <div class="overlay" id="ov-promo"><div class="modal"><h2>Promoção</h2><p>Escolha a peça</p><div class="promo" id="promo-btns">
   <button type="button" onclick="promo('q')" data-p="q"></button>
@@ -2091,6 +2097,52 @@ async function reloadMe(){
 }
 
 /* ===== LOBBY ===== */
+function sameUser(a,b){
+  return String(a||'').toLowerCase()===String(b||'').toLowerCase();
+}
+let pendingFriendFrom=null;
+let lastAvatarBroadcast=0;
+function ensurePublicAvatar(){
+  // se só existe HD, gera versão pública leve na hora
+  if(!me) return '';
+  var pub=getPublicAvatar(me.name);
+  if(pub) return pub;
+  var hd='';
+  try{ hd=localStorage.getItem(AVATAR_KEY+me.name)||''; }catch(e){}
+  if(!hd) return '';
+  try{
+    var img=new Image();
+    // síncrono não dá — marca e gera async
+    img.onload=function(){
+      try{
+        localStorage.setItem(AVATAR_KEY+'public_'+me.name, makeSquareJpeg(img, 64, 0.55));
+        broadcastMyAvatar();
+      }catch(e){}
+    };
+    img.src=hd;
+  }catch(e){}
+  return '';
+}
+function broadcastMyAvatar(){
+  if(!lobbyCh||!me) return;
+  var av=getPublicAvatar(me.name);
+  if(!av){ ensurePublicAvatar(); return; }
+  var now=Date.now();
+  if(now-lastAvatarBroadcast<1200) return;
+  lastAvatarBroadcast=now;
+  try{
+    lobbyCh.send({type:'broadcast',event:'avatar_share',payload:{user:me.name,avatar:av,ts:now}});
+  }catch(e){}
+}
+function resendPendingFriendRequests(){
+  if(!lobbyCh||!me) return;
+  var r=loadFriendReqs();
+  (r.out||[]).forEach(function(to){
+    try{
+      lobbyCh.send({type:'broadcast',event:'friend_request',payload:{from:me.name,to:to,ts:Date.now()}});
+    }catch(e){}
+  });
+}
 async function joinLobby(){
   if(!sb||!me)return;
   if(lobbyCh){try{await sb.removeChannel(lobbyCh)}catch(e){}}
@@ -2106,27 +2158,50 @@ async function joinLobby(){
     onlinePlayers=Object.values(map).sort(function(a,b){return (a.user||'').localeCompare(b.user||'')});
     renderOnline();
     renderFriends();
+    // quando alguém entra, reenvia avatar e pedidos pendentes
+    broadcastMyAvatar();
+    resendPendingFriendRequests();
+  });
+  lobbyCh.on('broadcast',{event:'avatar_share'},function(payload){
+    var data=payload.payload||{};
+    if(!data.user||!data.avatar) return;
+    if(me && sameUser(data.user, me.name)) return;
+    cachePeerAvatar(data.user, data.avatar);
+    renderOnline();
+    renderFriends();
+    refreshGameAvatars();
   });
   lobbyCh.on('broadcast',{event:'friend_request'},function(payload){
     var data=payload.payload||{};
-    if(data.to!==me.name||!data.from) return;
-    var r=loadFriendReqs();
+    if(!data.from||!data.to) return;
+    if(!sameUser(data.to, me.name)) return;
+    if(sameUser(data.from, me.name)) return;
     if(isFriend(data.from)) return;
-    if(!r.in.some(function(x){return x===data.from})) r.in.push(data.from);
+    var r=loadFriendReqs();
+    if(!r.in.some(function(x){return sameUser(x,data.from)})) r.in.push(data.from);
+    // limpa outgoing espelho se existir
+    r.out=r.out.filter(function(x){return !sameUser(x,data.from)});
     saveFriendReqs(r);
+    pendingFriendFrom=data.from;
+    var ft=document.getElementById('friend-text');
+    if(ft) ft.textContent=data.from+' quer ser seu amigo.';
+    var ov=document.getElementById('ov-friend');
+    if(ov) ov.style.display='flex';
     toast(data.from+' enviou pedido de amizade');
     renderFriends();
   });
   lobbyCh.on('broadcast',{event:'friend_response'},function(payload){
     var data=payload.payload||{};
-    if(data.to!==me.name||!data.from) return;
+    if(!data.from||!data.to) return;
+    if(!sameUser(data.to, me.name)) return;
     var r=loadFriendReqs();
-    r.out=r.out.filter(function(x){return x!==data.from});
+    r.out=r.out.filter(function(x){return !sameUser(x,data.from)});
+    r.in=r.in.filter(function(x){return !sameUser(x,data.from)});
     if(data.accept){
       var f=loadFriends();
-      if(f.indexOf(data.from)===-1) f.push(data.from);
+      if(!f.some(function(x){return sameUser(x,data.from)})) f.push(data.from);
       saveFriends(f);
-      toast(data.from+' aceitou sua amizade');
+      toast(data.from+' aceitou sua amizade 🎉');
     } else {
       toast(data.from+' recusou o pedido de amizade');
     }
@@ -2135,7 +2210,7 @@ async function joinLobby(){
   });
   lobbyCh.on('broadcast',{event:'challenge'},function(payload){
     var data=payload.payload||{};
-    if(data.to!==me.name)return;
+    if(!sameUser(data.to, me.name))return;
     // silenciado: auto-recusa sem mostrar popup
     if(isMuted(data.from)){
       lobbyCh.send({type:'broadcast',event:'challenge_response',payload:{id:data.id,from:data.from,to:data.to,accept:false,reason:'muted'}});
@@ -2163,19 +2238,23 @@ async function joinLobby(){
     startOnlineGame(data.id,data.to,'w');
   });
   lobbyCh.subscribe(async function(status){
-    if(status==='SUBSCRIBED'){setConn(true,'online');await setPresence(presenceStatus||'available')}
+    if(status==='SUBSCRIBED'){
+      setConn(true,'online');
+      await setPresence(presenceStatus||'available');
+      setTimeout(function(){ broadcastMyAvatar(); resendPendingFriendRequests(); }, 500);
+    }
     else if(status==='CHANNEL_ERROR')setConn(false,'erro canal');
   });
 }
 async function setPresence(status, gid){
   presenceStatus=status;
   if(!lobbyCh||!me)return;
+  // presença leve (sem base64 grande — avatar vai por broadcast)
   var payload={user:me.name,status:status,points:me.points||0,at:Date.now()};
   if(status==='in_game' && (gid||gameId)) payload.gameId = gid||gameId;
-  // compartilha avatar compacto para outros jogadores verem
-  var av=getPublicAvatar(me.name);
-  if(av) payload.avatar=av;
   try{await lobbyCh.track(payload)}catch(e){}
+  // compartilha foto em canal separado (mais confiável)
+  setTimeout(broadcastMyAvatar, 300);
 }
 function renderOnline(){
   var el=document.getElementById('online-list');
@@ -3735,9 +3814,9 @@ function getAvatarData(user){
   }catch(e){ return ''; }
 }
 function getPublicAvatar(user){
-  // versão compacta para presença (preferência public_)
+  // versão bem compacta para broadcast entre jogadores
   try{
-    return localStorage.getItem(AVATAR_KEY+'public_'+user)||getAvatarData(user)||'';
+    return localStorage.getItem(AVATAR_KEY+'public_'+user)||'';
   }catch(e){ return ''; }
 }
 function setAvatarData(user, dataUrl){
@@ -3748,8 +3827,17 @@ function setAvatarData(user, dataUrl){
   }catch(e){ return false; }
 }
 function cachePeerAvatar(user, dataUrl){
-  if(!user||!dataUrl||!dataUrl.indexOf||dataUrl.indexOf('data:image')!==0) return;
-  try{ localStorage.setItem(PEER_AV_KEY+user, dataUrl); }catch(e){}
+  if(!user||!dataUrl||typeof dataUrl!=='string') return;
+  if(dataUrl.indexOf('data:image')!==0) return;
+  try{ localStorage.setItem(PEER_AV_KEY+user, dataUrl); }catch(e){
+    // se estourar storage, tenta limpar avatares antigos de peers
+    try{
+      Object.keys(localStorage).forEach(function(k){
+        if(k.indexOf(PEER_AV_KEY)===0) localStorage.removeItem(k);
+      });
+      localStorage.setItem(PEER_AV_KEY+user, dataUrl);
+    }catch(e2){}
+  }
 }
 function avatarHtml(user, withCrown){
   var data=getAvatarData(user);
@@ -3796,15 +3884,16 @@ function onAvatarFile(ev){
         if(setAvatarData(me.name, makeSquareJpeg(img, 512, quals[i]))){ ok=true; break; }
       }
       if(!ok) ok=setAvatarData(me.name, makeSquareJpeg(img, 256, 0.7));
-      // versão pública compacta (para outros jogadores via presença)
+      // versão pública bem leve (64px) para outros jogadores via broadcast
       try{
-        localStorage.setItem(AVATAR_KEY+'public_'+me.name, makeSquareJpeg(img, 128, 0.65));
+        localStorage.setItem(AVATAR_KEY+'public_'+me.name, makeSquareJpeg(img, 64, 0.55));
       }catch(e){}
       if(ok){
         paintDashAvatar();
         renderOnline();
-        setPresence(presenceStatus||'available'); // reenvia avatar aos online
-        toast('Foto atualizada · outros jogadores verão quando você estiver online');
+        setPresence(presenceStatus||'available');
+        setTimeout(broadcastMyAvatar, 400);
+        toast('Foto atualizada · visível para quem está online no lobby');
       } else {
         toast('Não coube no armazenamento local. Tente outra imagem.');
       }
@@ -3859,29 +3948,39 @@ function friendStatus(user){
   return 'none';
 }
 function sendFriendRequest(user){
-  if(!me||!user||user===me.name) return;
+  if(!me||!user||sameUser(user,me.name)) return;
   if(isFriend(user)) return toast('Vocês já são amigos');
+  var online=onlinePlayers.some(function(p){return sameUser(p.user,user)});
+  if(!online) return toast('O jogador precisa estar online para receber o pedido');
   var r=loadFriendReqs();
-  if(!r.out.some(function(x){return x===user})) r.out.push(user);
+  if(!r.out.some(function(x){return sameUser(x,user)})) r.out.push(user);
   saveFriendReqs(r);
   if(lobbyCh){
-    lobbyCh.send({type:'broadcast',event:'friend_request',payload:{from:me.name,to:user}});
+    lobbyCh.send({type:'broadcast',event:'friend_request',payload:{from:me.name,to:user,ts:Date.now()}});
   }
-  toast('Pedido de amizade enviado para '+user);
+  toast('Pedido enviado para '+user+' · aguarde o aceite');
   viewPlayerProfile(user);
+}
+function respondFriendFromModal(accept){
+  var ov=document.getElementById('ov-friend');
+  if(ov) ov.style.display='none';
+  if(!pendingFriendFrom) return;
+  var from=pendingFriendFrom;
+  pendingFriendFrom=null;
+  respondFriendRequest(from, accept);
 }
 function respondFriendRequest(from, accept){
   var r=loadFriendReqs();
-  r.in=r.in.filter(function(x){return x!==from});
+  r.in=r.in.filter(function(x){return !sameUser(x,from)});
   if(accept){
     var f=loadFriends();
-    if(f.indexOf(from)===-1) f.push(from);
+    if(!f.some(function(x){return sameUser(x,from)})) f.push(from);
     saveFriends(f);
-    r.out=r.out.filter(function(x){return x!==from});
+    r.out=r.out.filter(function(x){return !sameUser(x,from)});
   }
   saveFriendReqs(r);
   if(lobbyCh){
-    lobbyCh.send({type:'broadcast',event:'friend_response',payload:{from:me.name,to:from,accept:!!accept}});
+    lobbyCh.send({type:'broadcast',event:'friend_response',payload:{from:me.name,to:from,accept:!!accept,ts:Date.now()}});
   }
   toast(accept?(from+' agora é seu amigo'):('Pedido de '+from+' recusado'));
   renderFriends();
