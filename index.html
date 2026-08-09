@@ -1577,7 +1577,7 @@ function initMasterEngine(){
 function engineBestMove(fen, depth, movetime, cb, skill){
   initMasterEngine();
   if(!sfWorker){ cb(null); return; }
-  // interrompe busca anterior para resposta mais rápida
+  // interrompe busca anterior
   if(sfBusy){
     try{ sfWorker.postMessage('stop'); }catch(e){}
     sfBusy=false; sfCb=null;
@@ -1585,7 +1585,7 @@ function engineBestMove(fen, depth, movetime, cb, skill){
   }
   sfBusy=true; sfCb=cb;
   if(sfTimer) clearTimeout(sfTimer);
-  var wait = (movetime||2000) + 1200;
+  var wait = Math.max((movetime||2000) + 1500, 2500);
   sfTimer=setTimeout(function(){
     if(sfCb===cb){
       try{ sfWorker.postMessage('stop'); }catch(e){}
@@ -1594,17 +1594,33 @@ function engineBestMove(fen, depth, movetime, cb, skill){
   }, wait);
   try{
     sfWorker.postMessage('ucinewgame');
-    if(typeof skill === 'number'){
-      var sk = Math.max(0, Math.min(20, skill|0));
-      sfWorker.postMessage('setoption name Skill Level value ' + sk);
-      var maxErr = Math.round(200 - sk * 9);
-      var prob = Math.round(128 - sk * 4);
-      sfWorker.postMessage('setoption name Skill Level Maximum Error value ' + Math.max(1, maxErr));
-      sfWorker.postMessage('setoption name Skill Level Probability value ' + Math.max(1, prob));
+    // SEMPRE redefine skill — senão o Coach herda o nível do computador
+    var sk = (typeof skill === 'number') ? Math.max(0, Math.min(20, skill|0)) : 20;
+    sfWorker.postMessage('setoption name Skill Level value ' + sk);
+    if(sk >= 20){
+      // força máxima: sem erros intencionais
+      sfWorker.postMessage('setoption name Skill Level Maximum Error value 1');
+      sfWorker.postMessage('setoption name Skill Level Probability value 1');
+      try{ sfWorker.postMessage('setoption name UCI_LimitStrength value false'); }catch(e){}
+      try{ sfWorker.postMessage('setoption name MultiPV value 1'); }catch(e){}
+    } else {
+      var maxErr = Math.round(220 - sk * 10);
+      var prob = Math.round(140 - sk * 5);
+      sfWorker.postMessage('setoption name Skill Level Maximum Error value ' + Math.max(10, maxErr));
+      sfWorker.postMessage('setoption name Skill Level Probability value ' + Math.max(10, prob));
+      try{ sfWorker.postMessage('setoption name UCI_LimitStrength value true'); }catch(e){}
     }
     sfWorker.postMessage('position fen '+fen);
-    if(movetime) sfWorker.postMessage('go movetime '+movetime);
-    else sfWorker.postMessage('go depth '+(depth||14));
+    // Coach / força máxima: depth + movetime generoso
+    if(sk >= 20){
+      var d = depth || 20;
+      var mt = movetime || 4000;
+      sfWorker.postMessage('go depth '+d+' movetime '+mt);
+    } else if(movetime){
+      sfWorker.postMessage('go movetime '+movetime);
+    } else {
+      sfWorker.postMessage('go depth '+(depth||12));
+    }
   }catch(e){ sfBusy=false; sfCb=null; cb(null); }
 }
 function uciToParts(uci){
@@ -2697,11 +2713,11 @@ function aiPlay(){
   if(!chess||chess.game_over()||mode!=='ai')return;
   var el=document.getElementById('status');
   if(el){ el.textContent='🤖 Computador pensando…'; el.classList.add('chk'); }
-  // Configuração por dificuldade (Skill Level 0-20 + tempo)
-  var skill = 5, movetime = 600, depth = 8;
-  if(diff==='easy'){ skill = 2; movetime = 350; depth = 5; }
-  else if(diff==='medium'){ skill = 8; movetime = 900; depth = 10; }
-  else { skill = 16; movetime = 1800; depth = 14; }
+  // Hierarquia clara: Fácil < Médio < Difícil << Coach (Skill 20)
+  var skill = 5, movetime = 500, depth = 7;
+  if(diff==='easy'){ skill = 3; movetime = 300; depth = 5; }
+  else if(diff==='medium'){ skill = 8; movetime = 700; depth = 9; }
+  else { skill = 13; movetime = 1100; depth = 11; } // Difícil forte, mas bem abaixo do Coach
 
   engineBestMove(chess.fen(), depth, movetime, function(uci){
     if(!chess||chess.game_over()||mode!=='ai')return;
@@ -2943,10 +2959,11 @@ function coachBest(auto){
     return;
   }
   document.getElementById('coach-move').textContent='…';
-  document.getElementById('coach-text').textContent='Calculando a jogada perfeita…';
+  document.getElementById('coach-text').textContent='Calculando a jogada perfeita (força máxima)…';
   initMasterEngine();
   var fen=chess.fen();
-  engineBestMove(fen, 16, 1600, function(uci){
+  // Skill 20 + depth 20 + 4.5s — bem acima do Difícil (Skill 13)
+  engineBestMove(fen, 20, 4500, function(uci){
     var found=null;
     var parts=uciToParts(uci);
     if(parts){
@@ -2959,7 +2976,7 @@ function coachBest(auto){
       }
     }
     if(!found){
-      var res=searchBest(chess, chess.moves().length>35?4:5);
+      var res=searchBest(chess, chess.moves().length>30?5:6);
       if(res) found=res.move;
     }
     if(!found){
