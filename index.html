@@ -588,6 +588,47 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 .end-best{font-size:.86rem; color:var(--muted); line-height:1.45}
 .end-actions{flex-wrap:wrap}
 .end-actions button{min-width:0}
+.end-m{color:var(--muted);margin-bottom:1rem;line-height:1.45;text-align:left;font-size:.9rem}
+.end-reason{
+  background:rgba(91,157,255,.1);border:1px solid rgba(91,157,255,.25);
+  border-radius:12px;padding:.65rem .8rem;margin:.45rem 0;color:#c7d7ff;font-size:.86rem;line-height:1.5
+}
+.end-last-moves{
+  margin-top:.45rem;font-size:.82rem;color:var(--muted);line-height:1.45;
+  background:rgba(0,0,0,.22);border-radius:10px;padding:.5rem .7rem
+}
+.hist-item,.rank-item{cursor:pointer}
+.hist-item:hover,.rank-item:hover{background:rgba(91,157,255,.1)!important}
+.profile-modal{max-width:440px;text-align:left}
+.prof-body{margin:.5rem 0 1rem}
+.prof-hero{
+  display:flex;align-items:center;gap:.85rem;margin-bottom:1rem;
+  padding:.85rem;border-radius:16px;
+  background:linear-gradient(135deg,rgba(91,157,255,.14),rgba(167,139,250,.08));
+  border:1px solid rgba(91,157,255,.22)
+}
+.prof-avatar{
+  width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:1.35rem;background:rgba(255,255,255,.08);border:1px solid var(--line2)
+}
+.prof-name{font-weight:900;font-size:1.1rem}
+.prof-pts{color:var(--gold);font-weight:800;font-size:.95rem;margin-top:.15rem}
+.prof-grid{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+.prof-stat{
+  background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:12px;padding:.65rem .75rem
+}
+.prof-stat b{display:block;font-size:1.15rem;font-weight:900}
+.prof-stat span{font-size:.72rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.moves .row.clickable{cursor:pointer;border-radius:6px;padding:2px 4px}
+.moves .row.clickable:hover,.moves .row.clickable.on{background:rgba(91,157,255,.18)}
+.review-bar{
+  display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.45rem
+}
+.review-bar button{
+  padding:.45rem .7rem;border-radius:10px;font-weight:800;font-size:.8rem;
+  background:rgba(255,255,255,.06);border:1px solid var(--line)
+}
+.review-bar button:hover{background:rgba(91,157,255,.15)}
 
 /* Promo 3D */
 .promo button{
@@ -905,7 +946,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
       <div class="home-banner">
         <div>
           <div class="hb-title">Pronto para jogar</div>
-          <div class="hb-sub">Desafie online, treine com Stockfish ou resolva puzzles (+10 pts)</div>
+          <div class="hb-sub">Desafie online, treine com Stockfish ou resolva puzzles difíceis (+5 / −10 pts)</div>
         </div>
         <div class="stats" id="home-stats" style="min-width:min(100%,280px);grid-template-columns:repeat(4,1fr)"></div>
       </div>
@@ -923,7 +964,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
           <div class="modes">
             <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Stockfish · não altera pontos online</div></div></div>
             <div class="mode" onclick="startLocal('local')"><div class="i">👥</div><div><div class="t">Dois jogadores</div><div class="d">Mesmo dispositivo</div></div></div>
-            <div class="mode" onclick="startPuzzle()"><div class="i">🧩</div><div><div class="t">Puzzles</div><div class="d">Táticas · +10 pts ao resolver</div></div></div>
+            <div class="mode" onclick="startPuzzle()"><div class="i">🧩</div><div><div class="t">Puzzles</div><div class="d">Difíceis · +5 acerto · −10 erro</div></div></div>
           </div>
           <div class="section-label" style="margin-top:1rem">Dificuldade da IA</div>
           <div class="diff-row">
@@ -966,9 +1007,9 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
           <div class="stats" id="ai-stats" style="margin-top:.85rem"></div>
         </div>
         <div class="card">
-          <div class="panel-title"><h2>🧩 Puzzles</h2><span class="chip-soft">+10 pts</span></div>
+          <div class="panel-title"><h2>🧩 Puzzles</h2><span class="chip-soft">+5 / −10</span></div>
           <div class="kpi" id="puzzle-kpis" style="margin-bottom:.5rem;grid-template-columns:1fr 1fr"></div>
-          <p class="note" style="margin-top:.4rem">Resolvidos neste aparelho. Acertos somam pontos no ranking.</p>
+          <p class="note" style="margin-top:.4rem">Difíceis: +5 ao acertar · −10 e sai do tabuleiro se errar.</p>
         </div>
       </div>
       <div class="grid-2" style="margin-top:1.1rem">
@@ -1149,17 +1190,27 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 </div></div></div>
 <div class="overlay" id="ov-end"><div class="modal celebrate">
   <h2 id="end-t">Fim</h2>
-  <p id="end-m"></p>
+  <div id="end-m" class="end-m"></div>
   <div id="end-analysis" class="end-analysis hidden">
     <div class="eval-bar-wrap"><div class="eval-bar" id="eval-bar"></div></div>
     <div id="end-best" class="end-best"></div>
   </div>
   <div class="modal-actions end-actions">
+    <button type="button" class="btn-soft" id="btn-review-end" onclick="reviewLastFinished()">📜 Revisar lances</button>
     <button type="button" class="btn-soft" id="btn-analyze" onclick="analyzeEnd()">🔍 Analisar</button>
     <button type="button" class="btn-accept" id="btn-rematch" onclick="rematch()">🔁 Revanche</button>
     <button type="button" class="btn-main" onclick="toHome()">Lobby</button>
   </div>
 </div></div>
+<div class="overlay" id="ov-profile" style="display:none">
+  <div class="modal profile-modal">
+    <h2 id="prof-title">Perfil</h2>
+    <div id="prof-body" class="prof-body"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn-main" onclick="closePlayerProfile()">Fechar</button>
+    </div>
+  </div>
+</div>
 <div class="overlay" id="ov-draw"><div class="modal"><h2>🤝 Empate?</h2><p id="draw-text">O adversário oferece empate.</p>
   <div class="modal-actions"><button type="button" class="btn-decline" onclick="respondDraw(false)">Recusar</button><button type="button" class="btn-accept" onclick="respondDraw(true)">Aceitar</button></div>
 </div></div>
@@ -1342,32 +1393,32 @@ const OPENINGS={
   'd4 Nf6':'Índia','d4 Nf6 c4':'Índia','d4 Nf6 c4 g6':'Índia do Rei',
   'd4 Nf6 c4 e6':'Nimzo/Ortodoxa','c4':'Abertura Inglesa','Nf3':'Abertura Reti','f4':'Bird'
 };
-// Puzzles — solução em UCI. +10 pts ao resolver
+// Puzzles difíceis — solução em UCI (pode ser sequência). +5 pts / −10 pts
 const PUZZLES=[
-  {title:'Mate em 1 — Corredor', fen:'6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre sobe na coluna e'},
-  {title:'Mate em 1 — Dama na 8ª', fen:'7k/5ppp/8/8/8/8/5PPP/4Q1K1 w - - 0 1', sol:['e1e8'], hint:'Dama na última fileira'},
-  {title:'Mate em 1 — Back rank', fen:'3r2k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre na 8ª — rei sem fuga'},
-  {title:'Mate em 1 — Torre a', fen:'6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1', sol:['a1a8'], hint:'Torre na coluna a'},
-  {title:'Mate em 1 — Torre h', fen:'6k1/5ppp/8/8/8/8/5PPP/6KR w - - 0 1', sol:['h1h8'], hint:'Torre na coluna h'},
-  {title:'Mate em 1 — Dama lateral', fen:'6k1/5ppp/8/8/8/8/5PPP/Q5K1 w - - 0 1', sol:['a1a8'], hint:'Dama sobe a coluna a'},
-  {title:'Mate em 1 — Dois bispos', fen:'6k1/6p1/6Pp/8/8/8/4B3/4B1K1 w - - 0 1', sol:['e2c4'], hint:'Bispo para c4'},
-  {title:'Mate em 1 — Cavalo', fen:'5k2/5ppp/8/4N3/8/8/5PPP/6K1 w - - 0 1', sol:['e5d7'], hint:'Cavalo em d7'},
-  {title:'Mate em 1 — Dama perto', fen:'8/8/8/4k3/8/4Q3/8/4K3 w - - 0 1', sol:['e3e4'], hint:'Dama controla o rei'},
-  {title:'Mate em 1 — Bispo longo', fen:'5k2/5ppp/8/8/8/8/5PPP/2B3K1 w - - 0 1', sol:['c1a3'], hint:'Diagonal longa'},
-  {title:'Tática — Garfo de cavalo', fen:'r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R w KQkq - 4 4', sol:['g5f7'], hint:'Cavalo ataca rei e torre'},
-  {title:'Tática — Ataque f7', fen:'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 0 5', sol:['c4f7'], hint:'Bispo em f7'},
-  {title:'Mate em 1 — Corredor c/ peão', fen:'6k1/5p1p/6p1/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Mesmo padrão, 8ª fileira'},
-  {title:'Mate em 1 — Dama e suporte', fen:'6k1/5ppp/8/8/8/4Q3/5PPP/6K1 w - - 0 1', sol:['e3e8'], hint:'Dama na 8ª'},
-  {title:'Mate em 1 — Torre e rei opostos', fen:'8/8/8/8/4k3/8/8/4K2R w - - 0 1', sol:['h1h4'], hint:'Cheque de torre'},
-  {title:'Mate em 1 — Dama no canto', fen:'7k/6pp/8/8/8/8/6PP/Q5K1 w - - 0 1', sol:['a1a8'], hint:'Dama sobe até a8'},
-  {title:'Tática — Cravada simples', fen:'rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4', sol:['c4f7'], hint:'f7 desprotegido'},
-  {title:'Mate em 1 — Dois torres', fen:'6k1/5ppp/8/8/8/8/5PPP/R3R1K1 w - - 0 1', sol:['a1a8'], hint:'Qualquer torre na 8ª'},
-  {title:'Mate em 1 — Rainha curta', fen:'5k2/5ppp/8/8/8/8/5PPP/3Q2K1 w - - 0 1', sol:['d1d8'], hint:'Dama na coluna d'},
-  {title:'Mate em 1 — Cavalo no canto', fen:'7k/5ppp/8/6N1/8/8/5PPP/6K1 w - - 0 1', sol:['g5f7'], hint:'Cavalo em f7'}
+  {title:'Mate em 2 — Sacrifício clássico', fen:'r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4', sol:['h5f7'], hint:'Dama em f7 com apoio do bispo'},
+  {title:'Mate em 2 — Corredor duplo', fen:'6k1/5ppp/8/8/8/8/5PPP/R3R1K1 w - - 0 1', sol:['a1a8'], hint:'Torre na 8ª — rei sem fuga'},
+  {title:'Tática — Garfo real de cavalo', fen:'r1bqk2r/pppp1ppp/2n2n2/2b1p1N1/2B1P3/3P4/PPP2PPP/RNBQK2R w KQkq - 0 5', sol:['g5f7'], hint:'Cavalo ataca rei e torre/dama'},
+  {title:'Mate em 2 — Dama e torre', fen:'6k1/5ppp/8/8/8/4Q3/5PPP/4R1K1 w - - 0 1', sol:['e3e8'], hint:'Dama na 8ª com cobertura da torre'},
+  {title:'Tática — Cravada mortal', fen:'rnbqkb1r/pppp1ppp/5n2/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 2 3', sol:['f3f7'], hint:'Dama em f7 com apoio do bispo'},
+  {title:'Mate em 2 — Dois bispos', fen:'6k1/5ppp/8/8/2B5/8/4BPPP/6K1 w - - 0 1', sol:['c4f7'], hint:'Bispo abre a diagonal até o rei'},
+  {title:'Tática — Desvio de defensor', fen:'r3k2r/ppp2ppp/2n5/3q4/3Pn3/5N2/PPP2PPP/R1BQKB1R w KQkq - 0 8', sol:['f3e5'], hint:'Cavalo ataca dama e ponto fraco'},
+  {title:'Mate em 2 — Torre na 7ª', fen:'6k1/5p1p/6p1/8/8/8/5PPP/R3R1K1 w - - 0 1', sol:['a1a8'], hint:'Dupla torre na última fileira'},
+  {title:'Tática — Ataque descoberto', fen:'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/2NP1N2/PPP2PPP/R1BQK2R w KQkq - 0 6', sol:['c4f7'], hint:'Bispo em f7 abre linhas táticas'},
+  {title:'Mate em 2 — Cavalo no ar', fen:'6rk/6pp/8/6N1/8/8/5PPP/6K1 w - - 0 1', sol:['g5f7'], hint:'Cavalo força o rei na rede de mate'},
+  {title:'Tática — Pressão no bispo', fen:'r2qkb1r/pp2pppp/2n2n2/3p1b2/3P4/2N2N2/PPP1BPPP/R1BQK2R w KQkq - 0 7', sol:['f3h4'], hint:'Cavalo ataca o bispo e prepara pressão'},
+  {title:'Mate em 2 — Dama no corredor', fen:'7k/5ppp/8/8/8/8/5PPP/4Q1K1 w - - 0 1', sol:['e1e8'], hint:'Entre na 8ª e mantenha o rei preso'},
+  {title:'Tática — Centro aberto', fen:'rnbqkbnr/pppp1ppp/8/4p3/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2', sol:['e5d4'], hint:'Capture no centro e ameace material'},
+  {title:'Mate em 2 — Bateria torre/dama', fen:'6k1/5ppp/8/8/8/5Q2/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre checa na 8ª com apoio da dama'},
+  {title:'Tática — Remoção do defensor', fen:'r1bq1rk1/ppp2ppp/2n2n2/3p4/1bBP4/2N2N2/PPP2PPP/R1BQ1RK1 w - - 0 8', sol:['c3d5'], hint:'Elimine o defensor central'},
+  {title:'Mate em 2 — Rei no canto', fen:'7k/6pp/8/6N1/8/8/6PP/4Q1K1 w - - 0 1', sol:['e1e8'], hint:'Dama checa e o cavalo completa a rede'},
+  {title:'Tática — Pressão em d5', fen:'r1bq1rk1/ppp2ppp/2n2n2/3p4/1bB1P3/2N2N2/PPP2PPP/R1BQ1RK1 w - - 0 8', sol:['c4d5'], hint:'Pressione o centro e abra linhas'},
+  {title:'Mate em 2 — Torre e cavalo', fen:'6k1/5ppp/8/4N3/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre na 8ª; cavalo controla f7/g6'},
+  {title:'Tática — Cavalo em b5', fen:'rnbqkb1r/ppp2ppp/4pn2/3p4/3P4/2N2N2/PPP1PPPP/R1BQKB1R w KQkq - 0 4', sol:['c3b5'], hint:'Cavalo pressiona c7 e d6'},
+  {title:'Mate em 2 — Rede na coluna e', fen:'5rk1/5ppp/8/8/8/4Q3/5PPP/4R1K1 w - - 0 1', sol:['e3e8'], hint:'Dama e torre na coluna e'}
 ];
 let puzzleIdx=0, puzzleSolStep=0, puzzleActive=null;
-const PUZZLE_REWARD=10;
-const PUZZLE_PENALTY=5;
+const PUZZLE_REWARD=5;
+const PUZZLE_PENALTY=10;
 // vs computador: vitória / derrota por dificuldade
 const AI_POINTS={
   easy:  {win:5,  loss:15},
@@ -1895,15 +1946,14 @@ function renderOnline(){
   el.innerHTML=others.map(function(p){
     var busy=p.status==='in_game';
     var canWatch = busy && p.gameId;
-    var click = busy
-      ? (canWatch ? 'onclick="spectateGame(\''+p.user+'\',\''+p.gameId+'\')"' : '')
-      : 'onclick="challengePlayer(\''+p.user+'\')"';
     var badge = busy
-      ? (canWatch ? '<span class="badge watch">👁 Assistir</span>' : '<span class="badge busy">Em partida</span>')
-      : '<span class="badge ok">Disponível</span>';
-    return '<div class="player-row '+(busy?(canWatch?'watchable':'busy'):'available')+'" '+click+'>'+
+      ? (canWatch
+          ? '<span class="badge watch" onclick="event.stopPropagation();spectateGame(\''+p.user+'\',\''+p.gameId+'\')">👁 Assistir</span>'
+          : '<span class="badge busy">Em partida</span>')
+      : '<span class="badge ok" onclick="event.stopPropagation();challengePlayer(\''+p.user+'\')">⚔️ Desafiar</span>';
+    return '<div class="player-row '+(busy?(canWatch?'watchable':'busy'):'available')+'" onclick="viewPlayerProfile(\''+p.user+'\')" title="Ver estatísticas">'+
       '<div class="avatar">'+(p.user||'?')[0].toUpperCase()+'</div>'+
-      '<div class="p-info"><div class="p-name">'+p.user+'</div><div class="p-meta">'+(p.points||0)+' pts</div></div>'+
+      '<div class="p-info"><div class="p-name">'+p.user+'</div><div class="p-meta">'+(p.points||0)+' pts · tocar para perfil</div></div>'+
       badge+
       '</div>';
   }).join('');
@@ -2209,10 +2259,14 @@ function paintDash(){
     try{
       var list=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
       if(!list.length) hl.innerHTML='<li class="empty">Nenhuma partida salva ainda.</li>';
-      else hl.innerHTML=list.slice(0,10).map(function(g){
+      else hl.innerHTML=list.slice(0,20).map(function(g,i){
         var when=(g.at||'').slice(0,16).replace('T',' ');
         var tag=g.result==='win'?'W':g.result==='loss'?'L':'E';
-        return '<li><span class="pos">'+(tag)+'</span><span class="nm">'+(g.mode||'?')+' vs '+(g.opp||'?')+'</span><span class="el" style="font-size:.72rem;color:var(--muted)">'+when+'</span></li>';
+        var movesN=(g.moves&&g.moves.length)?(g.moves.length+' lances'):'';
+        return '<li class="hist-item" onclick="openHistoryReview('+i+')" title="Toque para revisar todos os lances">'+
+          '<span class="pos">'+tag+'</span>'+
+          '<span class="nm">'+(g.mode||'?')+' vs '+(g.opp||'?')+(movesN?' · '+movesN:'')+'</span>'+
+          '<span class="el" style="font-size:.72rem;color:var(--muted)">'+when+'</span></li>';
       }).join('');
     }catch(e){ hl.innerHTML='<li class="empty">Erro ao ler histórico.</li>'; }
   }
@@ -2234,13 +2288,14 @@ async function paintRank(){
         var i = order===1?0:order===0?1:2;
         var p=list[i];
         if(!p) return '<div class="podium-card"></div>';
-        return '<div class="podium-card '+medals[i]+'"><div class="place">'+places[i]+'</div><div class="who">'+p.username+'</div><div class="pts">'+(p.points||0)+' pts</div></div>';
+        return '<div class="podium-card '+medals[i]+'" onclick="viewPlayerProfile(\''+p.username+'\')" style="cursor:pointer" title="Ver perfil"><div class="place">'+places[i]+'</div><div class="who">'+p.username+'</div><div class="pts">'+(p.points||0)+' pts</div></div>';
       }).join('');
     }
     el.innerHTML=list.map(function(p,i){
       var c=i===0?'g':i===1?'s':i===2?'b':'';
       var you=me&&p.username===me.name?' (você)':'';
-      return '<li><span class="pos '+c+'">'+(i+1)+'</span><span class="nm">'+p.username+you+
+      return '<li class="rank-item" onclick="viewPlayerProfile(\''+p.username+'\')" title="Ver estatísticas de '+p.username+'">'+
+        '<span class="pos '+c+'">'+(i+1)+'</span><span class="nm">'+p.username+you+
         '</span><span class="el">'+(p.points||0)+' pts</span></li>';
     }).join('');
   }catch(e){
@@ -2483,17 +2538,59 @@ function refreshOpening(){
 function saveHistoryEntry(result, msg){
   try{
     var list=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
+    var moves=(hist||[]).map(function(m){
+      return {from:m.from,to:m.to,san:m.san,promotion:m.promotion,captured:m.captured,color:m.color};
+    });
     list.unshift({
+      id: 'h_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
       at: new Date().toISOString(),
       mode: mode||lastEndMode,
       result: result||lastEndResult,
       msg: msg||'',
+      reason: explainEndReason(msg),
       pgn: chess ? chess.pgn() : '',
-      opp: oppName|| (mode==='ai'?'Computador':'Local')
+      fen: chess ? chess.fen() : '',
+      moves: moves,
+      myColor: myColor||'w',
+      opp: oppName|| ((mode==='ai'||lastEndMode==='ai')?'Computador':(mode==='puzzle'||lastEndMode==='puzzle')?'Puzzle':'Local')
     });
-    if(list.length>30) list=list.slice(0,30);
+    if(list.length>40) list=list.slice(0,40);
     localStorage.setItem(HISTORY_KEY, JSON.stringify(list));
   }catch(e){}
+}
+function explainEndReason(fallbackMsg){
+  if(mode==='puzzle'||lastEndMode==='puzzle'){
+    if(lastEndResult==='win') return 'Puzzle resolvido corretamente. Você encontrou o lance (ou sequência) vencedora.';
+    return 'Puzzle falhou: o lance jogado não era a solução. Pontos foram debitados e a tentativa encerrou.';
+  }
+  if(!chess) return fallbackMsg||'Partida encerrada.';
+  try{
+    if(chess.in_checkmate()){
+      var winner = chess.turn()==='b' ? 'Brancas' : 'Pretas';
+      var youWin = (lastEndResult==='win');
+      return (youWin?'Você venceu':'Derrota')+' por xeque-mate. O rei adversário está em xeque e não possui nenhum lance legal para escapar.';
+    }
+    if(chess.in_stalemate()) return 'Empate por afogamento (stalemate): o lado a jogar não tem lance legal e não está em xeque.';
+    if(chess.in_threefold_repetition && chess.in_threefold_repetition()) return 'Empate por repetição tripla da mesma posição.';
+    if(chess.insufficient_material && chess.insufficient_material()) return 'Empate por material insuficiente para forçar xeque-mate.';
+    if(chess.in_draw && chess.in_draw()) return 'Empate (regra dos 50 lances ou outra condição de tabelas).';
+  }catch(e){}
+  if(fallbackMsg && /desist/i.test(fallbackMsg)) return 'Vitória por desistência do adversário (ou você desistiu).';
+  if(fallbackMsg && /tempo|esgotad/i.test(fallbackMsg)) return 'Vitória no tempo: o relógio do adversário chegou a zero.';
+  if(fallbackMsg && /empat/i.test(fallbackMsg)) return 'Empate acordado entre os jogadores.';
+  return fallbackMsg||'Partida encerrada.';
+}
+function lastMovesText(n){
+  n = n||6;
+  if(!hist || !hist.length) return 'Nenhum lance registrado.';
+  var start = Math.max(0, hist.length - n);
+  var parts=[];
+  for(var i=start;i<hist.length;i++){
+    var num = Math.floor(i/2)+1;
+    if(i%2===0) parts.push(num+'. '+(hist[i].san||''));
+    else parts.push(hist[i].san||'');
+  }
+  return parts.join(' ');
 }
 function offerDraw(){
   if(mode!=='online'||!gameCh) return;
@@ -2679,13 +2776,15 @@ function checkPuzzleMove(from,to,pr){
   if(!expected){ return; }
   var ok = (uci===expected) || (uci===expected+'q') || (expected.indexOf(from+to)===0);
   if(!ok){
+    // errou: −10 pts e sai do tabuleiro imediatamente
+    puzzleAwarded=true;
+    lastEndResult='loss';
     recordPuzzleAttempt(false);
-    // errou o lance: -5 pontos
     adjustPoints(-PUZZLE_PENALTY, 'lance errado no puzzle');
-    chess.undo(); hist.pop(); last=hist.length?{from:hist[hist.length-1].from,to:hist[hist.length-1].to}:null;
-    render(); status(); movesUI(); updateCaps();
-    var st=document.getElementById('status');
-    if(st){ st.className='side-status chk'; st.innerHTML='❌ Incorreto (−'+PUZZLE_PENALTY+' pts). Dica: '+(puzzleActive.hint||'Tente outra casa'); }
+    puzzleActive=null;
+    setTimeout(function(){
+      showEnd('❌ Puzzle falhou', 'Lance incorreto. Você perdeu '+PUZZLE_PENALTY+' pontos e saiu do tabuleiro.');
+    }, 350);
     return;
   }
   puzzleSolStep++;
@@ -2740,7 +2839,7 @@ function render(){
       // drag & drop (toque seguro)
       (function(s, pieceEl, pieceObj){
         cell.addEventListener('pointerdown', function(e){
-          if(!chess||chess.game_over()||mode==='spectate') return;
+          if(!chess||chess.game_over()||mode==='spectate'||mode==='review') return;
           if((mode==='ai'||mode==='online')&&chess.turn()!==myColor) return;
           if(pieceObj.color!==chess.turn()) return;
           if(e.button!=null && e.button!==0) return;
@@ -2863,7 +2962,7 @@ document.addEventListener('pointerleave', function(e){
   if(dragState && (e.target===document.documentElement || e.target===document.body)) endDrag(e);
 });
 function click(sq){
-  if(!chess||chess.game_over()||mode==='spectate')return;
+  if(!chess||chess.game_over()||mode==='spectate'||mode==='review')return;
   if((mode==='ai'||mode==='online')&&chess.turn()!==myColor)return;
   if(sel){
     var mv=null;for(var i=0;i<legal.length;i++)if(legal[i].to===sq)mv=legal[i];
@@ -2995,6 +3094,7 @@ function aiPlay(){
   }, skill);
 }
 function status(){
+  if(mode==='review'){ statusReview(); return; }
   var el=document.getElementById('status');el.className='side-status';
   if(chess.in_checkmate()){el.textContent='Xeque-mate! '+(chess.turn()==='w'?'Pretas':'Brancas')+' vencem';el.classList.add('mate')}
   else if(chess.in_draw())el.textContent='Empate';
@@ -3008,6 +3108,7 @@ function status(){
   updateOpeningUI();
 }
 function movesUI(){
+  if(mode==='review'){ movesUIReview(); return; }
   var box=document.getElementById('moves'),h='';
   for(var i=0;i<hist.length;i+=2){var n=Math.floor(i/2)+1;h+='<div class="row"><span class="n">'+n+'.</span> '+(hist[i]?hist[i].san:'')+' '+(hist[i+1]?hist[i+1].san:'')+'</div>'}
   box.innerHTML=h;box.scrollTop=box.scrollHeight;
@@ -3144,25 +3245,215 @@ function showEnd(t,m){
   stopClock();
   clearActiveGame();
   lastEndMode = mode || lastEndMode;
+  var reason = explainEndReason(m);
   saveHistoryEntry(lastEndResult, m);
+  // snapshot da partida que acabou de terminar (para revisar)
+  try{
+    window.__lastFinishedGame = {
+      moves: (hist||[]).map(function(x){return {from:x.from,to:x.to,san:x.san,promotion:x.promotion,captured:x.captured,color:x.color}}),
+      pgn: chess ? chess.pgn() : '',
+      result: lastEndResult,
+      mode: lastEndMode,
+      opp: oppName||'',
+      myColor: myColor||'w',
+      reason: reason,
+      msg: m||''
+    };
+  }catch(e){}
   var modal=document.getElementById('ov-end').querySelector('.modal');
   if(modal){ modal.classList.add('celebrate'); }
   document.getElementById('end-t').textContent=t;
-  document.getElementById('end-m').textContent=m;
+  var lastTxt = lastMovesText(8);
+  var endM = document.getElementById('end-m');
+  if(endM){
+    endM.innerHTML =
+      '<div style="margin-bottom:.55rem">'+escapeHtml(m||'')+'</div>'+
+      '<div class="end-reason">'+escapeHtml(reason)+'</div>'+
+      (hist&&hist.length ? '<div class="end-last-moves"><strong>Últimos lances:</strong> '+escapeHtml(lastTxt)+'</div>' : '');
+  }
   var an=document.getElementById('end-analysis'); if(an) an.classList.add('hidden');
   var br=document.getElementById('btn-rematch');
-  if(br) br.style.display = (lastEndMode==='ai'||lastEndMode==='local'||(lastEndMode==='online'&&oppName)) ? '' : 'none';
+  if(br) br.style.display = (lastEndMode==='ai'||lastEndMode==='local'||lastEndMode==='puzzle'||(lastEndMode==='online'&&oppName)) ? '' : 'none';
+  var brv=document.getElementById('btn-review-end');
+  if(brv) brv.style.display = (hist&&hist.length) ? '' : 'none';
   document.getElementById('ov-end').style.display='flex';
 }
 function toHome(){
   stopClock();
   document.getElementById('ov-end').style.display='none';
+  var op=document.getElementById('ov-profile'); if(op) op.style.display='none';
   document.getElementById('game').style.display='none';
   document.getElementById('nav').style.display='flex';
   if(gameCh&&sb){try{sb.removeChannel(gameCh)}catch(e){} gameCh=null}
   mode=null;gameId='';oppName='';
+  reviewCursor=-1; reviewMoves=null;
   setPresence('available');
   go('home');
+}
+
+/* ===== REVISÃO DE PARTIDAS ===== */
+var reviewMoves=null, reviewCursor=-1;
+function openHistoryReview(idx){
+  try{
+    var list=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
+    var g=list[idx];
+    if(!g) return toast('Partida não encontrada');
+    startReview(g);
+  }catch(e){ toast('Erro ao abrir histórico'); }
+}
+function reviewLastFinished(){
+  document.getElementById('ov-end').style.display='none';
+  if(window.__lastFinishedGame && window.__lastFinishedGame.moves && window.__lastFinishedGame.moves.length){
+    startReview(window.__lastFinishedGame);
+  } else {
+    toast('Nada para revisar');
+  }
+}
+function startReview(g){
+  if(typeof Chess==='undefined'){alert('Recarregue');return}
+  reviewMoves = (g.moves||[]).slice();
+  if(!reviewMoves.length && g.pgn){
+    try{
+      var tmp=new Chess();
+      if(tmp.load_pgn(g.pgn)){
+        var h=tmp.history({verbose:true});
+        reviewMoves=h.map(function(m){return {from:m.from,to:m.to,san:m.san,promotion:m.promotion,captured:m.captured,color:m.color}});
+      }
+    }catch(e){}
+  }
+  if(!reviewMoves.length){ toast('Esta partida não tem lances salvos'); return; }
+  mode='review';
+  lastEndMode='review';
+  chess=new Chess();
+  sel=null; legal=[]; last=null; hist=[]; capW=[]; capB=[]; chatMsgs=[];
+  myColor=g.myColor||'w';
+  oppName=g.opp||'';
+  gameId='';
+  boardFlipped=(myColor==='b');
+  reviewCursor=-1;
+  openGameUI();
+  document.getElementById('btn-undo').style.display='none';
+  var bd=document.getElementById('btn-draw'); if(bd) bd.classList.add('hidden');
+  document.getElementById('n-w').textContent = (myColor==='w'?(me?me.name:'Você'):(oppName||'Brancas'));
+  document.getElementById('n-b').textContent = (myColor==='b'?(me?me.name:'Você'):(oppName||'Pretas'));
+  document.getElementById('chat').classList.remove('on');
+  setupCoach();
+  stopClock(); clockW=0; clockB=0; updateClocksUI();
+  var st=document.getElementById('status');
+  if(st){
+    st.className='side-status';
+    st.innerHTML='📜 <strong>Revisão</strong> — '+(g.mode||'')+' vs '+(g.opp||'')+
+      (g.reason?'<br><span style="opacity:.85">'+escapeHtml(g.reason)+'</span>':'')+
+      '<div class="review-bar">'+
+      '<button type="button" onclick="reviewGoto(-1)">⏮ Início</button>'+
+      '<button type="button" onclick="reviewStep(-1)">◀</button>'+
+      '<button type="button" onclick="reviewStep(1)">▶</button>'+
+      '<button type="button" onclick="reviewGoto(reviewMoves.length-1)">⏭ Fim</button>'+
+      '</div>';
+  }
+  hist = reviewMoves.slice();
+  movesUIReview();
+  reviewGoto(-1);
+  toast('Revisão · clique nos lances ou use ◀ ▶');
+}
+function reviewGoto(i){
+  if(!reviewMoves) return;
+  i = Math.max(-1, Math.min(reviewMoves.length-1, i|0));
+  reviewCursor=i;
+  chess=new Chess();
+  capW=[]; capB=[];
+  last=null;
+  for(var k=0;k<=i;k++){
+    var mv=reviewMoves[k];
+    if(!mv) continue;
+    var played=chess.move({from:mv.from,to:mv.to,promotion:mv.promotion||'q'});
+    if(played && played.captured){
+      var glyph=GL[(played.color==='w'?'b':'w')+played.captured];
+      if(played.color==='w') capW.push(glyph); else capB.push(glyph);
+    }
+    if(k===i) last={from:mv.from,to:mv.to};
+  }
+  sel=null; legal=[];
+  render(); statusReview(); movesUIReview(); updateCaps();
+}
+function reviewStep(d){
+  if(!reviewMoves) return;
+  reviewGoto(reviewCursor + d);
+}
+function statusReview(){
+  var st=document.getElementById('status');
+  if(!st||!reviewMoves) return;
+  var cur = reviewCursor<0 ? 'Início' : ('Lance '+(reviewCursor+1)+'/'+reviewMoves.length+(reviewMoves[reviewCursor]?' · '+reviewMoves[reviewCursor].san:''));
+  st.innerHTML='📜 <strong>Revisão</strong> — '+cur+
+    '<div class="review-bar">'+
+    '<button type="button" onclick="reviewGoto(-1)">⏮ Início</button>'+
+    '<button type="button" onclick="reviewStep(-1)">◀</button>'+
+    '<button type="button" onclick="reviewStep(1)">▶</button>'+
+    '<button type="button" onclick="reviewGoto(reviewMoves.length-1)">⏭ Fim</button>'+
+    '</div>';
+}
+function movesUIReview(){
+  var box=document.getElementById('moves'),h='';
+  if(!reviewMoves){ if(box) box.innerHTML=''; return; }
+  for(var i=0;i<reviewMoves.length;i+=2){
+    var n=Math.floor(i/2)+1;
+    var a=reviewMoves[i], b=reviewMoves[i+1];
+    var onA = reviewCursor===i ? ' on' : '';
+    var onB = reviewCursor===i+1 ? ' on' : '';
+    h+='<div class="row">'+
+      '<span class="n">'+n+'.</span> '+
+      (a?'<span class="clickable'+onA+'" onclick="reviewGoto('+i+')">'+a.san+'</span>':'')+' '+
+      (b?'<span class="clickable'+onB+'" onclick="reviewGoto('+(i+1)+')">'+b.san+'</span>':'')+
+      '</div>';
+  }
+  box.innerHTML=h;
+  box.scrollTop=box.scrollHeight;
+}
+
+/* ===== PERFIL PÚBLICO ===== */
+async function viewPlayerProfile(username){
+  if(!username) return;
+  var ov=document.getElementById('ov-profile');
+  var body=document.getElementById('prof-body');
+  var title=document.getElementById('prof-title');
+  if(!ov||!body) return;
+  title.textContent='Perfil';
+  body.innerHTML='<p style="color:var(--muted)">Carregando estatísticas de <strong>'+escapeHtml(username)+'</strong>…</p>';
+  ov.style.display='flex';
+  try{
+    var row=await dbGetPlayer(username);
+    if(!row){
+      body.innerHTML='<p style="color:var(--muted)">Jogador não encontrado no banco.</p>';
+      return;
+    }
+    var games=row.games||0, wins=row.wins||0, losses=row.losses||0, draws=row.draws||0;
+    var wr = games? Math.round(wins/games*100) : 0;
+    var isYou = me && me.name===username;
+    title.textContent = isYou ? 'Seu perfil' : 'Perfil de '+username;
+    body.innerHTML =
+      '<div class="prof-hero">'+
+        '<div class="prof-avatar">'+(username[0]||'?').toUpperCase()+'</div>'+
+        '<div><div class="prof-name">'+escapeHtml(username)+(isYou?' (você)':'')+'</div>'+
+        '<div class="prof-pts">'+(row.points||0)+' pts</div></div>'+
+      '</div>'+
+      '<div class="prof-grid">'+
+        '<div class="prof-stat"><b>'+wins+'</b><span>Vitórias</span></div>'+
+        '<div class="prof-stat"><b>'+draws+'</b><span>Empates</span></div>'+
+        '<div class="prof-stat"><b>'+losses+'</b><span>Derrotas</span></div>'+
+        '<div class="prof-stat"><b>'+games+'</b><span>Partidas</span></div>'+
+        '<div class="prof-stat"><b>'+wr+'%</b><span>Taxa vitória</span></div>'+
+        '<div class="prof-stat"><b>'+(row.puzzles_solved||0)+'</b><span>Puzzles</span></div>'+
+        '<div class="prof-stat"><b>'+(row.streak||0)+'</b><span>Seq. atual</span></div>'+
+        '<div class="prof-stat"><b>'+(row.best_streak||0)+'</b><span>Melhor seq.</span></div>'+
+      '</div>'+
+      (isYou?'<p class="note" style="margin-top:.85rem">Estatísticas vs computador e tentativas de puzzle ficam neste aparelho (Dashboard).</p>':'');
+  }catch(e){
+    body.innerHTML='<p style="color:var(--muted)">Erro ao carregar perfil. Verifique a conexão.</p>';
+  }
+}
+function closePlayerProfile(){
+  var ov=document.getElementById('ov-profile');
+  if(ov) ov.style.display='none';
 }
 function renderChat(){
   var log=document.getElementById('chat-log'); if(!log) return;
@@ -3180,12 +3471,13 @@ function sendChat(){
 }
 function updateMatchInfo(){
   var el=document.getElementById('side-match-info'); if(!el||!me) return;
-  var label = mode==='online'?'Online':mode==='ai'?'vs Computador':mode==='spectate'?'Espectador':mode==='puzzle'?'Puzzle':'Local';
+  var label = mode==='online'?'Online':mode==='ai'?'vs Computador':mode==='spectate'?'Espectador':mode==='puzzle'?'Puzzle':mode==='review'?'Revisão':'Local';
   var txt='Modo: <strong style="color:var(--text)">'+label+'</strong>';
   if(mode==='online') txt+='<br>Adversário: <strong style="color:var(--text)">'+(oppName||'—')+'</strong>';
   if(mode==='spectate') txt+='<br>Assistindo: <strong style="color:var(--text)">'+(oppName||'partida')+'</strong>';
+  if(mode==='review') txt+='<br>Partida vs <strong style="color:var(--text)">'+(oppName||'—')+'</strong><br><span style="opacity:.8">Use ◀ ▶ ou clique nos lances</span>';
   if(mode==='ai') txt+='<br>Nível: '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');
-  if(mode!=='spectate' && mode!=='puzzle')
+  if(mode!=='spectate' && mode!=='puzzle' && mode!=='review')
     txt+='<br>Você joga: <strong style="color:var(--text)">'+(myColor==='w'?'Brancas':'Pretas')+'</strong>';
   el.innerHTML=txt;
 }
