@@ -358,24 +358,6 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   position:relative;
   z-index:0;
 }
-/* Camada de setas de análise */
-.board-arrows{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  pointer-events:none;
-  z-index:4;
-  overflow:visible;
-}
-.board-arrows path{
-  fill:none;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-  opacity:.92;
-  filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));
-}
-.board-arrows .arrow-best{ stroke:#22d3ee; stroke-width:2.4; marker-end:url(#arrowhead-cyan); }
-.board-arrows .arrow-alt{ stroke:#a78bfa; stroke-width:2; marker-end:url(#arrowhead-violet); opacity:.75; }
-.board-arrows .arrow-danger{ stroke:#fb7185; stroke-width:2.2; marker-end:url(#arrowhead-red); }
 /* Eval bar ao lado do tabuleiro em desktop */
 .eval-live-wrap{
   display:none;
@@ -851,6 +833,11 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
         <div class="card"><h2>Conta</h2><div id="dash-details" style="color:var(--muted);font-size:.9rem;line-height:1.7"></div></div>
       </div>
       <div class="card" style="margin-top:1rem">
+        <h2>🧩 Estatísticas de puzzles</h2>
+        <div class="kpi" id="puzzle-kpis" style="margin-bottom:0"></div>
+        <p class="note" style="margin-top:.7rem">Cada puzzle resolvido vale +10 Elo no ranking.</p>
+      </div>
+      <div class="card" style="margin-top:1rem">
         <h2>📜 Histórico local (últimas partidas)</h2>
         <ul class="list" id="hist-list"><li class="empty">Nenhuma partida salva ainda.</li></ul>
       </div>
@@ -886,12 +873,14 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
               </select>
             </div>
             <div>
-              <label>Estilo das peças (3D)</label>
+              <label>Conjunto de peças</label>
               <select id="sel-pieces" onchange="setPieceTheme(this.value)">
-                <option value="classic">Clássico 3D</option>
-                <option value="neon">Neon 3D</option>
-                <option value="mono">Mono 3D</option>
-                <option value="gold">Ouro 3D</option>
+                <option value="wikipedia">Wikipedia</option>
+                <option value="cburnett">Cburnett</option>
+                <option value="alpha">Alpha</option>
+                <option value="merida">Merida</option>
+                <option value="staunty">Staunty</option>
+                <option value="caliente">Caliente</option>
               </select>
             </div>
             <div>
@@ -929,20 +918,6 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             <div class="board-hero">
               <div class="board-frame board-classic pieces-classic" id="board-frame">
                 <div id="board"></div>
-                <svg class="board-arrows" id="board-arrows" viewBox="0 0 8 8" preserveAspectRatio="none">
-                  <defs>
-                    <marker id="arrowhead-cyan" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
-                      <path d="M0,0 L4,2 L0,4 Z" fill="#22d3ee"/>
-                    </marker>
-                    <marker id="arrowhead-violet" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
-                      <path d="M0,0 L4,2 L0,4 Z" fill="#a78bfa"/>
-                    </marker>
-                    <marker id="arrowhead-red" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
-                      <path d="M0,0 L4,2 L0,4 Z" fill="#fb7185"/>
-                    </marker>
-                  </defs>
-                  <g id="arrows-g"></g>
-                </svg>
               </div>
             </div>
           </div>
@@ -1030,6 +1005,18 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 </div></div>
 <div class="toast" id="toast"></div>
 
+<div class="overlay" id="ov-tutorial" style="display:none">
+  <div class="modal" style="max-width:440px;text-align:left">
+    <h2 style="text-align:center">♛ Bem-vindo ao Xadrez Mestre</h2>
+    <p id="tut-text" style="color:var(--muted);line-height:1.55;margin:0.75rem 0 1rem"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn-soft" id="tut-skip" onclick="finishTutorial()">Pular</button>
+      <button type="button" class="btn-main" id="tut-next" onclick="nextTutorial()" style="flex:1.4">Próximo</button>
+    </div>
+    <div style="text-align:center;margin-top:.75rem;font-size:.75rem;color:var(--muted)" id="tut-step">1 / 5</div>
+  </div>
+</div>
+
 <!--
 ============================================================
 SQL PARA RODAR NO SUPABASE (SQL Editor) — obrigatório 1x
@@ -1090,11 +1077,26 @@ const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 const SESSION='xm_session_v8', GAMEKEY='xm_active_game_v8', MASTER=['fernandolapa'];
 const GL={wk:'♔',wq:'♕',wr:'♖',wb:'♗',wn:'♘',wp:'♙',bk:'♚',bq:'♛',br:'♜',bb:'♝',bn:'♞',bp:'♟'};
 // Peças 3D (set Wikipedia — alta qualidade)
-const PIECE_IMG_BASE='https://cdn.jsdelivr.net/gh/oakmac/chessboardjs@master/website/img/chesspieces/wikipedia/';
 const PIECE_CODE={w:{k:'wK',q:'wQ',r:'wR',b:'wB',n:'wN',p:'wP'},b:{k:'bK',q:'bQ',r:'bR',b:'bB',n:'bN',p:'bP'}};
+const PIECE_SETS={
+  wikipedia:{base:'https://cdn.jsdelivr.net/gh/oakmac/chessboardjs@master/website/img/chesspieces/wikipedia/',ext:'.png'},
+  alpha:{base:'https://cdn.jsdelivr.net/gh/oakmac/chessboardjs@master/website/img/chesspieces/alpha/',ext:'.png'},
+  uscf:{base:'https://cdn.jsdelivr.net/gh/oakmac/chessboardjs@master/website/img/chesspieces/uscf/',ext:'.png'},
+  cburnett:{base:'https://lichess1.org/assets/piece/cburnett/',ext:'.svg'},
+  merida:{base:'https://lichess1.org/assets/piece/merida/',ext:'.svg'},
+  staunty:{base:'https://lichess1.org/assets/piece/staunty/',ext:'.svg'},
+  caliente:{base:'https://lichess1.org/assets/piece/caliente/',ext:'.svg'}
+};
+function currentPieceSet(){
+  var key=(prefs&&prefs.pieces)||'wikipedia';
+  if(key==='classic') key='wikipedia';
+  return PIECE_SETS[key]||PIECE_SETS.wikipedia;
+}
 function pieceImgUrl(color, type){
   var c = PIECE_CODE[color] && PIECE_CODE[color][type];
-  return c ? (PIECE_IMG_BASE + c + '.png') : null;
+  if(!c) return null;
+  var set=currentPieceSet();
+  return set.base + c + set.ext;
 }
 function makePieceEl(color, type, moving){
   var url = pieceImgUrl(color, type);
@@ -1335,7 +1337,26 @@ function rowToMe(row){
 
 /* ===== PREFS / THEMES ===== */
 const PREFS_KEY='xm_prefs_v1';
-let prefs={ui:'dark',board:'classic',pieces:'classic',sound:true,coords:true};
+const PUZZLE_STATS_KEY='xm_puzzle_stats_v1';
+const TUTORIAL_KEY='xm_tutorial_done_v1';let prefs={ui:'dark',board:'classic',pieces:'wikipedia',sound:true,coords:true};
+function loadPuzzleStats(){
+  try{ return Object.assign({solved:0,attempts:0,streak:0,bestStreak:0}, JSON.parse(localStorage.getItem(PUZZLE_STATS_KEY)||'{}')); }
+  catch(e){ return {solved:0,attempts:0,streak:0,bestStreak:0}; }
+}
+function savePuzzleStats(s){ try{ localStorage.setItem(PUZZLE_STATS_KEY, JSON.stringify(s)); }catch(e){} }
+function recordPuzzleAttempt(ok){
+  var s=loadPuzzleStats();
+  s.attempts=(s.attempts||0)+1;
+  if(ok){
+    s.solved=(s.solved||0)+1;
+    s.streak=(s.streak||0)+1;
+    if(s.streak>(s.bestStreak||0)) s.bestStreak=s.streak;
+  } else {
+    s.streak=0;
+  }
+  savePuzzleStats(s);
+  return s;
+}
 function loadPrefs(){
   try{prefs=Object.assign(prefs, JSON.parse(localStorage.getItem(PREFS_KEY)||'{}'))}catch(e){}
   applyPrefs();
@@ -1349,7 +1370,7 @@ function applyPrefs(){
     bf.className='board-frame board-'+(prefs.board||'classic')+' pieces-'+(prefs.pieces||'classic')+(prefs.coords!==false?' show-coords':'');
   }
   var selB=document.getElementById('sel-board'); if(selB) selB.value=prefs.board||'classic';
-  var selP=document.getElementById('sel-pieces'); if(selP) selP.value=prefs.pieces||'classic';
+  var selP=document.getElementById('sel-pieces'); if(selP) selP.value=prefs.pieces||'wikipedia';
   document.querySelectorAll('#ui-theme-swatches button').forEach(function(b){
     b.classList.toggle('on', b.getAttribute('data-ui')===(prefs.ui||'dark'));
   });
@@ -1361,7 +1382,12 @@ function toggleSound(){ prefs.sound = !(prefs.sound!==false); savePrefs(); apply
 function toggleCoords(){ prefs.coords = !(prefs.coords!==false); savePrefs(); applyPrefs(); if(chess) render() }
 function setUiTheme(t){prefs.ui=t;savePrefs();applyPrefs()}
 function setBoardTheme(t){prefs.board=t;savePrefs();applyPrefs()}
-function setPieceTheme(t){prefs.pieces=t;savePrefs();applyPrefs()}
+function setPieceTheme(t){
+  prefs.pieces=t; savePrefs(); applyPrefs();
+  preloadPieces();
+  if(chess) render();
+  toast('Peças: '+t);
+}
 function paintPreview(){
   var grid=document.getElementById('preview-grid'); if(!grid) return;
   var wrap=document.getElementById('preview-board');
@@ -1798,11 +1824,23 @@ function paintDash(){
   var dr=s.games?Math.round(s.draws/s.games*100):0,lr=s.games?Math.round(s.losses/s.games*100):0;
   document.getElementById('dash-bars').innerHTML=
     bar('Vitórias',s.wins,wr,'#34d399')+bar('Empates',s.draws,dr,'#f5c542')+bar('Derrotas',s.losses,lr,'#fb7185');
+  var pz=loadPuzzleStats();
+  var pzRate=pz.attempts?Math.round(pz.solved/pz.attempts*100):0;
   document.getElementById('dash-details').innerHTML=
     '<p><strong style="color:var(--text)">Usuário:</strong> '+me.name+'</p>'+
     '<p><strong style="color:var(--text)">Banco:</strong> Supabase · tabela players</p>'+
     '<p><strong style="color:var(--text)">Placar online:</strong> '+s.wins+'V · '+s.draws+'E · '+s.losses+'D</p>'+
-    '<p><strong style="color:var(--text)">Treinos IA:</strong> '+s.trainGames+'</p>';
+    '<p><strong style="color:var(--text)">Treinos IA:</strong> '+s.trainGames+'</p>'+
+    '<p style="margin-top:.6rem"><strong style="color:var(--text)">🧩 Puzzles:</strong> '+pz.solved+' resolvidos · '+pz.attempts+' tentativas</p>'+
+    '<p><strong style="color:var(--text)">Taxa puzzles:</strong> '+pzRate+'% · sequência '+pz.streak+' (melhor '+pz.bestStreak+')</p>';
+  var pzk=document.getElementById('puzzle-kpis');
+  if(pzk){
+    pzk.innerHTML=
+      '<div class="stat green"><b>'+pz.solved+'</b><span>Resolvidos</span></div>'+
+      '<div class="stat blue"><b>'+pz.attempts+'</b><span>Tentativas</span></div>'+
+      '<div class="stat gold"><b>'+pzRate+'%</b><span>Taxa acerto</span></div>'+
+      '<div class="stat"><b>'+pz.bestStreak+'</b><span>Melhor seq.</span></div>';
+  }
   var hl=document.getElementById('hist-list');
   if(hl){
     try{
@@ -1888,8 +1926,9 @@ function initClocks(){
   if(timeControl>0) startClockTick();
 }
 function preloadPieces(){
+  var set=currentPieceSet();
   ['wK','wQ','wR','wB','wN','wP','bK','bQ','bR','bB','bN','bP'].forEach(function(c){
-    var img=new Image(); img.src=PIECE_IMG_BASE+c+'.png';
+    var img=new Image(); img.src=set.base+c+set.ext;
   });
 }
 function paintPromoButtons(){
@@ -2257,9 +2296,9 @@ function checkPuzzleMove(from,to,pr){
   if(!expected){ return; }
   var ok = (uci===expected) || (uci===expected+'q') || (expected.indexOf(from+to)===0);
   if(!ok){
+    recordPuzzleAttempt(false);
     toast('Lance incorreto — tente de novo');
     chess.undo(); hist.pop(); last=hist.length?{from:hist[hist.length-1].from,to:hist[hist.length-1].to}:null;
-    clearArrows();
     render(); status(); movesUI(); updateCaps();
     var st=document.getElementById('status');
     if(st){ st.className='side-status chk'; st.innerHTML='❌ Incorreto. Dica: '+(puzzleActive.hint||'Tente outra casa'); }
@@ -2267,10 +2306,9 @@ function checkPuzzleMove(from,to,pr){
   }
   puzzleSolStep++;
   sfxWin();
-  // seta da solução
-  drawArrow(from, to, 'best');
   if(puzzleSolStep >= puzzleActive.sol.length){
     lastEndResult='win';
+    recordPuzzleAttempt(true);
     awardPuzzlePoints();
     toast('Puzzle resolvido! +'+PUZZLE_REWARD+' Elo');
     setTimeout(function(){
@@ -2432,7 +2470,6 @@ function animateSlide(from, to, color, type, cb){
   setTimeout(finish, 280);
 }
 function play(from,to,pr){
-  clearArrows();
   var before=chess.get(from);
   var color=before?before.color:'w', type=before?before.type:(pr||'q');
   var mv=chess.move({from:from,to:to,promotion:pr||'q'});if(!mv)return;
@@ -2696,38 +2733,8 @@ function coachPlan(){
         : 'Final: ative o rei, crie peões passados e evite trocas desfavoráveis.';
   document.getElementById('coach-text').textContent=plan;
 }
-function clearArrows(){
-  var g=document.getElementById('arrows-g');
-  if(g) g.innerHTML='';
-}
-function sqToXY(sq){
-  // viewBox 0..8 — centro da casa
-  var files='abcdefgh';
-  var file=files.indexOf(sq[0]);
-  var rank=parseInt(sq[1],10)-1;
-  var flip = boardFlipped || (mode==='online' && myColor==='b');
-  var x = flip ? (7-file) + 0.5 : file + 0.5;
-  var y = flip ? rank + 0.5 : (7-rank) + 0.5;
-  return {x:x, y:y};
-}
-function drawArrow(from, to, kind){
-  var g=document.getElementById('arrows-g'); if(!g) return;
-  var a=sqToXY(from), b=sqToXY(to);
-  // encurta um pouco para não cobrir o centro das peças
-  var dx=b.x-a.x, dy=b.y-a.y, len=Math.sqrt(dx*dx+dy*dy)||1;
-  var ux=dx/len, uy=dy/len;
-  var x1=a.x+ux*0.28, y1=a.y+uy*0.28;
-  var x2=b.x-ux*0.32, y2=b.y-uy*0.32;
-  var cls = kind==='danger'?'arrow-danger':(kind==='alt'?'arrow-alt':'arrow-best');
-  var path=document.createElementNS('http://www.w3.org/2000/svg','path');
-  path.setAttribute('d','M '+x1+' '+y1+' L '+x2+' '+y2);
-  path.setAttribute('class', cls);
-  g.appendChild(path);
-}
 function setEvalLive(scoreCp){
-  // scoreCp do ponto de vista das brancas (aproximado)
   var el=document.getElementById('eval-live'); if(!el) return;
-  // mapeia -800..+800 para 5%..95%
   var clamped=Math.max(-800, Math.min(800, scoreCp||0));
   var pct=50 + (clamped/800)*45;
   el.style.height=pct+'%';
@@ -2741,7 +2748,6 @@ function coachBest(auto){
   }
   document.getElementById('coach-move').textContent='…';
   document.getElementById('coach-text').textContent='Calculando a jogada perfeita…';
-  clearArrows();
   initMasterEngine();
   var fen=chess.fen();
   engineBestMove(fen, 16, 1600, function(uci){
@@ -2777,8 +2783,6 @@ function coachBest(auto){
     legal=[{to:found.to}];
     last={from:found.from,to:found.to};
     render();
-    drawArrow(found.from, found.to, 'best');
-    // eval aproximada via minimax local rápido
     try{
       var sc=evaluate(chess);
       setEvalLive(chess.turn()==='w'?sc:-sc);
@@ -2795,10 +2799,39 @@ document.addEventListener('keydown',function(e){
   }
 });
 
+var tutStep=0;
+var TUTORIAL_STEPS=[
+  {t:'Crie ou entre na sua conta. O ranking Elo fica salvo no Supabase e funciona em qualquer aparelho.'},
+  {t:'Em Jogar você desafia quem está online, treina contra o computador (Stockfish) ou resolve puzzles (+10 Elo).'},
+  {t:'Durante a partida: arraste as peças, use o Coach Supremo, vire o tabuleiro e exporte o PGN.'},
+  {t:'Em Temas escolha tabuleiro e conjunto de peças (Wikipedia, Alpha, USCF, Staunty, Merida…).'},
+  {t:'No Dashboard veja estatísticas, puzzles resolvidos e o histórico local. Bom jogo!'}
+];
+function maybeShowTutorial(){
+  try{ if(localStorage.getItem(TUTORIAL_KEY)==='1') return; }catch(e){}
+  tutStep=0;
+  showTutorialStep();
+  document.getElementById('ov-tutorial').style.display='flex';
+}
+function showTutorialStep(){
+  var s=TUTORIAL_STEPS[tutStep];
+  document.getElementById('tut-text').textContent=s.t;
+  document.getElementById('tut-step').textContent=(tutStep+1)+' / '+TUTORIAL_STEPS.length;
+  document.getElementById('tut-next').textContent = tutStep>=TUTORIAL_STEPS.length-1 ? 'Começar' : 'Próximo';
+}
+function nextTutorial(){
+  if(tutStep>=TUTORIAL_STEPS.length-1){ finishTutorial(); return; }
+  tutStep++; showTutorialStep();
+}
+function finishTutorial(){
+  try{ localStorage.setItem(TUTORIAL_KEY,'1'); }catch(e){}
+  document.getElementById('ov-tutorial').style.display='none';
+}
+
 window.addEventListener('DOMContentLoaded',async function(){
   loadPrefs();
   preloadPieces();
-  loadEcoBook().then(function(){ updateOpeningUI(); });
+  if(typeof loadEcoBook==='function') loadEcoBook().then(function(){ if(typeof updateOpeningUI==='function') updateOpeningUI(); });
   initMasterEngine();
   initSupabase();
   if(sb){try{await ensureMaster()}catch(e){}}
@@ -2810,6 +2843,7 @@ window.addEventListener('DOMContentLoaded',async function(){
       else clearSession();
     }catch(e){clearSession()}
   }
+  setTimeout(maybeShowTutorial, 600);
 });
 window.addEventListener('beforeunload',function(){
   stopClock();
