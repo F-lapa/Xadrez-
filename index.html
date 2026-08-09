@@ -413,15 +413,15 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
         <div class="card">
           <h2>Treino local</h2>
           <div class="modes">
-            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Motor Stockfish · sem pontos de ranking</div></div></div>
+            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Treino · sem pontos de ranking</div></div></div>
             <div class="mode" onclick="startLocal('local')"><div class="i">👥</div><div><div class="t">Dois jogadores</div><div class="d">Mesmo dispositivo</div></div></div>
           </div>
           <div style="margin-top:.85rem">
             <div style="font-size:.78rem;color:var(--muted);font-weight:700;margin-bottom:.35rem">Dificuldade da IA</div>
             <div class="diff-row">
-              <button type="button" id="d-easy" onclick="setDiff('easy')">Mestre (rápido)</button>
-              <button type="button" id="d-medium" class="on" onclick="setDiff('medium')">Mestre</button>
-              <button type="button" id="d-hard" onclick="setDiff('hard')">Grande Mestre</button>
+              <button type="button" id="d-easy" onclick="setDiff('easy')">Fácil</button>
+              <button type="button" id="d-medium" class="on" onclick="setDiff('medium')">Médio</button>
+              <button type="button" id="d-hard" onclick="setDiff('hard')">Difícil</button>
             </div>
           </div>
           <div class="stats" id="home-stats" style="margin-top:1rem"></div>
@@ -1276,30 +1276,34 @@ function play(from,to,pr){
   
   if(chess.game_over()){if(mode==='online')setTimeout(endOnlineFromBoard,200);else setTimeout(endLocal,200);return}
   if(mode==='ai'&&chess.turn()!==myColor)setTimeout(aiPlay,240);
+  else if(me&&me.isMaster&&chess.turn()===myColor) setTimeout(function(){coachBest(true)},200);
 }
 function promo(p){document.getElementById('ov-promo').style.display='none';if(pend){play(pend.from,pend.to,p);pend=null}}
 function aiPlay(){
-  if(!chess||chess.game_over())return;
-  if(mode!=='ai')return;
+  if(!chess||chess.game_over()||mode!=='ai')return;
   var el=document.getElementById('status');
   if(el) el.textContent='Computador pensando…';
-  var fen=chess.fen();
-  // nível mestre: depth alto / tempo de pensamento
-  var depth = diff==='easy' ? 8 : (diff==='medium' ? 12 : 16);
-  var mt = diff==='easy' ? 500 : (diff==='medium' ? 1200 : 2500);
-  engineBestMove(fen, depth, mt, function(uci){
+  setTimeout(function(){
     if(!chess||chess.game_over()||mode!=='ai')return;
-    var parts=uciToParts(uci);
-    if(parts){
-      // valida
-      var ok=chess.moves({verbose:true}).some(function(m){return m.from===parts.from&&m.to===parts.to});
-      if(ok){ play(parts.from, parts.to, parts.promotion||'q'); return; }
+    var depth = diff==='easy'?1:(diff==='hard'?3:2);
+    if(diff==='easy'){
+      var top=searchTop(chess,1,Math.min(8,chess.moves().length));
+      var pick=top[Math.floor(Math.random()*top.length)]||top[0];
+      if(pick) play(pick.move.from,pick.move.to,pick.move.promotion||'q');
+      else status();
+      return;
     }
-    // fallback local se motor falhar
-    var res=searchBest(chess, diff==='hard'?3:2);
-    if(res&&res.move) play(res.move.from, res.move.to, res.move.promotion||'q');
+    if(diff==='medium'){
+      var top2=searchTop(chess,2,3);
+      var pick2=top2[Math.floor(Math.random()*Math.min(2,top2.length))]||top2[0];
+      if(pick2) play(pick2.move.from,pick2.move.to,pick2.move.promotion||'q');
+      else status();
+      return;
+    }
+    var res=searchBest(chess,3);
+    if(res&&res.move) play(res.move.from,res.move.to,res.move.promotion||'q');
     else status();
-  });
+  }, 120);
 }
 function status(){
   var el=document.getElementById('status');el.className='side-status';
@@ -1435,40 +1439,49 @@ function coachBest(auto){
   if(!me||!me.isMaster||!chess||chess.game_over())return;
   if((mode==='ai'||mode==='online')&&chess.turn()!==myColor){
     document.getElementById('coach-move').textContent='…';
-    document.getElementById('coach-text').textContent='Aguarde a sua vez.';
+    document.getElementById('coach-text').textContent='Aguarde a sua vez para o coach analisar.';
     return;
   }
   document.getElementById('coach-move').textContent='…';
-  document.getElementById('coach-text').textContent='Motor mestre analisando…';
+  document.getElementById('coach-text').textContent='Coach analisando todas as possibilidades…';
+  initMasterEngine();
   var fen=chess.fen();
-  engineBestMove(fen, 16, 2000, function(uci){
-    var parts=uciToParts(uci);
+  // análise forte só no COACH
+  engineBestMove(fen, 18, 3000, function(uci){
     var found=null;
+    var parts=uciToParts(uci);
     if(parts){
       var legalMoves=chess.moves({verbose:true});
       for(var i=0;i<legalMoves.length;i++){
-        if(legalMoves[i].from===parts.from&&legalMoves[i].to===parts.to){
-          if(!parts.promotion||legalMoves[i].promotion===parts.promotion){found=legalMoves[i];break;}
+        var lm=legalMoves[i];
+        if(lm.from===parts.from && lm.to===parts.to){
+          if(!parts.promotion || lm.promotion===parts.promotion){ found=lm; break; }
         }
       }
     }
     if(!found){
-      var res=searchBest(chess,3);
+      // fallback profundo local
+      var res=searchBest(chess, chess.moves().length>40?3:4);
       if(res) found=res.move;
     }
     if(!found){
       document.getElementById('coach-move').textContent='—';
-      document.getElementById('coach-text').textContent='Não foi possível analisar agora.';
+      document.getElementById('coach-text').textContent='Não consegui analisar agora. Tente de novo.';
       return;
     }
     document.getElementById('coach-move').textContent=found.san+'   '+found.from.toUpperCase()+' → '+found.to.toUpperCase();
-    var why='Jogada de nível mestre.';
-    if(found.san.indexOf('#')!==-1) why='Mate forçado.';
-    else if(found.captured) why='Melhor captura/continuação do motor.';
-    else if(found.san.indexOf('+')!==-1) why='Xeque na linha principal.';
-    else if(found.san.indexOf('O-O')!==-1) why='Roque na linha principal.';
+    var why='Jogada perfeita do coach.';
+    if(found.san.indexOf('#')!==-1) why='Mate! Jogue este lance e vença.';
+    else if(found.captured) why='Melhor captura da posição. Jogue este lance.';
+    else if(found.san.indexOf('+')!==-1) why='Melhor xeque da análise. Force a resposta.';
+    else if(found.san.indexOf('O-O')!==-1) why='Roque na linha principal — rei seguro e torre ativa.';
+    else why='Este é o melhor lance encontrado após analisar a posição. Jogue '+found.from.toUpperCase()+' → '+found.to.toUpperCase()+'.';
     document.getElementById('coach-text').textContent=why;
-    sel=found.from; legal=[{to:found.to}]; last={from:found.from,to:found.to}; render();
+    // destaca no tabuleiro
+    sel=found.from;
+    legal=[{to:found.to}];
+    last={from:found.from,to:found.to};
+    render();
   });
 }
 
