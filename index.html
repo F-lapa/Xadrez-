@@ -521,6 +521,64 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   box-shadow:0 0 0 1px rgba(91,157,255,.25), 0 12px 36px rgba(91,157,255,.12);
   transform:translateY(-1px);
 }
+.pc-avatar{
+  width:42px;height:42px;border-radius:14px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:1rem;color:#fff;overflow:hidden;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  border:2px solid rgba(255,255,255,.15);position:relative;
+}
+.pc-avatar img{width:100%;height:100%;object-fit:cover}
+.pc-avatar .crown{position:absolute;top:-10px;right:-8px;font-size:.95rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));line-height:1}
+.avatar{position:relative;overflow:visible}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.avatar .crown{position:absolute;top:-8px;right:-6px;font-size:.85rem;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
+.rank-item{display:flex;align-items:center;gap:.65rem}
+.rank-item .rank-av{
+  width:36px;height:36px;border-radius:12px;overflow:visible;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  color:#fff;font-weight:900;font-size:.9rem;flex-shrink:0;position:relative;
+  border:2px solid transparent;
+}
+.rank-item .rank-av img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.rank-item .rank-av.king{border-color:var(--gold);box-shadow:0 0 12px rgba(245,197,66,.35)}
+.rank-item .rank-av .crown{position:absolute;top:-10px;right:-8px;font-size:.9rem}
+.friends-panel{margin-top:.9rem}
+.friends-panel h3{margin:0 0 .55rem;font-size:.92rem}
+.friend-row{
+  display:flex;align-items:center;gap:.65rem;padding:.55rem .65rem;
+  border-radius:12px;border:1px solid var(--line);background:rgba(0,0,0,.16);
+  margin-bottom:.4rem;cursor:pointer
+}
+.friend-row .fr-name{font-weight:900;color:var(--text);font-size:.9rem}
+.friend-row .fr-meta{flex:1;min-width:0;font-size:.78rem;color:var(--muted)}
+.dot-on{width:8px;height:8px;border-radius:50%;background:#34d399;display:inline-block;box-shadow:0 0 8px #34d399;margin-right:.25rem}
+.dot-off{width:8px;height:8px;border-radius:50%;background:#64748b;display:inline-block;margin-right:.25rem}
+.profile-modal{max-width:min(96vw,460px)!important}
+.prof-hero{display:flex;gap:1rem;align-items:center;margin-bottom:1rem}
+.prof-avatar{
+  width:76px;height:76px;border-radius:22px;overflow:visible;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  color:#fff;font-size:1.7rem;font-weight:900;position:relative;flex-shrink:0;
+  border:2px solid rgba(255,255,255,.15);
+}
+.prof-avatar img{width:100%;height:100%;object-fit:cover;border-radius:20px}
+.prof-avatar .crown{position:absolute;top:-14px;right:-12px;font-size:1.4rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.prof-extra{
+  margin-top:.85rem;padding:.85rem;border-radius:14px;
+  background:rgba(0,0,0,.2);border:1px solid var(--line);
+  font-size:.84rem;line-height:1.55;color:var(--muted)
+}
+.prof-extra b{color:var(--text)}
+.btn-friend{
+  width:100%;margin-top:.55rem;padding:.7rem 1rem;border-radius:12px;
+  font-weight:900;border:1px solid rgba(52,211,153,.35);
+  background:rgba(52,211,153,.14);color:#6ee7b7;cursor:pointer
+}
+.btn-friend.pending{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.35);color:#fde68a}
+.btn-friend.accepted{background:rgba(91,157,255,.14);border-color:rgba(91,157,255,.35);color:#93c5fd}
 .player-card .who-wrap{flex:1;min-width:0}
 .player-card .who{
   font-weight:900;
@@ -1039,7 +1097,11 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
           </div>
           <div id="search-result" class="search-result hidden"></div>
           <div class="online-list" id="online-list"><div class="empty">Conectando ao lobby…</div></div>
-          <p class="note">Toque no jogador para ver o perfil · <strong>Desafiar</strong> se estiver online · <strong>Silenciar</strong> bloqueia desafios dele.</p>
+          <div class="friends-panel">
+            <h3>🤝 Amigos</h3>
+            <div id="friends-list"><div class="empty" style="padding:.35rem 0">Carregando…</div></div>
+          </div>
+          <p class="note">Toque no perfil · <strong>Ser amigo</strong> precisa de aceite · fotos aparecem quando o jogador está (ou esteve) online.</p>
         </div>
         <div class="card">
           <h2>🎯 Treino local</h2>
@@ -1195,6 +1257,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
         <div class="game-main">
           <div class="board-col">
           <div class="player-card" id="bar-b">
+            <div class="pc-avatar" id="av-b">?</div>
             <div class="who-wrap">
               <div class="who" id="n-b">Pretas</div>
               <div class="caps" id="caps-b"></div>
@@ -1210,6 +1273,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             </div>
           </div>
           <div class="player-card active" id="bar-w">
+            <div class="pc-avatar" id="av-w">?</div>
             <div class="who-wrap">
               <div class="who" id="n-w">Brancas</div>
               <div class="caps" id="caps-w"></div>
@@ -2033,9 +2097,41 @@ async function joinLobby(){
   lobbyCh=sb.channel('xm_lobby',{config:{presence:{key:me.name}}});
   lobbyCh.on('presence',{event:'sync'},function(){
     var state=lobbyCh.presenceState(), map={};
-    Object.keys(state).forEach(function(k){(state[k]||[]).forEach(function(p){if(p&&p.user)map[p.user]=p})});
+    Object.keys(state).forEach(function(k){(state[k]||[]).forEach(function(p){
+      if(p&&p.user){
+        map[p.user]=p;
+        if(p.avatar) cachePeerAvatar(p.user, p.avatar);
+      }
+    })});
     onlinePlayers=Object.values(map).sort(function(a,b){return (a.user||'').localeCompare(b.user||'')});
     renderOnline();
+    renderFriends();
+  });
+  lobbyCh.on('broadcast',{event:'friend_request'},function(payload){
+    var data=payload.payload||{};
+    if(data.to!==me.name||!data.from) return;
+    var r=loadFriendReqs();
+    if(isFriend(data.from)) return;
+    if(!r.in.some(function(x){return x===data.from})) r.in.push(data.from);
+    saveFriendReqs(r);
+    toast(data.from+' enviou pedido de amizade');
+    renderFriends();
+  });
+  lobbyCh.on('broadcast',{event:'friend_response'},function(payload){
+    var data=payload.payload||{};
+    if(data.to!==me.name||!data.from) return;
+    var r=loadFriendReqs();
+    r.out=r.out.filter(function(x){return x!==data.from});
+    if(data.accept){
+      var f=loadFriends();
+      if(f.indexOf(data.from)===-1) f.push(data.from);
+      saveFriends(f);
+      toast(data.from+' aceitou sua amizade');
+    } else {
+      toast(data.from+' recusou o pedido de amizade');
+    }
+    saveFriendReqs(r);
+    renderFriends();
   });
   lobbyCh.on('broadcast',{event:'challenge'},function(payload){
     var data=payload.payload||{};
@@ -2076,6 +2172,9 @@ async function setPresence(status, gid){
   if(!lobbyCh||!me)return;
   var payload={user:me.name,status:status,points:me.points||0,at:Date.now()};
   if(status==='in_game' && (gid||gameId)) payload.gameId = gid||gameId;
+  // compartilha avatar compacto para outros jogadores verem
+  var av=getPublicAvatar(me.name);
+  if(av) payload.avatar=av;
   try{await lobbyCh.track(payload)}catch(e){}
 }
 function renderOnline(){
@@ -2139,6 +2238,7 @@ async function startOnlineGame(id,opponent,color){
   openGameUI();
   document.getElementById('n-w').textContent=color==='w'?(me.name+' (você)'):oppName;
   document.getElementById('n-b').textContent=color==='b'?(me.name+' (você)'):oppName;
+  refreshGameAvatars();
   document.getElementById('btn-undo').style.display='none';
   var bd=document.getElementById('btn-draw'); if(bd) bd.classList.remove('hidden');
   document.getElementById('chat').classList.add('on');
@@ -2304,6 +2404,7 @@ async function paintAll(){
   if(!me)return;
   await reloadMe();
   paintHome();paintDash();
+  renderFriends();
   if(!document.getElementById('v-rank').classList.contains('hidden')) paintRank();
   else paintRank();
 }
@@ -2425,23 +2526,31 @@ async function paintRank(){
   try{
     var list=await dbListRanking();
     if(!list.length){el.innerHTML='<li class="empty">Nenhum jogador no banco</li>';return}
+    rankKing = list[0] ? list[0].username : '';
+    paintDashAvatar();
     if(pod){
       var medals=['gold','silver','bronze'];
       var places=['1º','2º','3º'];
       pod.innerHTML=[1,0,2].map(function(order){
-        // visual: 2º | 1º | 3º
         var i = order===1?0:order===0?1:2;
         var p=list[i];
         if(!p) return '<div class="podium-card"></div>';
-        return '<div class="podium-card '+medals[i]+'" onclick="viewPlayerProfile(\''+p.username+'\')" style="cursor:pointer" title="Ver perfil"><div class="place">'+places[i]+'</div><div class="who">'+p.username+'</div><div class="pts">'+(p.points||0)+' pts</div></div>';
+        var crown=i===0?' 👑':'';
+        return '<div class="podium-card '+medals[i]+'" onclick="viewPlayerProfile(\''+p.username+'\')" style="cursor:pointer" title="Ver perfil">'+
+          '<div style="width:48px;height:48px;border-radius:16px;overflow:hidden;margin:0 auto .4rem;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);position:relative">'+
+          avatarHtml(p.username, i===0)+'</div>'+
+          '<div class="place">'+places[i]+crown+'</div><div class="who">'+p.username+'</div><div class="pts">'+(p.points||0)+' pts</div></div>';
       }).join('');
     }
     el.innerHTML=list.map(function(p,i){
       var c=i===0?'g':i===1?'s':i===2?'b':'';
       var you=me&&p.username===me.name?' (você)':'';
+      var king=i===0;
       return '<li class="rank-item" onclick="viewPlayerProfile(\''+p.username+'\')" title="Ver estatísticas de '+p.username+'">'+
-        '<span class="pos '+c+'">'+(i+1)+'</span><span class="nm">'+p.username+you+
-        '</span><span class="el">'+(p.points||0)+' pts</span></li>';
+        '<span class="pos '+c+'">'+(i+1)+'</span>'+
+        '<span class="rank-av'+(king?' king':'')+'">'+avatarHtml(p.username, king)+'</span>'+
+        '<span class="nm" style="flex:1">'+(king?'👑 ':'')+p.username+you+'</span>'+
+        '<span class="el">'+(p.points||0)+' pts</span></li>';
     }).join('');
   }catch(e){
     el.innerHTML='<li class="empty">Erro ao carregar ranking. Confira a tabela players.</li>';
@@ -2857,6 +2966,7 @@ function startLocal(m){
   if(m==='ai'){document.getElementById('n-w').textContent=me.name+' (você)';document.getElementById('n-b').textContent='Computador · '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');document.getElementById('chat').classList.remove('on')}
   else{document.getElementById('n-w').textContent='Brancas';document.getElementById('n-b').textContent='Pretas';document.getElementById('chat').classList.add('on');
   chatMsgs=[{who:'Sistema',text:'Chat local.'}];renderChat()}
+  refreshGameAvatars();
   setupCoach();render();status();movesUI();updateCaps();initClocks();saveActiveGame();
 }
 function startPuzzle(){
@@ -2952,6 +3062,7 @@ function nextPuzzle(){
   loadPuzzle(puzzleIdx+1);
 }
 function openGameUI(){
+  refreshGameAvatars();
   applyPrefs();
   ['v-home','v-dash','v-rank','v-settings'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.add('hidden')});
   document.getElementById('game').style.display='block';
@@ -3495,6 +3606,7 @@ function startReview(g){
   var bd=document.getElementById('btn-draw'); if(bd) bd.classList.add('hidden');
   document.getElementById('n-w').textContent = (myColor==='w'?(me?me.name:'Você'):(oppName||'Brancas'));
   document.getElementById('n-b').textContent = (myColor==='b'?(me?me.name:'Você'):(oppName||'Pretas'));
+  refreshGameAvatars();
   document.getElementById('chat').classList.remove('on');
   // Coach NUNCA aparece na revisão
   var coachEl=document.getElementById('coach');
@@ -3585,9 +3697,13 @@ function movesUIReview(){
   box.scrollTop=box.scrollHeight;
 }
 
-/* ===== AVATAR / MUTE / BUSCA ===== */
+/* ===== AVATAR / MUTE / BUSCA / AMIZADES ===== */
 const MUTE_KEY='xm_muted_v1';
 const AVATAR_KEY='xm_avatar_';
+const PEER_AV_KEY='xm_peer_av_';
+const FRIENDS_KEY='xm_friends_v1';
+const FRIEND_REQ_KEY='xm_friend_req_v1';
+let rankKing=''; // líder do ranking (coroa)
 function loadMuted(){
   try{ return JSON.parse(localStorage.getItem(MUTE_KEY)||'[]'); }catch(e){ return []; }
 }
@@ -3611,7 +3727,18 @@ function toggleMute(user){
   if(sr && !sr.classList.contains('hidden')) searchUser();
 }
 function getAvatarData(user){
-  try{ return localStorage.getItem(AVATAR_KEY+(user||''))||''; }catch(e){ return ''; }
+  if(!user) return '';
+  try{
+    // próprio avatar (HD) ou cache de outros jogadores
+    if(me && user===me.name) return localStorage.getItem(AVATAR_KEY+user)||'';
+    return localStorage.getItem(PEER_AV_KEY+user)||localStorage.getItem(AVATAR_KEY+user)||'';
+  }catch(e){ return ''; }
+}
+function getPublicAvatar(user){
+  // versão compacta para presença (preferência public_)
+  try{
+    return localStorage.getItem(AVATAR_KEY+'public_'+user)||getAvatarData(user)||'';
+  }catch(e){ return ''; }
 }
 function setAvatarData(user, dataUrl){
   try{
@@ -3620,61 +3747,64 @@ function setAvatarData(user, dataUrl){
     return true;
   }catch(e){ return false; }
 }
-function avatarHtml(user){
+function cachePeerAvatar(user, dataUrl){
+  if(!user||!dataUrl||!dataUrl.indexOf||dataUrl.indexOf('data:image')!==0) return;
+  try{ localStorage.setItem(PEER_AV_KEY+user, dataUrl); }catch(e){}
+}
+function avatarHtml(user, withCrown){
   var data=getAvatarData(user);
-  if(data) return '<img src="'+data+'" alt=""/>';
-  return escapeHtml((user||'?')[0].toUpperCase());
+  var crown=(withCrown||(rankKing&&user===rankKing))?'<span class="crown" title="Rei do ranking">👑</span>':'';
+  if(data) return '<img src="'+data+'" alt=""/>'+crown;
+  return escapeHtml((user||'?')[0].toUpperCase())+crown;
 }
 function paintDashAvatar(){
   var av=document.getElementById('dash-avatar');
   if(!av||!me) return;
   var data=getAvatarData(me.name);
+  var crown=(rankKing&&me.name===rankKing)?'<span class="crown" style="position:absolute;top:-10px;right:-8px;font-size:1.1rem">👑</span>':'';
   if(data){
-    av.innerHTML='<img src="'+data+'" alt=""/><span class="av-edit">📷 Foto</span>';
+    av.innerHTML='<img src="'+data+'" alt=""/>'+crown+'<span class="av-edit">📷 Foto</span>';
   } else {
-    av.innerHTML=escapeHtml((me.name||'?')[0].toUpperCase())+'<span class="av-edit">📷 Foto</span>';
+    av.innerHTML=escapeHtml((me.name||'?')[0].toUpperCase())+crown+'<span class="av-edit">📷 Foto</span>';
   }
 }
 function pickAvatar(){
   var f=document.getElementById('avatar-file');
   if(f) f.click();
 }
+function makeSquareJpeg(img, size, quality){
+  var c=document.createElement('canvas');
+  c.width=size; c.height=size;
+  var ctx=c.getContext('2d');
+  var s=Math.min(img.width, img.height);
+  var sx=(img.width-s)/2, sy=(img.height-s)/2;
+  ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
+  return c.toDataURL('image/jpeg', quality);
+}
 function onAvatarFile(ev){
   var file=ev.target && ev.target.files && ev.target.files[0];
   if(!file||!me) return;
-  // Aceita fotos grandes (até 20 MB); o sistema compacta sozinho
   if(file.size>20*1024*1024){ toast('Arquivo muito grande. Máximo 20 MB.'); return; }
   toast('Processando foto…');
   var reader=new FileReader();
   reader.onload=function(){
     var img=new Image();
     img.onload=function(){
-      // recorte central em quadrado + compactação automática
-      var size=512;
-      var c=document.createElement('canvas');
-      c.width=size; c.height=size;
-      var ctx=c.getContext('2d');
-      var s=Math.min(img.width, img.height);
-      var sx=(img.width-s)/2, sy=(img.height-s)/2;
-      ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
-      // tenta qualidades até caber no armazenamento local
-      var quals=[0.92, 0.85, 0.75, 0.65, 0.55];
       var ok=false;
+      var quals=[0.9, 0.8, 0.7, 0.6];
       for(var i=0;i<quals.length;i++){
-        var dataUrl=c.toDataURL('image/jpeg', quals[i]);
-        if(setAvatarData(me.name, dataUrl)){ ok=true; break; }
+        if(setAvatarData(me.name, makeSquareJpeg(img, 512, quals[i]))){ ok=true; break; }
       }
-      if(!ok){
-        // último recurso: 256px
-        var c2=document.createElement('canvas');
-        c2.width=256; c2.height=256;
-        c2.getContext('2d').drawImage(c, 0, 0, 256, 256);
-        ok=setAvatarData(me.name, c2.toDataURL('image/jpeg', 0.7));
-      }
+      if(!ok) ok=setAvatarData(me.name, makeSquareJpeg(img, 256, 0.7));
+      // versão pública compacta (para outros jogadores via presença)
+      try{
+        localStorage.setItem(AVATAR_KEY+'public_'+me.name, makeSquareJpeg(img, 128, 0.65));
+      }catch(e){}
       if(ok){
         paintDashAvatar();
         renderOnline();
-        toast('Foto de perfil atualizada');
+        setPresence(presenceStatus||'available'); // reenvia avatar aos online
+        toast('Foto atualizada · outros jogadores verão quando você estiver online');
       } else {
         toast('Não coube no armazenamento local. Tente outra imagem.');
       }
@@ -3685,6 +3815,117 @@ function onAvatarFile(ev){
   reader.onerror=function(){ toast('Falha ao abrir o arquivo'); };
   reader.readAsDataURL(file);
   ev.target.value='';
+}
+function playerKeyFromLabel(label){
+  if(!label) return '';
+  // "fernandolapa (você)" → fernandolapa
+  var s=String(label).replace(/\s*\(você\)\s*/i,'').trim();
+  if(/^computador/i.test(s)) return 'Computador';
+  if(s==='Brancas'||s==='Pretas'||s==='Adversário'||s==='Você') return s;
+  return s;
+}
+function setGameAvatars(nameW, nameB){
+  var aw=document.getElementById('av-w'), ab=document.getElementById('av-b');
+  var kw=playerKeyFromLabel(nameW), kb=playerKeyFromLabel(nameB);
+  if(aw) aw.innerHTML=avatarHtml(kw||'?', rankKing&&kw===rankKing);
+  if(ab) ab.innerHTML=avatarHtml(kb||'?', rankKing&&kb===rankKing);
+}
+function refreshGameAvatars(){
+  var nw=document.getElementById('n-w'), nb=document.getElementById('n-b');
+  setGameAvatars(nw?nw.textContent:'', nb?nb.textContent:'');
+}
+/* Amizades (pedido + aceite; lista local + broadcast no lobby) */
+function friendsStorageKey(){ return FRIENDS_KEY+(me?me.name:''); }
+function friendReqStorageKey(){ return FRIEND_REQ_KEY+(me?me.name:''); }
+function loadFriends(){
+  try{ return JSON.parse(localStorage.getItem(friendsStorageKey())||'[]'); }catch(e){ return []; }
+}
+function saveFriends(list){ try{ localStorage.setItem(friendsStorageKey(), JSON.stringify(list)); }catch(e){} }
+function loadFriendReqs(){
+  try{ return Object.assign({in:[],out:[]}, JSON.parse(localStorage.getItem(friendReqStorageKey())||'{}')); }
+  catch(e){ return {in:[],out:[]}; }
+}
+function saveFriendReqs(r){ try{ localStorage.setItem(friendReqStorageKey(), JSON.stringify(r)); }catch(e){} }
+function isFriend(user){
+  if(!user) return false;
+  var u=String(user).toLowerCase();
+  return loadFriends().some(function(x){ return String(x).toLowerCase()===u; });
+}
+function friendStatus(user){
+  if(isFriend(user)) return 'friends';
+  var r=loadFriendReqs();
+  if(r.out.some(function(x){return String(x).toLowerCase()===String(user).toLowerCase()})) return 'outgoing';
+  if(r.in.some(function(x){return String(x).toLowerCase()===String(user).toLowerCase()})) return 'incoming';
+  return 'none';
+}
+function sendFriendRequest(user){
+  if(!me||!user||user===me.name) return;
+  if(isFriend(user)) return toast('Vocês já são amigos');
+  var r=loadFriendReqs();
+  if(!r.out.some(function(x){return x===user})) r.out.push(user);
+  saveFriendReqs(r);
+  if(lobbyCh){
+    lobbyCh.send({type:'broadcast',event:'friend_request',payload:{from:me.name,to:user}});
+  }
+  toast('Pedido de amizade enviado para '+user);
+  viewPlayerProfile(user);
+}
+function respondFriendRequest(from, accept){
+  var r=loadFriendReqs();
+  r.in=r.in.filter(function(x){return x!==from});
+  if(accept){
+    var f=loadFriends();
+    if(f.indexOf(from)===-1) f.push(from);
+    saveFriends(f);
+    r.out=r.out.filter(function(x){return x!==from});
+  }
+  saveFriendReqs(r);
+  if(lobbyCh){
+    lobbyCh.send({type:'broadcast',event:'friend_response',payload:{from:me.name,to:from,accept:!!accept}});
+  }
+  toast(accept?(from+' agora é seu amigo'):('Pedido de '+from+' recusado'));
+  renderFriends();
+  closePlayerProfile();
+}
+function removeFriend(user){
+  saveFriends(loadFriends().filter(function(x){return x!==user}));
+  toast(user+' removido dos amigos');
+  renderFriends();
+  viewPlayerProfile(user);
+}
+function renderFriends(){
+  var box=document.getElementById('friends-list');
+  if(!box||!me) return;
+  var friends=loadFriends();
+  var reqs=loadFriendReqs();
+  var html='';
+  if(reqs.in.length){
+    html+='<div style="margin-bottom:.55rem;font-size:.8rem;color:var(--gold);font-weight:800">Pedidos recebidos</div>';
+    reqs.in.forEach(function(u){
+      html+='<div class="friend-row">'+
+        '<div class="avatar" style="width:36px;height:36px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;font-weight:900">'+avatarHtml(u)+'</div>'+
+        '<div class="fr-meta"><div class="fr-name">'+escapeHtml(u)+'</div>quer ser seu amigo</div>'+
+        '<button type="button" class="badge ok" onclick="event.stopPropagation();respondFriendRequest(\''+u+'\',true)">Aceitar</button>'+
+        '<button type="button" class="badge mute" onclick="event.stopPropagation();respondFriendRequest(\''+u+'\',false)">Recusar</button></div>';
+    });
+  }
+  if(!friends.length && !reqs.in.length){
+    html+='<div class="empty" style="padding:.5rem 0">Nenhum amigo ainda. Peça amizade no perfil de alguém.</div>';
+  } else {
+    friends.forEach(function(u){
+      var online=onlinePlayers.find(function(p){return p.user===u});
+      var st=online
+        ? (online.status==='in_game'?'Em partida':'Online')
+        : 'Offline';
+      var dot=online?'<span class="dot-on"></span>':'<span class="dot-off"></span>';
+      html+='<div class="friend-row" onclick="viewPlayerProfile(\''+u+'\')">'+
+        '<div class="avatar" style="width:36px;height:36px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;font-weight:900">'+avatarHtml(u)+'</div>'+
+        '<div class="fr-meta"><div class="fr-name">'+escapeHtml(u)+'</div>'+dot+st+'</div>'+
+        (online&&online.status!=='in_game'?'<span class="badge ok" onclick="event.stopPropagation();challengePlayer(\''+u+'\')">⚔️</span>':'')+
+        '</div>';
+    });
+  }
+  box.innerHTML=html;
 }
 async function searchUser(){
   var inp=document.getElementById('user-search');
@@ -3759,22 +4000,36 @@ async function viewPlayerProfile(username){
     var wr = games? Math.round(wins/games*100) : 0;
     var isYou = me && me.name===username;
     var online=onlinePlayers.find(function(o){ return o.user===username; });
+    if(online && online.avatar) cachePeerAvatar(username, online.avatar);
     var statusHtml = online
-      ? (online.status==='in_game'?'<span class="badge busy">Em partida</span>':'<span class="badge ok">Online</span>')
+      ? (online.status==='in_game'?'<span class="badge busy">Em partida</span>':'<span class="badge ok">Online agora</span>')
       : '<span class="badge busy">Offline</span>';
     var muted=isMuted(username);
+    var king = rankKing && rankKing===username;
+    var fs=friendStatus(username);
     title.textContent = isYou ? 'Seu perfil' : 'Perfil de '+username;
+    var created = row.created_at ? new Date(row.created_at).toLocaleDateString('pt-BR') : '—';
+    var train = row.train_games||0;
+    var ratio = losses? (wins/Math.max(1,losses)).toFixed(2) : (wins? '∞' : '0');
     var actions='';
     if(!isYou){
       if(online && online.status!=='in_game') actions+='<button type="button" class="btn-main" style="margin-top:.7rem" onclick="closePlayerProfile();challengePlayer(\''+username+'\')">⚔️ Desafiar</button>';
+      if(fs==='friends') actions+='<button type="button" class="btn-friend accepted" onclick="removeFriend(\''+username+'\')">✓ Amigos · remover</button>';
+      else if(fs==='outgoing') actions+='<button type="button" class="btn-friend pending" disabled>⏳ Pedido enviado</button>';
+      else if(fs==='incoming') actions+='<button type="button" class="btn-friend" onclick="respondFriendRequest(\''+username+'\',true)">✓ Aceitar amizade</button>'+
+        '<button type="button" class="btn-soft" style="width:100%;margin-top:.35rem" onclick="respondFriendRequest(\''+username+'\',false)">Recusar</button>';
+      else actions+='<button type="button" class="btn-friend" onclick="sendFriendRequest(\''+username+'\')">🤝 Ser amigo</button>';
       actions+='<button type="button" class="btn-soft" style="margin-top:.5rem;width:100%" onclick="toggleMute(\''+username+'\');viewPlayerProfile(\''+username+'\')">'+(muted?'🔊 Dessilenciar':'🔇 Silenciar desafios')+'</button>';
     }
     body.innerHTML =
       '<div class="prof-hero">'+
-        '<div class="prof-avatar" style="overflow:hidden">'+avatarHtml(username)+'</div>'+
-        '<div><div class="prof-name">'+escapeHtml(username)+(isYou?' (você)':'')+'</div>'+
-        '<div class="prof-pts">'+(row.points||0)+' pts</div>'+
-        '<div style="margin-top:.35rem">'+statusHtml+(muted?' · 🔇 silenciado':'')+'</div></div>'+
+        '<div class="prof-avatar">'+avatarHtml(username, king)+'</div>'+
+        '<div><div class="prof-name">'+escapeHtml(username)+(isYou?' (você)':'')+(king?' · Rei 👑':'')+'</div>'+
+        '<div class="prof-pts">'+(row.points||0)+' pontos</div>'+
+        '<div style="margin-top:.4rem;display:flex;flex-wrap:wrap;gap:.35rem;align-items:center">'+statusHtml+
+        (fs==='friends'?'<span class="badge ok">Amigo</span>':'')+
+        (muted?'<span class="badge mute">Silenciado</span>':'')+
+        '</div></div>'+
       '</div>'+
       '<div class="prof-grid">'+
         '<div class="prof-stat"><b>'+wins+'</b><span>Vitórias</span></div>'+
@@ -3782,12 +4037,20 @@ async function viewPlayerProfile(username){
         '<div class="prof-stat"><b>'+losses+'</b><span>Derrotas</span></div>'+
         '<div class="prof-stat"><b>'+games+'</b><span>Partidas</span></div>'+
         '<div class="prof-stat"><b>'+wr+'%</b><span>Taxa vitória</span></div>'+
-        '<div class="prof-stat"><b>'+(row.puzzles_solved||0)+'</b><span>Puzzles</span></div>'+
+        '<div class="prof-stat"><b>'+ratio+'</b><span>V/D</span></div>'+
         '<div class="prof-stat"><b>'+(row.streak||0)+'</b><span>Seq. atual</span></div>'+
         '<div class="prof-stat"><b>'+(row.best_streak||0)+'</b><span>Melhor seq.</span></div>'+
+        '<div class="prof-stat"><b>'+train+'</b><span>Treinos PC</span></div>'+
+        '<div class="prof-stat"><b>'+(row.puzzles_solved||0)+'</b><span>Puzzles</span></div>'+
       '</div>'+
-      actions+
-      (isYou?'<p class="note" style="margin-top:.85rem">Toque no avatar do Dashboard para mudar sua foto. Pontos só mudam após partidas online, vs PC ou puzzles.</p>':'');
+      '<div class="prof-extra">'+
+        '<div>📅 Membro desde <b>'+created+'</b></div>'+
+        '<div>🏆 Pontuação no ranking: <b>'+(row.points||0)+' pts</b>'+(king?' · <b>líder atual</b>':'')+'</div>'+
+        '<div>📊 Aproveitamento: <b>'+wr+'%</b> em <b>'+games+'</b> jogos online</div>'+
+        (fs==='friends'?'<div>🤝 Vocês são amigos — status online sincronizado na lista de amigos</div>':'')+
+        (isYou?'<div>📷 Toque no avatar do Dashboard para mudar sua foto (visível aos outros quando você estiver online)</div>':'')+
+      '</div>'+
+      actions;
   }catch(e){
     body.innerHTML='<p style="color:var(--muted)">Erro ao carregar perfil. Verifique a conexão.</p>';
   }
