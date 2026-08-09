@@ -1079,18 +1079,26 @@ function initMasterEngine(){
 function engineBestMove(fen, depth, movetime, cb, skill){
   initMasterEngine();
   if(!sfWorker){ cb(null); return; }
-  if(sfBusy){ cb(null); return; }
+  // interrompe busca anterior para resposta mais rápida
+  if(sfBusy){
+    try{ sfWorker.postMessage('stop'); }catch(e){}
+    sfBusy=false; sfCb=null;
+    if(sfTimer){ clearTimeout(sfTimer); sfTimer=null; }
+  }
   sfBusy=true; sfCb=cb;
   if(sfTimer) clearTimeout(sfTimer);
+  var wait = (movetime||2000) + 1200;
   sfTimer=setTimeout(function(){
-    if(sfCb===cb){ sfCb=null; sfBusy=false; cb(null); }
-  }, (movetime||4000)+2500);
+    if(sfCb===cb){
+      try{ sfWorker.postMessage('stop'); }catch(e){}
+      sfCb=null; sfBusy=false; cb(null);
+    }
+  }, wait);
   try{
     sfWorker.postMessage('ucinewgame');
     if(typeof skill === 'number'){
       var sk = Math.max(0, Math.min(20, skill|0));
       sfWorker.postMessage('setoption name Skill Level value ' + sk);
-      // valores clássicos para tornar Skill Level efetivo em builds antigas
       var maxErr = Math.round(200 - sk * 9);
       var prob = Math.round(128 - sk * 4);
       sfWorker.postMessage('setoption name Skill Level Maximum Error value ' + Math.max(1, maxErr));
@@ -1098,7 +1106,7 @@ function engineBestMove(fen, depth, movetime, cb, skill){
     }
     sfWorker.postMessage('position fen '+fen);
     if(movetime) sfWorker.postMessage('go movetime '+movetime);
-    else sfWorker.postMessage('go depth '+(depth||12));
+    else sfWorker.postMessage('go depth '+(depth||14));
   }catch(e){ sfBusy=false; sfCb=null; cb(null); }
 }
 function uciToParts(uci){
@@ -1786,11 +1794,11 @@ function coachBest(auto){
     return;
   }
   document.getElementById('coach-move').textContent='…';
-  document.getElementById('coach-text').textContent='Calculando a jogada perfeita (força máxima)…';
+  document.getElementById('coach-text').textContent='Calculando a jogada perfeita…';
   initMasterEngine();
   var fen=chess.fen();
-  // FORÇA MÁXIMA — Skill Level 20 + análise profunda (apenas jogadas perfeitas)
-  engineBestMove(fen, 22, 5500, function(uci){
+  // Skill 20 (perfeito) + tempo curto ≈ resposta rápida e ainda força de GM
+  engineBestMove(fen, 16, 1600, function(uci){
     var found=null;
     var parts=uciToParts(uci);
     if(parts){
