@@ -546,17 +546,32 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 .board-frame.show-coords .cell .coord{display:block}
 .board-frame:not(.show-coords) .cell .coord{display:none}
 
-/* Drag ghost */
+/* Drag ghost — tamanho fixo pela casa, sem crescer no toque */
 .drag-ghost{
   position:fixed;
-  width:64px; height:64px;
-  pointer-events:none;
-  z-index:200;
-  transform:translate(-50%,-50%) scale(1.12);
-  filter:drop-shadow(0 8px 16px rgba(0,0,0,.5));
-  opacity:.95;
+  pointer-events:none !important;
+  z-index:500;
+  transform:translate(-50%,-50%);
+  filter:drop-shadow(0 6px 10px rgba(0,0,0,.45));
+  opacity:.98;
+  margin:0;
+  padding:0;
+  touch-action:none;
+  will-change:left, top;
 }
-.drag-ghost img{width:100%;height:100%;object-fit:contain}
+.drag-ghost img{
+  width:100% !important;
+  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
+  object-fit:contain;
+  display:block;
+  pointer-events:none;
+  -webkit-user-drag:none;
+  user-select:none;
+}
+#board{touch-action:none; -webkit-user-select:none; user-select:none}
+.cell{touch-action:none}
 .cell.drag-over{outline:3px solid rgba(52,211,153,.7); outline-offset:-3px}
 
 /* Análise fim de jogo */
@@ -2708,6 +2723,7 @@ function setupCoach(){
   document.getElementById('coach-text').textContent='Análise de elite · apenas jogadas perfeitas. Clique para a melhor linha.';
 }
 function render(){
+  clearDragGhosts();
   var board=document.getElementById('board');board.innerHTML='';
   var files=['a','b','c','d','e','f','g','h'];
   var flip = boardFlipped || (mode==='online' && myColor==='b');
@@ -2721,24 +2737,59 @@ function render(){
     if(p){
       var pel=makePieceEl(p.color, p.type, !!(last&&last.to===sq));
       cell.appendChild(pel);
-      // drag & drop
+      // drag & drop (toque seguro)
       (function(s, pieceEl, pieceObj){
         cell.addEventListener('pointerdown', function(e){
           if(!chess||chess.game_over()||mode==='spectate') return;
           if((mode==='ai'||mode==='online')&&chess.turn()!==myColor) return;
           if(pieceObj.color!==chess.turn()) return;
+          if(e.button!=null && e.button!==0) return;
           e.preventDefault();
-          pick(s);
+          e.stopPropagation();
+          // limpa qualquer ghost antigo
+          clearDragGhosts();
+          sel=s;
+          legal=chess.moves({square:s,verbose:true});
+          // destaca sem rebuild completo (evita sumir a peça durante o arraste)
+          document.querySelectorAll('#board .cell').forEach(function(c){
+            c.classList.remove('sel','cap');
+            c.querySelectorAll('.dot,.ring').forEach(function(x){x.remove()});
+          });
+          cell.classList.add('sel');
+          legal.forEach(function(mv){
+            var tc=document.querySelector('#board .cell[data-sq="'+mv.to+'"]');
+            if(!tc) return;
+            if(chess.get(mv.to)){
+              tc.classList.add('cap');
+              var ring=document.createElement('span'); ring.className='ring'; tc.appendChild(ring);
+            } else {
+              var dot=document.createElement('span'); dot.className='dot'; tc.appendChild(dot);
+            }
+          });
+          var rect=cell.getBoundingClientRect();
+          var size=Math.max(28, Math.min(rect.width, rect.height)*0.9);
           var ghost=document.createElement('div');
           ghost.className='drag-ghost';
+          ghost.style.width=size+'px';
+          ghost.style.height=size+'px';
+          ghost.style.left=e.clientX+'px';
+          ghost.style.top=e.clientY+'px';
           var url=pieceImgUrl(pieceObj.color, pieceObj.type);
-          if(url) ghost.innerHTML='<img src="'+url+'"/>';
-          else ghost.textContent=GL[pieceObj.color+pieceObj.type]||'';
+          if(url){
+            var img=document.createElement('img');
+            img.src=url; img.alt=''; img.draggable=false;
+            ghost.appendChild(img);
+          } else {
+            ghost.textContent=GL[pieceObj.color+pieceObj.type]||'';
+            ghost.style.fontSize=(size*0.75)+'px';
+            ghost.style.display='flex';
+            ghost.style.alignItems='center';
+            ghost.style.justifyContent='center';
+          }
           document.body.appendChild(ghost);
-          ghost.style.left=e.clientX+'px'; ghost.style.top=e.clientY+'px';
-          if(pieceEl.style) pieceEl.style.opacity='0.35';
-          dragState={from:s, ghost:ghost, pieceEl:pieceEl};
-          cell.setPointerCapture && cell.setPointerCapture(e.pointerId);
+          pieceEl.style.opacity='0.25';
+          dragState={from:s, ghost:ghost, pieceEl:pieceEl, pointerId:e.pointerId, size:size};
+          try{ cell.setPointerCapture(e.pointerId); }catch(err){}
         });
       })(sq, pel, p);
     }
@@ -2771,16 +2822,16 @@ function squareFromPoint(x,y){
   }
   return null;
 }
-document.addEventListener('pointermove', function(e){
-  if(!dragState||!dragState.ghost) return;
-  dragState.ghost.style.left=e.clientX+'px';
-  dragState.ghost.style.top=e.clientY+'px';
-});
-document.addEventListener('pointerup', function(e){
+function clearDragGhosts(){
+  document.querySelectorAll('.drag-ghost').forEach(function(g){
+    if(g.parentNode) g.parentNode.removeChild(g);
+  });
+}
+function endDrag(e){
   if(!dragState) return;
-  var to=squareFromPoint(e.clientX, e.clientY);
-  var from=dragState.from;
-  if(dragState.ghost && dragState.ghost.parentNode) dragState.ghost.parentNode.removeChild(dragState.ghost);
+  var to = e ? squareFromPoint(e.clientX, e.clientY) : null;
+  var from = dragState.from;
+  clearDragGhosts();
   if(dragState.pieceEl && dragState.pieceEl.style) dragState.pieceEl.style.opacity='';
   dragState=null;
   if(to && from && to!==from){
@@ -2790,11 +2841,26 @@ document.addEventListener('pointerup', function(e){
       if(mv.flags&&mv.flags.indexOf('p')!==-1){
         pend={from:from,to:to}; paintPromoButtons();
         document.getElementById('ov-promo').style.display='flex';
-      } else play(from,to);
+        render();
+      } else {
+        play(from,to);
+      }
       return;
     }
   }
   sel=null; legal=[]; render();
+}
+document.addEventListener('pointermove', function(e){
+  if(!dragState||!dragState.ghost) return;
+  e.preventDefault();
+  dragState.ghost.style.left=e.clientX+'px';
+  dragState.ghost.style.top=e.clientY+'px';
+}, {passive:false});
+document.addEventListener('pointerup', endDrag);
+document.addEventListener('pointercancel', endDrag);
+document.addEventListener('pointerleave', function(e){
+  // se o ponteiro sair da janela no meio do arraste, finaliza
+  if(dragState && (e.target===document.documentElement || e.target===document.body)) endDrag(e);
 });
 function click(sq){
   if(!chess||chess.game_over()||mode==='spectate')return;
@@ -2814,19 +2880,31 @@ function cellRect(sq){
   return cell.getBoundingClientRect();
 }
 function animateSlide(from, to, color, type, cb){
+  clearDragGhosts();
   var r0=cellRect(from), r1=cellRect(to);
   if(!r0 || !r1){ if(cb) cb(); return; }
-  var size=Math.min(r0.width, r0.height)*0.88;
+  var size=Math.max(24, Math.min(r0.width, r0.height)*0.88);
   var el=document.createElement('div');
   el.className='slide-piece';
-  el.style.width=size+'px'; el.style.height=size+'px';
+  el.style.width=size+'px';
+  el.style.height=size+'px';
+  el.style.boxSizing='border-box';
   var url=pieceImgUrl(color, type);
-  if(url) el.innerHTML='<img src="'+url+'" alt=""/>';
-  else { el.textContent=GL[color+type]||''; el.style.fontSize=(size*0.8)+'px'; el.style.display='flex'; el.style.alignItems='center'; el.style.justifyContent='center'; }
+  if(url){
+    var img=document.createElement('img');
+    img.src=url; img.alt=''; img.draggable=false;
+    img.style.width='100%'; img.style.height='100%'; img.style.objectFit='contain';
+    el.appendChild(img);
+  } else {
+    el.textContent=GL[color+type]||'';
+    el.style.fontSize=(size*0.75)+'px';
+    el.style.display='flex';
+    el.style.alignItems='center';
+    el.style.justifyContent='center';
+  }
   el.style.left=(r0.left + r0.width/2 - size/2)+'px';
   el.style.top=(r0.top + r0.height/2 - size/2)+'px';
   document.body.appendChild(el);
-  // force reflow then move
   el.offsetHeight;
   el.style.left=(r1.left + r1.width/2 - size/2)+'px';
   el.style.top=(r1.top + r1.height/2 - size/2)+'px';
@@ -2834,10 +2912,12 @@ function animateSlide(from, to, color, type, cb){
   function finish(){
     if(done) return; done=true;
     if(el.parentNode) el.parentNode.removeChild(el);
+    // remove qualquer slide residual
+    document.querySelectorAll('.slide-piece').forEach(function(n){ if(n.parentNode) n.parentNode.removeChild(n); });
     if(cb) cb();
   }
   el.addEventListener('transitionend', finish);
-  setTimeout(finish, 280);
+  setTimeout(finish, 260);
 }
 function play(from,to,pr){
   var before=chess.get(from);
