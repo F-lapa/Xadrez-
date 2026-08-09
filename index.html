@@ -746,9 +746,55 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 .moves-box .row{margin-bottom:.15rem}
 .moves-box .n{color:var(--muted); margin-right:.3rem; font-weight:700}
 
-/* ===== COACH PREMIUM ===== */
+/* Board / piece visual swatches */
+.board-swatches,.piece-swatches{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:.55rem;
+}
+@media(max-width:520px){.board-swatches,.piece-swatches{grid-template-columns:repeat(3,1fr)}}
+.board-swatch,.piece-swatch{
+  border:2px solid transparent;
+  border-radius:14px;
+  padding:.35rem;
+  background:rgba(0,0,0,.22);
+  cursor:pointer;
+  transition:transform .15s, border-color .15s, box-shadow .15s;
+  text-align:center;
+}
+.board-swatch:hover,.piece-swatch:hover{transform:translateY(-2px);border-color:rgba(91,157,255,.45)}
+.board-swatch.on,.piece-swatch.on{
+  border-color:var(--blue);
+  box-shadow:0 0 0 2px rgba(91,157,255,.25), 0 8px 20px rgba(91,157,255,.15);
+  background:rgba(91,157,255,.12);
+}
+.board-mini{
+  width:100%;aspect-ratio:1;border-radius:8px;overflow:hidden;
+  display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.25);
+}
+.board-mini i{display:block}
+.board-swatch .lbl,.piece-swatch .lbl{
+  display:block;margin-top:.35rem;font-size:.68rem;font-weight:800;color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.board-swatch.on .lbl,.piece-swatch.on .lbl{color:var(--text)}
+.piece-swatch .piece-preview{
+  width:100%;aspect-ratio:1;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;gap:2px;
+  background:linear-gradient(135deg,#f0d9b5 50%,#b58863 50%);
+  padding:.25rem;
+}
+.piece-swatch .piece-preview img{
+  width:42%;height:42%;object-fit:contain;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));
+}
+
+/* ===== COACH PREMIUM (só mestre · no rodapé da coluna) ===== */
 #coach{
   display:none;
+  order:99;
+  margin-top:.35rem;
   background:
     linear-gradient(165deg, rgba(72,48,10,.98), rgba(18,16,28,.98)) !important;
   border:1px solid rgba(245,197,66,.45) !important;
@@ -757,6 +803,12 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   box-shadow:0 16px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(245,197,66,.08) inset;
   position:relative;
   overflow:hidden;
+}
+.game-side{display:flex;flex-direction:column;gap:.7rem}
+.review-bar .btn-back{
+  background:linear-gradient(135deg,var(--blue),var(--violet))!important;
+  color:#fff!important;border:none!important;
+  font-weight:900;
 }
 #coach::before{
   content:'';
@@ -894,7 +946,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   .game-main{order:1}
   .board-hero{width:min(96vw, 520px)}
   .player-card, .game-actions{width:min(96vw, 520px)}
-  #coach{order:-1}
+  #coach{order:99} /* mestre: coach fica no final, discreto */
 }
 
 </style>
@@ -1052,7 +1104,8 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             </div>
             <div>
               <label>Estilo do tabuleiro</label>
-              <select id="sel-board" onchange="setBoardTheme(this.value)">
+              <div class="board-swatches" id="board-swatches"></div>
+              <select id="sel-board" class="hidden" onchange="setBoardTheme(this.value)">
                 <option value="classic">Clássico madeira</option>
                 <option value="chesscom">Verde clássico</option>
                 <option value="emerald">Esmeralda</option>
@@ -1069,7 +1122,8 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             </div>
             <div>
               <label>Conjunto de peças</label>
-              <select id="sel-pieces" onchange="setPieceTheme(this.value)">
+              <div class="piece-swatches" id="piece-swatches"></div>
+              <select id="sel-pieces" class="hidden" onchange="setPieceTheme(this.value)">
                 <option value="wikipedia">Wikipedia</option>
                 <option value="cburnett">Cburnett</option>
                 <option value="alpha">Alpha</option>
@@ -1149,16 +1203,6 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             <div id="opening-next" class="opening-next"></div>
           </div>
 
-          <div id="coach">
-            <h3>♛ Coach Supremo</h3>
-            <div id="coach-move">—</div>
-            <div id="coach-text">Análise de elite · apenas jogadas perfeitas.</div>
-            <div class="coach-btns">
-              <button type="button" class="btn-gold" onclick="coachBest()">✦ Jogada perfeita</button>
-              <button type="button" class="btn-soft" onclick="coachPlan()">Plano de jogo</button>
-            </div>
-          </div>
-
           <div class="side-card">
             <h3>📜 Lances</h3>
             <div class="moves-box moves" id="moves"></div>
@@ -1170,6 +1214,17 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             <div class="form chat-form">
               <input id="chat-in" placeholder="Mensagem..." maxlength="120"/>
               <button type="button" onclick="sendChat()">Enviar</button>
+            </div>
+          </div>
+
+          <!-- Coach exclusivo do mestre — no final da coluna, discreto -->
+          <div id="coach">
+            <h3>♛ Coach Supremo</h3>
+            <div id="coach-move">—</div>
+            <div id="coach-text">Análise de elite · apenas jogadas perfeitas.</div>
+            <div class="coach-btns">
+              <button type="button" class="btn-gold" onclick="coachBest()">✦ Jogada perfeita</button>
+              <button type="button" class="btn-soft" onclick="coachPlan()">Plano de jogo</button>
             </div>
           </div>
         </div>
@@ -1604,6 +1659,49 @@ function loadPrefs(){
   applyPrefs();
 }
 function savePrefs(){localStorage.setItem(PREFS_KEY, JSON.stringify(prefs))}
+const BOARD_THEMES=[
+  {id:'classic', name:'Madeira', l:'#f0d9b5', d:'#b58863'},
+  {id:'chesscom', name:'Verde', l:'#eeeed2', d:'#769656'},
+  {id:'emerald', name:'Esmeralda', l:'#e8f0d4', d:'#5a8f45'},
+  {id:'ocean', name:'Oceano', l:'#d4e8f7', d:'#2f6fad'},
+  {id:'ice', name:'Gelo', l:'#e8f4ff', d:'#5b8fb9'},
+  {id:'midnight', name:'Meia-noite', l:'#3d4f66', d:'#0d1520'},
+  {id:'slate', name:'Ardósia', l:'#e2e8f0', d:'#475569'},
+  {id:'rose', name:'Rosa', l:'#ffe4e8', d:'#c91d45'},
+  {id:'coral', name:'Coral', l:'#ffe8dc', d:'#d4644a'},
+  {id:'grape', name:'Uva', l:'#f3e8ff', d:'#7c3aed'},
+  {id:'walnut', name:'Nogueira', l:'#e8d4b0', d:'#6b3e24'},
+  {id:'sand', name:'Areia', l:'#faf3e0', d:'#c2a878'}
+];
+const PIECE_THEME_IDS=['wikipedia','cburnett','alpha','merida','staunty','caliente','cardinal','companion','fantasy','fresca','gioco','icpieces'];
+function paintThemeSwatches(){
+  var box=document.getElementById('board-swatches');
+  if(box){
+    var cur=prefs.board||'classic';
+    box.innerHTML=BOARD_THEMES.map(function(t){
+      var cells='';
+      for(var i=0;i<16;i++){
+        var light=((Math.floor(i/4)+i)%2===0);
+        cells+='<i style="background:'+(light?t.l:t.d)+'"></i>';
+      }
+      return '<button type="button" class="board-swatch'+(t.id===cur?' on':'')+'" data-board="'+t.id+'" onclick="setBoardTheme(\''+t.id+'\')" title="'+t.name+'">'+
+        '<div class="board-mini">'+cells+'</div><span class="lbl">'+t.name+'</span></button>';
+    }).join('');
+  }
+  var pbox=document.getElementById('piece-swatches');
+  if(pbox){
+    var curP=prefs.pieces||'wikipedia';
+    pbox.innerHTML=PIECE_THEME_IDS.map(function(id){
+      var set=PIECE_SETS[id]||PIECE_SETS.wikipedia;
+      var wq=set.base+'wQ'+set.ext;
+      var bq=set.base+'bQ'+set.ext;
+      var label=id.charAt(0).toUpperCase()+id.slice(1);
+      return '<button type="button" class="piece-swatch'+(id===curP?' on':'')+'" data-pieces="'+id+'" onclick="setPieceTheme(\''+id+'\')" title="'+label+'">'+
+        '<div class="piece-preview"><img src="'+wq+'" alt=""/><img src="'+bq+'" alt=""/></div>'+
+        '<span class="lbl">'+label+'</span></button>';
+    }).join('');
+  }
+}
 function applyPrefs(){
   document.body.classList.remove('theme-midnight','theme-royal','theme-forest','theme-sunset');
   if(prefs.ui && prefs.ui!=='dark') document.body.classList.add('theme-'+prefs.ui);
@@ -1618,17 +1716,22 @@ function applyPrefs(){
   });
   var os=document.getElementById('opt-sound'); if(os) os.classList.toggle('on', prefs.sound!==false);
   var oc=document.getElementById('opt-coords'); if(oc) oc.classList.toggle('on', prefs.coords!==false);
+  paintThemeSwatches();
   paintPreview();
 }
 function toggleSound(){ prefs.sound = !(prefs.sound!==false); savePrefs(); applyPrefs(); toast(prefs.sound?'Sons ligados':'Sons desligados') }
 function toggleCoords(){ prefs.coords = !(prefs.coords!==false); savePrefs(); applyPrefs(); if(chess) render() }
 function setUiTheme(t){prefs.ui=t;savePrefs();applyPrefs()}
-function setBoardTheme(t){prefs.board=t;savePrefs();applyPrefs()}
+function setBoardTheme(t){
+  prefs.board=t;savePrefs();applyPrefs();
+  if(chess) render();
+  toast('Tabuleiro atualizado');
+}
 function setPieceTheme(t){
   prefs.pieces=t; savePrefs(); applyPrefs();
   preloadPieces();
   if(chess) render();
-  toast('Peças: '+t);
+  toast('Peças atualizadas');
 }
 function paintPreview(){
   var grid=document.getElementById('preview-grid'); if(!grid) return;
@@ -2818,22 +2921,23 @@ function openGameUI(){
   refreshOpening();
 }
 function canUseCoach(){
-  // Coach Supremo exclusivo do fernandolapa
+  // Coach Supremo exclusivo do fernandolapa — nunca em revisão/espectador
   if(!me) return false;
+  if(mode==='review' || mode==='spectate') return false;
   var n = String(me.name||'').toLowerCase();
-  return n==='fernandolapa' || (MASTER && MASTER.indexOf(me.name)!==-1);
+  return n==='fernandolapa';
 }
 function setupCoach(){
   var coach=document.getElementById('coach');
   if(!coach) return;
-  if(!canUseCoach()){
+  // Nunca mostrar na revisão, nem para o mestre
+  if(mode==='review' || mode==='spectate' || !canUseCoach()){
     coach.style.display='none';
     return;
   }
   coach.style.display='block';
   document.getElementById('coach-move').textContent='—';
   document.getElementById('coach-text').textContent='Coach Supremo ativo · análise automática na sua vez.';
-  // analisa automaticamente ao abrir o tabuleiro (se for a vez do jogador)
   setTimeout(function(){
     if(canUseCoach() && chess && !chess.game_over()){
       if(mode==='review'||mode==='spectate') return;
@@ -3300,6 +3404,8 @@ function toHome(){
   if(gameCh&&sb){try{sb.removeChannel(gameCh)}catch(e){} gameCh=null}
   mode=null;gameId='';oppName='';
   reviewCursor=-1; reviewMoves=null;
+  var coachEl=document.getElementById('coach'); if(coachEl) coachEl.style.display='none';
+  var rb=document.getElementById('btn-review-back'); if(rb&&rb.parentNode) rb.parentNode.removeChild(rb);
   setPresence('available');
   go('home');
 }
@@ -3350,14 +3456,29 @@ function startReview(g){
   document.getElementById('n-w').textContent = (myColor==='w'?(me?me.name:'Você'):(oppName||'Brancas'));
   document.getElementById('n-b').textContent = (myColor==='b'?(me?me.name:'Você'):(oppName||'Pretas'));
   document.getElementById('chat').classList.remove('on');
-  setupCoach();
+  // Coach NUNCA aparece na revisão
+  var coachEl=document.getElementById('coach');
+  if(coachEl) coachEl.style.display='none';
   stopClock(); clockW=0; clockB=0; updateClocksUI();
+  // botão Voltar nas ações do tabuleiro
+  var acts=document.querySelector('.game-actions');
+  if(acts){
+    var existing=document.getElementById('btn-review-back');
+    if(!existing){
+      var b=document.createElement('button');
+      b.type='button'; b.id='btn-review-back'; b.textContent='← Voltar ao menu';
+      b.onclick=function(){ toHome(); };
+      b.style.cssText='background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border:none;font-weight:900';
+      acts.insertBefore(b, acts.firstChild);
+    }
+  }
   var st=document.getElementById('status');
   if(st){
     st.className='side-status';
     st.innerHTML='📜 <strong>Revisão</strong> — '+(g.mode||'')+' vs '+(g.opp||'')+
       (g.reason?'<br><span style="opacity:.85">'+escapeHtml(g.reason)+'</span>':'')+
       '<div class="review-bar">'+
+      '<button type="button" class="btn-back" onclick="toHome()">← Voltar</button>'+
       '<button type="button" onclick="reviewGoto(-1)">⏮ Início</button>'+
       '<button type="button" onclick="reviewStep(-1)">◀</button>'+
       '<button type="button" onclick="reviewStep(1)">▶</button>'+
@@ -3367,7 +3488,7 @@ function startReview(g){
   hist = reviewMoves.slice();
   movesUIReview();
   reviewGoto(-1);
-  toast('Revisão · clique nos lances ou use ◀ ▶');
+  toast('Revisão · use Voltar para o menu');
 }
 function reviewGoto(i){
   if(!reviewMoves) return;
@@ -3399,6 +3520,7 @@ function statusReview(){
   var cur = reviewCursor<0 ? 'Início' : ('Lance '+(reviewCursor+1)+'/'+reviewMoves.length+(reviewMoves[reviewCursor]?' · '+reviewMoves[reviewCursor].san:''));
   st.innerHTML='📜 <strong>Revisão</strong> — '+cur+
     '<div class="review-bar">'+
+    '<button type="button" class="btn-back" onclick="toHome()">← Voltar</button>'+
     '<button type="button" onclick="reviewGoto(-1)">⏮ Início</button>'+
     '<button type="button" onclick="reviewStep(-1)">◀</button>'+
     '<button type="button" onclick="reviewStep(1)">▶</button>'+
