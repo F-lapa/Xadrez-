@@ -66,52 +66,133 @@ nav{display:flex;gap:.2rem;padding:.5rem 1rem 0;overflow-x:auto}
 nav button{padding:.5rem .95rem;border-radius:12px 12px 0 0;color:var(--muted);font-weight:800;font-size:.86rem;border-bottom:2px solid transparent;white-space:nowrap}
 nav button.on{color:var(--text);border-bottom-color:var(--blue);background:linear-gradient(180deg,rgba(91,157,255,.12),transparent)}
 main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:1.1rem;box-shadow:0 12px 40px rgba(0,0,0,.22);backdrop-filter:blur(12px);animation:fade-up .35s ease}
-.card h2{font-size:1rem;font-weight:900;margin-bottom:.85rem}
+.card{
+  background:linear-gradient(165deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:1.2rem 1.25rem;
+  box-shadow:0 16px 48px rgba(0,0,0,.28);
+  backdrop-filter:blur(16px);
+  animation:fade-up .35s ease;
+  position:relative;
+  overflow:hidden;
+}
+.card::before{
+  content:'';
+  position:absolute; inset:0 0 auto 0; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+  pointer-events:none;
+}
+.card h2{font-size:1.02rem;font-weight:900;margin-bottom:.9rem;display:flex;align-items:center;gap:.45rem}
 .card h3{font-size:.88rem;font-weight:900;margin-bottom:.5rem;color:#dbe4ff}
-.grid-2{display:grid;grid-template-columns:1.1fr 1fr;gap:1rem}
-@media(max-width:900px){.grid-2{grid-template-columns:1fr}}
-.modes{display:grid;gap:.6rem}
-.mode{display:flex;align-items:center;gap:.85rem;cursor:pointer;transition:.18s;padding:1rem;border-radius:16px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02))}
-.mode:hover{transform:translateY(-2px);border-color:rgba(91,157,255,.5)}
-.mode .i{font-size:1.6rem;width:40px;text-align:center}
+.section-label{
+  font-size:.72rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 .55rem;
+}
+.grid-2{display:grid;grid-template-columns:1.05fr 1fr;gap:1.1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:960px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.modes{display:grid;gap:.55rem}
+.mode{display:flex;align-items:center;gap:.85rem;cursor:pointer;transition:.2s;padding:1rem 1.05rem;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.18)}
+.mode:hover{transform:translateY(-2px);border-color:rgba(91,157,255,.55);background:rgba(91,157,255,.08);box-shadow:0 10px 28px rgba(91,157,255,.12)}
+.mode .i{font-size:1.55rem;width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid var(--line)}
 .mode .t{font-weight:900}
 .mode .d{font-size:.76rem;color:var(--muted);margin-top:.15rem}
-.diff-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.75rem}
-.diff-row button{padding:.42rem .7rem;border-radius:999px;font-size:.76rem;font-weight:800;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--muted)}
-.diff-row button.on{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border-color:transparent}
-.online-list{display:flex;flex-direction:column;gap:.45rem;max-height:320px;overflow:auto}
-.player-row{display:flex;align-items:center;gap:.65rem;padding:.7rem .75rem;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03);transition:.18s}
+.diff-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.55rem}
+.diff-row button{padding:.42rem .75rem;border-radius:999px;font-size:.76rem;font-weight:800;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--muted);transition:.15s}
+.diff-row button:hover{color:var(--text);border-color:var(--line2)}
+.diff-row button.on{background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border-color:transparent;box-shadow:0 6px 18px rgba(91,157,255,.25)}
+.online-list{display:flex;flex-direction:column;gap:.5rem;max-height:340px;overflow:auto;padding-right:.15rem}
+.player-row{display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;border-radius:16px;border:1px solid var(--line);background:rgba(0,0,0,.16);transition:.18s}
 .player-row.available{cursor:pointer}
-.player-row.available:hover{border-color:rgba(91,157,255,.5);background:rgba(91,157,255,.08);transform:translateX(2px)}
-.player-row.busy{opacity:.7}
-.avatar{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem;background:linear-gradient(135deg,rgba(91,157,255,.35),rgba(167,139,250,.35));border:1px solid var(--line2);flex-shrink:0}
+.player-row.available:hover{border-color:rgba(91,157,255,.55);background:rgba(91,157,255,.1);transform:translateX(3px)}
+.player-row.busy{opacity:.72}
+.avatar{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.95rem;background:linear-gradient(135deg,rgba(91,157,255,.4),rgba(167,139,250,.35));border:1px solid var(--line2);flex-shrink:0}
 .p-info{flex:1;min-width:0}
-.p-name{font-weight:800;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.p-meta{font-size:.72rem;color:var(--muted);margin-top:.1rem}
-.badge{font-size:.68rem;font-weight:900;padding:.22rem .5rem;border-radius:999px;white-space:nowrap}
-.badge.ok{background:rgba(52,211,153,.14);color:var(--green);border:1px solid rgba(52,211,153,.25)}
-.badge.busy{background:rgba(245,197,66,.12);color:var(--gold);border:1px solid rgba(245,197,66,.25)}
-.empty{color:var(--muted);text-align:center;padding:1.1rem;font-size:.88rem}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
-.stat{text-align:center;padding:.85rem .6rem;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
-.stat b{display:block;font-size:1.3rem;font-weight:900}
-.stat span{display:block;margin-top:.2rem;font-size:.72rem;color:var(--muted);font-weight:700}
+.p-name{font-weight:800;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.p-meta{font-size:.72rem;color:var(--muted);margin-top:.12rem}
+.badge{font-size:.68rem;font-weight:900;padding:.24rem .55rem;border-radius:999px;white-space:nowrap}
+.badge.ok{background:rgba(52,211,153,.14);color:var(--green);border:1px solid rgba(52,211,153,.28)}
+.badge.busy{background:rgba(245,197,66,.12);color:var(--gold);border:1px solid rgba(245,197,66,.28)}
+.empty{color:var(--muted);text-align:center;padding:1.25rem;font-size:.88rem}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+.stat{
+  text-align:center;padding:.9rem .55rem;border-radius:16px;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.12));
+  transition:transform .18s, border-color .18s;
+}
+.stat:hover{transform:translateY(-2px);border-color:var(--line2)}
+.stat b{display:block;font-size:1.35rem;font-weight:900;letter-spacing:-.02em}
+.stat span{display:block;margin-top:.22rem;font-size:.7rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .stat.gold b{color:var(--gold)}.stat.green b{color:var(--green)}.stat.red b{color:var(--red)}.stat.blue b{color:#93c5fd}
-.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:1rem}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:.65rem;margin-bottom:1.1rem}
 @media(max-width:720px){.kpi{grid-template-columns:1fr 1fr}}
-.barline{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:.35rem}
-.barline>i{display:block;height:100%;border-radius:999px}
+.barline{height:9px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:.4rem}
+.barline>i{display:block;height:100%;border-radius:999px;transition:width .5s ease}
 .note{color:var(--muted);font-size:.82rem;line-height:1.5;margin-top:.7rem}
 .list{list-style:none}
-.list li{display:flex;align-items:center;gap:.6rem;padding:.65rem .15rem;border-bottom:1px solid var(--line);font-size:.88rem}
+.list li{display:flex;align-items:center;gap:.65rem;padding:.72rem .2rem;border-bottom:1px solid var(--line);font-size:.88rem;transition:background .15s}
+.list li:hover{background:rgba(255,255,255,.03)}
 .list li:last-child{border-bottom:none}
-.pos{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;background:rgba(255,255,255,.06)}
-.pos.g{background:linear-gradient(135deg,#f5c542,#f59e0b);color:#1a1200}
+.pos{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:900;background:rgba(255,255,255,.06);flex-shrink:0}
+.pos.g{background:linear-gradient(135deg,#f5c542,#f59e0b);color:#1a1200;box-shadow:0 4px 12px rgba(245,197,66,.3)}
 .pos.s{background:linear-gradient(135deg,#cbd5e1,#94a3b8);color:#111}
 .pos.b{background:linear-gradient(135deg,#d97706,#92400e);color:#fff}
 .nm{flex:1;font-weight:800}
 .el{color:var(--gold);font-weight:900}
+
+/* Dashboard hero */
+.dash-hero{
+  display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
+  padding:1.25rem 1.35rem;margin-bottom:1.1rem;
+  border-radius:22px;
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(91,157,255,.22), transparent 55%),
+    radial-gradient(ellipse at 100% 100%, rgba(167,139,250,.15), transparent 50%),
+    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  border:1px solid var(--line2);
+  box-shadow:0 18px 50px rgba(0,0,0,.3);
+}
+.dash-avatar{
+  width:64px;height:64px;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;font-weight:900;
+  background:linear-gradient(135deg,var(--blue),var(--violet));
+  color:#fff;box-shadow:0 10px 28px rgba(91,157,255,.35);
+  flex-shrink:0;
+}
+.dash-hero-info{flex:1;min-width:160px}
+.dash-hero-info .name{font-size:1.25rem;font-weight:900;letter-spacing:-.02em}
+.dash-hero-info .sub{color:var(--muted);font-size:.84rem;margin-top:.2rem;font-weight:600}
+.dash-elo-pill{
+  padding:.55rem 1rem;border-radius:14px;
+  background:rgba(245,197,66,.12);border:1px solid rgba(245,197,66,.3);
+  text-align:center;
+}
+.dash-elo-pill b{display:block;font-size:1.4rem;font-weight:900;color:var(--gold)}
+.dash-elo-pill span{font-size:.7rem;color:var(--muted);font-weight:700;text-transform:uppercase}
+.panel-title{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.85rem}
+.panel-title h2{margin:0}
+.chip-soft{font-size:.7rem;font-weight:800;padding:.22rem .55rem;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted)}
+.rank-podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;margin-bottom:1rem}
+.podium-card{
+  text-align:center;padding:1rem .6rem;border-radius:18px;border:1px solid var(--line);
+  background:rgba(0,0,0,.18);
+}
+.podium-card.gold{background:linear-gradient(180deg,rgba(245,197,66,.18),rgba(245,197,66,.04));border-color:rgba(245,197,66,.35)}
+.podium-card.silver{background:linear-gradient(180deg,rgba(203,213,225,.12),rgba(0,0,0,.1))}
+.podium-card.bronze{background:linear-gradient(180deg,rgba(217,119,6,.15),rgba(0,0,0,.1))}
+.podium-card .place{font-size:.72rem;font-weight:800;color:var(--muted);margin-bottom:.35rem}
+.podium-card .who{font-weight:900;font-size:.92rem;margin-bottom:.2rem}
+.podium-card .pts{border:none;background:transparent;padding:0;font-size:.95rem}
+.home-banner{
+  margin-bottom:1.1rem;padding:1.1rem 1.25rem;border-radius:20px;
+  background:linear-gradient(120deg, rgba(91,157,255,.14), rgba(167,139,250,.1));
+  border:1px solid var(--line2);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+}
+.home-banner .hb-title{font-weight:900;font-size:1.05rem}
+.home-banner .hb-sub{font-size:.82rem;color:var(--muted);margin-top:.2rem}
 #game{display:none}
 .game-layout{display:flex;flex-direction:column;align-items:center;gap:.85rem;width:100%}
 @media(min-width:1100px){
@@ -792,60 +873,98 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   </nav>
   <main>
     <div id="v-home">
+      <div class="home-banner">
+        <div>
+          <div class="hb-title">Pronto para jogar</div>
+          <div class="hb-sub">Desafie online, treine com Stockfish ou resolva puzzles (+10 Elo)</div>
+        </div>
+        <div class="stats" id="home-stats" style="min-width:min(100%,280px);grid-template-columns:repeat(4,1fr)"></div>
+      </div>
       <div class="grid-2">
         <div class="card">
-          <h2>🟢 Jogadores online</h2>
+          <div class="panel-title">
+            <h2>🟢 Online agora</h2>
+            <span class="chip-soft" id="online-count">0</span>
+          </div>
           <div class="online-list" id="online-list"><div class="empty">Conectando ao lobby…</div></div>
-          <p class="note">Clique em um jogador <strong>disponível</strong> para desafiar.</p>
+          <p class="note">Toque em um jogador <strong>disponível</strong> para desafiar.</p>
         </div>
         <div class="card">
-          <h2>Treino local</h2>
+          <h2>🎯 Treino local</h2>
           <div class="modes">
-            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Stockfish real · sem Elo de ranking</div></div></div>
+            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Stockfish · não altera Elo online</div></div></div>
             <div class="mode" onclick="startLocal('local')"><div class="i">👥</div><div><div class="t">Dois jogadores</div><div class="d">Mesmo dispositivo</div></div></div>
-            <div class="mode" onclick="startPuzzle()"><div class="i">🧩</div><div><div class="t">Puzzles</div><div class="d">Mate em 1 · táticas · treino</div></div></div>
+            <div class="mode" onclick="startPuzzle()"><div class="i">🧩</div><div><div class="t">Puzzles</div><div class="d">Táticas · +10 Elo ao resolver</div></div></div>
           </div>
-          <div style="margin-top:.85rem">
-            <div style="font-size:.78rem;color:var(--muted);font-weight:700;margin-bottom:.35rem">Dificuldade da IA</div>
-            <div class="diff-row">
-              <button type="button" id="d-easy" onclick="setDiff('easy')">Fácil (Skill 2)</button>
-              <button type="button" id="d-medium" class="on" onclick="setDiff('medium')">Médio (Skill 8)</button>
-              <button type="button" id="d-hard" onclick="setDiff('hard')">Difícil (Skill 16)</button>
-            </div>
+          <div class="section-label" style="margin-top:1rem">Dificuldade da IA</div>
+          <div class="diff-row">
+            <button type="button" id="d-easy" onclick="setDiff('easy')">Fácil</button>
+            <button type="button" id="d-medium" class="on" onclick="setDiff('medium')">Médio</button>
+            <button type="button" id="d-hard" onclick="setDiff('hard')">Difícil</button>
           </div>
-          <div style="margin-top:.75rem">
-            <div style="font-size:.78rem;color:var(--muted);font-weight:700;margin-bottom:.35rem">Controle de tempo</div>
-            <div class="diff-row" id="time-row">
-              <button type="button" id="t-inf" class="on" onclick="setTimeControl(0)">∞ Livre</button>
-              <button type="button" id="t-3" onclick="setTimeControl(180)">3 min</button>
-              <button type="button" id="t-5" onclick="setTimeControl(300)">5 min</button>
-              <button type="button" id="t-10" onclick="setTimeControl(600)">10 min</button>
-            </div>
+          <div class="section-label" style="margin-top:.85rem">Controle de tempo</div>
+          <div class="diff-row" id="time-row">
+            <button type="button" id="t-inf" class="on" onclick="setTimeControl(0)">∞ Livre</button>
+            <button type="button" id="t-3" onclick="setTimeControl(180)">3 min</button>
+            <button type="button" id="t-5" onclick="setTimeControl(300)">5 min</button>
+            <button type="button" id="t-10" onclick="setTimeControl(600)">10 min</button>
           </div>
-          <div class="stats" id="home-stats" style="margin-top:1rem"></div>
         </div>
       </div>
     </div>
+
     <div id="v-dash" class="hidden">
+      <div class="dash-hero" id="dash-hero">
+        <div class="dash-avatar" id="dash-avatar">?</div>
+        <div class="dash-hero-info">
+          <div class="name" id="dash-name">Jogador</div>
+          <div class="sub" id="dash-sub">Carregando perfil…</div>
+        </div>
+        <div class="dash-elo-pill">
+          <b id="dash-elo">1200</b>
+          <span>Elo</span>
+        </div>
+      </div>
       <div class="kpi" id="dash-kpis"></div>
-      <div class="grid-2">
-        <div class="card"><h2>Estatísticas</h2><div id="dash-bars"></div><p class="note">Dados salvos no Supabase.</p></div>
-        <div class="card"><h2>Conta</h2><div id="dash-details" style="color:var(--muted);font-size:.9rem;line-height:1.7"></div></div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="panel-title"><h2>🌐 Online</h2><span class="chip-soft">Ranking</span></div>
+          <div id="dash-bars-online"></div>
+        </div>
+        <div class="card">
+          <div class="panel-title"><h2>🤖 vs Computador</h2><span class="chip-soft">Treino</span></div>
+          <div id="dash-bars-ai"></div>
+          <div class="stats" id="ai-stats" style="margin-top:.85rem"></div>
+        </div>
+        <div class="card">
+          <div class="panel-title"><h2>🧩 Puzzles</h2><span class="chip-soft">+10 Elo</span></div>
+          <div class="kpi" id="puzzle-kpis" style="margin-bottom:.5rem;grid-template-columns:1fr 1fr"></div>
+          <p class="note" style="margin-top:.4rem">Resolvidos neste aparelho. Acertos somam Elo no ranking.</p>
+        </div>
       </div>
-      <div class="card" style="margin-top:1rem">
-        <h2>🧩 Estatísticas de puzzles</h2>
-        <div class="kpi" id="puzzle-kpis" style="margin-bottom:0"></div>
-        <p class="note" style="margin-top:.7rem">Cada puzzle resolvido vale +10 Elo no ranking.</p>
-      </div>
-      <div class="card" style="margin-top:1rem">
-        <h2>📜 Histórico local (últimas partidas)</h2>
-        <ul class="list" id="hist-list"><li class="empty">Nenhuma partida salva ainda.</li></ul>
+      <div class="grid-2" style="margin-top:1.1rem">
+        <div class="card">
+          <h2>👤 Conta</h2>
+          <div id="dash-details" style="color:var(--muted);font-size:.9rem;line-height:1.75"></div>
+        </div>
+        <div class="card">
+          <div class="panel-title"><h2>📜 Histórico recente</h2><span class="chip-soft">Local</span></div>
+          <ul class="list" id="hist-list"><li class="empty">Nenhuma partida salva ainda.</li></ul>
+        </div>
       </div>
     </div>
+
     <div id="v-rank" class="hidden">
-      <div class="card"><h2>Ranking Elo global (Supabase)</h2><ul class="list" id="rank-list"></ul></div>
+      <div class="card">
+        <div class="panel-title">
+          <h2>🏆 Ranking Elo global</h2>
+          <span class="chip-soft">Supabase</span>
+        </div>
+        <div class="rank-podium" id="rank-podium"></div>
+        <ul class="list" id="rank-list"></ul>
+      </div>
     </div>
-    
+
     <div id="v-settings" class="hidden">
       <div class="grid-2">
         <div class="card">
@@ -891,11 +1010,11 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
               </div>
             </div>
           </div>
-          <p class="note">Suas preferências são salvas neste aparelho.</p>
+          <p class="note">Preferências salvas neste aparelho.</p>
         </div>
         <div class="card">
-          <h2>👁️ Prévia</h2>
-          <div class="board-frame board-classic pieces-classic" id="preview-board" style="width:min(100%,280px);margin:0 auto">
+          <div class="panel-title"><h2>👁️ Prévia ao vivo</h2><span class="chip-soft">Tabuleiro</span></div>
+          <div class="board-frame board-classic pieces-classic" id="preview-board" style="width:min(100%,300px);margin:0 auto;aspect-ratio:1;border-radius:14px;overflow:hidden">
             <div id="preview-grid" style="width:100%;height:100%;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr)"></div>
           </div>
         </div>
@@ -1680,6 +1799,8 @@ async function setPresence(status){
 function renderOnline(){
   var el=document.getElementById('online-list');
   var others=onlinePlayers.filter(function(p){return p.user!==me.name});
+  var cnt=document.getElementById('online-count');
+  if(cnt) cnt.textContent=others.length+' online';
   if(!others.length){el.innerHTML='<div class="empty">Nenhum outro jogador online agora.</div>';return}
   el.innerHTML=others.map(function(p){
     var busy=p.status==='in_game';
@@ -1806,39 +1927,83 @@ async function paintAll(){
   if(!document.getElementById('v-rank').classList.contains('hidden')) paintRank();
   else paintRank();
 }
+const AI_STATS_KEY='xm_ai_stats_v1';
+function loadAiStats(){
+  try{ return Object.assign({games:0,wins:0,losses:0,draws:0}, JSON.parse(localStorage.getItem(AI_STATS_KEY)||'{}')); }
+  catch(e){ return {games:0,wins:0,losses:0,draws:0}; }
+}
+function saveAiStats(s){ try{ localStorage.setItem(AI_STATS_KEY, JSON.stringify(s)); }catch(e){} }
+function recordAiResult(result){
+  var s=loadAiStats();
+  s.games=(s.games||0)+1;
+  if(result==='win') s.wins=(s.wins||0)+1;
+  else if(result==='loss') s.losses=(s.losses||0)+1;
+  else s.draws=(s.draws||0)+1;
+  saveAiStats(s);
+  return s;
+}
 function paintHome(){
   var s=me.stats;
-  document.getElementById('home-stats').innerHTML=
+  var el=document.getElementById('home-stats');
+  if(!el) return;
+  el.innerHTML=
     '<div class="stat gold"><b>'+me.points+'</b><span>Elo</span></div>'+
     '<div class="stat blue"><b>'+s.games+'</b><span>Online</span></div>'+
     '<div class="stat green"><b>'+s.wins+'</b><span>Vitórias</span></div>'+
     '<div class="stat red"><b>'+s.losses+'</b><span>Derrotas</span></div>';
 }
 function paintDash(){
+  if(!me) return;
   var s=me.stats,wr=s.games?Math.round(s.wins/s.games*100):0;
-  document.getElementById('dash-kpis').innerHTML=
-    '<div class="stat gold"><b>'+me.points+'</b><span>Elo</span></div>'+
-    '<div class="stat green"><b>'+wr+'%</b><span>Taxa vitória</span></div>'+
-    '<div class="stat blue"><b>'+s.streak+'</b><span>Sequência</span></div>'+
-    '<div class="stat"><b>'+s.trainGames+'</b><span>Treinos</span></div>';
-  var dr=s.games?Math.round(s.draws/s.games*100):0,lr=s.games?Math.round(s.losses/s.games*100):0;
-  document.getElementById('dash-bars').innerHTML=
-    bar('Vitórias',s.wins,wr,'#34d399')+bar('Empates',s.draws,dr,'#f5c542')+bar('Derrotas',s.losses,lr,'#fb7185');
+  var ai=loadAiStats();
+  var aiWr=ai.games?Math.round(ai.wins/ai.games*100):0;
   var pz=loadPuzzleStats();
   var pzRate=pz.attempts?Math.round(pz.solved/pz.attempts*100):0;
+
+  var av=document.getElementById('dash-avatar');
+  if(av) av.textContent=(me.name||'?')[0].toUpperCase();
+  var dn=document.getElementById('dash-name'); if(dn) dn.textContent=me.name;
+  var ds=document.getElementById('dash-sub');
+  if(ds) ds.textContent=s.games+' partidas online · '+ai.games+' vs PC · '+pz.solved+' puzzles';
+  var de=document.getElementById('dash-elo'); if(de) de.textContent=me.points;
+
+  document.getElementById('dash-kpis').innerHTML=
+    '<div class="stat gold"><b>'+me.points+'</b><span>Elo</span></div>'+
+    '<div class="stat green"><b>'+wr+'%</b><span>Win online</span></div>'+
+    '<div class="stat blue"><b>'+s.streak+'</b><span>Sequência</span></div>'+
+    '<div class="stat"><b>'+(s.trainGames||ai.games)+'</b><span>Treinos</span></div>';
+
+  var bo=document.getElementById('dash-bars-online');
+  if(bo){
+    var dr=s.games?Math.round(s.draws/s.games*100):0,lr=s.games?Math.round(s.losses/s.games*100):0;
+    bo.innerHTML=bar('Vitórias',s.wins,wr,'#34d399')+bar('Empates',s.draws,dr,'#f5c542')+bar('Derrotas',s.losses,lr,'#fb7185');
+  }
+  var ba=document.getElementById('dash-bars-ai');
+  if(ba){
+    var adr=ai.games?Math.round(ai.draws/ai.games*100):0, alr=ai.games?Math.round(ai.losses/ai.games*100):0;
+    ba.innerHTML=bar('Vitórias',ai.wins,aiWr,'#34d399')+bar('Empates',ai.draws,adr,'#f5c542')+bar('Derrotas',ai.losses,alr,'#fb7185');
+  }
+  var ais=document.getElementById('ai-stats');
+  if(ais){
+    ais.innerHTML=
+      '<div class="stat green"><b>'+ai.wins+'</b><span>V</span></div>'+
+      '<div class="stat"><b>'+ai.draws+'</b><span>E</span></div>'+
+      '<div class="stat red"><b>'+ai.losses+'</b><span>D</span></div>'+
+      '<div class="stat blue"><b>'+ai.games+'</b><span>Total</span></div>';
+  }
   document.getElementById('dash-details').innerHTML=
     '<p><strong style="color:var(--text)">Usuário:</strong> '+me.name+'</p>'+
-    '<p><strong style="color:var(--text)">Banco:</strong> Supabase · tabela players</p>'+
-    '<p><strong style="color:var(--text)">Placar online:</strong> '+s.wins+'V · '+s.draws+'E · '+s.losses+'D</p>'+
-    '<p><strong style="color:var(--text)">Treinos IA:</strong> '+s.trainGames+'</p>'+
-    '<p style="margin-top:.6rem"><strong style="color:var(--text)">🧩 Puzzles:</strong> '+pz.solved+' resolvidos · '+pz.attempts+' tentativas</p>'+
-    '<p><strong style="color:var(--text)">Taxa puzzles:</strong> '+pzRate+'% · sequência '+pz.streak+' (melhor '+pz.bestStreak+')</p>';
+    '<p><strong style="color:var(--text)">Elo atual:</strong> '+me.points+'</p>'+
+    '<p><strong style="color:var(--text)">Online:</strong> '+s.wins+'V · '+s.draws+'E · '+s.losses+'D</p>'+
+    '<p><strong style="color:var(--text)">vs Computador:</strong> '+ai.wins+'V · '+ai.draws+'E · '+ai.losses+'D</p>'+
+    '<p><strong style="color:var(--text)">Puzzles:</strong> '+pz.solved+' ok · taxa '+pzRate+'% · seq. '+pz.streak+'</p>';
+
   var pzk=document.getElementById('puzzle-kpis');
   if(pzk){
     pzk.innerHTML=
       '<div class="stat green"><b>'+pz.solved+'</b><span>Resolvidos</span></div>'+
       '<div class="stat blue"><b>'+pz.attempts+'</b><span>Tentativas</span></div>'+
-      '<div class="stat gold"><b>'+pzRate+'%</b><span>Taxa acerto</span></div>'+
+      '<div class="stat gold"><b>'+pzRate+'%</b><span>Taxa</span></div>'+
       '<div class="stat"><b>'+pz.bestStreak+'</b><span>Melhor seq.</span></div>';
   }
   var hl=document.getElementById('hist-list');
@@ -1846,9 +2011,10 @@ function paintDash(){
     try{
       var list=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
       if(!list.length) hl.innerHTML='<li class="empty">Nenhuma partida salva ainda.</li>';
-      else hl.innerHTML=list.slice(0,12).map(function(g){
+      else hl.innerHTML=list.slice(0,10).map(function(g){
         var when=(g.at||'').slice(0,16).replace('T',' ');
-        return '<li><span class="pos">'+(g.result==='win'?'W':g.result==='loss'?'L':'E')+'</span><span class="nm">'+(g.mode||'?')+' vs '+(g.opp||'?')+'</span><span class="el" style="font-size:.72rem;color:var(--muted)">'+when+'</span></li>';
+        var tag=g.result==='win'?'W':g.result==='loss'?'L':'E';
+        return '<li><span class="pos">'+(tag)+'</span><span class="nm">'+(g.mode||'?')+' vs '+(g.opp||'?')+'</span><span class="el" style="font-size:.72rem;color:var(--muted)">'+when+'</span></li>';
       }).join('');
     }catch(e){ hl.innerHTML='<li class="empty">Erro ao ler histórico.</li>'; }
   }
@@ -1856,13 +2022,27 @@ function paintDash(){
 function bar(l,v,p,c){return '<div style="margin-bottom:.75rem"><div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:.2rem"><span>'+l+' ('+v+')</span><span style="color:var(--muted)">'+p+'%</span></div><div class="barline"><i style="width:'+p+'%;background:'+c+'"></i></div></div>'}
 async function paintRank(){
   var el=document.getElementById('rank-list');
+  var pod=document.getElementById('rank-podium');
   el.innerHTML='<li class="empty">Carregando ranking do Supabase…</li>';
+  if(pod) pod.innerHTML='';
   try{
     var list=await dbListRanking();
     if(!list.length){el.innerHTML='<li class="empty">Nenhum jogador no banco</li>';return}
+    if(pod){
+      var medals=['gold','silver','bronze'];
+      var places=['1º','2º','3º'];
+      pod.innerHTML=[1,0,2].map(function(order){
+        // visual: 2º | 1º | 3º
+        var i = order===1?0:order===0?1:2;
+        var p=list[i];
+        if(!p) return '<div class="podium-card"></div>';
+        return '<div class="podium-card '+medals[i]+'"><div class="place">'+places[i]+'</div><div class="who">'+p.username+'</div><div class="pts">'+(p.points||0)+' Elo</div></div>';
+      }).join('');
+    }
     el.innerHTML=list.map(function(p,i){
       var c=i===0?'g':i===1?'s':i===2?'b':'';
-      return '<li><span class="pos '+c+'">'+(i+1)+'</span><span class="nm">'+p.username+(me&&p.username===me.name?' (você)':'')+
+      var you=me&&p.username===me.name?' (você)':'';
+      return '<li><span class="pos '+c+'">'+(i+1)+'</span><span class="nm">'+p.username+you+
         '</span><span class="el">'+(p.points||0)+' Elo</span></li>';
     }).join('');
   }catch(e){
@@ -1912,7 +2092,11 @@ function startClockTick(){
         finishOnline(iWon?'win':'loss', iWon?'Adversário ficou sem tempo!':'Você ficou sem tempo.');
       } else {
         var msg = loser==='w' ? 'Brancas ficaram sem tempo.' : 'Pretas ficaram sem tempo.';
-        if(mode==='ai') recordTrain();
+        lastEndResult = loser===myColor ? 'loss' : 'win';
+        if(mode==='ai'){
+          recordAiResult(lastEndResult);
+          recordTrain();
+        }
         showEnd('Tempo esgotado', msg);
       }
     }
@@ -2605,7 +2789,11 @@ function resign(){
     if(gameCh)gameCh.send({type:'broadcast',event:'resign',payload:{by:me.name}});
     finishOnline('loss','Você desistiu.');return;
   }
-  if(mode==='ai')recordTrain();
+  if(mode==='ai'){
+    lastEndResult='loss';
+    recordAiResult('loss');
+    recordTrain();
+  }
   showEnd('Desistência',mode==='ai'?'Você desistiu. (treino)':'Partida encerrada.');
 }
 function endLocal(){
@@ -2618,7 +2806,15 @@ function endLocal(){
     if(mode==='ai')msg=wWhite?'Você venceu. (treino)':'Computador venceu. (treino)';
     else msg='Xeque-mate! '+(wWhite?'Brancas':'Pretas')+' vencem.';
   }
-  if(mode==='ai')recordTrain();
+  if(mode==='ai'){
+    // do ponto de vista do jogador (sempre brancas no vs AI)
+    var aiRes = lastEndResult;
+    if(myColor==='b'){
+      aiRes = lastEndResult==='win'?'loss':(lastEndResult==='loss'?'win':'draw');
+    }
+    recordAiResult(aiRes);
+    recordTrain();
+  }
   animateLastMoveThen(function(){ showEnd('Fim de jogo',msg); });
 }
 function endOnlineFromBoard(){
