@@ -153,16 +153,7 @@ main{flex:1;padding:.95rem;max-width:1180px;width:100%;margin:0 auto}
 .status.chk{color:var(--red)}.status.mate{color:var(--gold)}
 .moves{background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:14px;padding:.75rem;max-height:120px;overflow:auto;font-family:ui-monospace,monospace;font-size:.82rem}
 .moves .row{margin-bottom:.18rem}.moves .n{color:var(--muted);margin-right:.25rem}
-#coach{display:none;padding:.95rem;border-radius:16px;background:linear-gradient(165deg,rgba(48,36,12,.92),rgba(14,18,30,.96));border:1px solid rgba(245,197,66,.35)}
-#coach h3{color:var(--gold);font-size:.88rem;font-weight:900;margin-bottom:.25rem}
-#coach-move{font-size:1.25rem;font-weight:900;color:var(--gold);margin:.2rem 0 .4rem}
-#coach-text{font-size:.84rem;line-height:1.5;color:#f6ecc8}
-.coach-btns{display:flex;gap:.35rem;margin-top:.65rem;flex-wrap:wrap}
-.coach-btns button{padding:.45rem .75rem;border-radius:10px;font-size:.78rem;font-weight:900}
-.btn-gold{background:linear-gradient(135deg,#f5c542,#f59e0b);color:#1a1200}
-.btn-soft{background:rgba(255,255,255,.06);border:1px solid var(--line)}
-.chat{display:none;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:.85rem;flex-direction:column;gap:.55rem;box-shadow:0 10px 30px rgba(0,0,0,.2)}
-.chat.on{display:flex}
+/* coach e chat estilos legados removidos — ver bloco GAME LAYOUT PREMIUM */
 .chat-log{height:120px;overflow:auto;background:rgba(0,0,0,.25);border-radius:12px;padding:.65rem;font-size:.82rem;border:1px solid var(--line)}
 .chat-msg{margin-bottom:.35rem;line-height:1.35}
 .chat-msg b{color:#93c5fd}
@@ -254,108 +245,325 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 .theme-swatches button.on{border-color:#fff;transform:scale(1.08)}
 
 
-/* ===== GAME REDESIGN ===== */
+/* ===== GAME LAYOUT PREMIUM ===== */
+#game{
+  padding:0 .5rem 1.5rem;
+  animation:fade-up .4s ease;
+}
 .game-shell{
   width:100%;
-  max-width:1100px;
+  max-width:1240px;
   margin:0 auto;
   display:grid;
-  gap:1rem;
+  gap:1.25rem;
 }
-@media(min-width:960px){
+@media(min-width:1024px){
   .game-shell{
-    grid-template-columns: minmax(300px,560px) 1fr;
+    grid-template-columns: minmax(340px, 620px) minmax(300px, 380px);
     align-items:start;
+    gap:1.5rem;
   }
 }
-.game-main{display:flex;flex-direction:column;align-items:center;gap:.65rem}
+.game-main{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:.7rem;
+}
 .game-side{
-  display:flex;flex-direction:column;gap:.75rem;
+  display:flex;
+  flex-direction:column;
+  gap:.85rem;
   width:100%;
   min-width:0;
 }
+
+/* Board container */
 .board-hero{
-  width:min(92vw,560px);
+  width:min(94vw, 600px);
   aspect-ratio:1/1;
-  border-radius:18px;
-  padding:10px;
-  background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
+  border-radius:22px;
+  padding:12px;
+  background:
+    linear-gradient(155deg, rgba(255,255,255,.1), rgba(255,255,255,.02)),
+    radial-gradient(circle at 30% 20%, rgba(91,157,255,.12), transparent 55%);
   border:1px solid var(--line2);
-  box-shadow:0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.04) inset;
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.5),
+    0 0 0 1px rgba(255,255,255,.05) inset,
+    0 1px 0 rgba(255,255,255,.06);
+  position:relative;
 }
 .board-hero .board-frame{
   width:100%;height:100%;
-  border-radius:12px;
+  border-radius:14px;
   overflow:hidden;
-  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 0 0 1px rgba(0,0,0,.2);
 }
+
+/* Player bars */
 .player-card{
-  width:min(92vw,560px);
-  display:flex;align-items:center;justify-content:space-between;gap:.75rem;
-  padding:.7rem .9rem;border-radius:16px;
-  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+  width:min(94vw, 600px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:.8rem;
+  padding:.75rem 1.05rem;
+  border-radius:16px;
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
   border:1px solid var(--line);
-  backdrop-filter:blur(10px);
+  backdrop-filter:blur(14px);
+  transition:border-color .25s, box-shadow .25s, transform .2s;
 }
 .player-card.active{
-  border-color:rgba(91,157,255,.55);
-  box-shadow:0 0 0 1px rgba(91,157,255,.2),0 10px 30px rgba(91,157,255,.08);
+  border-color:rgba(91,157,255,.6);
+  box-shadow:0 0 0 1px rgba(91,157,255,.25), 0 12px 36px rgba(91,157,255,.12);
+  transform:translateY(-1px);
 }
-.player-card .who{font-weight:900;font-size:.92rem}
-.player-card .caps{font-size:1.05rem;opacity:.95}
-.game-actions{display:flex;flex-wrap:wrap;gap:.45rem;justify-content:center;width:min(92vw,560px)}
+.player-card .who{
+  font-weight:900;
+  font-size:.95rem;
+  letter-spacing:.01em;
+}
+.player-card .caps{
+  font-size:1.1rem;
+  opacity:.95;
+  display:flex;
+  flex-wrap:wrap;
+  gap:1px;
+  justify-content:flex-end;
+  max-width:55%;
+}
+
+/* Actions under board */
+.game-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.4rem;
+  justify-content:center;
+  width:min(94vw, 600px);
+  margin-top:.15rem;
+}
 .game-actions button{
-  padding:.55rem 1rem;border-radius:999px;font-size:.84rem;font-weight:800;
-  background:rgba(255,255,255,.05);border:1px solid var(--line);
-  transition:.15s;
+  padding:.55rem 1.05rem;
+  border-radius:999px;
+  font-size:.82rem;
+  font-weight:800;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--line);
+  transition:transform .15s, background .15s, border-color .15s;
 }
-.game-actions button:hover{background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.game-actions button:hover{
+  background:rgba(255,255,255,.11);
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.18);
+}
+.game-actions button:active{transform:translateY(0)}
+
+/* Side status */
 .side-status{
-  text-align:center;padding:.8rem;border-radius:16px;font-weight:900;
-  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-  border:1px solid var(--line);font-size:.95rem;
+  text-align:center;
+  padding:.9rem 1rem;
+  border-radius:16px;
+  font-weight:900;
+  font-size:1rem;
+  letter-spacing:.02em;
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  box-shadow:0 8px 24px rgba(0,0,0,.18);
+  transition:color .2s, border-color .2s;
 }
-.side-status.chk{color:var(--red)}
-.side-status.mate{color:var(--gold)}
+.side-status.chk{
+  color:var(--red);
+  border-color:rgba(251,113,133,.35);
+  background:linear-gradient(180deg, rgba(251,113,133,.12), rgba(255,255,255,.02));
+}
+.side-status.mate{
+  color:var(--gold);
+  border-color:rgba(245,197,66,.4);
+  background:linear-gradient(180deg, rgba(245,197,66,.14), rgba(255,255,255,.02));
+}
+
+/* Generic side card */
 .side-card{
-  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-  border:1px solid var(--line);border-radius:18px;padding:.9rem;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:1rem 1.05rem;
+  box-shadow:0 12px 32px rgba(0,0,0,.22);
 }
-.side-card h3{font-size:.88rem;font-weight:900;margin-bottom:.55rem;color:#dbe4ff}
+.side-card h3{
+  font-size:.86rem;
+  font-weight:900;
+  margin-bottom:.6rem;
+  color:#dbe4ff;
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+}
 .moves-box{
-  max-height:130px;overflow:auto;font-family:ui-monospace,monospace;font-size:.84rem;
-  background:rgba(0,0,0,.22);border-radius:12px;padding:.7rem;border:1px solid var(--line);
+  max-height:148px;
+  overflow:auto;
+  font-family:ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size:.84rem;
+  background:rgba(0,0,0,.28);
+  border-radius:12px;
+  padding:.75rem .85rem;
+  border:1px solid var(--line);
+  line-height:1.55;
 }
+.moves-box .row{margin-bottom:.15rem}
+.moves-box .n{color:var(--muted); margin-right:.3rem; font-weight:700}
+
+/* ===== COACH PREMIUM ===== */
+#coach{
+  display:none;
+  background:
+    linear-gradient(165deg, rgba(72,48,10,.98), rgba(18,16,28,.98)) !important;
+  border:1px solid rgba(245,197,66,.45) !important;
+  border-radius:20px !important;
+  padding:1.15rem 1.2rem !important;
+  box-shadow:0 16px 40px rgba(0,0,0,.35), 0 0 0 1px rgba(245,197,66,.08) inset;
+  position:relative;
+  overflow:hidden;
+}
+#coach::before{
+  content:'';
+  position:absolute;
+  top:-40%;
+  right:-20%;
+  width:180px;
+  height:180px;
+  background:radial-gradient(circle, rgba(245,197,66,.18), transparent 70%);
+  pointer-events:none;
+}
+#coach h3{
+  color:var(--gold);
+  font-size:.92rem;
+  font-weight:900;
+  margin-bottom:.35rem;
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  letter-spacing:.02em;
+}
+#coach-move{
+  font-size:1.45rem;
+  font-weight:900;
+  color:#fde68a;
+  margin:.25rem 0 .45rem;
+  letter-spacing:.03em;
+  text-shadow:0 0 20px rgba(245,197,66,.25);
+}
+#coach-text{
+  font-size:.86rem;
+  line-height:1.55;
+  color:#f6ecc8;
+  opacity:.95;
+}
+.coach-btns{
+  display:flex;
+  gap:.4rem;
+  margin-top:.85rem;
+  flex-wrap:wrap;
+}
+.coach-btns button{
+  padding:.55rem .9rem;
+  border-radius:12px;
+  font-size:.8rem;
+  font-weight:900;
+  transition:transform .15s, filter .15s;
+}
+.coach-btns button:hover{transform:translateY(-1px); filter:brightness(1.08)}
+.btn-gold{
+  background:linear-gradient(135deg, #f5c542, #f59e0b);
+  color:#1a1200;
+  box-shadow:0 6px 18px rgba(245,197,66,.3);
+}
+.btn-soft{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  color:#f6ecc8;
+}
+
+/* ===== CHAT PREMIUM ===== */
 .chat-modern{
-  display:none;flex-direction:column;gap:.55rem;
-  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-  border:1px solid var(--line);border-radius:18px;padding:.9rem;
-  min-height:220px;
+  display:none;
+  flex-direction:column;
+  gap:.6rem;
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:1rem 1.05rem;
+  min-height:240px;
+  box-shadow:0 12px 32px rgba(0,0,0,.2);
 }
 .chat-modern.on{display:flex}
-.chat-modern .head{display:flex;align-items:center;justify-content:space-between}
-.chat-modern .head h3{margin:0;font-size:.9rem;font-weight:900}
-.chat-modern .log{
-  flex:1;min-height:120px;max-height:200px;overflow:auto;
-  background:rgba(0,0,0,.25);border-radius:14px;padding:.7rem;
-  border:1px solid var(--line);font-size:.84rem;
+.chat-modern .head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
-.chat-modern .msg{margin-bottom:.4rem;line-height:1.4;padding:.35rem .5rem;border-radius:10px;background:rgba(255,255,255,.03)}
+.chat-modern .head h3{
+  margin:0;
+  font-size:.9rem;
+  font-weight:900;
+  color:#dbe4ff;
+}
+.chat-modern .log{
+  flex:1;
+  min-height:130px;
+  max-height:220px;
+  overflow:auto;
+  background:rgba(0,0,0,.3);
+  border-radius:14px;
+  padding:.8rem;
+  border:1px solid var(--line);
+  font-size:.84rem;
+}
+.chat-modern .msg{
+  margin-bottom:.45rem;
+  line-height:1.4;
+  padding:.4rem .6rem;
+  border-radius:10px;
+  background:rgba(255,255,255,.04);
+  animation:fade-up .25s ease;
+}
 .chat-modern .msg b{color:#93c5fd}
-.chat-modern .form{display:flex;gap:.4rem}
+.chat-modern .form{display:flex; gap:.45rem}
 .chat-modern .form input{
-  flex:1;padding:.65rem .8rem;border-radius:12px;
-  background:rgba(0,0,0,.28);border:1px solid var(--line);color:var(--text);font-size:.88rem;
+  flex:1;
+  padding:.7rem .85rem;
+  border-radius:12px;
+  background:rgba(0,0,0,.32);
+  border:1px solid var(--line);
+  color:var(--text);
+  font-size:.88rem;
+  transition:border-color .15s;
+}
+.chat-modern .form input:focus{
+  border-color:rgba(91,157,255,.5);
+  box-shadow:0 0 0 3px rgba(91,157,255,.12);
 }
 .chat-modern .form button{
-  padding:.65rem .9rem;border-radius:12px;font-weight:900;font-size:.82rem;color:#fff;
-  background:linear-gradient(135deg,var(--blue),var(--violet));
+  padding:.7rem 1rem;
+  border-radius:12px;
+  font-weight:900;
+  font-size:.82rem;
+  color:#fff;
+  background:linear-gradient(135deg, var(--blue), var(--violet));
+  box-shadow:0 6px 16px rgba(91,157,255,.25);
+  transition:transform .15s, filter .15s;
 }
-#coach{
-  background:linear-gradient(165deg,rgba(60,42,12,.95),rgba(18,20,32,.96))!important;
-  border:1px solid rgba(245,197,66,.4)!important;
-  border-radius:18px!important;padding:1rem!important;
+.chat-modern .form button:hover{transform:translateY(-1px); filter:brightness(1.08)}
+
+/* Mobile tweaks for game */
+@media(max-width:1023px){
+  .game-side{order:2}
+  .game-main{order:1}
+  .board-hero{width:min(96vw, 520px)}
+  .player-card, .game-actions{width:min(96vw, 520px)}
+  #coach{order:-1}
 }
 
 </style>
@@ -365,7 +573,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   <div class="auth-card">
     <div class="brand">♛</div>
     <h1>Xadrez Mestre</h1>
-    <p class="sub">Contas no Supabase · ranking online</p>
+    <p class="sub">Stockfish · Elo · Contas seguras no Supabase</p>
     <div class="tabs">
       <button type="button" class="on" id="t-in" onclick="tab('in')">Entrar</button>
       <button type="button" id="t-up" onclick="tab('up')">Criar conta</button>
@@ -392,7 +600,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     <div class="hdr-right">
       <span class="conn" id="conn-status">conectando…</span>
       <div class="chip"><span id="h-name">—</span><span class="tag-m hidden" id="h-master">MESTRE</span></div>
-      <span class="pts" id="h-pts">0 pts</span>
+      <span class="pts" id="h-pts">1200 Elo</span>
       <button type="button" class="btn-out" onclick="logout()">Sair</button>
     </div>
   </header>
@@ -413,15 +621,15 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
         <div class="card">
           <h2>Treino local</h2>
           <div class="modes">
-            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Treino · sem pontos de ranking</div></div></div>
+            <div class="mode" onclick="startLocal('ai')"><div class="i">🤖</div><div><div class="t">vs Computador</div><div class="d">Stockfish real · sem Elo de ranking</div></div></div>
             <div class="mode" onclick="startLocal('local')"><div class="i">👥</div><div><div class="t">Dois jogadores</div><div class="d">Mesmo dispositivo</div></div></div>
           </div>
           <div style="margin-top:.85rem">
             <div style="font-size:.78rem;color:var(--muted);font-weight:700;margin-bottom:.35rem">Dificuldade da IA</div>
             <div class="diff-row">
-              <button type="button" id="d-easy" onclick="setDiff('easy')">Fácil</button>
-              <button type="button" id="d-medium" class="on" onclick="setDiff('medium')">Médio</button>
-              <button type="button" id="d-hard" onclick="setDiff('hard')">Difícil</button>
+              <button type="button" id="d-easy" onclick="setDiff('easy')">Fácil (Skill 2)</button>
+              <button type="button" id="d-medium" class="on" onclick="setDiff('medium')">Médio (Skill 8)</button>
+              <button type="button" id="d-hard" onclick="setDiff('hard')">Difícil (Skill 16)</button>
             </div>
           </div>
           <div class="stats" id="home-stats" style="margin-top:1rem"></div>
@@ -436,7 +644,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
       </div>
     </div>
     <div id="v-rank" class="hidden">
-      <div class="card"><h2>Ranking global (Supabase)</h2><ul class="list" id="rank-list"></ul></div>
+      <div class="card"><h2>Ranking Elo global (Supabase)</h2><ul class="list" id="rank-list"></ul></div>
     </div>
     
     <div id="v-settings" class="hidden">
@@ -504,30 +712,35 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
           </div>
           <div class="game-actions">
             <button type="button" id="btn-undo" onclick="undo()">↩ Desfazer</button>
+            <button type="button" onclick="flipBoard()">🔄 Virar</button>
+            <button type="button" onclick="copyPGN()">📋 PGN</button>
             <button type="button" onclick="resign()">Desistir</button>
             <button type="button" onclick="toHome()">Lobby</button>
           </div>
         </div>
         <div class="game-side">
           <div class="side-status" id="status">Vez das Brancas</div>
+
+          <div id="coach">
+            <h3>♛ Coach Supremo</h3>
+            <div id="coach-move">—</div>
+            <div id="coach-text">Análise de elite · apenas jogadas perfeitas.</div>
+            <div class="coach-btns">
+              <button type="button" class="btn-gold" onclick="coachBest()">✦ Jogada perfeita</button>
+              <button type="button" class="btn-soft" onclick="coachPlan()">Plano de jogo</button>
+            </div>
+          </div>
+
           <div class="side-card">
             <h3>📜 Lances</h3>
             <div class="moves-box moves" id="moves"></div>
           </div>
-          <div id="coach">
-            <h3>🧠 Coach de Elite</h3>
-            <div id="coach-move">—</div>
-            <div id="coach-text">Análise disponível.</div>
-            <div class="coach-btns">
-              <button type="button" class="btn-gold" onclick="coachBest()">Melhor jogada</button>
-              <button type="button" class="btn-soft" onclick="coachPlan()">Plano</button>
-            </div>
-          </div>
+
           <div class="chat-modern" id="chat">
             <div class="head"><h3>💬 Chat</h3></div>
             <div class="log chat-log" id="chat-log"></div>
             <div class="form chat-form">
-              <input id="chat-in" placeholder="Escreva uma mensagem..." maxlength="120"/>
+              <input id="chat-in" placeholder="Mensagem..." maxlength="120"/>
               <button type="button" onclick="sendChat()">Enviar</button>
             </div>
           </div>
@@ -578,10 +791,13 @@ create policy "players_select" on public.players for select using (true);
 create policy "players_insert" on public.players for insert with check (true);
 create policy "players_update" on public.players for update using (true);
 
--- opcional: conta mestre
+-- opcional: conta mestre (senha será hasheada no primeiro login)
 insert into public.players (username, password, points)
-values ('fernandolapa', '123456', 0)
+values ('fernandolapa', '123456', 1200)
 on conflict (username) do nothing;
+
+-- Nota: a partir desta versão as senhas novas são armazenadas como
+-- pbkdf2$salt$hash (Web Crypto). Contas antigas em texto puro são migradas no login.
 
 ============================================================
 -->
@@ -601,6 +817,33 @@ const PST={
  k:[-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-20,-30,-30,-40,-40,-30,-30,-20,-10,-20,-20,-20,-20,-20,-20,-10,20,20,0,0,0,0,20,20,20,30,10,0,0,10,30,20]
 };
 const PTS={win:25,draw:10,loss:-8};
+const ELO_K=32, ELO_START=1200;
+
+/* ===== PASSWORD HASHING (Web Crypto) ===== */
+async function hashPassword(password, salt){
+  var enc=new TextEncoder();
+  var keyMaterial=await crypto.subtle.importKey('raw',enc.encode(password),{name:'PBKDF2'},false,['deriveBits']);
+  var bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:120000,hash:'SHA-256'},keyMaterial,256);
+  var hashArray=Array.from(new Uint8Array(bits));
+  return hashArray.map(function(b){return b.toString(16).padStart(2,'0')}).join('');
+}
+function makeSalt(){return Array.from(crypto.getRandomValues(new Uint8Array(16))).map(function(b){return b.toString(16).padStart(2,'0')}).join('')}
+async function verifyPassword(password, stored){
+  // formato novo: "pbkdf2$salt$hash"
+  if(stored && stored.indexOf('pbkdf2$')===0){
+    var parts=stored.split('$');
+    if(parts.length!==3) return false;
+    var h=await hashPassword(password, parts[1]);
+    return h===parts[2];
+  }
+  // compatibilidade com contas antigas (texto puro)
+  return password===stored;
+}
+async function createHashedPassword(password){
+  var salt=makeSalt();
+  var h=await hashPassword(password, salt);
+  return 'pbkdf2$'+salt+'$'+h;
+}
 
 let sb=null, lobbyCh=null, gameCh=null;
 let me=null, presenceStatus='available', onlinePlayers=[];
@@ -613,6 +856,27 @@ function setSession(u){localStorage.setItem(SESSION,u)}
 function clearSession(){localStorage.removeItem(SESSION)}
 function getSession(){return localStorage.getItem(SESSION)}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},2200)}
+
+/* ===== SONS ===== */
+var audioCtx=null;
+function ensureAudio(){ if(!audioCtx) try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)() }catch(e){} }
+function playTone(freq, dur, type, vol){
+  ensureAudio(); if(!audioCtx) return;
+  try{
+    var o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type=type||'sine'; o.frequency.value=freq;
+    g.gain.value=vol||0.08;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (dur||0.12));
+    o.stop(audioCtx.currentTime + (dur||0.12) + 0.02);
+  }catch(e){}
+}
+function sfxMove(){ playTone(420, 0.07, 'triangle', 0.06) }
+function sfxCapture(){ playTone(280, 0.1, 'square', 0.07); setTimeout(function(){playTone(180,0.08,'square',0.05)},40) }
+function sfxCheck(){ playTone(660,0.09,'sawtooth',0.06); setTimeout(function(){playTone(880,0.12,'sawtooth',0.05)},70) }
+function sfxWin(){ playTone(523,0.12,'sine',0.08); setTimeout(function(){playTone(659,0.12,'sine',0.08)},110); setTimeout(function(){playTone(784,0.18,'sine',0.09)},220) }
+
 function setConn(ok,txt){
   var el=document.getElementById('conn-status');
   el.className='conn '+(ok?'on':'off');
@@ -812,7 +1076,7 @@ function initMasterEngine(){
     try{ attach(new Worker(urls[0])); }catch(e){ sfWorker=null; }
   })});
 }
-function engineBestMove(fen, depth, movetime, cb){
+function engineBestMove(fen, depth, movetime, cb, skill){
   initMasterEngine();
   if(!sfWorker){ cb(null); return; }
   if(sfBusy){ cb(null); return; }
@@ -820,12 +1084,21 @@ function engineBestMove(fen, depth, movetime, cb){
   if(sfTimer) clearTimeout(sfTimer);
   sfTimer=setTimeout(function(){
     if(sfCb===cb){ sfCb=null; sfBusy=false; cb(null); }
-  }, (movetime||3000)+2000);
+  }, (movetime||4000)+2500);
   try{
     sfWorker.postMessage('ucinewgame');
+    if(typeof skill === 'number'){
+      var sk = Math.max(0, Math.min(20, skill|0));
+      sfWorker.postMessage('setoption name Skill Level value ' + sk);
+      // valores clássicos para tornar Skill Level efetivo em builds antigas
+      var maxErr = Math.round(200 - sk * 9);
+      var prob = Math.round(128 - sk * 4);
+      sfWorker.postMessage('setoption name Skill Level Maximum Error value ' + Math.max(1, maxErr));
+      sfWorker.postMessage('setoption name Skill Level Probability value ' + Math.max(1, prob));
+    }
     sfWorker.postMessage('position fen '+fen);
     if(movetime) sfWorker.postMessage('go movetime '+movetime);
-    else sfWorker.postMessage('go depth '+(depth||14));
+    else sfWorker.postMessage('go depth '+(depth||12));
   }catch(e){ sfBusy=false; sfCb=null; cb(null); }
 }
 function uciToParts(uci){
@@ -850,7 +1123,7 @@ async function dbGetPlayer(username){
 async function dbCreatePlayer(username,password){
   var res=await sb.from('players').insert({
     username:username,password:password,
-    points:0,games:0,wins:0,losses:0,draws:0,streak:0,best_streak:0,train_games:0
+    points:ELO_START,games:0,wins:0,losses:0,draws:0,streak:0,best_streak:0,train_games:0
   }).select('*').single();
   if(res.error) throw res.error;
   return res.data;
@@ -895,8 +1168,9 @@ async function register(){
   try{
     var exists=await dbGetPlayer(u);
     if(exists) return err('Este usuário já existe no banco');
-    var row=await dbCreatePlayer(u,p);
-    toast('Conta criada no Supabase');
+    var hashed = await createHashedPassword(p);
+    var row=await dbCreatePlayer(u, hashed);
+    toast('Conta criada com senha protegida');
     enter(rowToMe(row));
   }catch(e){
     console.error(e);
@@ -917,7 +1191,15 @@ async function login(){
   try{
     var row=await dbGetPlayer(u);
     if(!row) return err('Usuário não encontrado no banco');
-    if(row.password!==p) return err('Senha incorreta');
+    var ok = await verifyPassword(p, row.password);
+    if(!ok) return err('Senha incorreta');
+    // migração automática: se ainda estava em texto puro, grava o hash
+    if(row.password && row.password.indexOf('pbkdf2$')!==0){
+      try{
+        var hashed = await createHashedPassword(p);
+        await dbUpdatePlayer(u, {password: hashed});
+      }catch(e){}
+    }
     enter(rowToMe(row));
   }catch(e){
     console.error(e);
@@ -934,7 +1216,7 @@ function enter(userObj){
   document.getElementById('auth').style.display='none';
   document.getElementById('app').style.display='flex';
   document.getElementById('h-name').textContent=me.name;
-  document.getElementById('h-pts').textContent=me.points+' pts';
+  document.getElementById('h-pts').textContent=me.points+' Elo';
   document.getElementById('h-master').classList.toggle('hidden',!me.isMaster);
   if(!sb) initSupabase();
   joinLobby();
@@ -958,7 +1240,7 @@ async function reloadMe(){
     var row=await dbGetPlayer(me.name);
     if(row){
       me=rowToMe(row);
-      document.getElementById('h-pts').textContent=me.points+' pts';
+      document.getElementById('h-pts').textContent=me.points+' Elo';
     }
   }catch(e){}
 }
@@ -1013,7 +1295,7 @@ function renderOnline(){
     var busy=p.status==='in_game';
     return '<div class="player-row '+(busy?'busy':'available')+'" '+(busy?'':'onclick="challengePlayer(\''+p.user+'\')"')+'>'+
       '<div class="avatar">'+(p.user||'?')[0].toUpperCase()+'</div>'+
-      '<div class="p-info"><div class="p-name">'+p.user+'</div><div class="p-meta">'+(p.points||0)+' pts</div></div>'+
+      '<div class="p-info"><div class="p-name">'+p.user+'</div><div class="p-meta">'+(p.points||0)+' Elo</div></div>'+
       (busy?'<span class="badge busy">Em partida</span>':'<span class="badge ok">Disponível</span>')+
       '</div>';
   }).join('');
@@ -1043,7 +1325,7 @@ async function startOnlineGame(id,opponent,color){
   pendingChallenge=null;
   document.getElementById('ov-wait').style.display='none';
   document.getElementById('ov-challenge').style.display='none';
-  gameId=id;oppName=opponent;myColor=color;mode='online';
+  gameId=id;oppName=opponent;myColor=color;mode='online';boardFlipped=false;
   chess=new Chess();sel=null;legal=[];last=null;hist=[];capW=[];capB=[];chatMsgs=[];
   await setPresence('in_game');
   openGameUI();
@@ -1068,17 +1350,22 @@ async function joinGameChannel(id){
   });
   gameCh.on('broadcast',{event:'resign'},function(payload){
     var data=payload.payload||{};if(data.by===me.name)return;
-    finishOnline('win',data.by+' desistiu. Você venceu! (+'+PTS.win+' pts)');
+    finishOnline('win',data.by+' desistiu. Você venceu!');
   });
   gameCh.subscribe();
 }
 function applyRemoteMove(data){
   if(!chess||chess.game_over())return;
   var mv=chess.move({from:data.from,to:data.to,promotion:data.promotion||'q'});if(!mv)return;
-  if(mv.captured){var glyph=GL[(mv.color==='w'?'b':'w')+mv.captured];if(mv.color==='w')capW.push(glyph);else capB.push(glyph)}
+  if(mv.captured){var glyph=GL[(mv.color==='w'?'b':'w')+mv.captured];if(mv.color==='w')capW.push(glyph);else capB.push(glyph); sfxCapture()}
+  else sfxMove();
+  if(chess.in_check()) sfxCheck();
   last={from:mv.from,to:mv.to};hist.push(mv);render();status();movesUI();updateCaps();saveActiveGame();
   
-  if(chess.game_over())setTimeout(endOnlineFromBoard,200);
+  if(chess.game_over()){
+    if(chess.in_checkmate()) sfxWin();
+    setTimeout(endOnlineFromBoard,200);
+  }
 }
 
 function go(v){
@@ -1101,7 +1388,7 @@ async function paintAll(){
 function paintHome(){
   var s=me.stats;
   document.getElementById('home-stats').innerHTML=
-    '<div class="stat gold"><b>'+me.points+'</b><span>Pontos</span></div>'+
+    '<div class="stat gold"><b>'+me.points+'</b><span>Elo</span></div>'+
     '<div class="stat blue"><b>'+s.games+'</b><span>Online</span></div>'+
     '<div class="stat green"><b>'+s.wins+'</b><span>Vitórias</span></div>'+
     '<div class="stat red"><b>'+s.losses+'</b><span>Derrotas</span></div>';
@@ -1109,7 +1396,7 @@ function paintHome(){
 function paintDash(){
   var s=me.stats,wr=s.games?Math.round(s.wins/s.games*100):0;
   document.getElementById('dash-kpis').innerHTML=
-    '<div class="stat gold"><b>'+me.points+'</b><span>Pontos</span></div>'+
+    '<div class="stat gold"><b>'+me.points+'</b><span>Elo</span></div>'+
     '<div class="stat green"><b>'+wr+'%</b><span>Taxa vitória</span></div>'+
     '<div class="stat blue"><b>'+s.streak+'</b><span>Sequência</span></div>'+
     '<div class="stat"><b>'+s.trainGames+'</b><span>Treinos</span></div>';
@@ -1132,7 +1419,7 @@ async function paintRank(){
     el.innerHTML=list.map(function(p,i){
       var c=i===0?'g':i===1?'s':i===2?'b':'';
       return '<li><span class="pos '+c+'">'+(i+1)+'</span><span class="nm">'+p.username+(me&&p.username===me.name?' (você)':'')+
-        '</span><span class="el">'+(p.points||0)+' pts</span></li>';
+        '</span><span class="el">'+(p.points||0)+' Elo</span></li>';
     }).join('');
   }catch(e){
     el.innerHTML='<li class="empty">Erro ao carregar ranking. Confira a tabela players.</li>';
@@ -1213,7 +1500,7 @@ function searchTop(ch,depth,n){
 
 function startLocal(m){
   if(typeof Chess==='undefined'){alert('Recarregue');return}
-  mode=m;chess=new Chess();sel=null;legal=[];last=null;hist=[];capW=[];capB=[];chatMsgs=[];myColor='w';oppName='';gameId='';
+  mode=m;chess=new Chess();sel=null;legal=[];last=null;hist=[];capW=[];capB=[];chatMsgs=[];myColor='w';oppName='';gameId='';boardFlipped=false;
   openGameUI();
   document.getElementById('btn-undo').style.display='inline-block';
   if(m==='ai'){document.getElementById('n-w').textContent=me.name+' (você)';document.getElementById('n-b').textContent='Computador · '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio');document.getElementById('chat').classList.remove('on')}
@@ -1231,13 +1518,14 @@ function openGameUI(){
 }
 function setupCoach(){
   var coach=document.getElementById('coach');
-  if(me.isMaster){coach.style.display='block';document.getElementById('coach-move').textContent='—';document.getElementById('coach-text').textContent='Peça a melhor jogada ou o plano.'}
-  else coach.style.display='none';
+  coach.style.display='block';
+  document.getElementById('coach-move').textContent='—';
+  document.getElementById('coach-text').textContent='Análise de elite · apenas jogadas perfeitas. Clique para a melhor linha.';
 }
 function render(){
   var board=document.getElementById('board');board.innerHTML='';
   var files=['a','b','c','d','e','f','g','h'];
-  var flip=mode==='online'&&myColor==='b';
+  var flip = boardFlipped || (mode==='online' && myColor==='b');
   for(var r=0;r<8;r++)for(var f=0;f<8;f++){
     var rankNum=flip?(r+1):(8-r);
     var fileIdx=flip?(7-f):f;
@@ -1269,41 +1557,55 @@ function click(sq){
 function pick(sq){sel=sq;legal=chess.moves({square:sq,verbose:true});render()}
 function play(from,to,pr){
   var mv=chess.move({from:from,to:to,promotion:pr||'q'});if(!mv)return;
-  if(mv.captured){var glyph=GL[(mv.color==='w'?'b':'w')+mv.captured];if(mv.color==='w')capW.push(glyph);else capB.push(glyph)}
+  if(mv.captured){var glyph=GL[(mv.color==='w'?'b':'w')+mv.captured];if(mv.color==='w')capW.push(glyph);else capB.push(glyph); sfxCapture()}
+  else sfxMove();
+  if(chess.in_check()) sfxCheck();
   last={from:from,to:to};sel=null;legal=[];hist.push(mv);
   render();status();movesUI();updateCaps();saveActiveGame();
   if(mode==='online'&&gameCh)gameCh.send({type:'broadcast',event:'move',payload:{by:me.name,from:from,to:to,promotion:pr||'q'}});
   
-  if(chess.game_over()){if(mode==='online')setTimeout(endOnlineFromBoard,200);else setTimeout(endLocal,200);return}
-  if(mode==='ai'&&chess.turn()!==myColor)setTimeout(aiPlay,240);
+  if(chess.game_over()){
+    if(chess.in_checkmate()) sfxWin();
+    if(mode==='online')setTimeout(endOnlineFromBoard,200);else setTimeout(endLocal,200);return
+  }
+  if(mode==='ai'&&chess.turn()!==myColor)setTimeout(aiPlay,280);
   else if(me&&me.isMaster&&chess.turn()===myColor) setTimeout(function(){coachBest(true)},200);
 }
 function promo(p){document.getElementById('ov-promo').style.display='none';if(pend){play(pend.from,pend.to,p);pend=null}}
 function aiPlay(){
   if(!chess||chess.game_over()||mode!=='ai')return;
   var el=document.getElementById('status');
-  if(el) el.textContent='Computador pensando…';
-  setTimeout(function(){
+  if(el){ el.textContent='🤖 Computador pensando…'; el.classList.add('chk'); }
+  // Configuração por dificuldade (Skill Level 0-20 + tempo)
+  var skill = 5, movetime = 600, depth = 8;
+  if(diff==='easy'){ skill = 2; movetime = 350; depth = 5; }
+  else if(diff==='medium'){ skill = 8; movetime = 900; depth = 10; }
+  else { skill = 16; movetime = 1800; depth = 14; }
+
+  engineBestMove(chess.fen(), depth, movetime, function(uci){
     if(!chess||chess.game_over()||mode!=='ai')return;
-    var depth = diff==='easy'?1:(diff==='hard'?3:2);
-    if(diff==='easy'){
-      var top=searchTop(chess,1,Math.min(8,chess.moves().length));
-      var pick=top[Math.floor(Math.random()*top.length)]||top[0];
-      if(pick) play(pick.move.from,pick.move.to,pick.move.promotion||'q');
-      else status();
-      return;
+    var parts = uciToParts(uci);
+    var played = false;
+    if(parts){
+      var legalMoves = chess.moves({verbose:true});
+      for(var i=0;i<legalMoves.length;i++){
+        var lm = legalMoves[i];
+        if(lm.from===parts.from && lm.to===parts.to){
+          if(!parts.promotion || lm.promotion===parts.promotion){
+            play(lm.from, lm.to, lm.promotion||'q');
+            played = true;
+            break;
+          }
+        }
+      }
     }
-    if(diff==='medium'){
-      var top2=searchTop(chess,2,3);
-      var pick2=top2[Math.floor(Math.random()*Math.min(2,top2.length))]||top2[0];
-      if(pick2) play(pick2.move.from,pick2.move.to,pick2.move.promotion||'q');
+    // Fallback forte com minimax se Stockfish falhar
+    if(!played){
+      var res = searchBest(chess, diff==='hard'?3:2);
+      if(res && res.move) play(res.move.from, res.move.to, res.move.promotion||'q');
       else status();
-      return;
     }
-    var res=searchBest(chess,3);
-    if(res&&res.move) play(res.move.from,res.move.to,res.move.promotion||'q');
-    else status();
-  }, 120);
+  }, skill);
 }
 function status(){
   var el=document.getElementById('status');el.className='side-status';
@@ -1327,6 +1629,28 @@ function updateCaps(){
   document.getElementById('caps-w').innerHTML=sortG(capW).join('')+(mw>mb?'<span class="adv">+'+(mw-mb)+'</span>':'');
   document.getElementById('caps-b').innerHTML=sortG(capB).join('')+(mb>mw?'<span class="adv">+'+(mb-mw)+'</span>':'');
 }
+let boardFlipped=false;
+function flipBoard(){
+  boardFlipped = !boardFlipped;
+  render();
+  toast(boardFlipped ? 'Tabuleiro virado' : 'Orientação normal');
+}
+function copyPGN(){
+  if(!chess) return;
+  var pgn = chess.pgn({max_width:80, newline_char:'\n'});
+  var header = '[Event "Xadrez Mestre"]\n[Site "Online"]\n[Date "'+new Date().toISOString().slice(0,10)+'"]\n';
+  if(mode==='online'){
+    header += '[White "'+(myColor==='w'?me.name:oppName)+'"]\n[Black "'+(myColor==='b'?me.name:oppName)+'"]\n';
+  } else if(mode==='ai'){
+    header += '[White "'+me.name+'"]\n[Black "Computador"]\n';
+  }
+  var full = header + '\n' + pgn;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(full).then(function(){ toast('PGN copiado!') }).catch(function(){ prompt('Copie o PGN:', full) });
+  } else {
+    prompt('Copie o PGN:', full);
+  }
+}
 function undo(){
   if(mode==='online'||!hist.length)return;
   var lastMv=hist[hist.length-1];chess.undo();hist.pop();
@@ -1339,7 +1663,7 @@ function resign(){
   if(!confirm('Desistir?'))return;
   if(mode==='online'){
     if(gameCh)gameCh.send({type:'broadcast',event:'resign',payload:{by:me.name}});
-    finishOnline('loss','Você desistiu. ('+PTS.loss+' pts)');return;
+    finishOnline('loss','Você desistiu.');return;
   }
   if(mode==='ai')recordTrain();
   showEnd('Desistência',mode==='ai'?'Você desistiu. (treino)':'Partida encerrada.');
@@ -1357,8 +1681,8 @@ function endLocal(){
 function endOnlineFromBoard(){
   if(chess.in_checkmate()){
     var iWon=(chess.turn()!==myColor);
-    animateLastMoveThen(function(){ finishOnline(iWon?'win':'loss',iWon?('Você venceu! (+'+PTS.win+' pts)'):('Derrota ('+PTS.loss+' pts)')); });
-  }else animateLastMoveThen(function(){ finishOnline('draw','Empate (+'+PTS.draw+' pts)'); });
+    animateLastMoveThen(function(){ finishOnline(iWon?'win':'loss',iWon?'Você venceu!':'Derrota'); });
+  }else animateLastMoveThen(function(){ finishOnline('draw','Empate'); });
 }
 async function finishOnline(result,msg){
   await applyRank(result);
@@ -1372,16 +1696,28 @@ async function applyRank(result){
   try{
     var row=await dbGetPlayer(me.name);if(!row)return;
     var games=(row.games||0)+1,wins=row.wins||0,losses=row.losses||0,draws=row.draws||0;
-    var streak=row.streak||0,best=row.best_streak||0,points=row.points||0,delta=0;
-    if(result==='win'){wins++;delta=PTS.win;streak++;if(streak>best)best=streak}
-    else if(result==='loss'){losses++;delta=PTS.loss;streak=0}
-    else{draws++;delta=PTS.draw;streak=0}
-    points=Math.max(0,points+delta);
-    var updated=await dbUpdatePlayer(me.name,{games:games,wins:wins,losses:losses,draws:draws,streak:streak,best_streak:best,points:points});
+    var streak=row.streak||0,best=row.best_streak||0;
+    var myElo = row.points || ELO_START;
+    // estimativa do adversário (busca rápida no ranking ou fallback)
+    var oppElo = ELO_START;
+    try{
+      if(oppName){
+        var oppRow = await dbGetPlayer(oppName);
+        if(oppRow) oppElo = oppRow.points || ELO_START;
+      }
+    }catch(e){}
+    var expected = 1 / (1 + Math.pow(10, (oppElo - myElo)/400));
+    var score = result==='win' ? 1 : (result==='draw' ? 0.5 : 0);
+    var delta = Math.round(ELO_K * (score - expected));
+    if(result==='win'){wins++;streak++;if(streak>best)best=streak}
+    else if(result==='loss'){losses++;streak=0}
+    else{draws++;streak=0}
+    var newElo = Math.max(100, myElo + delta);
+    var updated=await dbUpdatePlayer(me.name,{games:games,wins:wins,losses:losses,draws:draws,streak:streak,best_streak:best,points:newElo});
     me=rowToMe(updated);
-    document.getElementById('h-pts').textContent=me.points+' pts';
-    toast((delta>=0?'+':'')+delta+' pts salvos no Supabase');
-  }catch(e){console.error(e);toast('Falha ao salvar pontos no banco')}
+    document.getElementById('h-pts').textContent=me.points+' Elo';
+    toast((delta>=0?'+':'')+delta+' Elo  →  '+newElo);
+  }catch(e){console.error(e);toast('Falha ao salvar Elo no banco')}
 }
 async function recordTrain(){
   if(!me||!sb)return;
@@ -1431,23 +1767,30 @@ function updateMatchInfo(){
   el.innerHTML=txt;
 }
 function coachPlan(){
-  if(!me||!me.isMaster||!chess)return;
-  var n=hist.length,plan=chess.in_check()?'Saia do xeque.':n<12?'Abertura: centro, desenvolvimento, roque.':n<28?'Meio-jogo: táticas e coordenação.':'Final: rei ativo e peões passados.';
+  if(!me||!chess)return;
+  var n=hist.length;
+  var plan = chess.in_check()
+    ? 'Prioridade absoluta: saia do xeque com o melhor lance disponível.'
+    : n<12
+      ? 'Abertura: ocupe o centro, desenvolva as peças menores e prepare o roque.'
+      : n<28
+        ? 'Meio-jogo: procure táticas, melhore a pior peça e coordene as torres.'
+        : 'Final: ative o rei, crie peões passados e evite trocas desfavoráveis.';
   document.getElementById('coach-text').textContent=plan;
 }
 function coachBest(auto){
-  if(!me||!me.isMaster||!chess||chess.game_over())return;
+  if(!me||!chess||chess.game_over())return;
   if((mode==='ai'||mode==='online')&&chess.turn()!==myColor){
     document.getElementById('coach-move').textContent='…';
-    document.getElementById('coach-text').textContent='Aguarde a sua vez para o coach analisar.';
+    document.getElementById('coach-text').textContent='Aguarde a sua vez para o Coach Supremo analisar.';
     return;
   }
   document.getElementById('coach-move').textContent='…';
-  document.getElementById('coach-text').textContent='Coach analisando todas as possibilidades…';
+  document.getElementById('coach-text').textContent='Calculando a jogada perfeita (força máxima)…';
   initMasterEngine();
   var fen=chess.fen();
-  // análise forte só no COACH
-  engineBestMove(fen, 18, 3000, function(uci){
+  // FORÇA MÁXIMA — Skill Level 20 + análise profunda (apenas jogadas perfeitas)
+  engineBestMove(fen, 22, 5500, function(uci){
     var found=null;
     var parts=uciToParts(uci);
     if(parts){
@@ -1460,29 +1803,27 @@ function coachBest(auto){
       }
     }
     if(!found){
-      // fallback profundo local
-      var res=searchBest(chess, chess.moves().length>40?3:4);
+      var res=searchBest(chess, chess.moves().length>35?4:5);
       if(res) found=res.move;
     }
     if(!found){
       document.getElementById('coach-move').textContent='—';
-      document.getElementById('coach-text').textContent='Não consegui analisar agora. Tente de novo.';
+      document.getElementById('coach-text').textContent='Não consegui analisar agora. Tente novamente.';
       return;
     }
-    document.getElementById('coach-move').textContent=found.san+'   '+found.from.toUpperCase()+' → '+found.to.toUpperCase();
-    var why='Jogada perfeita do coach.';
-    if(found.san.indexOf('#')!==-1) why='Mate! Jogue este lance e vença.';
-    else if(found.captured) why='Melhor captura da posição. Jogue este lance.';
-    else if(found.san.indexOf('+')!==-1) why='Melhor xeque da análise. Force a resposta.';
-    else if(found.san.indexOf('O-O')!==-1) why='Roque na linha principal — rei seguro e torre ativa.';
-    else why='Este é o melhor lance encontrado após analisar a posição. Jogue '+found.from.toUpperCase()+' → '+found.to.toUpperCase()+'.';
+    document.getElementById('coach-move').textContent=found.san+'  ·  '+found.from.toUpperCase()+' → '+found.to.toUpperCase();
+    var why='✦ Jogada perfeita.';
+    if(found.san.indexOf('#')!==-1) why='♛ Mate forçado! Execute este lance e vença.';
+    else if(found.captured) why='✦ Melhor captura da posição. Lance perfeito.';
+    else if(found.san.indexOf('+')!==-1) why='✦ Melhor xeque. Force a resposta do adversário.';
+    else if(found.san.indexOf('O-O')!==-1) why='✦ Roque na linha principal — rei seguro e torre ativa.';
+    else why='✦ Este é o melhor lance da posição. Jogue '+found.from.toUpperCase()+' → '+found.to.toUpperCase()+'.';
     document.getElementById('coach-text').textContent=why;
-    // destaca no tabuleiro
     sel=found.from;
     legal=[{to:found.to}];
     last={from:found.from,to:found.to};
     render();
-  });
+  }, 20);
 }
 
 document.addEventListener('keydown',function(e){
