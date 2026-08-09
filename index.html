@@ -159,13 +159,38 @@ main{flex:1;padding:1.05rem 1.15rem 1.5rem;max-width:1180px;width:100%;margin:0 
   box-shadow:0 18px 50px rgba(0,0,0,.3);
 }
 .dash-avatar{
-  width:64px;height:64px;border-radius:20px;
+  width:72px;height:72px;border-radius:20px;
   display:flex;align-items:center;justify-content:center;
   font-size:1.6rem;font-weight:900;
   background:linear-gradient(135deg,var(--blue),var(--violet));
   color:#fff;box-shadow:0 10px 28px rgba(91,157,255,.35);
-  flex-shrink:0;
+  flex-shrink:0;position:relative;overflow:hidden;cursor:pointer;
+  border:2px solid rgba(255,255,255,.18);
 }
+.dash-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.dash-avatar .av-edit{
+  position:absolute;inset:auto 0 0 0;background:rgba(0,0,0,.55);
+  font-size:.62rem;font-weight:800;padding:.2rem;text-align:center;
+  opacity:0;transition:opacity .15s;color:#fff
+}
+.dash-avatar:hover .av-edit{opacity:1}
+.search-box{
+  display:flex;gap:.45rem;margin-bottom:.85rem;flex-wrap:wrap
+}
+.search-box input{
+  flex:1;min-width:140px;padding:.7rem .9rem;border-radius:12px;
+  background:rgba(0,0,0,.28);border:1px solid var(--line);color:var(--text);font-weight:600
+}
+.search-box button{
+  padding:.7rem 1rem;border-radius:12px;font-weight:900;
+  background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff
+}
+.search-result{
+  margin-top:.55rem;padding:.85rem;border-radius:14px;border:1px solid var(--line);
+  background:rgba(0,0,0,.18)
+}
+.badge.mute{background:rgba(251,113,133,.14);color:var(--red);border:1px solid rgba(251,113,133,.3);cursor:pointer}
+.badge.muted-on{background:rgba(251,113,133,.22);color:#fecdd3}
 .dash-hero-info{flex:1;min-width:160px}
 .dash-hero-info .name{font-size:1.25rem;font-weight:900;letter-spacing:-.02em}
 .dash-hero-info .sub{color:var(--muted);font-size:.84rem;margin-top:.2rem;font-weight:600}
@@ -983,7 +1008,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     <div class="hdr-right">
       <span class="conn" id="conn-status">conectando…</span>
       <div class="chip"><span id="h-name">—</span><span class="tag-m hidden" id="h-master">MESTRE</span></div>
-      <span class="pts" id="h-pts">1200 pts</span>
+      <span class="pts" id="h-pts">0 pts</span>
       <button type="button" class="btn-out" onclick="logout()">Sair</button>
     </div>
   </header>
@@ -1008,8 +1033,13 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             <h2>🟢 Online agora</h2>
             <span class="chip-soft" id="online-count">0</span>
           </div>
+          <div class="search-box">
+            <input id="user-search" type="text" placeholder="Pesquisar jogador…" maxlength="24" onkeydown="if(event.key==='Enter')searchUser()"/>
+            <button type="button" onclick="searchUser()">🔍 Buscar</button>
+          </div>
+          <div id="search-result" class="search-result hidden"></div>
           <div class="online-list" id="online-list"><div class="empty">Conectando ao lobby…</div></div>
-          <p class="note">Toque em um jogador <strong>disponível</strong> para desafiar.</p>
+          <p class="note">Toque no jogador para ver o perfil · <strong>Desafiar</strong> se estiver online · <strong>Silenciar</strong> bloqueia desafios dele.</p>
         </div>
         <div class="card">
           <h2>🎯 Treino local</h2>
@@ -1037,13 +1067,16 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 
     <div id="v-dash" class="hidden">
       <div class="dash-hero" id="dash-hero">
-        <div class="dash-avatar" id="dash-avatar">?</div>
+        <div class="dash-avatar" id="dash-avatar" onclick="pickAvatar()" title="Trocar foto de perfil">?
+          <span class="av-edit">📷 Foto</span>
+        </div>
+        <input type="file" id="avatar-file" accept="image/*" class="hidden" onchange="onAvatarFile(event)"/>
         <div class="dash-hero-info">
           <div class="name" id="dash-name">Jogador</div>
           <div class="sub" id="dash-sub">Carregando perfil…</div>
         </div>
         <div class="dash-elo-pill">
-          <b id="dash-elo">1200</b>
+          <b id="dash-elo">0</b>
           <span>Pontos</span>
         </div>
       </div>
@@ -1292,7 +1325,7 @@ create table if not exists public.players (
   id uuid primary key default gen_random_uuid(),
   username text unique not null,
   password text not null,
-  points int not null default 1200,
+  points int not null default 0,
   games int not null default 0,
   wins int not null default 0,
   losses int not null default 0,
@@ -1317,7 +1350,7 @@ drop policy if exists "players_update" on public.players;
 create policy "players_select" on public.players for select using (true);
 -- Criar conta: só com username válido e pontos iniciais
 create policy "players_insert" on public.players for insert with check (
-  points = 1200 and games = 0 and wins = 0 and losses = 0 and draws = 0
+  points = 0 and games = 0 and wins = 0 and losses = 0 and draws = 0
 );
 -- Update: permitido (app single-page). Para produção real use Supabase Auth +
 -- policy: using (auth.uid() = id) e Edge Function para pontos/puzzles.
@@ -1329,7 +1362,7 @@ create policy "players_update" on public.players for update using (true);
 -- 3) Mover pontos e +10 puzzles para Edge Function com service role
 
 insert into public.players (username, password, points)
-values ('fernandolapa', '123456', 1200)
+values ('fernandolapa', '123456', 0)
 on conflict (username) do nothing;
 
 -- Senhas: pbkdf2$salt$hash (Web Crypto). Texto puro migra no login.
@@ -1401,8 +1434,8 @@ const PST={
  q:[-20,-10,-10,-5,-5,-10,-10,-20,-10,0,0,0,0,0,0,-10,-10,0,5,5,5,5,0,-10,-5,0,5,5,5,5,0,-5,0,0,5,5,5,5,0,-5,-10,5,5,5,5,5,0,-10,-10,0,5,0,0,0,0,-10,-20,-10,-10,-5,-5,-10,-10,-20],
  k:[-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-20,-30,-30,-40,-40,-30,-30,-20,-10,-20,-20,-20,-20,-20,-20,-10,20,20,0,0,0,0,20,20,20,30,10,0,0,10,30,20]
 };
-const PTS={win:25,draw:10,loss:-8};
-const ELO_K=32, ELO_START=1200;
+const PTS={win:25,draw:0,loss:-8}; // online: +25 vitória · −8 derrota · 0 empate
+const ELO_K=32, ELO_START=0; // contas novas começam com 0
 
 /* ===== PASSWORD HASHING (Web Crypto) ===== */
 async function hashPassword(password, salt){
@@ -2007,6 +2040,11 @@ async function joinLobby(){
   lobbyCh.on('broadcast',{event:'challenge'},function(payload){
     var data=payload.payload||{};
     if(data.to!==me.name)return;
+    // silenciado: auto-recusa sem mostrar popup
+    if(isMuted(data.from)){
+      lobbyCh.send({type:'broadcast',event:'challenge_response',payload:{id:data.id,from:data.from,to:data.to,accept:false,reason:'muted'}});
+      return;
+    }
     if(presenceStatus!=='available'){
       lobbyCh.send({type:'broadcast',event:'challenge_response',payload:{id:data.id,from:data.from,to:data.to,accept:false,reason:'busy'}});
       return;
@@ -2021,7 +2059,7 @@ async function joinLobby(){
     if(data.from!==me.name)return;
     document.getElementById('ov-wait').style.display='none';
     if(!data.accept){
-      toast(data.to+(data.reason==='busy'?' está em partida':' recusou'));
+      toast(data.to+(data.reason==='busy'?' está em partida':data.reason==='muted'?' bloqueou seus desafios':' recusou'));
       pendingChallenge=null;setPresence('available');return;
     }
     if(typeof data.timeControl==='number') timeControl=data.timeControl;
@@ -2049,23 +2087,26 @@ function renderOnline(){
   el.innerHTML=others.map(function(p){
     var busy=p.status==='in_game';
     var canWatch = busy && p.gameId;
+    var muted = isMuted(p.user);
     var badge = busy
       ? (canWatch
           ? '<span class="badge watch" onclick="event.stopPropagation();spectateGame(\''+p.user+'\',\''+p.gameId+'\')">👁 Assistir</span>'
           : '<span class="badge busy">Em partida</span>')
       : '<span class="badge ok" onclick="event.stopPropagation();challengePlayer(\''+p.user+'\')">⚔️ Desafiar</span>';
+    var muteBtn = '<span class="badge '+(muted?'muted-on':'mute')+'" onclick="event.stopPropagation();toggleMute(\''+p.user+'\')">'+(muted?'🔇 Silenciado':'🔇 Silenciar')+'</span>';
     return '<div class="player-row '+(busy?(canWatch?'watchable':'busy'):'available')+'" onclick="viewPlayerProfile(\''+p.user+'\')" title="Ver estatísticas">'+
-      '<div class="avatar">'+(p.user||'?')[0].toUpperCase()+'</div>'+
-      '<div class="p-info"><div class="p-name">'+p.user+'</div><div class="p-meta">'+(p.points||0)+' pts · tocar para perfil</div></div>'+
-      badge+
+      '<div class="avatar">'+avatarHtml(p.user)+'</div>'+
+      '<div class="p-info"><div class="p-name">'+p.user+(muted?' 🔇':'')+'</div><div class="p-meta">'+(p.points||0)+' pts · tocar para perfil</div></div>'+
+      '<div style="display:flex;flex-direction:column;gap:.25rem;align-items:flex-end">'+badge+muteBtn+'</div>'+
       '</div>';
   }).join('');
 }
 function challengePlayer(to){
   if(!lobbyCh||!me)return toast('Sem conexão');
   if(presenceStatus!=='available')return toast('Você está ocupado');
+  if(isMuted(to)) return toast('Você silenciou este jogador. Dessilencie para desafiar.');
   var target=onlinePlayers.find(function(p){return p.user===to});
-  if(!target||target.status==='in_game')return toast('Indisponível');
+  if(!target||target.status==='in_game')return toast('Indisponível ou offline');
   var id='g_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
   pendingChallenge={id:id,from:me.name,to:to,timeControl:timeControl};
   lobbyCh.send({type:'broadcast',event:'challenge',payload:{id:id,from:me.name,to:to,timeControl:timeControl}});
@@ -2313,8 +2354,7 @@ function paintDash(){
   var pz=loadPuzzleStats();
   var pzRate=pz.attempts?Math.round(pz.solved/pz.attempts*100):0;
 
-  var av=document.getElementById('dash-avatar');
-  if(av) av.textContent=(me.name||'?')[0].toUpperCase();
+  paintDashAvatar();
   var dn=document.getElementById('dash-name'); if(dn) dn.textContent=me.name;
   var ds=document.getElementById('dash-sub');
   if(ds) ds.textContent=s.games+' partidas online · '+ai.games+' vs PC · '+pz.solved+' puzzles';
@@ -3545,6 +3585,139 @@ function movesUIReview(){
   box.scrollTop=box.scrollHeight;
 }
 
+/* ===== AVATAR / MUTE / BUSCA ===== */
+const MUTE_KEY='xm_muted_v1';
+const AVATAR_KEY='xm_avatar_';
+function loadMuted(){
+  try{ return JSON.parse(localStorage.getItem(MUTE_KEY)||'[]'); }catch(e){ return []; }
+}
+function saveMuted(list){ try{ localStorage.setItem(MUTE_KEY, JSON.stringify(list)); }catch(e){} }
+function isMuted(user){
+  if(!user) return false;
+  var u=String(user).toLowerCase();
+  return loadMuted().some(function(x){ return String(x).toLowerCase()===u; });
+}
+function toggleMute(user){
+  if(!user||(me&&user===me.name)) return;
+  var list=loadMuted();
+  var u=String(user).toLowerCase();
+  var idx=-1;
+  for(var i=0;i<list.length;i++){ if(String(list[i]).toLowerCase()===u){ idx=i; break; } }
+  if(idx>=0){ list.splice(idx,1); toast(user+' dessilenciado'); }
+  else { list.push(user); toast(user+' silenciado · não poderá te desafiar'); }
+  saveMuted(list);
+  renderOnline();
+  var sr=document.getElementById('search-result');
+  if(sr && !sr.classList.contains('hidden')) searchUser();
+}
+function getAvatarData(user){
+  try{ return localStorage.getItem(AVATAR_KEY+(user||''))||''; }catch(e){ return ''; }
+}
+function setAvatarData(user, dataUrl){
+  try{
+    if(dataUrl) localStorage.setItem(AVATAR_KEY+user, dataUrl);
+    else localStorage.removeItem(AVATAR_KEY+user);
+  }catch(e){ toast('Não foi possível salvar a foto (arquivo grande?)'); }
+}
+function avatarHtml(user){
+  var data=getAvatarData(user);
+  if(data) return '<img src="'+data+'" alt=""/>';
+  return escapeHtml((user||'?')[0].toUpperCase());
+}
+function paintDashAvatar(){
+  var av=document.getElementById('dash-avatar');
+  if(!av||!me) return;
+  var data=getAvatarData(me.name);
+  if(data){
+    av.innerHTML='<img src="'+data+'" alt=""/><span class="av-edit">📷 Foto</span>';
+  } else {
+    av.innerHTML=escapeHtml((me.name||'?')[0].toUpperCase())+'<span class="av-edit">📷 Foto</span>';
+  }
+}
+function pickAvatar(){
+  var f=document.getElementById('avatar-file');
+  if(f) f.click();
+}
+function onAvatarFile(ev){
+  var file=ev.target && ev.target.files && ev.target.files[0];
+  if(!file||!me) return;
+  if(file.size>900000){ toast('Use uma imagem menor que 900 KB'); return; }
+  var reader=new FileReader();
+  reader.onload=function(){
+    var img=new Image();
+    img.onload=function(){
+      // redimensiona para caber no quadrado
+      var size=256;
+      var c=document.createElement('canvas');
+      c.width=size; c.height=size;
+      var ctx=c.getContext('2d');
+      var s=Math.min(img.width, img.height);
+      var sx=(img.width-s)/2, sy=(img.height-s)/2;
+      ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
+      var dataUrl=c.toDataURL('image/jpeg', 0.85);
+      setAvatarData(me.name, dataUrl);
+      paintDashAvatar();
+      renderOnline();
+      toast('Foto de perfil atualizada');
+    };
+    img.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+  ev.target.value='';
+}
+async function searchUser(){
+  var inp=document.getElementById('user-search');
+  var box=document.getElementById('search-result');
+  if(!inp||!box) return;
+  var q=(inp.value||'').trim();
+  if(!q){ box.classList.add('hidden'); box.innerHTML=''; return; }
+  box.classList.remove('hidden');
+  box.innerHTML='<p style="color:var(--muted);margin:0">Buscando…</p>';
+  try{
+    var row=null;
+    // busca exata e depois parcial
+    try{ row=await dbGetPlayer(q); }catch(e){}
+    if(!row && sb){
+      var res=await sb.from('players').select('username,points,wins,losses,draws,games').ilike('username','%'+q+'%').limit(8);
+      if(res.data && res.data.length){
+        box.innerHTML=res.data.map(function(p){
+          return renderSearchCard(p);
+        }).join('');
+        return;
+      }
+    }
+    if(row){ box.innerHTML=renderSearchCard(row); return; }
+    box.innerHTML='<p style="color:var(--muted);margin:0">Nenhum jogador encontrado para “'+escapeHtml(q)+'”.</p>';
+  }catch(e){
+    box.innerHTML='<p style="color:var(--muted);margin:0">Erro na busca. Tente de novo.</p>';
+  }
+}
+function renderSearchCard(p){
+  var name=p.username||p.user||'';
+  var online=onlinePlayers.find(function(o){ return o.user===name; });
+  var statusTxt, actions='';
+  if(online){
+    if(online.status==='in_game'){
+      statusTxt='<span class="badge busy">Em partida</span>';
+      if(online.gameId) actions+='<button type="button" class="btn-soft" style="padding:.45rem .7rem;font-size:.78rem;margin-top:.45rem" onclick="spectateGame(\''+name+'\',\''+online.gameId+'\')">👁 Assistir</button> ';
+    } else {
+      statusTxt='<span class="badge ok">Online</span>';
+      actions+='<button type="button" class="btn-soft" style="padding:.45rem .7rem;font-size:.78rem;margin-top:.45rem;background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;border:none" onclick="challengePlayer(\''+name+'\')">⚔️ Desafiar</button> ';
+    }
+  } else {
+    statusTxt='<span class="badge busy">Offline</span>';
+  }
+  var muted=isMuted(name);
+  actions+='<button type="button" class="btn-soft" style="padding:.45rem .7rem;font-size:.78rem;margin-top:.45rem" onclick="viewPlayerProfile(\''+name+'\')">👤 Perfil</button> ';
+  actions+='<button type="button" class="btn-soft" style="padding:.45rem .7rem;font-size:.78rem;margin-top:.45rem" onclick="toggleMute(\''+name+'\')">'+(muted?'🔊 Dessilenciar':'🔇 Silenciar')+'</button>';
+  return '<div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap">'+
+    '<div class="avatar" style="width:44px;height:44px">'+avatarHtml(name)+'</div>'+
+    '<div style="flex:1;min-width:120px"><div style="font-weight:900">'+escapeHtml(name)+'</div>'+
+    '<div style="font-size:.8rem;color:var(--muted)">'+(p.points||0)+' pts · '+(p.wins||0)+'V '+(p.draws||0)+'E '+(p.losses||0)+'D</div>'+
+    '<div style="margin-top:.35rem">'+statusTxt+'</div></div>'+
+    '<div>'+actions+'</div></div>';
+}
+
 /* ===== PERFIL PÚBLICO ===== */
 async function viewPlayerProfile(username){
   if(!username) return;
@@ -3564,12 +3737,23 @@ async function viewPlayerProfile(username){
     var games=row.games||0, wins=row.wins||0, losses=row.losses||0, draws=row.draws||0;
     var wr = games? Math.round(wins/games*100) : 0;
     var isYou = me && me.name===username;
+    var online=onlinePlayers.find(function(o){ return o.user===username; });
+    var statusHtml = online
+      ? (online.status==='in_game'?'<span class="badge busy">Em partida</span>':'<span class="badge ok">Online</span>')
+      : '<span class="badge busy">Offline</span>';
+    var muted=isMuted(username);
     title.textContent = isYou ? 'Seu perfil' : 'Perfil de '+username;
+    var actions='';
+    if(!isYou){
+      if(online && online.status!=='in_game') actions+='<button type="button" class="btn-main" style="margin-top:.7rem" onclick="closePlayerProfile();challengePlayer(\''+username+'\')">⚔️ Desafiar</button>';
+      actions+='<button type="button" class="btn-soft" style="margin-top:.5rem;width:100%" onclick="toggleMute(\''+username+'\');viewPlayerProfile(\''+username+'\')">'+(muted?'🔊 Dessilenciar':'🔇 Silenciar desafios')+'</button>';
+    }
     body.innerHTML =
       '<div class="prof-hero">'+
-        '<div class="prof-avatar">'+(username[0]||'?').toUpperCase()+'</div>'+
+        '<div class="prof-avatar" style="overflow:hidden">'+avatarHtml(username)+'</div>'+
         '<div><div class="prof-name">'+escapeHtml(username)+(isYou?' (você)':'')+'</div>'+
-        '<div class="prof-pts">'+(row.points||0)+' pts</div></div>'+
+        '<div class="prof-pts">'+(row.points||0)+' pts</div>'+
+        '<div style="margin-top:.35rem">'+statusHtml+(muted?' · 🔇 silenciado':'')+'</div></div>'+
       '</div>'+
       '<div class="prof-grid">'+
         '<div class="prof-stat"><b>'+wins+'</b><span>Vitórias</span></div>'+
@@ -3581,7 +3765,8 @@ async function viewPlayerProfile(username){
         '<div class="prof-stat"><b>'+(row.streak||0)+'</b><span>Seq. atual</span></div>'+
         '<div class="prof-stat"><b>'+(row.best_streak||0)+'</b><span>Melhor seq.</span></div>'+
       '</div>'+
-      (isYou?'<p class="note" style="margin-top:.85rem">Estatísticas vs computador e tentativas de puzzle ficam neste aparelho (Dashboard).</p>':'');
+      actions+
+      (isYou?'<p class="note" style="margin-top:.85rem">Toque no avatar do Dashboard para mudar sua foto. Pontos só mudam após partidas online, vs PC ou puzzles.</p>':'');
   }catch(e){
     body.innerHTML='<p style="color:var(--muted)">Erro ao carregar perfil. Verifique a conexão.</p>';
   }
