@@ -1352,6 +1352,31 @@ const PUZZLES=[
 ];
 let puzzleIdx=0, puzzleSolStep=0, puzzleActive=null;
 const PUZZLE_REWARD=10;
+const PUZZLE_PENALTY=5;
+// vs computador: vitória / derrota por dificuldade
+const AI_POINTS={
+  easy:  {win:5,  loss:15},
+  medium:{win:10, loss:10},
+  hard:  {win:15, loss:5}
+};
+let puzzleAwarded=false;
+
+async function adjustPoints(delta, reason){
+  if(!me||!sb||!delta) return null;
+  try{
+    var row=await dbGetPlayer(me.name); if(!row) return null;
+    var cur=row.points||ELO_START;
+    var pts=Math.max(0, cur+delta);
+    var patch={points:pts};
+    var updated=await dbUpdatePlayer(me.name, patch);
+    me=rowToMe(updated);
+    var el=document.getElementById('h-pts');
+    if(el) el.textContent=me.points+' pts';
+    var sign=delta>0?'+':'';
+    toast(sign+delta+' pts'+(reason?' · '+reason:''));
+    return delta;
+  }catch(e){ console.error(e); toast('Falha ao atualizar pontos'); return null; }
+}
 
 function norm(s){return String(s||'').trim().toLowerCase().replace(/\s+/g,'_')}
 function setSession(u){localStorage.setItem(SESSION,u)}
@@ -2086,6 +2111,20 @@ function recordAiResult(result){
   saveAiStats(s);
   return s;
 }
+function aiPointsDelta(result){
+  var cfg=AI_POINTS[diff]||AI_POINTS.medium;
+  if(result==='win') return cfg.win;
+  if(result==='loss') return -cfg.loss;
+  return 0; // empate: sem mudança
+}
+async function awardAiPoints(result){
+  var delta=aiPointsDelta(result);
+  if(!delta) return;
+  var label = result==='win'
+    ? ('vitória vs PC · '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio'))
+    : ('derrota vs PC · '+(diff==='easy'?'Fácil':diff==='hard'?'Difícil':'Médio'));
+  await adjustPoints(delta, label);
+}
 function paintHome(){
   var s=me.stats;
   var el=document.getElementById('home-stats');
@@ -2240,6 +2279,9 @@ function startClockTick(){
         if(mode==='ai'){
           recordAiResult(lastEndResult);
           recordTrain();
+          awardAiPoints(lastEndResult);
+          var d=aiPointsDelta(lastEndResult);
+          if(d) msg += (d>0?' · +'+d:' · '+d)+' pts';
         }
         showEnd('Tempo esgotado', msg);
       }
@@ -2570,6 +2612,7 @@ function loadPuzzle(idx){
   puzzleIdx=idx % PUZZLES.length;
   puzzleActive=PUZZLES[puzzleIdx];
   puzzleSolStep=0;
+  puzzleAwarded=false;
   mode='puzzle';
   chess=new Chess(puzzleActive.fen);
   sel=null; legal=[]; last=null; hist=[]; capW=[]; capB=[]; chatMsgs=[];
@@ -2596,40 +2639,38 @@ function loadPuzzle(idx){
   saveActiveGame();
 }
 async function awardPuzzlePoints(){
+  if(puzzleAwarded) return;
+  puzzleAwarded=true;
   if(!me||!sb) return;
   try{
     var row=await dbGetPlayer(me.name); if(!row) return;
-    var pts=Math.max(100,(row.points||ELO_START)+PUZZLE_REWARD);
+    var pts=Math.max(0, (row.points||ELO_START) + PUZZLE_REWARD);
     var solved=(row.puzzles_solved||0)+1;
-    var updated=await dbUpdatePlayer(me.name,{points:pts, puzzles_solved:solved});
-    me=rowToMe(updated);
-    document.getElementById('h-pts').textContent=me.points+' pts';
-    toast('+'+PUZZLE_REWARD+' pts pelo puzzle!');
-  }catch(e){
-    // se coluna puzzles_solved não existir, tenta só points
+    var updated;
     try{
-      var row2=await dbGetPlayer(me.name); if(!row2) return;
-      var pts2=Math.max(100,(row2.points||ELO_START)+PUZZLE_REWARD);
-      var updated2=await dbUpdatePlayer(me.name,{points:pts2});
-      me=rowToMe(updated2);
-      document.getElementById('h-pts').textContent=me.points+' pts';
-      toast('+'+PUZZLE_REWARD+' pts pelo puzzle!');
-    }catch(e2){ console.error(e2); }
-  }
+      updated=await dbUpdatePlayer(me.name,{points:pts, puzzles_solved:solved});
+    }catch(e1){
+      updated=await dbUpdatePlayer(me.name,{points:pts});
+    }
+    me=rowToMe(updated);
+    var el=document.getElementById('h-pts');
+    if(el) el.textContent=me.points+' pts';
+  }catch(e){ console.error(e); }
 }
 function checkPuzzleMove(from,to,pr){
-  if(!puzzleActive) return;
+  if(!puzzleActive || puzzleAwarded) return;
   var uci = from+to+(pr||'');
   var expected = puzzleActive.sol[puzzleSolStep];
   if(!expected){ return; }
   var ok = (uci===expected) || (uci===expected+'q') || (expected.indexOf(from+to)===0);
   if(!ok){
     recordPuzzleAttempt(false);
-    toast('Lance incorreto — tente de novo');
+    // errou o lance: -5 pontos
+    adjustPoints(-PUZZLE_PENALTY, 'lance errado no puzzle');
     chess.undo(); hist.pop(); last=hist.length?{from:hist[hist.length-1].from,to:hist[hist.length-1].to}:null;
     render(); status(); movesUI(); updateCaps();
     var st=document.getElementById('status');
-    if(st){ st.className='side-status chk'; st.innerHTML='❌ Incorreto. Dica: '+(puzzleActive.hint||'Tente outra casa'); }
+    if(st){ st.className='side-status chk'; st.innerHTML='❌ Incorreto (−'+PUZZLE_PENALTY+' pts). Dica: '+(puzzleActive.hint||'Tente outra casa'); }
     return;
   }
   puzzleSolStep++;
@@ -2637,11 +2678,12 @@ function checkPuzzleMove(from,to,pr){
   if(puzzleSolStep >= puzzleActive.sol.length){
     lastEndResult='win';
     recordPuzzleAttempt(true);
-    awardPuzzlePoints();
-    toast('Puzzle resolvido! +'+PUZZLE_REWARD+' pts');
-    setTimeout(function(){
-      showEnd('🧩 Puzzle resolvido!', puzzleActive.title+' — +'+PUZZLE_REWARD+' pts no ranking!');
-    }, 500);
+    awardPuzzlePoints().then(function(){
+      toast('+'+PUZZLE_REWARD+' pts · puzzle resolvido');
+      setTimeout(function(){
+        showEnd('🧩 Puzzle resolvido!', puzzleActive.title+' — +'+PUZZLE_REWARD+' pontos');
+      }, 450);
+    });
   } else {
     var st=document.getElementById('status');
     if(st){ st.className='side-status'; st.textContent='✓ Continuação… lance '+(puzzleSolStep+1)+'/'+puzzleActive.sol.length; }
@@ -2937,6 +2979,7 @@ function resign(){
     lastEndResult='loss';
     recordAiResult('loss');
     recordTrain();
+    awardAiPoints('loss');
   }
   showEnd('Desistência',mode==='ai'?'Você desistiu. (treino)':'Partida encerrada.');
 }
@@ -2951,13 +2994,15 @@ function endLocal(){
     else msg='Xeque-mate! '+(wWhite?'Brancas':'Pretas')+' vencem.';
   }
   if(mode==='ai'){
-    // do ponto de vista do jogador (sempre brancas no vs AI)
     var aiRes = lastEndResult;
     if(myColor==='b'){
       aiRes = lastEndResult==='win'?'loss':(lastEndResult==='loss'?'win':'draw');
     }
     recordAiResult(aiRes);
     recordTrain();
+    awardAiPoints(aiRes);
+    var d=aiPointsDelta(aiRes);
+    if(d) msg += (d>0?' · +'+d:' · '+d)+' pts';
   }
   animateLastMoveThen(function(){ showEnd('Fim de jogo',msg); });
 }
