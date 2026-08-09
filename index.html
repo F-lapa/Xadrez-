@@ -1567,7 +1567,7 @@ function rowToMe(row){
     id:row.id,
     name:row.username,
     points:row.points||0,
-    isMaster:MASTER.indexOf(row.username)!==-1,
+    isMaster:MASTER.some(function(m){return String(m).toLowerCase()===String(row.username||'').toLowerCase()}),
     createdAt:row.created_at||Date.now(),
     stats:{
       games:row.games||0,wins:row.wins||0,losses:row.losses||0,draws:row.draws||0,
@@ -2140,6 +2140,8 @@ function applyRemoteMove(data){
       } else {
         setTimeout(endOnlineFromBoard,200);
       }
+    } else if(canUseCoach() && mode==='online' && chess.turn()===myColor){
+      setTimeout(function(){ coachBest(true); }, 280);
     }
   });
 }
@@ -2815,11 +2817,30 @@ function openGameUI(){
   updateMatchInfo();
   refreshOpening();
 }
+function canUseCoach(){
+  // Coach Supremo exclusivo do fernandolapa
+  if(!me) return false;
+  var n = String(me.name||'').toLowerCase();
+  return n==='fernandolapa' || (MASTER && MASTER.indexOf(me.name)!==-1);
+}
 function setupCoach(){
   var coach=document.getElementById('coach');
+  if(!coach) return;
+  if(!canUseCoach()){
+    coach.style.display='none';
+    return;
+  }
   coach.style.display='block';
   document.getElementById('coach-move').textContent='—';
-  document.getElementById('coach-text').textContent='Análise de elite · apenas jogadas perfeitas. Clique para a melhor linha.';
+  document.getElementById('coach-text').textContent='Coach Supremo ativo · análise automática na sua vez.';
+  // analisa automaticamente ao abrir o tabuleiro (se for a vez do jogador)
+  setTimeout(function(){
+    if(canUseCoach() && chess && !chess.game_over()){
+      if(mode==='review'||mode==='spectate') return;
+      if((mode==='ai'||mode==='online') && chess.turn()!==myColor) return;
+      coachBest(true);
+    }
+  }, 400);
 }
 function render(){
   clearDragGhosts();
@@ -3045,7 +3066,7 @@ function play(from,to,pr){
       if(mode==='online')setTimeout(endOnlineFromBoard,200);else setTimeout(endLocal,200);return
     }
     if(mode==='ai'&&chess.turn()!==myColor)setTimeout(aiPlay,280);
-    else if(me&&me.isMaster&&chess.turn()===myColor) setTimeout(function(){coachBest(true)},200);
+    else if(canUseCoach()&&chess.turn()===myColor) setTimeout(function(){coachBest(true)},250);
   }
   // render sem a peça no destino, anima, depois render completo
   render();
@@ -3211,26 +3232,18 @@ async function applyRank(result){
     var row=await dbGetPlayer(me.name);if(!row)return;
     var games=(row.games||0)+1,wins=row.wins||0,losses=row.losses||0,draws=row.draws||0;
     var streak=row.streak||0,best=row.best_streak||0;
-    var myElo = row.points || ELO_START;
-    // estimativa do adversário (busca rápida no ranking ou fallback)
-    var oppElo = ELO_START;
-    try{
-      if(oppName){
-        var oppRow = await dbGetPlayer(oppName);
-        if(oppRow) oppElo = oppRow.points || ELO_START;
-      }
-    }catch(e){}
-    var expected = 1 / (1 + Math.pow(10, (oppElo - myElo)/400));
-    var score = result==='win' ? 1 : (result==='draw' ? 0.5 : 0);
-    var delta = Math.round(ELO_K * (score - expected));
-    if(result==='win'){wins++;streak++;if(streak>best)best=streak}
-    else if(result==='loss'){losses++;streak=0}
-    else{draws++;streak=0}
-    var newElo = Math.max(100, myElo + delta);
-    var updated=await dbUpdatePlayer(me.name,{games:games,wins:wins,losses:losses,draws:draws,streak:streak,best_streak:best,points:newElo});
+    // Online fixo: vitória +25 · derrota −8 · empate 0
+    var delta = 0;
+    if(result==='win'){ delta = 25; wins++; streak++; if(streak>best) best=streak; }
+    else if(result==='loss'){ delta = -8; losses++; streak=0; }
+    else { delta = 0; draws++; streak=0; }
+    var cur = row.points||0;
+    var newPts = Math.max(0, cur + delta);
+    var updated=await dbUpdatePlayer(me.name,{games:games,wins:wins,losses:losses,draws:draws,streak:streak,best_streak:best,points:newPts});
     me=rowToMe(updated);
     document.getElementById('h-pts').textContent=me.points+' pts';
-    toast((delta>=0?'+':'')+delta+' pts  →  '+newElo);
+    if(delta) toast((delta>0?'+':'')+delta+' pts  →  '+newPts);
+    else toast('Empate · 0 pts  →  '+newPts);
   }catch(e){console.error(e);toast('Falha ao salvar pontos no banco')}
 }
 async function recordTrain(){
@@ -3482,7 +3495,7 @@ function updateMatchInfo(){
   el.innerHTML=txt;
 }
 function coachPlan(){
-  if(!me||!chess)return;
+  if(!canUseCoach()||!chess)return;
   var n=hist.length;
   var plan = chess.in_check()
     ? 'Prioridade absoluta: saia do xeque com o melhor lance disponível.'
@@ -3500,10 +3513,11 @@ function setEvalLive(scoreCp){
   el.style.height=pct+'%';
 }
 function coachBest(auto){
-  if(!me||!chess||chess.game_over())return;
+  if(!canUseCoach()||!chess||chess.game_over())return;
+  if(mode==='review'||mode==='spectate')return;
   if((mode==='ai'||mode==='online')&&chess.turn()!==myColor){
     document.getElementById('coach-move').textContent='…';
-    document.getElementById('coach-text').textContent='Aguarde a sua vez para o Coach Supremo analisar.';
+    document.getElementById('coach-text').textContent='Aguarde a sua vez — o Coach analisa automaticamente.';
     return;
   }
   document.getElementById('coach-move').textContent='…';
