@@ -3617,7 +3617,8 @@ function setAvatarData(user, dataUrl){
   try{
     if(dataUrl) localStorage.setItem(AVATAR_KEY+user, dataUrl);
     else localStorage.removeItem(AVATAR_KEY+user);
-  }catch(e){ toast('Não foi possível salvar a foto (arquivo grande?)'); }
+    return true;
+  }catch(e){ return false; }
 }
 function avatarHtml(user){
   var data=getAvatarData(user);
@@ -3641,27 +3642,47 @@ function pickAvatar(){
 function onAvatarFile(ev){
   var file=ev.target && ev.target.files && ev.target.files[0];
   if(!file||!me) return;
-  if(file.size>900000){ toast('Use uma imagem menor que 900 KB'); return; }
+  // Aceita fotos grandes (até 20 MB); o sistema compacta sozinho
+  if(file.size>20*1024*1024){ toast('Arquivo muito grande. Máximo 20 MB.'); return; }
+  toast('Processando foto…');
   var reader=new FileReader();
   reader.onload=function(){
     var img=new Image();
     img.onload=function(){
-      // redimensiona para caber no quadrado
-      var size=256;
+      // recorte central em quadrado + compactação automática
+      var size=512;
       var c=document.createElement('canvas');
       c.width=size; c.height=size;
       var ctx=c.getContext('2d');
       var s=Math.min(img.width, img.height);
       var sx=(img.width-s)/2, sy=(img.height-s)/2;
       ctx.drawImage(img, sx, sy, s, s, 0, 0, size, size);
-      var dataUrl=c.toDataURL('image/jpeg', 0.85);
-      setAvatarData(me.name, dataUrl);
-      paintDashAvatar();
-      renderOnline();
-      toast('Foto de perfil atualizada');
+      // tenta qualidades até caber no armazenamento local
+      var quals=[0.92, 0.85, 0.75, 0.65, 0.55];
+      var ok=false;
+      for(var i=0;i<quals.length;i++){
+        var dataUrl=c.toDataURL('image/jpeg', quals[i]);
+        if(setAvatarData(me.name, dataUrl)){ ok=true; break; }
+      }
+      if(!ok){
+        // último recurso: 256px
+        var c2=document.createElement('canvas');
+        c2.width=256; c2.height=256;
+        c2.getContext('2d').drawImage(c, 0, 0, 256, 256);
+        ok=setAvatarData(me.name, c2.toDataURL('image/jpeg', 0.7));
+      }
+      if(ok){
+        paintDashAvatar();
+        renderOnline();
+        toast('Foto de perfil atualizada');
+      } else {
+        toast('Não coube no armazenamento local. Tente outra imagem.');
+      }
     };
+    img.onerror=function(){ toast('Não foi possível ler a imagem'); };
     img.src=reader.result;
   };
+  reader.onerror=function(){ toast('Falha ao abrir o arquivo'); };
   reader.readAsDataURL(file);
   ev.target.value='';
 }
