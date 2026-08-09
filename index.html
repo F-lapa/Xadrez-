@@ -322,40 +322,82 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   min-width:0;
 }
 
-/* Board container */
+/* Board container — visual premium */
 .board-hero{
   width:min(94vw, 600px);
   aspect-ratio:1/1;
-  border-radius:24px;
-  padding:14px;
+  border-radius:26px;
+  padding:16px;
   background:
-    linear-gradient(160deg, #3a2e22 0%, #1a1510 40%, #2a2118 100%);
-  border:1px solid rgba(255,220,160,.18);
+    linear-gradient(145deg, #4a3a2a 0%, #1c1610 35%, #2e241a 70%, #3d3024 100%);
+  border:1px solid rgba(255,210,140,.22);
   box-shadow:
-    0 30px 80px rgba(0,0,0,.55),
-    0 0 0 1px rgba(255,255,255,.06) inset,
-    0 2px 0 rgba(255,230,180,.12) inset,
-    0 -1px 0 rgba(0,0,0,.4) inset;
+    0 32px 90px rgba(0,0,0,.6),
+    0 0 0 1px rgba(255,255,255,.07) inset,
+    0 3px 0 rgba(255,230,180,.14) inset,
+    0 -2px 0 rgba(0,0,0,.45) inset,
+    0 0 60px rgba(91,157,255,.06);
   position:relative;
 }
 .board-hero::before{
   content:'';
-  position:absolute;inset:6px;
-  border-radius:18px;
-  border:1px solid rgba(255,220,160,.08);
+  position:absolute;inset:7px;
+  border-radius:20px;
+  border:1px solid rgba(255,220,160,.1);
   pointer-events:none;
   z-index:1;
 }
 .board-hero .board-frame{
   width:100%;height:100%;
-  border-radius:12px;
+  border-radius:14px;
   overflow:hidden;
   box-shadow:
-    0 8px 24px rgba(0,0,0,.5),
-    inset 0 0 0 2px rgba(0,0,0,.25),
-    inset 0 0 30px rgba(0,0,0,.12);
+    0 10px 28px rgba(0,0,0,.55),
+    inset 0 0 0 2px rgba(0,0,0,.3),
+    inset 0 0 40px rgba(0,0,0,.15);
   position:relative;
   z-index:0;
+}
+/* Camada de setas de análise */
+.board-arrows{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  pointer-events:none;
+  z-index:4;
+  overflow:visible;
+}
+.board-arrows path{
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  opacity:.92;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.35));
+}
+.board-arrows .arrow-best{ stroke:#22d3ee; stroke-width:2.4; marker-end:url(#arrowhead-cyan); }
+.board-arrows .arrow-alt{ stroke:#a78bfa; stroke-width:2; marker-end:url(#arrowhead-violet); opacity:.75; }
+.board-arrows .arrow-danger{ stroke:#fb7185; stroke-width:2.2; marker-end:url(#arrowhead-red); }
+/* Eval bar ao lado do tabuleiro em desktop */
+.eval-live-wrap{
+  display:none;
+  width:14px;
+  border-radius:999px;
+  background:#1a120b;
+  border:1px solid var(--line);
+  overflow:hidden;
+  align-self:stretch;
+  min-height:200px;
+  position:relative;
+}
+.eval-live-fill{
+  position:absolute; left:0; right:0; bottom:0;
+  height:50%;
+  background:linear-gradient(180deg,#f8fafc,#e2e8f0);
+  transition:height .45s ease;
+}
+@media(min-width:1024px){
+  .game-main{ flex-direction:row; align-items:stretch; justify-content:center; gap:.65rem; }
+  .game-main .board-col{ display:flex; flex-direction:column; align-items:center; gap:.7rem; }
+  .eval-live-wrap{ display:block; }
 }
 
 /* Player bars */
@@ -469,6 +511,27 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
   text-align:center; font-size:.78rem; font-weight:700; color:var(--muted);
   padding:.25rem .5rem; margin-top:-.2rem;
 }
+.opening-card{
+  background:linear-gradient(165deg, rgba(91,157,255,.12), rgba(255,255,255,.03)) !important;
+  border-color:rgba(91,157,255,.25) !important;
+}
+.opening-eco{
+  font-size:.72rem; font-weight:900; letter-spacing:.08em;
+  color:var(--cyan); margin-bottom:.2rem; text-transform:uppercase;
+}
+.opening-name{
+  font-size:.92rem; font-weight:800; color:var(--text); line-height:1.35; margin-bottom:.45rem;
+}
+.opening-next{
+  font-size:.78rem; color:var(--muted); line-height:1.5;
+  display:flex; flex-wrap:wrap; gap:.3rem;
+}
+.opening-next .om{
+  padding:.2rem .45rem; border-radius:8px;
+  background:rgba(255,255,255,.06); border:1px solid var(--line);
+  font-weight:700; color:#c7d2fe; cursor:default;
+}
+.opening-next .om b{color:var(--gold); font-weight:900; margin-right:.15rem}
 
 /* Actions under board */
 .game-actions{
@@ -853,6 +916,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     <div id="game">
       <div class="game-shell">
         <div class="game-main">
+          <div class="board-col">
           <div class="player-card" id="bar-b">
             <div class="who-wrap">
               <div class="who" id="n-b">Pretas</div>
@@ -860,9 +924,26 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             </div>
             <div class="clock" id="clock-b">∞</div>
           </div>
-          <div class="board-hero">
-            <div class="board-frame board-classic pieces-classic" id="board-frame">
-              <div id="board"></div>
+          <div style="display:flex;align-items:stretch;gap:.55rem;justify-content:center;width:100%">
+            <div class="eval-live-wrap" title="Avaliação"><div class="eval-live-fill" id="eval-live"></div></div>
+            <div class="board-hero">
+              <div class="board-frame board-classic pieces-classic" id="board-frame">
+                <div id="board"></div>
+                <svg class="board-arrows" id="board-arrows" viewBox="0 0 8 8" preserveAspectRatio="none">
+                  <defs>
+                    <marker id="arrowhead-cyan" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
+                      <path d="M0,0 L4,2 L0,4 Z" fill="#22d3ee"/>
+                    </marker>
+                    <marker id="arrowhead-violet" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
+                      <path d="M0,0 L4,2 L0,4 Z" fill="#a78bfa"/>
+                    </marker>
+                    <marker id="arrowhead-red" markerWidth="4" markerHeight="4" refX="3" refY="2" orient="auto">
+                      <path d="M0,0 L4,2 L0,4 Z" fill="#fb7185"/>
+                    </marker>
+                  </defs>
+                  <g id="arrows-g"></g>
+                </svg>
+              </div>
             </div>
           </div>
           <div class="player-card active" id="bar-w">
@@ -880,9 +961,17 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             <button type="button" onclick="resign()">Desistir</button>
             <button type="button" onclick="toHome()">Lobby</button>
           </div>
+          </div>
         </div>
         <div class="game-side">
           <div class="side-status" id="status">Vez das Brancas</div>
+
+          <div class="side-card opening-card" id="opening-card">
+            <h3>📖 Abertura</h3>
+            <div id="opening-eco" class="opening-eco">—</div>
+            <div id="opening-name" class="opening-name">Carregando livro de aberturas…</div>
+            <div id="opening-next" class="opening-next"></div>
+          </div>
 
           <div id="coach">
             <h3>♛ Coach Supremo</h3>
@@ -950,7 +1039,7 @@ create table if not exists public.players (
   id uuid primary key default gen_random_uuid(),
   username text unique not null,
   password text not null,
-  points int not null default 0,
+  points int not null default 1200,
   games int not null default 0,
   wins int not null default 0,
   losses int not null default 0,
@@ -958,8 +1047,12 @@ create table if not exists public.players (
   streak int not null default 0,
   best_streak int not null default 0,
   train_games int not null default 0,
+  puzzles_solved int not null default 0,
   created_at timestamptz not null default now()
 );
+
+-- coluna extra se a tabela já existir:
+alter table public.players add column if not exists puzzles_solved int not null default 0;
 
 alter table public.players enable row level security;
 
@@ -967,17 +1060,26 @@ drop policy if exists "players_select" on public.players;
 drop policy if exists "players_insert" on public.players;
 drop policy if exists "players_update" on public.players;
 
+-- Leitura pública do ranking
 create policy "players_select" on public.players for select using (true);
-create policy "players_insert" on public.players for insert with check (true);
+-- Criar conta: só com username válido e pontos iniciais
+create policy "players_insert" on public.players for insert with check (
+  points = 1200 and games = 0 and wins = 0 and losses = 0 and draws = 0
+);
+-- Update: permitido (app single-page). Para produção real use Supabase Auth +
+-- policy: using (auth.uid() = id) e Edge Function para Elo/puzzles.
 create policy "players_update" on public.players for update using (true);
 
--- opcional: conta mestre (senha será hasheada no primeiro login)
+-- RECOMENDADO EM PRODUÇÃO:
+-- 1) Migrar login para supabase.auth
+-- 2) Trocar update para: using (auth.uid() = id)
+-- 3) Mover Elo e +10 puzzles para Edge Function com service role
+
 insert into public.players (username, password, points)
 values ('fernandolapa', '123456', 1200)
 on conflict (username) do nothing;
 
--- Nota: a partir desta versão as senhas novas são armazenadas como
--- pbkdf2$salt$hash (Web Crypto). Contas antigas em texto puro são migradas no login.
+-- Senhas: pbkdf2$salt$hash (Web Crypto). Texto puro migra no login.
 
 ============================================================
 -->
@@ -1072,20 +1174,31 @@ const OPENINGS={
   'd4 Nf6':'Índia','d4 Nf6 c4':'Índia','d4 Nf6 c4 g6':'Índia do Rei',
   'd4 Nf6 c4 e6':'Nimzo/Ortodoxa','c4':'Abertura Inglesa','Nf3':'Abertura Reti','f4':'Bird'
 };
-// Puzzles verificados — solução em UCI. side opcional ('w' default)
+// Puzzles — solução em UCI. +10 Elo ao resolver
 const PUZZLES=[
   {title:'Mate em 1 — Corredor', fen:'6k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre sobe na coluna e'},
   {title:'Mate em 1 — Dama na 8ª', fen:'7k/5ppp/8/8/8/8/5PPP/4Q1K1 w - - 0 1', sol:['e1e8'], hint:'Dama na última fileira'},
   {title:'Mate em 1 — Back rank', fen:'3r2k1/5ppp/8/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Torre na 8ª — rei sem fuga'},
-  {title:'Mate em 1 — Dois bispos', fen:'6k1/6p1/6Pp/8/8/8/4B3/4B1K1 w - - 0 1', sol:['e2c4'], hint:'Bispo para c4 fecha a rede'},
-  {title:'Mate em 1 — Cavalo', fen:'5k2/5ppp/8/4N3/8/8/5PPP/6K1 w - - 0 1', sol:['e5d7'], hint:'Cavalo dá cheque decisivo'},
-  {title:'Tática — Garfo', fen:'r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R w KQkq - 4 4', sol:['g5f7'], hint:'Cavalo ataca rei e torre/dama'},
-  {title:'Tática — Mate do pastor (final)', fen:'r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 0 4', sol:['f7f8'], hint:'Já quase mate — complete se necessário'},
-  {title:'Mate em 1 — Torre lateral', fen:'6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1', sol:['a1a8'], hint:'Torre na coluna a'},
-  {title:'Mate em 1 — Dama e rei', fen:'8/8/8/4k3/8/4Q3/8/4K3 w - - 0 1', sol:['e3e4'], hint:'Aproxime a dama com suporte'},
-  {title:'Mate em 1 — Bispo longo', fen:'5k2/5ppp/8/8/8/8/5PPP/2B3K1 w - - 0 1', sol:['c1a3'], hint:'Diagonal até o rei'}
+  {title:'Mate em 1 — Torre a', fen:'6k1/5ppp/8/8/8/8/5PPP/R5K1 w - - 0 1', sol:['a1a8'], hint:'Torre na coluna a'},
+  {title:'Mate em 1 — Torre h', fen:'6k1/5ppp/8/8/8/8/5PPP/6KR w - - 0 1', sol:['h1h8'], hint:'Torre na coluna h'},
+  {title:'Mate em 1 — Dama lateral', fen:'6k1/5ppp/8/8/8/8/5PPP/Q5K1 w - - 0 1', sol:['a1a8'], hint:'Dama sobe a coluna a'},
+  {title:'Mate em 1 — Dois bispos', fen:'6k1/6p1/6Pp/8/8/8/4B3/4B1K1 w - - 0 1', sol:['e2c4'], hint:'Bispo para c4'},
+  {title:'Mate em 1 — Cavalo', fen:'5k2/5ppp/8/4N3/8/8/5PPP/6K1 w - - 0 1', sol:['e5d7'], hint:'Cavalo em d7'},
+  {title:'Mate em 1 — Dama perto', fen:'8/8/8/4k3/8/4Q3/8/4K3 w - - 0 1', sol:['e3e4'], hint:'Dama controla o rei'},
+  {title:'Mate em 1 — Bispo longo', fen:'5k2/5ppp/8/8/8/8/5PPP/2B3K1 w - - 0 1', sol:['c1a3'], hint:'Diagonal longa'},
+  {title:'Tática — Garfo de cavalo', fen:'r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R w KQkq - 4 4', sol:['g5f7'], hint:'Cavalo ataca rei e torre'},
+  {title:'Tática — Ataque f7', fen:'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 0 5', sol:['c4f7'], hint:'Bispo em f7'},
+  {title:'Mate em 1 — Corredor c/ peão', fen:'6k1/5p1p/6p1/8/8/8/5PPP/4R1K1 w - - 0 1', sol:['e1e8'], hint:'Mesmo padrão, 8ª fileira'},
+  {title:'Mate em 1 — Dama e suporte', fen:'6k1/5ppp/8/8/8/4Q3/5PPP/6K1 w - - 0 1', sol:['e3e8'], hint:'Dama na 8ª'},
+  {title:'Mate em 1 — Torre e rei opostos', fen:'8/8/8/8/4k3/8/8/4K2R w - - 0 1', sol:['h1h4'], hint:'Cheque de torre'},
+  {title:'Mate em 1 — Dama no canto', fen:'7k/6pp/8/8/8/8/6PP/Q5K1 w - - 0 1', sol:['a1a8'], hint:'Dama sobe até a8'},
+  {title:'Tática — Cravada simples', fen:'rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4', sol:['c4f7'], hint:'f7 desprotegido'},
+  {title:'Mate em 1 — Dois torres', fen:'6k1/5ppp/8/8/8/8/5PPP/R3R1K1 w - - 0 1', sol:['a1a8'], hint:'Qualquer torre na 8ª'},
+  {title:'Mate em 1 — Rainha curta', fen:'5k2/5ppp/8/8/8/8/5PPP/3Q2K1 w - - 0 1', sol:['d1d8'], hint:'Dama na coluna d'},
+  {title:'Mate em 1 — Cavalo no canto', fen:'7k/5ppp/8/6N1/8/8/5PPP/6K1 w - - 0 1', sol:['g5f7'], hint:'Cavalo em f7'}
 ];
 let puzzleIdx=0, puzzleSolStep=0, puzzleActive=null;
+const PUZZLE_REWARD=10;
 
 function norm(s){return String(s||'').trim().toLowerCase().replace(/\s+/g,'_')}
 function setSession(u){localStorage.setItem(SESSION,u)}
@@ -1511,8 +1624,9 @@ async function joinLobby(){
       lobbyCh.send({type:'broadcast',event:'challenge_response',payload:{id:data.id,from:data.from,to:data.to,accept:false,reason:'busy'}});
       return;
     }
-    pendingChallenge={id:data.id,from:data.from,to:data.to};
-    document.getElementById('challenge-text').textContent=data.from+' desafiou você!';
+    pendingChallenge={id:data.id,from:data.from,to:data.to,timeControl:data.timeControl||0};
+    var tc=data.timeControl?(' · '+(data.timeControl/60)+' min'):'';
+    document.getElementById('challenge-text').textContent=data.from+' desafiou você!'+tc;
     document.getElementById('ov-challenge').style.display='flex';
   });
   lobbyCh.on('broadcast',{event:'challenge_response'},function(payload){
@@ -1523,6 +1637,8 @@ async function joinLobby(){
       toast(data.to+(data.reason==='busy'?' está em partida':' recusou'));
       pendingChallenge=null;setPresence('available');return;
     }
+    if(typeof data.timeControl==='number') timeControl=data.timeControl;
+    else if(pendingChallenge && typeof pendingChallenge.timeControl==='number') timeControl=pendingChallenge.timeControl;
     startOnlineGame(data.id,data.to,'w');
   });
   lobbyCh.subscribe(async function(status){
@@ -1554,8 +1670,8 @@ function challengePlayer(to){
   var target=onlinePlayers.find(function(p){return p.user===to});
   if(!target||target.status==='in_game')return toast('Indisponível');
   var id='g_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
-  pendingChallenge={id:id,from:me.name,to:to};
-  lobbyCh.send({type:'broadcast',event:'challenge',payload:{id:id,from:me.name,to:to}});
+  pendingChallenge={id:id,from:me.name,to:to,timeControl:timeControl};
+  lobbyCh.send({type:'broadcast',event:'challenge',payload:{id:id,from:me.name,to:to,timeControl:timeControl}});
   document.getElementById('wait-text').textContent='Desafio enviado para '+to;
   document.getElementById('ov-wait').style.display='flex';
   setPresence('in_game');
@@ -1564,9 +1680,14 @@ function cancelChallenge(){document.getElementById('ov-wait').style.display='non
 function respondChallenge(accept){
   document.getElementById('ov-challenge').style.display='none';
   if(!pendingChallenge||!lobbyCh)return;
-  lobbyCh.send({type:'broadcast',event:'challenge_response',payload:{id:pendingChallenge.id,from:pendingChallenge.from,to:pendingChallenge.to,accept:accept}});
-  if(accept) startOnlineGame(pendingChallenge.id,pendingChallenge.from,'b');
-  else{pendingChallenge=null;setPresence('available')}
+  lobbyCh.send({type:'broadcast',event:'challenge_response',payload:{
+    id:pendingChallenge.id,from:pendingChallenge.from,to:pendingChallenge.to,accept:accept,
+    timeControl:pendingChallenge.timeControl||0
+  }});
+  if(accept){
+    if(typeof pendingChallenge.timeControl==='number') timeControl=pendingChallenge.timeControl;
+    startOnlineGame(pendingChallenge.id,pendingChallenge.from,'b');
+  } else{pendingChallenge=null;setPresence('available')}
 }
 
 async function startOnlineGame(id,opponent,color){
@@ -1627,8 +1748,13 @@ function applyRemoteMove(data){
   var destCell=document.querySelector('.cell[data-sq="'+mv.to+'"]');
   if(destCell){ var img=destCell.querySelector('.pc-img, .pc'); if(img) img.style.opacity='0'; }
   animateSlide(mv.from, mv.to, color, type, function(){
+    // sincroniza relógios enviados pelo adversário
+    if(typeof data.clockW==='number' && typeof data.clockB==='number'){
+      clockW=data.clockW; clockB=data.clockB;
+      if(typeof data.timeControl==='number') timeControl=data.timeControl;
+    }
     render(); status(); movesUI(); updateCaps(); saveActiveGame();
-    if(timeControl>0){ lastClockTick=Date.now(); updateClocksUI(); }
+    if(timeControl>0){ lastClockTick=Date.now(); updateClocksUI(); if(!clockRunning) startClockTick(); }
     if(chess.game_over()){
       stopClock();
       if(chess.in_checkmate()) sfxWin();
@@ -1774,17 +1900,161 @@ function paintPromoButtons(){
     btn.innerHTML = url ? '<img src="'+url+'" alt="'+p+'"/>' : (GL[color+p]||p);
   });
 }
-function detectOpening(){
+/* ===== LIVRO DE ABERTURAS (Lichess ECO dataset) ===== */
+let ecoBook=null; // map: "e4 e5 Nf3" -> {eco, name}
+let ecoBookLoading=null;
+let ecoBookReady=false;
+let currentOpening={eco:'', name:'', key:'', next:[]};
+
+function normalizeSan(san){
+  // remove +, #, !, ? for matching
+  return String(san||'').replace(/[+#?!]+/g,'').trim();
+}
+function pgnToSanKey(pgn){
+  // "1. e4 e5 2. Nf3 Nc6" -> "e4 e5 Nf3 Nc6"
+  if(!pgn) return '';
+  return pgn
+    .replace(/\d+\.(\.\.)?/g,' ')
+    .replace(/\s+/g,' ')
+    .trim()
+    .split(' ')
+    .filter(function(t){ return t && !/^\d+\.?$/.test(t) })
+    .map(normalizeSan)
+    .join(' ');
+}
+function histToSanKey(maxLen){
   if(!hist || !hist.length) return '';
+  var n = typeof maxLen==='number' ? maxLen : hist.length;
   var sans=[];
-  for(var i=0;i<Math.min(hist.length,8);i++) sans.push(hist[i].san);
-  // try longest match
+  for(var i=0;i<Math.min(hist.length, n);i++) sans.push(normalizeSan(hist[i].san));
+  return sans.join(' ');
+}
+function parseEcoTsv(text){
+  var map={};
+  var lines=String(text||'').split(/\r?\n/);
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];
+    if(!line || line.indexOf('eco')===0) continue;
+    var parts=line.split('\t');
+    if(parts.length<3) continue;
+    var eco=parts[0].trim();
+    var name=parts[1].trim();
+    var key=pgnToSanKey(parts.slice(2).join('\t'));
+    if(!key) continue;
+    // keep longest / more specific: always overwrite with later more specific entries of same key
+    map[key]={eco:eco, name:name, key:key};
+  }
+  return map;
+}
+function loadEcoBook(){
+  if(ecoBookReady && ecoBook) return Promise.resolve(ecoBook);
+  if(ecoBookLoading) return ecoBookLoading;
+  var files=['a','b','c','d','e'];
+  var base='https://cdn.jsdelivr.net/gh/lichess-org/chess-openings@master/';
+  ecoBookLoading = Promise.all(files.map(function(f){
+    return fetch(base+f+'.tsv').then(function(r){ return r.ok ? r.text() : ''; }).catch(function(){ return ''; });
+  })).then(function(texts){
+    ecoBook={};
+    texts.forEach(function(t){
+      var part=parseEcoTsv(t);
+      Object.keys(part).forEach(function(k){ ecoBook[k]=part[k]; });
+    });
+    // merge small local fallback
+    Object.keys(OPENINGS).forEach(function(k){
+      if(!ecoBook[k]) ecoBook[k]={eco:'', name:OPENINGS[k], key:k};
+    });
+    ecoBookReady=true;
+    ecoBookLoading=null;
+    console.log('[ECO] aberturas carregadas:', Object.keys(ecoBook).length);
+    return ecoBook;
+  }).catch(function(e){
+    console.warn('ECO book falhou', e);
+    ecoBook={};
+    Object.keys(OPENINGS).forEach(function(k){ ecoBook[k]={eco:'', name:OPENINGS[k], key:k}; });
+    ecoBookReady=true;
+    ecoBookLoading=null;
+    return ecoBook;
+  });
+  return ecoBookLoading;
+}
+function lookupOpening(){
+  if(!ecoBook) return null;
+  if(!hist || !hist.length) return {eco:'', name:'Posição inicial', key:'', next:suggestNextMoves('')};
+  var full=histToSanKey();
+  // longest prefix match
+  var sans=full.split(' ').filter(Boolean);
   for(var len=sans.length; len>=1; len--){
     var key=sans.slice(0,len).join(' ');
-    if(OPENINGS[key]) return OPENINGS[key];
+    if(ecoBook[key]){
+      var o=ecoBook[key];
+      return {eco:o.eco, name:o.name, key:key, next:suggestNextMoves(key)};
+    }
   }
-  // try only white moves style simplified - already SAN sequence
-  return '';
+  // fallback local short map
+  for(var len2=Math.min(sans.length,6); len2>=1; len2--){
+    var k2=sans.slice(0,len2).join(' ');
+    if(OPENINGS[k2]) return {eco:'', name:OPENINGS[k2], key:k2, next:suggestNextMoves(k2)};
+  }
+  return {eco:'', name:'Fora do livro', key:full, next:[]};
+}
+function suggestNextMoves(currentKey){
+  if(!ecoBook) return [];
+  var prefix = currentKey ? currentKey+' ' : '';
+  var found={}, list=[];
+  var keys=Object.keys(ecoBook);
+  for(var i=0;i<keys.length;i++){
+    var k=keys[i];
+    if(prefix && k.indexOf(prefix)!==0) continue;
+    if(!prefix && k.indexOf(' ')!==-1) {
+      // only first moves from start
+      var first=k.split(' ')[0];
+      if(!found[first]){ found[first]=ecoBook[k]; list.push({san:first, eco:ecoBook[k].eco, name:ecoBook[k].name}); }
+      continue;
+    }
+    if(prefix){
+      var rest=k.slice(prefix.length);
+      var nextSan=rest.split(' ')[0];
+      if(!nextSan || found[nextSan]) continue;
+      found[nextSan]=ecoBook[k];
+      list.push({san:nextSan, eco:ecoBook[k].eco, name:ecoBook[k].name});
+      if(list.length>=8) break;
+    }
+  }
+  // sort by eco then name
+  list.sort(function(a,b){ return (a.eco||'').localeCompare(b.eco||'') || a.san.localeCompare(b.san); });
+  return list.slice(0,6);
+}
+function updateOpeningUI(){
+  var ecoEl=document.getElementById('opening-eco');
+  var nameEl=document.getElementById('opening-name');
+  var nextEl=document.getElementById('opening-next');
+  if(!ecoEl||!nameEl) return;
+  if(!ecoBookReady){
+    ecoEl.textContent='…';
+    nameEl.textContent='Carregando livro de aberturas…';
+    if(nextEl) nextEl.innerHTML='';
+    return;
+  }
+  currentOpening = lookupOpening() || currentOpening;
+  ecoEl.textContent = currentOpening.eco ? ('ECO '+currentOpening.eco) : (hist&&hist.length?'—':'ECO');
+  nameEl.textContent = currentOpening.name || '—';
+  if(nextEl){
+    if(currentOpening.next && currentOpening.next.length){
+      nextEl.innerHTML = currentOpening.next.map(function(m){
+        return '<span class="om" title="'+(m.name||'')+'"><b>'+m.san+'</b>'+(m.eco?m.eco:'')+'</span>';
+      }).join('');
+    } else {
+      nextEl.innerHTML = hist&&hist.length ? '<span style="opacity:.7">Sem continuações no livro</span>' : '';
+    }
+  }
+}
+function detectOpening(){
+  var o = lookupOpening();
+  if(!o) return '';
+  return o.eco ? (o.eco+' · '+o.name) : (o.name||'');
+}
+function refreshOpening(){
+  loadEcoBook().then(function(){ updateOpeningUI(); });
 }
 function saveHistoryEntry(result, msg){
   try{
@@ -1958,17 +2228,38 @@ function loadPuzzle(idx){
   toast('Puzzle '+(puzzleIdx+1)+'/'+PUZZLES.length);
   saveActiveGame();
 }
+async function awardPuzzlePoints(){
+  if(!me||!sb) return;
+  try{
+    var row=await dbGetPlayer(me.name); if(!row) return;
+    var pts=Math.max(100,(row.points||ELO_START)+PUZZLE_REWARD);
+    var solved=(row.puzzles_solved||0)+1;
+    var updated=await dbUpdatePlayer(me.name,{points:pts, puzzles_solved:solved});
+    me=rowToMe(updated);
+    document.getElementById('h-pts').textContent=me.points+' Elo';
+    toast('+'+PUZZLE_REWARD+' Elo pelo puzzle!');
+  }catch(e){
+    // se coluna puzzles_solved não existir, tenta só points
+    try{
+      var row2=await dbGetPlayer(me.name); if(!row2) return;
+      var pts2=Math.max(100,(row2.points||ELO_START)+PUZZLE_REWARD);
+      var updated2=await dbUpdatePlayer(me.name,{points:pts2});
+      me=rowToMe(updated2);
+      document.getElementById('h-pts').textContent=me.points+' Elo';
+      toast('+'+PUZZLE_REWARD+' Elo pelo puzzle!');
+    }catch(e2){ console.error(e2); }
+  }
+}
 function checkPuzzleMove(from,to,pr){
   if(!puzzleActive) return;
   var uci = from+to+(pr||'');
   var expected = puzzleActive.sol[puzzleSolStep];
   if(!expected){ return; }
-  // aceitar com ou sem promoção explícita
   var ok = (uci===expected) || (uci===expected+'q') || (expected.indexOf(from+to)===0);
   if(!ok){
     toast('Lance incorreto — tente de novo');
-    // desfaz
     chess.undo(); hist.pop(); last=hist.length?{from:hist[hist.length-1].from,to:hist[hist.length-1].to}:null;
+    clearArrows();
     render(); status(); movesUI(); updateCaps();
     var st=document.getElementById('status');
     if(st){ st.className='side-status chk'; st.innerHTML='❌ Incorreto. Dica: '+(puzzleActive.hint||'Tente outra casa'); }
@@ -1976,12 +2267,15 @@ function checkPuzzleMove(from,to,pr){
   }
   puzzleSolStep++;
   sfxWin();
+  // seta da solução
+  drawArrow(from, to, 'best');
   if(puzzleSolStep >= puzzleActive.sol.length){
     lastEndResult='win';
-    toast('Puzzle resolvido!');
+    awardPuzzlePoints();
+    toast('Puzzle resolvido! +'+PUZZLE_REWARD+' Elo');
     setTimeout(function(){
-      showEnd('🧩 Puzzle resolvido!', puzzleActive.title+' — muito bem!');
-    }, 400);
+      showEnd('🧩 Puzzle resolvido!', puzzleActive.title+' — +'+PUZZLE_REWARD+' Elo no ranking!');
+    }, 500);
   } else {
     var st=document.getElementById('status');
     if(st){ st.className='side-status'; st.textContent='✓ Continuação… lance '+(puzzleSolStep+1)+'/'+puzzleActive.sol.length; }
@@ -1997,6 +2291,7 @@ function openGameUI(){
   document.getElementById('nav').style.display='none';
   document.getElementById('ov-end').style.display='none';
   updateMatchInfo();
+  refreshOpening();
 }
 function setupCoach(){
   var coach=document.getElementById('coach');
@@ -2137,6 +2432,7 @@ function animateSlide(from, to, color, type, cb){
   setTimeout(finish, 280);
 }
 function play(from,to,pr){
+  clearArrows();
   var before=chess.get(from);
   var color=before?before.color:'w', type=before?before.type:(pr||'q');
   var mv=chess.move({from:from,to:to,promotion:pr||'q'});if(!mv)return;
@@ -2150,7 +2446,10 @@ function play(from,to,pr){
   function afterAnim(){
     render(); status(); movesUI(); updateCaps(); saveActiveGame();
     if(timeControl>0){ lastClockTick=Date.now(); updateClocksUI(); }
-    if(mode==='online'&&gameCh)gameCh.send({type:'broadcast',event:'move',payload:{by:me.name,from:from,to:to,promotion:pr||'q'}});
+    if(mode==='online'&&gameCh)gameCh.send({type:'broadcast',event:'move',payload:{
+      by:me.name, from:from, to:to, promotion:pr||'q',
+      clockW: clockW, clockB: clockB, timeControl: timeControl
+    }});
 
     if(mode==='puzzle'){ checkPuzzleMove(from,to,pr); return; }
 
@@ -2219,6 +2518,7 @@ function status(){
   }
   document.getElementById('bar-w').classList.toggle('active',chess.turn()==='w');
   document.getElementById('bar-b').classList.toggle('active',chess.turn()==='b');
+  updateOpeningUI();
 }
 function movesUI(){
   var box=document.getElementById('moves'),h='';
@@ -2396,6 +2696,42 @@ function coachPlan(){
         : 'Final: ative o rei, crie peões passados e evite trocas desfavoráveis.';
   document.getElementById('coach-text').textContent=plan;
 }
+function clearArrows(){
+  var g=document.getElementById('arrows-g');
+  if(g) g.innerHTML='';
+}
+function sqToXY(sq){
+  // viewBox 0..8 — centro da casa
+  var files='abcdefgh';
+  var file=files.indexOf(sq[0]);
+  var rank=parseInt(sq[1],10)-1;
+  var flip = boardFlipped || (mode==='online' && myColor==='b');
+  var x = flip ? (7-file) + 0.5 : file + 0.5;
+  var y = flip ? rank + 0.5 : (7-rank) + 0.5;
+  return {x:x, y:y};
+}
+function drawArrow(from, to, kind){
+  var g=document.getElementById('arrows-g'); if(!g) return;
+  var a=sqToXY(from), b=sqToXY(to);
+  // encurta um pouco para não cobrir o centro das peças
+  var dx=b.x-a.x, dy=b.y-a.y, len=Math.sqrt(dx*dx+dy*dy)||1;
+  var ux=dx/len, uy=dy/len;
+  var x1=a.x+ux*0.28, y1=a.y+uy*0.28;
+  var x2=b.x-ux*0.32, y2=b.y-uy*0.32;
+  var cls = kind==='danger'?'arrow-danger':(kind==='alt'?'arrow-alt':'arrow-best');
+  var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d','M '+x1+' '+y1+' L '+x2+' '+y2);
+  path.setAttribute('class', cls);
+  g.appendChild(path);
+}
+function setEvalLive(scoreCp){
+  // scoreCp do ponto de vista das brancas (aproximado)
+  var el=document.getElementById('eval-live'); if(!el) return;
+  // mapeia -800..+800 para 5%..95%
+  var clamped=Math.max(-800, Math.min(800, scoreCp||0));
+  var pct=50 + (clamped/800)*45;
+  el.style.height=pct+'%';
+}
 function coachBest(auto){
   if(!me||!chess||chess.game_over())return;
   if((mode==='ai'||mode==='online')&&chess.turn()!==myColor){
@@ -2405,9 +2741,9 @@ function coachBest(auto){
   }
   document.getElementById('coach-move').textContent='…';
   document.getElementById('coach-text').textContent='Calculando a jogada perfeita…';
+  clearArrows();
   initMasterEngine();
   var fen=chess.fen();
-  // Skill 20 (perfeito) + tempo curto ≈ resposta rápida e ainda força de GM
   engineBestMove(fen, 16, 1600, function(uci){
     var found=null;
     var parts=uciToParts(uci);
@@ -2441,6 +2777,12 @@ function coachBest(auto){
     legal=[{to:found.to}];
     last={from:found.from,to:found.to};
     render();
+    drawArrow(found.from, found.to, 'best');
+    // eval aproximada via minimax local rápido
+    try{
+      var sc=evaluate(chess);
+      setEvalLive(chess.turn()==='w'?sc:-sc);
+    }catch(e){}
   }, 20);
 }
 
@@ -2456,6 +2798,7 @@ document.addEventListener('keydown',function(e){
 window.addEventListener('DOMContentLoaded',async function(){
   loadPrefs();
   preloadPieces();
+  loadEcoBook().then(function(){ updateOpeningUI(); });
   initMasterEngine();
   initSupabase();
   if(sb){try{await ensureMaster()}catch(e){}}
