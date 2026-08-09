@@ -579,6 +579,37 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 }
 .btn-friend.pending{background:rgba(245,197,66,.12);border-color:rgba(245,197,66,.35);color:#fde68a}
 .btn-friend.accepted{background:rgba(91,157,255,.14);border-color:rgba(91,157,255,.35);color:#93c5fd}
+.pw-wrap{position:relative;display:flex;align-items:center}
+.pw-wrap input{width:100%;padding-right:2.6rem!important}
+.pw-eye{
+  position:absolute;right:.45rem;top:50%;transform:translateY(-50%);
+  background:transparent;border:none;cursor:pointer;font-size:1.05rem;
+  opacity:.75;padding:.25rem .4rem;line-height:1
+}
+.pw-eye:hover{opacity:1}
+.admin-card{border:1px solid rgba(245,197,66,.35)!important}
+.admin-list{display:flex;flex-direction:column;gap:.55rem;margin-top:.5rem}
+.admin-row{
+  display:flex;flex-wrap:wrap;gap:.65rem;align-items:flex-start;
+  padding:.85rem;border-radius:14px;border:1px solid var(--line);
+  background:rgba(0,0,0,.22)
+}
+.admin-row .adm-main{flex:1;min-width:180px}
+.admin-row .adm-name{font-weight:900;font-size:1rem}
+.admin-row .adm-meta{font-size:.8rem;color:var(--muted);margin-top:.2rem;line-height:1.45}
+.admin-row .adm-pass{
+  margin-top:.45rem;padding:.45rem .6rem;border-radius:10px;
+  background:rgba(0,0,0,.35);font-family:ui-monospace,Menlo,monospace;
+  font-size:.78rem;word-break:break-all;color:#fde68a
+}
+.admin-row .adm-pass.protected{color:#fb7185}
+.admin-row .adm-actions{display:flex;flex-direction:column;gap:.35rem}
+.btn-danger{
+  padding:.55rem .85rem;border-radius:12px;font-weight:900;font-size:.8rem;
+  background:rgba(251,113,133,.16);border:1px solid rgba(251,113,133,.4);color:#fecdd3;cursor:pointer
+}
+.btn-danger:hover{background:rgba(251,113,133,.28)}
+#nav-admin{color:#fde68a!important}
 .player-card .who-wrap{flex:1;min-width:0}
 .player-card .who{
   font-weight:900;
@@ -1046,13 +1077,28 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     </div>
     <div id="p-in">
       <div class="fld"><label>Usuário</label><input id="in-u" value="" placeholder="seu usuário" autocomplete="username"/></div>
-      <div class="fld"><label>Senha</label><input id="in-p" type="password" value="" placeholder="sua senha" autocomplete="current-password"/></div>
+      <div class="fld"><label>Senha</label>
+        <div class="pw-wrap">
+          <input id="in-p" type="password" value="" placeholder="sua senha" autocomplete="current-password"/>
+          <button type="button" class="pw-eye" onclick="togglePw('in-p',this)" title="Mostrar/ocultar" aria-label="Mostrar senha">👁</button>
+        </div>
+      </div>
       <button type="button" class="btn-go" id="btn-login" onclick="login()">Entrar</button>
     </div>
     <div id="p-up" class="hidden">
       <div class="fld"><label>Usuário</label><input id="up-u" placeholder="escolha um nome" autocomplete="username"/></div>
-      <div class="fld"><label>Senha</label><input id="up-p" type="password" value="" placeholder="mín. 4 caracteres" autocomplete="new-password"/></div>
-      <div class="fld"><label>Confirmar</label><input id="up-p2" type="password" value="" placeholder="repita a senha" autocomplete="new-password"/></div>
+      <div class="fld"><label>Senha</label>
+        <div class="pw-wrap">
+          <input id="up-p" type="password" value="" placeholder="mín. 4 caracteres" autocomplete="new-password"/>
+          <button type="button" class="pw-eye" onclick="togglePw('up-p',this)" title="Mostrar/ocultar" aria-label="Mostrar senha">👁</button>
+        </div>
+      </div>
+      <div class="fld"><label>Confirmar</label>
+        <div class="pw-wrap">
+          <input id="up-p2" type="password" value="" placeholder="repita a senha" autocomplete="new-password"/>
+          <button type="button" class="pw-eye" onclick="togglePw('up-p2',this)" title="Mostrar/ocultar" aria-label="Mostrar senha">👁</button>
+        </div>
+      </div>
       <button type="button" class="btn-go" id="btn-reg" onclick="register()">Criar e entrar</button>
     </div>
     <p class="err" id="err"></p>
@@ -1075,6 +1121,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     <button type="button" data-v="dash" onclick="go('dash')">Dashboard</button>
     <button type="button" data-v="rank" onclick="go('rank')">Ranking</button>
     <button type="button" data-v="settings" onclick="go('settings')">Temas</button>
+    <button type="button" data-v="admin" id="nav-admin" class="hidden" onclick="go('admin')">Painel</button>
   </nav>
   <main>
     <div id="v-home">
@@ -1249,6 +1296,21 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
             <div id="preview-grid" style="width:100%;height:100%;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr)"></div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="v-admin" class="hidden">
+      <div class="card admin-card">
+        <div class="panel-title">
+          <h2>🛡️ Painel do Mestre</h2>
+          <span class="chip-soft">somente fernandolapa</span>
+        </div>
+        <p class="note">Controle total de contas. A senha do mestre <strong>nunca</strong> é exibida. Excluir um jogador remove o acesso na hora.</p>
+        <div class="search-box">
+          <input id="admin-search" type="text" placeholder="Filtrar por usuário…" oninput="paintAdmin()"/>
+          <button type="button" onclick="paintAdmin()">🔄 Atualizar</button>
+        </div>
+        <div id="admin-list" class="admin-list"><div class="empty">Carregando jogadores…</div></div>
       </div>
     </div>
 
@@ -1989,6 +2051,17 @@ async function dbListRanking(){
   if(res.error) throw res.error;
   return res.data||[];
 }
+async function dbListPlayersAdmin(){
+  // mestre: lista completa (inclui senha armazenada)
+  var res=await sb.from('players').select('*').order('points',{ascending:false}).limit(200);
+  if(res.error) throw res.error;
+  return res.data||[];
+}
+async function dbDeletePlayer(username){
+  var res=await sb.from('players').delete().eq('username',username).select('username');
+  if(res.error) throw res.error;
+  return res.data||[];
+}
 async function ensureMaster(){
   try{
     var p=await dbGetPlayer('fernandolapa');
@@ -2005,6 +2078,83 @@ function tab(t){
   document.getElementById('err').textContent='';
 }
 function err(m){document.getElementById('err').textContent=m}
+function togglePw(inputId, btn){
+  var el=document.getElementById(inputId);
+  if(!el) return;
+  if(el.type==='password'){ el.type='text'; if(btn) btn.textContent='🙈'; }
+  else { el.type='password'; if(btn) btn.textContent='👁'; }
+}
+function isProtectedMasterUser(username){
+  // senha do mestre nunca é exposta em hipótese alguma
+  return sameUser(username, 'fernandolapa') || (MASTER||[]).some(function(m){return sameUser(m,username)});
+}
+function safePasswordDisplay(username, stored){
+  if(isProtectedMasterUser(username)) return '••••••••  (protegida — inacessível)';
+  if(!stored) return '(vazia)';
+  return String(stored);
+}
+async function paintAdmin(){
+  var box=document.getElementById('admin-list');
+  if(!box) return;
+  if(!(me&&me.isMaster)){
+    box.innerHTML='<div class="empty">Acesso negado.</div>';
+    return;
+  }
+  box.innerHTML='<div class="empty">Carregando contas…</div>';
+  try{
+    var list=await dbListPlayersAdmin();
+    var q=((document.getElementById('admin-search')||{}).value||'').trim().toLowerCase();
+    if(q) list=list.filter(function(p){ return String(p.username||'').toLowerCase().indexOf(q)!==-1; });
+    if(!list.length){ box.innerHTML='<div class="empty">Nenhuma conta encontrada.</div>'; return; }
+    box.innerHTML=list.map(function(p){
+      var u=p.username||'';
+      var protected=isProtectedMasterUser(u);
+      var online=onlinePlayers.some(function(o){return sameUser(o.user,u)});
+      var passHtml=protected
+        ? '<div class="adm-pass protected">🔒 Senha do mestre protegida no código — ninguém pode visualizar</div>'
+        : '<div class="adm-pass">🔑 '+escapeHtml(safePasswordDisplay(u, p.password))+'</div>';
+      var delBtn=protected
+        ? '<button type="button" class="btn-soft" disabled>Conta protegida</button>'
+        : '<button type="button" class="btn-danger" onclick="adminDeletePlayer(\''+u.replace(/'/g,"\\'")+'\')">🗑 Excluir conta</button>';
+      return '<div class="admin-row">'+
+        '<div class="adm-main">'+
+          '<div class="adm-name">'+escapeHtml(u)+(protected?' · 👑 MESTRE':'')+(online?' · <span style="color:#34d399">online</span>':'')+'</div>'+
+          '<div class="adm-meta">'+
+            (p.points||0)+' pts · '+(p.wins||0)+'V / '+(p.draws||0)+'E / '+(p.losses||0)+'D · '+(p.games||0)+' jogos<br>'+
+            'Seq. '+(p.streak||0)+' (melhor '+(p.best_streak||0)+') · treinos '+(p.train_games||0)+'<br>'+
+            'Criado: '+(p.created_at? new Date(p.created_at).toLocaleString('pt-BR'):'—')+
+          '</div>'+passHtml+
+        '</div>'+
+        '<div class="adm-actions">'+
+          '<button type="button" class="btn-soft" onclick="viewPlayerProfile(\''+u.replace(/'/g,"\\'")+'\')">👤 Perfil</button>'+
+          delBtn+
+        '</div></div>';
+    }).join('');
+  }catch(e){
+    box.innerHTML='<div class="empty">Erro ao carregar contas.</div>';
+  }
+}
+async function adminDeletePlayer(username){
+  if(!(me&&me.isMaster)) return toast('Acesso negado');
+  if(isProtectedMasterUser(username)) return toast('Não é possível excluir a conta do mestre');
+  if(!username) return;
+  if(!confirm('Excluir permanentemente a conta "'+username+'"?\nO jogador perderá o acesso na hora.')) return;
+  try{
+    await dbDeletePlayer(username);
+    // derruba sessão se estiver online
+    if(lobbyCh){
+      try{
+        lobbyCh.send({type:'broadcast',event:'force_logout',payload:{user:username,by:me.name,ts:Date.now()}});
+      }catch(e){}
+    }
+    toast('Conta '+username+' excluída');
+    paintAdmin();
+    paintRank();
+  }catch(e){
+    console.error(e);
+    toast('Falha ao excluir no banco');
+  }
+}
 
 async function register(){
   var u=norm(document.getElementById('up-u').value);
@@ -2069,6 +2219,8 @@ function enter(userObj){
   document.getElementById('h-name').textContent=me.name;
   document.getElementById('h-pts').textContent=me.points+' pts';
   document.getElementById('h-master').classList.toggle('hidden',!me.isMaster);
+  var na=document.getElementById('nav-admin');
+  if(na) na.classList.toggle('hidden', !me.isMaster);
   if(!sb) initSupabase();
   joinLobby();
   if(!restoreActiveGameIfAny()){ go('home'); paintAll(); }
@@ -2092,6 +2244,12 @@ async function reloadMe(){
     if(row){
       me=rowToMe(row);
       document.getElementById('h-pts').textContent=me.points+' pts';
+      var na=document.getElementById('nav-admin');
+      if(na) na.classList.toggle('hidden', !me.isMaster);
+    } else {
+      // conta removida do banco
+      toast('Sua conta não existe mais');
+      logout();
     }
   }catch(e){}
 }
@@ -2207,6 +2365,14 @@ async function joinLobby(){
     }
     saveFriendReqs(r);
     renderFriends();
+  });
+  lobbyCh.on('broadcast',{event:'force_logout'},function(payload){
+    var data=payload.payload||{};
+    if(!data.user||!me) return;
+    if(!sameUser(data.user, me.name)) return;
+    // conta removida pelo mestre — encerra na hora
+    toast('Sua conta foi removida pelo administrador');
+    setTimeout(function(){ logout(); }, 400);
   });
   lobbyCh.on('broadcast',{event:'challenge'},function(payload){
     var data=payload.payload||{};
@@ -2470,13 +2636,15 @@ function applyRemoteMove(data){
 }
 
 function go(v){
-  ['home','dash','rank','settings'].forEach(function(k){
+  if(v==='admin' && !(me&&me.isMaster)) { toast('Acesso restrito'); v='home'; }
+  ['home','dash','rank','settings','admin'].forEach(function(k){
     var el=document.getElementById('v-'+k); if(el) el.classList.toggle('hidden',k!==v);
   });
   document.getElementById('game').style.display='none';
   document.getElementById('nav').style.display='flex';
   document.querySelectorAll('#nav button').forEach(function(b){b.classList.toggle('on',b.dataset.v===v)});
   if(v==='settings') paintPreview();
+  if(v==='admin') paintAdmin();
   paintAll();
 }
 async function paintAll(){
@@ -3143,7 +3311,7 @@ function nextPuzzle(){
 function openGameUI(){
   refreshGameAvatars();
   applyPrefs();
-  ['v-home','v-dash','v-rank','v-settings'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.add('hidden')});
+  ['v-home','v-dash','v-rank','v-settings','v-admin'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.add('hidden')});
   document.getElementById('game').style.display='block';
   document.getElementById('nav').style.display='none';
   document.getElementById('ov-end').style.display='none';
