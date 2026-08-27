@@ -1666,6 +1666,8 @@ const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 const XM_APP_VERSION = '1.1.1';
 const XM_UPDATE_REPO = 'fernandolapa/xadrez-mestre';
 const XM_UPDATE_BRANCH = 'main';
+const XM_UPDATE_USER = '__xm_app__';
+const XM_UPDATE_VERSION_JS = ''; // opcional: URL completa do version.js no GitHub
 const SESSION='xm_session_v8', GAMEKEY='xm_active_game_v8', MASTER=['fernandolapa'];
 const GL={wk:'♔',wq:'♕',wr:'♖',wb:'♗',wn:'♘',wp:'♙',bk:'♚',bq:'♛',br:'♜',bb:'♝',bn:'♞',bp:'♟'};
 // Peças 3D (set Wikipedia — alta qualidade)
@@ -1796,30 +1798,97 @@ function considerManifest(L, fromUrl){
 }
 function loadUpdateManifest(){
   var urls=[];
+  if(XM_UPDATE_VERSION_JS) urls.push(XM_UPDATE_VERSION_JS);
   try{
-    if(location.protocol!=='file:') urls.push(new URL('version.js', location.href).href);
+    if(location.protocol!=='file:'){
+      urls.push(new URL('version.js', location.href).href);
+    }
+  }catch(e){}
+  try{
+    if(location.hostname && /github\.io$/i.test(location.hostname)){
+      urls.push(location.origin+'/version.js');
+      var parts=location.pathname.split('/').filter(Boolean);
+      if(parts.length) urls.push(location.origin+'/'+parts[0]+'/version.js');
+    }
   }catch(e){}
   if(XM_UPDATE_REPO){
-    urls.push('https://cdn.jsdelivr.net/gh/'+XM_UPDATE_REPO+'@'+XM_UPDATE_BRANCH+'/version.js');
-    urls.push('https://raw.githubusercontent.com/'+XM_UPDATE_REPO+'/'+XM_UPDATE_BRANCH+'/version.js');
-    urls.push('https://'+XM_UPDATE_REPO.split('/')[0]+'.github.io/'+XM_UPDATE_REPO.split('/')[1]+'/version.js');
+    var user=XM_UPDATE_REPO.split('/')[0], repo=XM_UPDATE_REPO.split('/')[1]||'';
+    ['main','master'].forEach(function(br){
+      urls.push('https://cdn.jsdelivr.net/gh/'+XM_UPDATE_REPO+'@'+br+'/version.js');
+      urls.push('https://raw.githubusercontent.com/'+XM_UPDATE_REPO+'/'+br+'/version.js');
+    });
+    if(repo) urls.push('https://'+user+'.github.io/'+repo+'/version.js');
+    urls.push('https://'+user+'.github.io/version.js');
   }
+  var seen={};
+  urls=urls.filter(function(u){ if(!u||seen[u]) return false; seen[u]=1; return true; });
   var i=0;
   function next(){
-    if(window.XM_LATEST && window.XM_LATEST.version){
-      considerManifest(window.XM_LATEST);
-      return;
-    }
     if(i>=urls.length) return;
-    var url=urls[i++]+(urls[i-1].indexOf('?')>=0?'&':'?')+'t='+Date.now();
+    var raw=urls[i++];
+    var url=raw+(raw.indexOf('?')>=0?'&':'?')+'t='+Date.now();
     var s=document.createElement('script');
     s.src=url;
     s.async=true;
-    s.onload=function(){ considerManifest(window.XM_LATEST, url.split('?')[0]); };
+    s.onload=function(){ considerManifest(window.XM_LATEST, raw); if(!window.XM_LATEST||!xmIsNewer((window.XM_LATEST||{}).version, XM_APP_VERSION)) next(); };
     s.onerror=function(){ next(); };
     document.head.appendChild(s);
   }
   next();
+}
+async function publishAppMeta(){
+  if(!sb || location.protocol==='file:') return;
+  var apkUrl='';
+  try{ apkUrl=new URL('xadrez-mestre.apk', location.href).href; }catch(e){ apkUrl='xadrez-mestre.apk'; }
+  var payload={
+    version: XM_APP_VERSION,
+    apk: apkUrl,
+    apkAbsolute: apkUrl,
+    message: 'Nova versão '+XM_APP_VERSION+' do Xadrez Mestre. Toque em Atualizar para instalar.',
+    force: false,
+    ts: Date.now(),
+    origin: String(location.href||'')
+  };
+  var row=null;
+  try{ row=await dbGetPlayer(XM_UPDATE_USER); }catch(e){}
+  var cur=null;
+  try{ cur=row && row.password ? JSON.parse(row.password) : null; }catch(e){ cur=null; }
+  var should=true;
+  if(cur && cur.version && xmIsNewer(cur.version, XM_APP_VERSION)) should=false;
+  if(!should) return;
+  if(!row){
+    await sb.from('players').insert({
+      username:XM_UPDATE_USER,
+      password:JSON.stringify(payload),
+      points:0,games:0,wins:0,losses:0,draws:0
+    });
+  } else {
+    await dbUpdatePlayer(XM_UPDATE_USER,{password:JSON.stringify(payload)});
+  }
+}
+async function readAppMeta(){
+  if(!sb) return null;
+  try{
+    var row=await dbGetPlayer(XM_UPDATE_USER);
+    if(!row||!row.password) return null;
+    var meta=JSON.parse(row.password);
+    if(!meta||!meta.version) return null;
+    return meta;
+  }catch(e){ return null; }
+}
+async function checkAllUpdates(){
+  try{
+    if(location.protocol!=='file:') await publishAppMeta();
+  }catch(e){}
+  try{
+    var meta=await readAppMeta();
+    if(meta){
+      window.XM_LATEST=Object.assign({}, window.XM_LATEST||{}, meta);
+      if(meta.apk && !meta.apkAbsolute) window.XM_LATEST.apkAbsolute=meta.apk;
+      considerManifest(window.XM_LATEST, meta.origin||'');
+    }
+  }catch(e){}
+  try{ loadUpdateManifest(); }catch(e){}
 }
 
 
@@ -2340,7 +2409,7 @@ function togglePw(inputId, btn){
 }
 function isProtectedMasterUser(username){
   // senha do mestre nunca é exposta em hipótese alguma
-  return sameUser(username, 'fernandolapa') || (MASTER||[]).some(function(m){return sameUser(m,username)});
+  return sameUser(username, 'fernandolapa') || sameUser(username, XM_UPDATE_USER) || (MASTER||[]).some(function(m){return sameUser(m,username)});
 }
 function safePasswordDisplay(username, stored){
   if(isProtectedMasterUser(username)) return '••••••••  (protegida — inacessível)';
@@ -2415,6 +2484,7 @@ async function register(){
   var p=document.getElementById('up-p').value;
   var p2=document.getElementById('up-p2').value;
   if(u.length<3)return err('Mínimo 3 caracteres');
+  if(u.indexOf('__xm_')===0)return err('Nome reservado');
   if(!/^[a-z0-9_]+$/.test(u))return err('Só letras, números e _');
   if(p.length<4)return err('Senha mínima 4');
   if(p!==p2)return err('As senhas não coincidem');
@@ -2678,7 +2748,7 @@ async function setPresence(status, gid){
 }
 function renderOnline(){
   var el=document.getElementById('online-list');
-  var others=onlinePlayers.filter(function(p){return p.user!==me.name});
+  var others=onlinePlayers.filter(function(p){return p.user!==me.name && String(p.user||'').indexOf('__xm_')!==0});
   var cnt=document.getElementById('online-count');
   if(cnt) cnt.textContent=others.length+' online';
   if(!others.length){el.innerHTML='<div class="empty">Nenhum outro jogador online agora.</div>';return}
@@ -4716,14 +4786,15 @@ function finishTutorial(){
 }
 
 window.addEventListener('DOMContentLoaded',async function(){
-  try{ loadUpdateManifest(); }catch(e){}
-  setInterval(function(){ try{ loadUpdateManifest(); }catch(e){} }, 10*60*1000);
+  setTimeout(function(){ checkAllUpdates(); }, 800);
+  setInterval(function(){ try{ checkAllUpdates(); }catch(e){} }, 10*60*1000);
   loadPrefs();
   preloadPieces();
   if(typeof loadEcoBook==='function') loadEcoBook().then(function(){ if(typeof updateOpeningUI==='function') updateOpeningUI(); });
   initMasterEngine();
   initSupabase();
   if(sb){try{await ensureMaster()}catch(e){}}
+  try{ await checkAllUpdates(); }catch(e){}
   var u=getSession();
   if(u&&sb){
     try{
