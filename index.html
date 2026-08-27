@@ -1623,6 +1623,25 @@ nav button.on{
 .ov-resign .upd-msg{text-align:center}
 .ov-resign .end-badge{animation:badge-pop .45s cubic-bezier(.2,1.2,.3,1) both}
 
+
+@media(min-width:900px){
+  #game{display:flex;justify-content:center;}
+  .game-shell{
+    grid-template-columns: 1fr auto minmax(260px, 340px) !important;
+    justify-content:center !important;
+    width:100%;
+    max-width:1400px !important;
+    margin:0 auto;
+  }
+  .game-main{grid-column:2;justify-self:center;}
+  .game-side{grid-column:3;}
+  .board-hero{width:min(92vw, 560px);}
+}
+@media(max-width:899px){
+  .game-shell{display:flex;flex-direction:column;align-items:center;}
+  .board-hero{width:min(96vw, 520px);}
+}
+
 </style>
 </head>
 <body>
@@ -2112,7 +2131,7 @@ on conflict (username) do nothing;
 const SUPA_URL='https://inzkuohrnvxbzwrdxekw.supabase.co';
 const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 /* atualização: XM_BUILD sobe sozinho a cada geração dos arquivos */
-const APP_VERSION = '2026.08.27.1';
+const APP_VERSION = '2026.08.27.2';
 const XM_APP_VERSION = APP_VERSION;
 const XM_BUILD = APP_VERSION;
 const XM_APK_VERSION = APP_VERSION;
@@ -4690,9 +4709,10 @@ function doResign(){
   if(mode==='ai'){
     recordAiResult('loss');
     recordTrain();
-    awardAiPoints('loss');
-    lastPointsDelta=aiPointsDelta('loss')||lastPointsDelta;
-    lastPointsTotal=Math.max(0,((me&&me.points)||0)+lastPointsDelta);
+    applyScore('loss').then(function(){
+      showEnd('Derrota','Você desistiu da partida.');
+    });
+    return;
   }
   showEnd('Derrota','Você desistiu da partida.');
 }
@@ -4713,11 +4733,12 @@ function endLocal(){
     }
     recordAiResult(aiRes);
     recordTrain();
-    awardAiPoints(aiRes);
-    var d=aiPointsDelta(aiRes);
-    lastPointsDelta = d||0;
-    lastPointsTotal = Math.max(0, ((me&&me.points)||0) + (d||0));
-    if(d) msg += (d>0?' · +'+d:' · '+d)+' pts';
+    applyScore(aiRes).then(function(d){
+      lastPointsDelta=d||0;
+      if(d) msg += (d>0?' · +'+d:' · '+d)+' pts';
+      animateLastMoveThen(function(){ showEnd('Fim de jogo',msg); });
+    });
+    return;
   } else {
     lastPointsDelta = 0;
   }
@@ -4734,13 +4755,50 @@ async function finishOnline(result,msg){
   stopClock();
   lastEndResult=result; lastEndMode='online';
   var keepOpp=oppName;
-  await applyRank(result);
+  await applyScore(result);
   setPresence('available');
   if(gameCh&&sb){try{await sb.removeChannel(gameCh)}catch(e){} gameCh=null}
   gameId=''; mode=null;
   oppName=keepOpp; // para revanche
   showEnd('Fim de jogo',msg);
 }
+
+async function applyScore(result){
+  if(!me||!sb) return 0;
+  if(result!=='win' && result!=='loss' && result!=='draw') result='draw';
+  try{
+    if(!sb && typeof initSupabase==='function') initSupabase();
+    var row=await dbGetPlayer(me.name);
+    if(!row) return 0;
+    var delta = result==='win' ? ((PTS&&PTS.win)||15) : (result==='loss' ? ((PTS&&PTS.loss)||-15) : 0);
+    var newPts=Math.max(0, (row.points||0)+delta);
+    var wins=(row.wins||0)+(result==='win'?1:0);
+    var losses=(row.losses||0)+(result==='loss'?1:0);
+    var draws=(row.draws||0)+(result==='draw'?1:0);
+    var games=(row.games||0)+1;
+    var streak=row.streak||0, best=row.best_streak||0;
+    if(result==='win'){ streak++; if(streak>best) best=streak; }
+    else streak=0;
+    var updated=await dbUpdatePlayer(me.name,{
+      points:newPts, games:games, wins:wins, losses:losses, draws:draws,
+      streak:streak, best_streak:best
+    });
+    me=rowToMe(updated);
+    lastPointsDelta=delta;
+    lastPointsTotal=newPts;
+    var el=document.getElementById('h-pts');
+    if(el) el.textContent=me.points+' pts';
+    try{ paintHome(); }catch(e){}
+    try{ paintDash(); }catch(e){}
+    if(delta) toast((delta>0?'+':'')+delta+' pts  →  '+newPts);
+    return delta;
+  }catch(e){
+    console.error('applyScore', e);
+    try{ toast('Não deu para salvar os pontos'); }catch(err){}
+    return 0;
+  }
+}
+
 async function applyRank(result){
   if(!me||!sb)return;
   try{
