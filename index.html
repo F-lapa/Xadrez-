@@ -2096,12 +2096,14 @@ on conflict (username) do nothing;
 const SUPA_URL='https://inzkuohrnvxbzwrdxekw.supabase.co';
 const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 /* atualização: XM_BUILD sobe sozinho a cada geração dos arquivos */
-const XM_APP_VERSION = '1787804923123';
-const XM_BUILD = '1787804923123';
+const XM_APP_VERSION = '1787837360158';
+const XM_BUILD = '1787837360158';
 const XM_UPDATE_REPO = 'f-lapa/Xadrez-';
 const XM_UPDATE_BRANCH = 'main';
 const XM_UPDATE_USER = '__xm_app__';
 const XM_UPDATE_VERSION_JS = '';
+const XM_UPDATE_PAGE = 'https://f-lapa.github.io/Xadrez-/';
+const XM_UPDATE_APK  = 'https://f-lapa.github.io/Xadrez-/xadrez-mestre.apk';
 const SESSION='xm_session_v8', GAMEKEY='xm_active_game_v8', MASTER=['fernandolapa'];
 const GL={wk:'♔',wq:'♕',wr:'♖',wb:'♗',wn:'♘',wp:'♙',bk:'♚',bq:'♛',br:'♜',bb:'♝',bn:'♞',bp:'♟'};
 // Peças 3D (set Wikipedia — alta qualidade)
@@ -2200,6 +2202,7 @@ function apkDownloadCandidates(){
     if(seen[u]) return;
     seen[u]=1; out.push(u);
   }
+  if(typeof XM_UPDATE_APK==='string') add(XM_UPDATE_APK);
   add(L.apkAbsolute);
   add(L.apk);
   if(L.origin && /^https?:/i.test(L.origin)){
@@ -2271,9 +2274,9 @@ function considerManifest(L, fromUrl){
     window.XM_UPDATE_BASE=String(fromUrl).replace(/version\.js(\?.*)?$/i,'');
   }
   if(!xmIsNewer(L.version, XM_BUILD||XM_APP_VERSION)) return;
-  var skipped='';
-  try{ skipped=localStorage.getItem('xm_skip_ver')||''; }catch(e){}
-  if(!L.force && skipped===String(L.version)) return;
+  L.apkAbsolute = L.apkAbsolute || XM_UPDATE_APK;
+  L.apk = L.apk || XM_UPDATE_APK;
+  L.force = true;
   showAppUpdate(L);
 }
 function loadUpdateManifest(){
@@ -2371,39 +2374,39 @@ async function fetchBuildFromHtml(url){
   }catch(e){ return null; }
 }
 async function checkAllUpdates(){
+  var page=(typeof XM_UPDATE_PAGE==='string'&&XM_UPDATE_PAGE)?XM_UPDATE_PAGE:'https://f-lapa.github.io/Xadrez-/';
+  var apkUrl=(typeof XM_UPDATE_APK==='string'&&XM_UPDATE_APK)?XM_UPDATE_APK:(page+'xadrez-mestre.apk');
   try{
     if(location.protocol!=='file:') await publishAppMeta();
   }catch(e){}
+  var htmlUrls=[
+    page,
+    page.replace(/\/?$/, '/')+'index.html',
+    'https://f-lapa.github.io/Xadrez-/index.html',
+    'https://raw.githubusercontent.com/f-lapa/Xadrez-/main/index.html',
+    'https://raw.githubusercontent.com/f-lapa/Xadrez-/master/index.html'
+  ];
+  try{ if(location.protocol!=='file:') htmlUrls.unshift(location.href.split('#')[0]); }catch(e){}
+  for(var i=0;i<htmlUrls.length;i++){
+    var got=await fetchBuildFromHtml(htmlUrls[i]);
+    if(got){
+      got.apkAbsolute=apkUrl;
+      got.apk=apkUrl;
+      got.force=true;
+      window.XM_LATEST=Object.assign({}, window.XM_LATEST||{}, got);
+      considerManifest(window.XM_LATEST, page);
+      if(xmIsNewer(got.version, XM_BUILD||XM_APP_VERSION)) break;
+    }
+  }
   try{
     var meta=await readAppMeta();
     if(meta){
+      meta.apkAbsolute=meta.apkAbsolute||meta.apk||apkUrl;
+      meta.force=true;
       window.XM_LATEST=Object.assign({}, window.XM_LATEST||{}, meta);
-      if(meta.apk && !meta.apkAbsolute) window.XM_LATEST.apkAbsolute=meta.apk;
-      considerManifest(window.XM_LATEST, meta.origin||'');
+      considerManifest(window.XM_LATEST, meta.origin||page);
     }
   }catch(e){}
-  if(!(window.XM_LATEST && xmIsNewer(window.XM_LATEST.version, XM_BUILD||XM_APP_VERSION))){
-    var htmlUrls=[];
-    try{ if(location.protocol!=='file:') htmlUrls.push(location.href.split('#')[0]); }catch(e){}
-    if(XM_UPDATE_REPO){
-      var user=XM_UPDATE_REPO.split('/')[0], repo=XM_UPDATE_REPO.split('/')[1]||'';
-      ['main','master'].forEach(function(br){
-        htmlUrls.push('https://raw.githubusercontent.com/'+XM_UPDATE_REPO+'/'+br+'/index.html');
-        htmlUrls.push('https://cdn.jsdelivr.net/gh/'+XM_UPDATE_REPO+'@'+br+'/index.html');
-      });
-      if(repo) htmlUrls.push('https://'+user+'.github.io/'+repo+'/index.html');
-      htmlUrls.push('https://'+user+'.github.io/index.html');
-    }
-    for(var i=0;i<htmlUrls.length;i++){
-      var got=await fetchBuildFromHtml(htmlUrls[i]);
-      if(got){
-        window.XM_LATEST=Object.assign({}, window.XM_LATEST||{}, got);
-        considerManifest(window.XM_LATEST, got.origin);
-        if(xmIsNewer(got.version, XM_BUILD||XM_APP_VERSION)) break;
-      }
-    }
-  }
-  try{ loadUpdateManifest(); }catch(e){}
 }
 
 
