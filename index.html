@@ -191,7 +191,7 @@ header{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-
 }
 
 
-.ov-update .modal{max-width:420px;text-align:left}
+.ov-update{z-index:10001!important}.ov-update .modal{max-width:420px;text-align:left}
 .ov-update .ver-pill{
   display:inline-block;margin:.15rem 0 .7rem;padding:.22rem .6rem;border-radius:999px;
   background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);
@@ -422,7 +422,7 @@ main{flex:1;padding:1.05rem 1.15rem 1.5rem;max-width:1180px;width:100%;margin:0 
 .chat-form{display:flex;gap:.35rem}
 .chat-form input{flex:1;padding:.55rem .7rem;border-radius:10px;background:rgba(0,0,0,.28);border:1px solid var(--line);color:var(--text);font-size:.84rem}
 .chat-form button{padding:.55rem .75rem;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--violet));color:#fff;font-weight:800;font-size:.8rem}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem;backdrop-filter:blur(5px)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:10000;padding:1rem;backdrop-filter:blur(5px)}
 .modal{background:linear-gradient(180deg,#1a243a,#101826);border:1px solid var(--line2);border-radius:22px;padding:1.45rem;max-width:400px;width:100%;text-align:center;box-shadow:0 28px 70px rgba(0,0,0,.55);animation:scale-in .28s ease}
 .modal h2{margin-bottom:.4rem;font-weight:900}
 .modal p{color:var(--muted);margin-bottom:1rem;line-height:1.45}
@@ -2112,14 +2112,26 @@ on conflict (username) do nothing;
 const SUPA_URL='https://inzkuohrnvxbzwrdxekw.supabase.co';
 const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 /* atualização: XM_BUILD sobe sozinho a cada geração dos arquivos */
-const XM_APP_VERSION = '1787837360158';
-const XM_BUILD = '1787837360158';
+const XM_APP_VERSION = '1787843160356';
+const XM_BUILD = '1787843160356';
 const XM_UPDATE_REPO = 'f-lapa/Xadrez-';
 const XM_UPDATE_BRANCH = 'main';
 const XM_UPDATE_USER = '__xm_app__';
 const XM_UPDATE_VERSION_JS = '';
 const XM_UPDATE_PAGE = 'https://f-lapa.github.io/Xadrez-/';
 const XM_UPDATE_APK  = 'https://f-lapa.github.io/Xadrez-/xadrez-mestre.apk';
+
+(function(){
+  try{
+    if(location.protocol==='file:' && navigator.onLine && typeof XM_UPDATE_PAGE==='string'){
+      var dest=XM_UPDATE_PAGE.replace(/\/?$/,'/')+'index.html?src=apk&t='+Date.now()+'#xm_apk='+encodeURIComponent(XM_BUILD);
+      fetch(XM_UPDATE_PAGE,{cache:'no-store',mode:'cors'}).then(function(r){
+        if(r && r.ok) location.replace(dest);
+      }).catch(function(){});
+    }
+  }catch(e){}
+})();
+
 const SESSION='xm_session_v8', GAMEKEY='xm_active_game_v8', MASTER=['fernandolapa'];
 const GL={wk:'♔',wq:'♕',wr:'♖',wb:'♗',wn:'♘',wp:'♙',bk:'♚',bq:'♛',br:'♜',bb:'♝',bn:'♞',bp:'♟'};
 // Peças 3D (set Wikipedia — alta qualidade)
@@ -2289,7 +2301,7 @@ function considerManifest(L, fromUrl){
   if(fromUrl){
     window.XM_UPDATE_BASE=String(fromUrl).replace(/version\.js(\?.*)?$/i,'');
   }
-  if(!xmIsNewer(L.version, XM_BUILD||XM_APP_VERSION)) return;
+  if(!xmIsNewer(L.version, xmApkInstalledBuild())) return;
   L.apkAbsolute = L.apkAbsolute || XM_UPDATE_APK;
   L.apk = L.apk || XM_UPDATE_APK;
   L.force = true;
@@ -2375,18 +2387,48 @@ async function readAppMeta(){
     return meta;
   }catch(e){ return null; }
 }
+function xmApkInstalledBuild(){
+  try{
+    var m=String(location.hash||'').match(/xm_apk=(\d{12,})/);
+    if(m) return m[1];
+  }catch(e){}
+  return XM_BUILD||XM_APP_VERSION;
+}
+function xmHttpText(url){
+  var u=url+(url.indexOf('?')>=0?'&':'?')+'t='+Date.now();
+  return fetch(u,{cache:'no-store',mode:'cors'}).then(function(res){
+    if(!res||!res.ok) throw new Error('http');
+    return res.text();
+  }).catch(function(){
+    return new Promise(function(resolve,reject){
+      try{
+        var x=new XMLHttpRequest();
+        x.open('GET',u,true);
+        x.timeout=12000;
+        x.onload=function(){ if(x.status>=200&&x.status<400) resolve(x.responseText); else reject(new Error('xhr')); };
+        x.onerror=function(){ reject(new Error('xhr')); };
+        x.ontimeout=function(){ reject(new Error('timeout')); };
+        x.send();
+      }catch(e){ reject(e); }
+    });
+  });
+}
 async function fetchBuildFromHtml(url){
   try{
-    var res=await fetch(url+(url.indexOf('?')>=0?'&':'?')+'t='+Date.now(), {cache:'no-store'});
-    if(!res || !res.ok) return null;
-    var txt=await res.text();
+    var txt=await xmHttpText(url);
+    if(!txt) return null;
     var bm=txt.match(/XM_BUILD\s*=\s*['\"](\d{12,})['\"]/);
     var vm=txt.match(/XM_APP_VERSION\s*=\s*['\"]([^'\"]+)['\"]/);
     var version=(bm&&bm[1])||(vm&&vm[1]);
     if(!version) return null;
-    var apk='';
-    try{ apk=new URL('xadrez-mestre.apk', url).href; }catch(e){ apk='xadrez-mestre.apk'; }
-    return {version:version, apk:apk, apkAbsolute:apk, message:'Nova versão do Xadrez Mestre. Toque em Atualizar para instalar.', origin:url};
+    return {
+      version:version,
+      apk: (typeof XM_UPDATE_APK==='string'?XM_UPDATE_APK:''),
+      apkAbsolute: (typeof XM_UPDATE_APK==='string'?XM_UPDATE_APK:''),
+      force:true,
+      message:'Nova versão do Xadrez Mestre. Toque em Atualizar para instalar.',
+      origin:url
+    };
   }catch(e){ return null; }
 }
 async function checkAllUpdates(){
