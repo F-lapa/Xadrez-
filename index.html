@@ -1486,6 +1486,65 @@ nav button.on{
 }
 .btn-apk:hover{color:var(--gold);border-color:rgba(215,181,106,.45)}
 
+
+/* board center + turn + trail + motion */
+@media(min-width:1024px){
+  .game-shell{
+    grid-template-columns: 1fr auto minmax(280px, 340px) !important;
+    justify-content:center;
+    max-width:1400px !important;
+  }
+  .game-main{grid-column:2; justify-self:center;}
+  .game-side{grid-column:3;}
+  .game-main{flex-direction:column !important;}
+}
+.board-row{position:relative; justify-content:center !important;}
+@media(min-width:1024px){
+  .eval-live-wrap{
+    position:absolute !important;
+    left:8px; top:18px; bottom:18px;
+    width:10px;
+    z-index:4;
+    display:block;
+  }
+}
+.slide-piece{
+  transition:left .44s cubic-bezier(.2,.72,.18,1), top .44s cubic-bezier(.2,.72,.18,1), transform .44s cubic-bezier(.2,.72,.18,1) !important;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.5)) !important;
+  z-index:200 !important;
+}
+.cell.last-from{
+  box-shadow:inset 0 0 0 999px rgba(255,216,80,.42) !important;
+  outline:3px solid rgba(255,220,120,.95) !important;
+  outline-offset:-3px;
+  animation:none !important;
+}
+.cell.last-to{
+  box-shadow:inset 0 0 0 999px rgba(255,196,40,.55) !important;
+  outline:4px solid #ffe28a !important;
+  outline-offset:-4px;
+  animation:trail-pulse 1.15s ease-in-out infinite !important;
+}
+@keyframes trail-pulse{
+  0%,100%{outline-color:#ffe28a}
+  50%{outline-color:#fff6c8}
+}
+.player-card.your-turn{
+  border-color:#f5c542 !important;
+  animation:turn-glow 1s ease-in-out infinite;
+}
+.side-status.your-turn{
+  color:#1a1308 !important;
+  background:linear-gradient(135deg,#f3d58a,#d7b56a) !important;
+  border-color:#f0d9a6 !important;
+  animation:turn-glow 1s ease-in-out infinite;
+  font-weight:900;
+}
+@keyframes turn-glow{
+  0%,100%{box-shadow:0 0 0 0 rgba(245,197,66,.55); filter:brightness(1)}
+  50%{box-shadow:0 0 0 10px rgba(245,197,66,.12); filter:brightness(1.08)}
+}
+
 </style>
 </head>
 <body>
@@ -1753,7 +1812,7 @@ nav button.on{
             </div>
             <div class="clock" id="clock-b">∞</div>
           </div>
-          <div style="display:flex;align-items:stretch;gap:.55rem;justify-content:center;width:100%">
+          <div class="board-row" style="display:flex;align-items:stretch;gap:.55rem;justify-content:center;width:100%">
             <div class="eval-live-wrap" title="Avaliação"><div class="eval-live-fill" id="eval-live"></div></div>
             <div class="board-hero">
               <div class="board-frame board-classic pieces-classic" id="board-frame">
@@ -4216,20 +4275,21 @@ function animateSlide(from, to, color, type, cb){
   }
   el.style.left=(r0.left + r0.width/2 - size/2)+'px';
   el.style.top=(r0.top + r0.height/2 - size/2)+'px';
+  el.style.transform='translateY(-10px) scale(1.08)';
   document.body.appendChild(el);
   el.offsetHeight;
   el.style.left=(r1.left + r1.width/2 - size/2)+'px';
   el.style.top=(r1.top + r1.height/2 - size/2)+'px';
+  el.style.transform='translateY(0) scale(1)';
   var done=false;
   function finish(){
     if(done) return; done=true;
     if(el.parentNode) el.parentNode.removeChild(el);
-    // remove qualquer slide residual
     document.querySelectorAll('.slide-piece').forEach(function(n){ if(n.parentNode) n.parentNode.removeChild(n); });
     if(cb) cb();
   }
   el.addEventListener('transitionend', finish);
-  setTimeout(finish, 260);
+  setTimeout(finish, 480);
 }
 function play(from,to,pr){
   var before=chess.get(from);
@@ -4309,15 +4369,31 @@ function aiPlay(){
 function status(){
   if(mode==='review'){ statusReview(); return; }
   var el=document.getElementById('status');el.className='side-status';
+  var myTurn=false;
+  if(mode!=='spectate' && mode!=='review'){
+    if(mode==='online'||mode==='ai'||mode==='puzzle') myTurn = chess.turn()===myColor;
+    else myTurn = true;
+  }
   if(chess.in_checkmate()){el.textContent='Xeque-mate! '+(chess.turn()==='w'?'Pretas':'Brancas')+' vencem';el.classList.add('mate')}
   else if(chess.in_draw())el.textContent='Empate';
-  else if(chess.in_check()){el.textContent='Xeque! Vez das '+(chess.turn()==='w'?'Brancas':'Pretas');el.classList.add('chk')}
+  else if(chess.in_check()){
+    el.textContent=(myTurn?'SUA VEZ — Xeque!':'Xeque! Vez das '+(chess.turn()==='w'?'Brancas':'Pretas'));
+    el.classList.add('chk');
+    if(myTurn) el.classList.add('your-turn');
+  }
   else {
     var op=detectOpening();
-    el.textContent='Vez das '+(chess.turn()==='w'?'Brancas':'Pretas')+(op?' · '+op:'');
+    if(myTurn){
+      el.textContent='● SUA VEZ'+(op?' · '+op:'');
+      el.classList.add('your-turn');
+    } else {
+      el.textContent='Vez das '+(chess.turn()==='w'?'Brancas':'Pretas')+(op?' · '+op:'');
+    }
   }
   document.getElementById('bar-w').classList.toggle('active',chess.turn()==='w');
   document.getElementById('bar-b').classList.toggle('active',chess.turn()==='b');
+  document.getElementById('bar-w').classList.toggle('your-turn', myTurn && chess.turn()==='w' && !chess.game_over());
+  document.getElementById('bar-b').classList.toggle('your-turn', myTurn && chess.turn()==='b' && !chess.game_over());
   updateOpeningUI();
 }
 function movesUI(){
