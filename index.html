@@ -2114,6 +2114,7 @@ const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 /* atualização: XM_BUILD sobe sozinho a cada geração dos arquivos */
 const XM_APP_VERSION = '1787843160356';
 const XM_BUILD = '1787843160356';
+const XM_APK_VERSION = '4';
 const XM_UPDATE_REPO = 'f-lapa/Xadrez-';
 const XM_UPDATE_BRANCH = 'main';
 const XM_UPDATE_USER = '__xm_app__';
@@ -2124,7 +2125,7 @@ const XM_UPDATE_APK  = 'https://f-lapa.github.io/Xadrez-/xadrez-mestre.apk';
 (function(){
   try{
     if(location.protocol==='file:' && navigator.onLine && typeof XM_UPDATE_PAGE==='string'){
-      var dest=XM_UPDATE_PAGE.replace(/\/?$/,'/')+'index.html?src=apk&t='+Date.now()+'#xm_apk='+encodeURIComponent(XM_BUILD);
+      var dest=XM_UPDATE_PAGE.replace(/\/?$/,'/')+'index.html?src=apk&t='+Date.now()+'#xm_apk='+encodeURIComponent(XM_APK_VERSION);
       fetch(XM_UPDATE_PAGE,{cache:'no-store',mode:'cors'}).then(function(r){
         if(r && r.ok) location.replace(dest);
       }).catch(function(){});
@@ -2204,8 +2205,10 @@ function xmParseVer(v){
 }
 function xmIsNewer(remote, local){
   var r=String(remote||''), l=String(local||'');
+  if(!r) return false;
+  if(!l) return true;
   if(/^\d{12,}$/.test(r) && /^\d{12,}$/.test(l)) return Number(r) > Number(l);
-  if(/^\d{12,}$/.test(r) && !/^\d{12,}$/.test(l)) return true;
+  if(/^\d+$/.test(r) && /^\d+$/.test(l)) return Number(r) > Number(l);
   return xmParseVer(r) > xmParseVer(l);
 }
 function xmBuildLabel(v){
@@ -2253,13 +2256,19 @@ function apkDownloadCandidates(){
   }
   return out;
 }
-function skipAppUpdate(){
+function ackAppUpdate(){
   var L=window.XM_LATEST||{};
-  try{ localStorage.setItem('xm_skip_ver', String(L.version||'')); }catch(e){}
+  try{ localStorage.setItem('xm_acked_apk', String(L.version||XM_APK_VERSION||'')); }catch(e){}
+}
+function skipAppUpdate(){
+  ackAppUpdate();
   var ov=document.getElementById('ov-update');
   if(ov) ov.style.display='none';
 }
 function applyAppUpdate(){
+  ackAppUpdate();
+  var ov=document.getElementById('ov-update');
+  if(ov) ov.style.display='none';
   var urls=apkDownloadCandidates();
   var btn=document.getElementById('upd-go');
   if(!urls.length){
@@ -2268,7 +2277,7 @@ function applyAppUpdate(){
     return;
   }
   if(btn){ btn.textContent='Abrindo instalador…'; btn.disabled=true; }
-  var url=urls[0];
+  var url=(typeof XM_UPDATE_APK==='string' && XM_UPDATE_APK) ? XM_UPDATE_APK : urls[0];
   try{ localStorage.setItem('xm_updating', String((window.XM_LATEST||{}).version||'')); }catch(e){}
   try{
     var a=document.createElement('a');
@@ -2301,10 +2310,13 @@ function considerManifest(L, fromUrl){
   if(fromUrl){
     window.XM_UPDATE_BASE=String(fromUrl).replace(/version\.js(\?.*)?$/i,'');
   }
-  if(!xmIsNewer(L.version, xmApkInstalledBuild())) return;
+  var installed=xmApkInstalledBuild();
+  if(!xmIsNewer(L.version, installed)) return;
+  var acked='';
+  try{ acked=localStorage.getItem('xm_acked_apk')||''; }catch(e){}
+  if(acked && !xmIsNewer(L.version, acked)) return;
   L.apkAbsolute = L.apkAbsolute || XM_UPDATE_APK;
   L.apk = L.apk || XM_UPDATE_APK;
-  L.force = true;
   showAppUpdate(L);
 }
 function loadUpdateManifest(){
@@ -2389,10 +2401,10 @@ async function readAppMeta(){
 }
 function xmApkInstalledBuild(){
   try{
-    var m=String(location.hash||'').match(/xm_apk=(\d{12,})/);
+    var m=String(location.hash||'').match(/xm_apk=([0-9.]+)/);
     if(m) return m[1];
   }catch(e){}
-  return XM_BUILD||XM_APP_VERSION;
+  return (typeof XM_APK_VERSION==='string' && XM_APK_VERSION) ? XM_APK_VERSION : '0';
 }
 function xmHttpText(url){
   var u=url+(url.indexOf('?')>=0?'&':'?')+'t='+Date.now();
@@ -2417,15 +2429,15 @@ async function fetchBuildFromHtml(url){
   try{
     var txt=await xmHttpText(url);
     if(!txt) return null;
+    var am=txt.match(/XM_APK_VERSION\s*=\s*['\"]([^'\"]+)['\"]/);
     var bm=txt.match(/XM_BUILD\s*=\s*['\"](\d{12,})['\"]/);
     var vm=txt.match(/XM_APP_VERSION\s*=\s*['\"]([^'\"]+)['\"]/);
-    var version=(bm&&bm[1])||(vm&&vm[1]);
+    var version=(am&&am[1])||(bm&&bm[1])||(vm&&vm[1]);
     if(!version) return null;
     return {
       version:version,
       apk: (typeof XM_UPDATE_APK==='string'?XM_UPDATE_APK:''),
       apkAbsolute: (typeof XM_UPDATE_APK==='string'?XM_UPDATE_APK:''),
-      force:true,
       message:'Nova versão do Xadrez Mestre. Toque em Atualizar para instalar.',
       origin:url
     };
