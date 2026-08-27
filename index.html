@@ -1618,6 +1618,11 @@ nav button.on{
 #ov-end.win-glow{background:radial-gradient(600px 280px at 50% 40%, rgba(245,197,66,.22), rgba(0,0,0,.72))}
 #ov-end.loss-glow{background:radial-gradient(600px 280px at 50% 40%, rgba(251,113,133,.2), rgba(0,0,0,.72))}
 
+
+.ov-resign .modal{max-width:400px;text-align:center}
+.ov-resign .upd-msg{text-align:center}
+.ov-resign .end-badge{animation:badge-pop .45s cubic-bezier(.2,1.2,.3,1) both}
+
 </style>
 </head>
 <body>
@@ -2004,6 +2009,17 @@ nav button.on{
     <div id="prof-body" class="prof-body"></div>
     <div class="modal-actions">
       <button type="button" class="btn-main" onclick="closePlayerProfile()">Fechar</button>
+    </div>
+  </div>
+</div>
+<div class="overlay ov-resign" id="ov-resign">
+  <div class="modal end-modal loss">
+    <div class="end-badge">⚑</div>
+    <h2>Desistir?</h2>
+    <p class="upd-msg">Se confirmar, a partida acaba agora e conta como derrota.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-decline" onclick="closeResign()">Continuar jogando</button>
+      <button type="button" class="btn-accept" onclick="doResign()">Sim, desistir</button>
     </div>
   </div>
 </div>
@@ -4541,18 +4557,34 @@ function undo(){
   sel=null;legal=[];render();status();movesUI();updateCaps();saveActiveGame();
 }
 function resign(){
-  if(!confirm('Desistir?'))return;
+  if(mode==='review'||mode==='spectate') return;
+  var ov=document.getElementById('ov-resign');
+  if(!ov){ doResign(); return; }
+  ov.style.display='flex';
+}
+function closeResign(){
+  var ov=document.getElementById('ov-resign');
+  if(ov) ov.style.display='none';
+}
+function doResign(){
+  closeResign();
+  if(!chess) return;
+  lastEndResult='loss';
+  lastEndMode=mode||lastEndMode;
+  lastPointsDelta = (mode==='ai'||mode==='online') ? ((PTS&&PTS.loss)||-15) : 0;
   if(mode==='online'){
     if(gameCh)gameCh.send({type:'broadcast',event:'resign',payload:{by:me.name}});
-    finishOnline('loss','Você desistiu.');return;
+    finishOnline('loss','Você desistiu.');
+    return;
   }
   if(mode==='ai'){
-    lastEndResult='loss';
     recordAiResult('loss');
     recordTrain();
     awardAiPoints('loss');
+    lastPointsDelta=aiPointsDelta('loss')||lastPointsDelta;
+    lastPointsTotal=Math.max(0,((me&&me.points)||0)+lastPointsDelta);
   }
-  showEnd('Desistência',mode==='ai'?'Você desistiu. (treino)':'Partida encerrada.');
+  showEnd('Derrota','Você desistiu da partida.');
 }
 function endLocal(){
   stopClock();
@@ -4816,6 +4848,7 @@ function stopMateLoop(){
 function toHome(){
   stopClock();
   try{ stopMateLoop(); }catch(e){}
+  try{ closeResign(); }catch(e){}
   document.getElementById('ov-end').style.display='none';
   var op=document.getElementById('ov-profile'); if(op) op.style.display='none';
   document.getElementById('game').style.display='none';
