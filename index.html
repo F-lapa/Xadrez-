@@ -2038,7 +2038,7 @@ nav button.on{
       <button type="button" class="btn-decline" id="upd-later" onclick="skipAppUpdate()">Depois</button>
       <button type="button" class="btn-accept" id="upd-go" onclick="applyAppUpdate()">Atualizar</button>
     </div>
-    <div class="upd-note">O Android pede confirmação para instalar o APK novo.</div>
+    <div class="upd-note">A atualização recarrega o jogo do site. A partida em andamento é salva.</div>
   </div>
 </div>
 
@@ -2112,26 +2112,19 @@ on conflict (username) do nothing;
 const SUPA_URL='https://inzkuohrnvxbzwrdxekw.supabase.co';
 const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 /* atualização: XM_BUILD sobe sozinho a cada geração dos arquivos */
-const XM_APP_VERSION = '1787843160356';
-const XM_BUILD = '1787843160356';
-const XM_APK_VERSION = '5';
+const APP_VERSION = '2026.08.27.1';
+const XM_APP_VERSION = APP_VERSION;
+const XM_BUILD = APP_VERSION;
+const XM_APK_VERSION = APP_VERSION;
+const VERSION_URL = 'https://f-lapa.github.io/Xadrez-/version.json';
+const REMOTE_APP_URL = 'https://f-lapa.github.io/Xadrez-/';
 const XM_UPDATE_REPO = 'f-lapa/Xadrez-';
 const XM_UPDATE_BRANCH = 'main';
 const XM_UPDATE_USER = '__xm_app__';
 const XM_UPDATE_VERSION_JS = '';
-const XM_UPDATE_PAGE = 'https://f-lapa.github.io/Xadrez-/';
+const XM_UPDATE_PAGE = REMOTE_APP_URL;
 const XM_UPDATE_APK  = 'https://f-lapa.github.io/Xadrez-/xadrez-mestre.apk';
 
-(function(){
-  try{
-    if(location.protocol==='file:' && navigator.onLine && typeof XM_UPDATE_PAGE==='string'){
-      var dest=XM_UPDATE_PAGE.replace(/\/?$/,'/')+'index.html?src=apk&t='+Date.now()+'#xm_apk='+encodeURIComponent(XM_APK_VERSION);
-      fetch(XM_UPDATE_PAGE,{cache:'no-store',mode:'cors'}).then(function(r){
-        if(r && r.ok) location.replace(dest);
-      }).catch(function(){});
-    }
-  }catch(e){}
-})();
 
 const SESSION='xm_session_v8', GAMEKEY='xm_active_game_v8', MASTER=['fernandolapa'];
 const GL={wk:'♔',wq:'♕',wr:'♖',wb:'♗',wn:'♘',wp:'♙',bk:'♚',bq:'♛',br:'♜',bb:'♝',bn:'♞',bp:'♟'};
@@ -2260,39 +2253,101 @@ function ackAppUpdate(){
   var L=window.XM_LATEST||{};
   try{ localStorage.setItem('xm_acked_apk', String(L.version||XM_APK_VERSION||'')); }catch(e){}
 }
-function skipAppUpdate(){
-  ackAppUpdate();
-  var ov=document.getElementById('ov-update');
-  if(ov) ov.style.display='none';
-}
-function applyAppUpdate(){
-  ackAppUpdate();
-  var ov=document.getElementById('ov-update');
-  if(ov) ov.style.display='none';
-  var urls=apkDownloadCandidates();
-  var btn=document.getElementById('upd-go');
-  if(!urls.length){
-    if(btn){ btn.disabled=false; btn.textContent='Atualizar'; }
-    alert('Não achei o APK no GitHub. Confirme se xadrez-mestre.apk está na mesma pasta do site.');
-    return;
-  }
-  if(btn){ btn.textContent='Abrindo instalador…'; btn.disabled=true; }
-  var url=(typeof XM_UPDATE_APK==='string' && XM_UPDATE_APK) ? XM_UPDATE_APK : urls[0];
-  try{ localStorage.setItem('xm_updating', String((window.XM_LATEST||{}).version||'')); }catch(e){}
+
+function isNativeApp(){
   try{
-    var a=document.createElement('a');
-    a.href=url;
-    a.target='_blank';
-    a.rel='noopener';
-    document.body.appendChild(a);
-    a.click();
-    a.parentNode && a.parentNode.removeChild(a);
+    if(window.XadrezNative) return true;
+    if(location.protocol==='file:') return true;
   }catch(e){}
-  try{ window.location.href=url; }catch(e2){}
-  setTimeout(function(){
-    if(btn){ btn.disabled=false; btn.textContent='Atualizar'; }
-  }, 3000);
+  return false;
 }
+function showUpdatePrompt(remote){
+  if(!remote) return;
+  var skipped=false;
+  try{ skipped=!!localStorage.getItem('xm_skip_ver_'+remote); }catch(e){}
+  if(skipped) return;
+  if(window.__updatePromptShown===String(remote)) return;
+  window.__updatePromptShown=String(remote);
+  window.__remoteVersion=String(remote);
+  window.XM_LATEST={version:remote, message:'Nova versão '+remote+' disponível.'};
+  var ov=document.getElementById('ov-update');
+  var ver=document.getElementById('upd-ver');
+  var msg=document.getElementById('upd-msg');
+  if(ver) ver.textContent=remote+'  ·  instalado: '+APP_VERSION;
+  if(msg) msg.textContent='Há uma versão nova do Xadrez Mestre. Atualizar agora?';
+  if(ov) ov.style.display='flex';
+}
+function skipAppUpdate(){
+  var ver=window.__remoteVersion||'';
+  if(ver){
+    try{ localStorage.setItem('xm_skip_ver_'+ver,'1'); }catch(e){}
+  }
+  window.__updatePromptShown=ver||true;
+  var el=document.getElementById('ov-update'); if(el) el.style.display='none';
+}
+async function applyAppUpdate(){
+  var ver=window.__remoteVersion||APP_VERSION;
+  try{
+    var el0=document.getElementById('ov-update');
+    if(el0) el0.style.display='none';
+    window.__updatePromptShown=String(ver);
+    localStorage.setItem('xm_app_version', String(ver));
+    localStorage.setItem('xm_skip_ver_'+String(ver),'1');
+  }catch(e){}
+  try{
+    if(mode==='online'||mode==='ai'||mode==='local'||mode==='puzzle'){
+      try{ saveActiveGame(); }catch(e){}
+      localStorage.setItem('xm_force_resume','1');
+    }
+  }catch(e){}
+  try{
+    if('serviceWorker' in navigator){
+      var regs=await navigator.serviceWorker.getRegistrations();
+      for(var i=0;i<regs.length;i++) await regs[i].unregister();
+    }
+    if(window.caches){
+      var keys=await caches.keys();
+      await Promise.all(keys.map(function(k){ return caches.delete(k); }));
+    }
+  }catch(e){}
+  var dest=REMOTE_APP_URL.replace(/\/?$/,'/')+'index.html?v='+encodeURIComponent(ver)+'&t='+Date.now();
+  try{ toast('Atualizando…'); }catch(e){}
+  window.location.replace(dest);
+}
+async function checkForAppUpdate(){
+  try{
+    var base=VERSION_URL|| (REMOTE_APP_URL+'version.json');
+    var urls=[
+      base+(base.indexOf('?')>=0?'&':'?')+'t='+Date.now(),
+      REMOTE_APP_URL+'version.json?t='+Date.now(),
+      './version.json?t='+Date.now()
+    ];
+    var data=null;
+    for(var i=0;i<urls.length;i++){
+      try{
+        var res=await fetch(urls[i],{cache:'no-store',mode:'cors',credentials:'omit'});
+        if(res&&res.ok){
+          data=await res.json();
+          if(data&&data.version) break;
+        }
+      }catch(e){}
+    }
+    if(!data||!data.version) return;
+    var remote=String(data.version).trim();
+    if(!remote) return;
+    if(remote===String(APP_VERSION)){
+      try{
+        localStorage.setItem('xm_app_version', remote);
+        localStorage.removeItem('xm_skip_ver_'+remote);
+      }catch(e){}
+      try{ var el=document.getElementById('ov-update'); if(el) el.style.display='none'; }catch(e){}
+      return;
+    }
+    showUpdatePrompt(remote);
+  }catch(e){}
+}
+
+
 function showAppUpdate(L){
   window.XM_LATEST=L;
   var ov=document.getElementById('ov-update');
@@ -2305,7 +2360,8 @@ function showAppUpdate(L){
   if(later) later.style.display=L.force?'none':'';
   ov.style.display='flex';
 }
-function considerManifest(L, fromUrl){
+function considerManifest(L, fromUrl){ if(true){ return; } // legado; usa version.json
+  
   if(!L||!L.version) return;
   if(fromUrl){
     window.XM_UPDATE_BASE=String(fromUrl).replace(/version\.js(\?.*)?$/i,'');
@@ -5571,15 +5627,19 @@ function finishTutorial(){
 }
 
 window.addEventListener('DOMContentLoaded',async function(){
-  setTimeout(function(){ checkAllUpdates(); }, 800);
-  setInterval(function(){ try{ checkAllUpdates(); }catch(e){} }, 10*60*1000);
+  setTimeout(checkForAppUpdate, 1500);
+  setTimeout(checkForAppUpdate, 5000);
+  setInterval(function(){ try{ checkForAppUpdate(); }catch(e){} }, 45*1000);
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState==='visible') setTimeout(checkForAppUpdate, 400);
+  });
   loadPrefs();
   preloadPieces();
   if(typeof loadEcoBook==='function') loadEcoBook().then(function(){ if(typeof updateOpeningUI==='function') updateOpeningUI(); });
   initMasterEngine();
   initSupabase();
   if(sb){try{await ensureMaster()}catch(e){}}
-  try{ await checkAllUpdates(); }catch(e){}
+  try{ await checkForAppUpdate(); }catch(e){}
   var u=getSession();
   if(u&&sb){
     try{
