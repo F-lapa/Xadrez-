@@ -66,6 +66,22 @@ header{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-
 .pts{padding:.32rem .65rem;border-radius:999px;background:rgba(245,197,66,.1);border:1px solid rgba(245,197,66,.28);color:var(--gold);font-weight:900;font-size:.84rem}
 .online-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.6s infinite}
 .btn-out{padding:.38rem .7rem;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--line);font-size:.8rem;font-weight:700}
+
+.btn-apk{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  color:var(--muted);text-decoration:none;font-size:.95rem;opacity:.72;
+  transition:opacity .15s,border-color .15s,transform .15s;
+}
+.btn-apk:hover{opacity:1;border-color:rgba(245,197,66,.4);color:var(--gold);transform:translateY(-1px)}
+.apk-auth{
+  display:block;margin:.85rem auto 0;text-align:center;
+  font-size:.72rem;color:var(--muted);text-decoration:none;opacity:.65;font-weight:700;
+  letter-spacing:.02em;
+}
+.apk-auth:hover{opacity:1;color:var(--gold)}
+
 nav{display:flex;gap:.25rem;padding:.55rem 1.15rem 0;overflow-x:auto;max-width:1180px;margin:0 auto;width:100%}
 nav button{padding:.55rem 1.05rem;border-radius:12px 12px 0 0;color:var(--muted);font-weight:800;font-size:.86rem;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s, background .15s}
 nav button:hover{color:var(--text)}
@@ -1103,6 +1119,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
     </div>
     <p class="err" id="err"></p>
     <div class="hint">Cada conta é salva no <strong>Supabase</strong>.<br>Funciona em qualquer aparelho com a mesma conta.</div>
+    <a class="apk-auth" href="xadrez-mestre.apk" download="xadrez-mestre.apk" title="Baixar o aplicativo Android">App Android · APK</a>
   </div>
 </div>
 
@@ -1113,6 +1130,7 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
       <span class="conn" id="conn-status">conectando…</span>
       <div class="chip"><span id="h-name">—</span><span class="tag-m hidden" id="h-master">MESTRE</span></div>
       <span class="pts" id="h-pts">0 pts</span>
+      <a class="btn-apk" href="xadrez-mestre.apk" download="xadrez-mestre.apk" title="Baixar app Android">🤖</a>
       <button type="button" class="btn-out" onclick="logout()">Sair</button>
     </div>
   </header>
