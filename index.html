@@ -2036,13 +2036,42 @@ function xmBuildLabel(v){
 }
 function resolveUpdateAsset(file){
   var L=window.XM_LATEST||{};
-  if(L.apkAbsolute && /\.apk($|\?)/i.test(file)) return L.apkAbsolute;
-  var base=window.XM_UPDATE_BASE||'';
-  if(/^https?:/i.test(file)) return file;
-  if(!base && location.protocol!=='file:'){
-    try{ return new URL(file, location.href).href; }catch(e){}
+  if(L.apkAbsolute && /^https?:/i.test(L.apkAbsolute)) return L.apkAbsolute;
+  if(file && /^https?:/i.test(file)) return file;
+  var list=apkDownloadCandidates();
+  return list[0]||file||'';
+}
+function apkDownloadCandidates(){
+  var L=window.XM_LATEST||{};
+  var out=[], seen={};
+  function add(u){
+    if(!u) return;
+    u=String(u).trim();
+    if(!/^https?:\/\//i.test(u)) return;
+    if(seen[u]) return;
+    seen[u]=1; out.push(u);
   }
-  return (base||'') + String(file||'').replace(/^\.\//,'');
+  add(L.apkAbsolute);
+  add(L.apk);
+  if(L.origin && /^https?:/i.test(L.origin)){
+    try{ add(new URL('xadrez-mestre.apk', L.origin).href); }catch(e){}
+  }
+  if(window.XM_UPDATE_BASE){
+    try{ add(new URL('xadrez-mestre.apk', window.XM_UPDATE_BASE).href); }catch(e){}
+  }
+  try{
+    if(location.protocol!=='file:') add(new URL('xadrez-mestre.apk', location.href).href);
+  }catch(e){}
+  if(typeof XM_UPDATE_REPO==='string' && XM_UPDATE_REPO.indexOf('/')>=0){
+    var user=XM_UPDATE_REPO.split('/')[0], repo=XM_UPDATE_REPO.split('/')[1];
+    ['main','master'].forEach(function(br){
+      add('https://github.com/'+XM_UPDATE_REPO+'/raw/'+br+'/xadrez-mestre.apk');
+      add('https://cdn.jsdelivr.net/gh/'+XM_UPDATE_REPO+'@'+br+'/xadrez-mestre.apk');
+    });
+    if(repo) add('https://'+user+'.github.io/'+repo+'/xadrez-mestre.apk');
+    add('https://'+user+'.github.io/xadrez-mestre.apk');
+  }
+  return out;
 }
 function skipAppUpdate(){
   var L=window.XM_LATEST||{};
@@ -2051,22 +2080,29 @@ function skipAppUpdate(){
   if(ov) ov.style.display='none';
 }
 function applyAppUpdate(){
-  var L=window.XM_LATEST||{};
-  var apk=L.apkAbsolute||L.apk||'xadrez-mestre.apk';
-  var url=resolveUpdateAsset(apk);
+  var urls=apkDownloadCandidates();
   var btn=document.getElementById('upd-go');
-  if(btn){ btn.textContent='Baixando…'; btn.disabled=true; }
-  try{ localStorage.setItem('xm_updating', String(L.version||'')); }catch(e){}
-  // No APK, o WebView abre o link .apk no instalador/download do Android
-  var a=document.createElement('a');
-  a.href=url;
-  a.download='xadrez-mestre.apk';
-  a.rel='noopener';
-  document.body.appendChild(a);
-  a.click();
+  if(!urls.length){
+    if(btn){ btn.disabled=false; btn.textContent='Atualizar'; }
+    alert('Não achei o APK no GitHub. Confirme se xadrez-mestre.apk está na mesma pasta do site.');
+    return;
+  }
+  if(btn){ btn.textContent='Abrindo instalador…'; btn.disabled=true; }
+  var url=urls[0];
+  try{ localStorage.setItem('xm_updating', String((window.XM_LATEST||{}).version||'')); }catch(e){}
+  try{
+    var a=document.createElement('a');
+    a.href=url;
+    a.target='_blank';
+    a.rel='noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.parentNode && a.parentNode.removeChild(a);
+  }catch(e){}
+  try{ window.location.href=url; }catch(e2){}
   setTimeout(function(){
-    try{ window.location.href=url; }catch(e){}
-  }, 200);
+    if(btn){ btn.disabled=false; btn.textContent='Atualizar'; }
+  }, 3000);
 }
 function showAppUpdate(L){
   window.XM_LATEST=L;
