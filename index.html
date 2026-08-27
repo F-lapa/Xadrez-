@@ -1545,6 +1545,79 @@ nav button.on{
   50%{box-shadow:0 0 0 10px rgba(245,197,66,.12); filter:brightness(1.08)}
 }
 
+
+.ov-mate{
+  align-items:flex-end !important;
+  background:rgba(0,0,0,.38) !important;
+  padding-bottom:1.1rem;
+}
+.ov-mate .modal{max-width:420px;text-align:left;margin:0 auto 4.2rem;}
+
+
+.end-modal{overflow:hidden;position:relative;padding-top:1.6rem}
+.end-burst{position:absolute;inset:-20% -10% auto -10%;height:220px;pointer-events:none;z-index:0}
+.end-burst i{
+  position:absolute;top:50%;left:50%;width:8px;height:8px;border-radius:2px;
+  opacity:0; animation:burst-fly .9s ease-out forwards;
+}
+@keyframes burst-fly{
+  0%{transform:translate(0,0) scale(.4) rotate(0deg);opacity:0}
+  20%{opacity:1}
+  100%{transform:translate(var(--x),var(--y)) scale(1) rotate(220deg);opacity:0}
+}
+.end-badge{
+  width:84px;height:84px;margin:0 auto .7rem;border-radius:24px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.4rem;position:relative;z-index:1;
+  background:linear-gradient(145deg,#2a3144,#12141c);
+  border:1px solid rgba(255,255,255,.12);
+  transform:scale(.6); opacity:0;
+  animation:badge-pop .55s cubic-bezier(.2,1.2,.3,1) .05s forwards;
+}
+.end-modal.win .end-badge{
+  background:linear-gradient(145deg,#f3d58a,#b0893a);
+  color:#1a1308;
+  box-shadow:0 0 0 8px rgba(215,181,106,.16), 0 16px 40px rgba(215,181,106,.28);
+}
+.end-modal.loss .end-badge{
+  background:linear-gradient(145deg,#fb7185,#9f1239);
+  color:#fff;
+  box-shadow:0 0 0 8px rgba(251,113,133,.14), 0 16px 40px rgba(251,113,133,.22);
+}
+.end-modal.draw .end-badge{
+  background:linear-gradient(145deg,#94a3b8,#334155);
+  color:#fff;
+}
+@keyframes badge-pop{
+  0%{transform:scale(.45) rotate(-12deg);opacity:0}
+  70%{transform:scale(1.08) rotate(3deg);opacity:1}
+  100%{transform:scale(1) rotate(0);opacity:1}
+}
+.end-modal h2{
+  position:relative;z-index:1;
+  font-family:'Cinzel',Georgia,serif;
+  letter-spacing:.06em;
+  animation:title-in .45s ease .15s both;
+}
+.end-modal.win h2{color:#f0d9a6}
+.end-modal.loss h2{color:#fecdd3}
+@keyframes title-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.end-pts{
+  position:relative;z-index:1;
+  text-align:center;margin:.15rem 0 .85rem;
+}
+.end-delta{
+  font-size:2.1rem;font-weight:900;letter-spacing:.04em;
+  animation:delta-in .5s cubic-bezier(.2,1.1,.3,1) .22s both;
+}
+.end-modal.win .end-delta{color:#f5c542;text-shadow:0 0 22px rgba(245,197,66,.35)}
+.end-modal.loss .end-delta{color:#fb7185}
+.end-modal.draw .end-delta{color:#cbd5e1;font-size:1.35rem}
+.end-total{color:var(--muted);font-weight:800;margin-top:.15rem;font-size:.92rem}
+@keyframes delta-in{from{opacity:0;transform:scale(.7) translateY(10px)}to{opacity:1;transform:none}}
+#ov-end.win-glow{background:radial-gradient(600px 280px at 50% 40%, rgba(245,197,66,.22), rgba(0,0,0,.72))}
+#ov-end.loss-glow{background:radial-gradient(600px 280px at 50% 40%, rgba(251,113,133,.2), rgba(0,0,0,.72))}
+
 </style>
 </head>
 <body>
@@ -1894,8 +1967,25 @@ nav button.on{
   <button type="button" onclick="promo('b')" data-p="b"></button>
   <button type="button" onclick="promo('n')" data-p="n"></button>
 </div></div></div>
-<div class="overlay" id="ov-end"><div class="modal celebrate">
+<div class="overlay ov-mate" id="ov-mate">
+  <div class="modal">
+    <h2 id="mate-title">Xeque-mate</h2>
+    <div class="ver-pill" id="mate-san">#</div>
+    <p class="upd-msg" id="mate-explain">O último lance deu xeque-mate.</p>
+    <p class="upd-note">A animação do lance final se repete no tabuleiro até você tocar em OK.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-accept" id="btn-mate-ok" onclick="confirmMateEnd()">OK, entendi</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="ov-end"><div class="modal celebrate end-modal" id="end-modal">
+  <div class="end-burst" id="end-burst" aria-hidden="true"></div>
+  <div class="end-badge" id="end-badge">♛</div>
   <h2 id="end-t">Fim</h2>
+  <div class="end-pts" id="end-pts-wrap">
+    <div class="end-delta" id="end-delta"></div>
+    <div class="end-total" id="end-total"></div>
+  </div>
   <div id="end-m" class="end-m"></div>
   <div id="end-analysis" class="end-analysis hidden">
     <div class="eval-bar-wrap"><div class="eval-bar" id="eval-bar"></div></div>
@@ -2008,7 +2098,7 @@ const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 /* atualização: XM_BUILD sobe sozinho a cada geração dos arquivos */
 const XM_APP_VERSION = '1787804923123';
 const XM_BUILD = '1787804923123';
-const XM_UPDATE_REPO = 'fernandolapa/xadrez-mestre';
+const XM_UPDATE_REPO = 'f-lapa/Xadrez-';
 const XM_UPDATE_BRANCH = 'main';
 const XM_UPDATE_USER = '__xm_app__';
 const XM_UPDATE_VERSION_JS = '';
@@ -2073,7 +2163,7 @@ const PST={
  q:[-20,-10,-10,-5,-5,-10,-10,-20,-10,0,0,0,0,0,0,-10,-10,0,5,5,5,5,0,-10,-5,0,5,5,5,5,0,-5,0,0,5,5,5,5,0,-5,-10,5,5,5,5,5,0,-10,-10,0,5,0,0,0,0,-10,-20,-10,-10,-5,-5,-10,-10,-20],
  k:[-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-30,-40,-40,-50,-50,-40,-40,-30,-20,-30,-30,-40,-40,-30,-30,-20,-10,-20,-20,-20,-20,-20,-20,-10,20,20,0,0,0,0,20,20,20,30,10,0,0,10,30,20]
 };
-const PTS={win:25,draw:0,loss:-8}; // online: +25 vitória · −8 derrota · 0 empate
+const PTS={win:15,draw:0,loss:-15}; // online: +15 vitória · −15 derrota · 0 empate
 const ELO_K=32, ELO_START=0; // contas novas começam com 0
 
 /* ===== APP UPDATE ===== */
@@ -2389,9 +2479,9 @@ const PUZZLE_REWARD=5;
 const PUZZLE_PENALTY=10;
 // vs computador: vitória / derrota por dificuldade
 const AI_POINTS={
-  easy:  {win:5,  loss:15},
-  medium:{win:10, loss:10},
-  hard:  {win:15, loss:5}
+  easy:  {win:15, loss:15},
+  medium:{win:15, loss:15},
+  hard:  {win:15, loss:15}
 };
 let puzzleAwarded=false;
 
@@ -4314,7 +4404,15 @@ function play(from,to,pr){
 
     if(chess.game_over()){
       stopClock();
-      if(chess.in_checkmate()) sfxWin();
+      if(chess.in_checkmate()){
+        sfxWin();
+        setTimeout(function(){
+          startMateExplain(function(){
+            if(mode==='online') endOnlineFromBoard(); else endLocal();
+          });
+        }, 350);
+        return;
+      }
       if(mode==='online')setTimeout(endOnlineFromBoard,200);else setTimeout(endLocal,200);return
     }
     if(mode==='ai'&&chess.turn()!==myColor)setTimeout(aiPlay,280);
@@ -4472,7 +4570,11 @@ function endLocal(){
     recordTrain();
     awardAiPoints(aiRes);
     var d=aiPointsDelta(aiRes);
+    lastPointsDelta = d||0;
+    lastPointsTotal = Math.max(0, ((me&&me.points)||0) + (d||0));
     if(d) msg += (d>0?' · +'+d:' · '+d)+' pts';
+  } else {
+    lastPointsDelta = 0;
   }
   animateLastMoveThen(function(){ showEnd('Fim de jogo',msg); });
 }
@@ -4500,13 +4602,16 @@ async function applyRank(result){
     var row=await dbGetPlayer(me.name);if(!row)return;
     var games=(row.games||0)+1,wins=row.wins||0,losses=row.losses||0,draws=row.draws||0;
     var streak=row.streak||0,best=row.best_streak||0;
-    // Online fixo: vitória +25 · derrota −8 · empate 0
+    // Online fixo: vitória +15 · derrota −15 · empate 0
     var delta = 0;
-    if(result==='win'){ delta = 25; wins++; streak++; if(streak>best) best=streak; }
-    else if(result==='loss'){ delta = -8; losses++; streak=0; }
+    lastPointsDelta = 0;
+    if(result==='win'){ delta = (PTS&&PTS.win)||15; wins++; streak++; if(streak>best) best=streak; }
+    else if(result==='loss'){ delta = (PTS&&PTS.loss)||-15; losses++; streak=0; }
     else { delta = 0; draws++; streak=0; }
     var cur = row.points||0;
     var newPts = Math.max(0, cur + delta);
+    lastPointsDelta = delta;
+    lastPointsTotal = newPts;
     var updated=await dbUpdatePlayer(me.name,{games:games,wins:wins,losses:losses,draws:draws,streak:streak,best_streak:best,points:newPts});
     me=rowToMe(updated);
     document.getElementById('h-pts').textContent=me.points+' pts';
@@ -4521,6 +4626,124 @@ async function recordTrain(){
     var updated=await dbUpdatePlayer(me.name,{train_games:(row.train_games||0)+1});
     me=rowToMe(updated);
   }catch(e){}
+}
+
+var mateLoopTimer=null, mateLoopStop=false, mateLoopPending=null;
+function describeMate(){
+  var mv=hist&&hist.length?hist[hist.length-1]:null;
+  var san=mv&&mv.san?mv.san:'o último lance';
+  var route=mv? (String(mv.from||'').toUpperCase()+' → '+String(mv.to||'').toUpperCase()) : '';
+  var lostSide=chess&&chess.turn()==='w'?'Brancas':'Pretas';
+  var wonSide=lostSide==='Brancas'?'Pretas':'Brancas';
+  var youLost=(typeof myColor==='string' && chess && chess.turn()===myColor);
+  var youWon=(typeof myColor==='string' && chess && chess.turn()!==myColor);
+  var who = youWon?'Você venceu':(youLost?'Você perdeu':(wonSide+' venceram'));
+  return {
+    title: 'Xeque-mate',
+    san: san+(route?'  ·  '+route:''),
+    text: who+' com '+san+'. O rei das '+lostSide+' está em xeque e não tem lance legal: não pode fugir, não pode capturar a peça que ataca e ninguém cobre o xeque. Veja o lance se repetindo no tabuleiro.'
+  };
+}
+function startMateExplain(done){
+  mateLoopStop=false;
+  mateLoopPending=done||null;
+  if(!chess||!chess.in_checkmate()||!hist||!hist.length){
+    if(done) done();
+    return;
+  }
+  var info=describeMate();
+  var title=document.getElementById('mate-title');
+  var san=document.getElementById('mate-san');
+  var ex=document.getElementById('mate-explain');
+  if(title) title.textContent=info.title;
+  if(san) san.textContent=info.san;
+  if(ex) ex.textContent=info.text;
+  var ov=document.getElementById('ov-mate');
+  if(ov) ov.style.display='flex';
+  function cycle(){
+    if(mateLoopStop) return;
+    replayMateMove(function(){
+      if(mateLoopStop) return;
+      mateLoopTimer=setTimeout(cycle, 1100);
+    });
+  }
+  setTimeout(cycle, 500);
+}
+function replayMateMove(cb){
+  if(!chess||!hist||!hist.length){ if(cb) cb(); return; }
+  var mv=hist[hist.length-1];
+  try{ chess.undo(); }catch(e){ if(cb) cb(); return; }
+  if(mv.captured){
+    var glyph=GL[(mv.color==='w'?'b':'w')+mv.captured];
+    if(mv.color==='w'){ var i=capW.lastIndexOf(glyph); if(i>=0) capW.splice(i,1); }
+    else { var j=capB.lastIndexOf(glyph); if(j>=0) capB.splice(j,1); }
+  }
+  last=hist.length>1?{from:hist[hist.length-2].from,to:hist[hist.length-2].to}:null;
+  sel=null; legal=[];
+  render();
+  var fromEl=document.querySelector('.cell[data-sq="'+mv.from+'"] .pc-img, .cell[data-sq="'+mv.from+'"] .pc');
+  if(fromEl) fromEl.style.opacity='0';
+  animateSlide(mv.from, mv.to, mv.color, mv.piece||'q', function(){
+    try{ chess.move({from:mv.from,to:mv.to,promotion:mv.promotion||'q'}); }catch(e){}
+    if(mv.captured){
+      var g2=GL[(mv.color==='w'?'b':'w')+mv.captured];
+      if(mv.color==='w') capW.push(g2); else capB.push(g2);
+    }
+    last={from:mv.from,to:mv.to};
+    render();
+    if(cb) cb();
+  });
+}
+function confirmMateEnd(){
+  mateLoopStop=true;
+  if(mateLoopTimer){ clearTimeout(mateLoopTimer); mateLoopTimer=null; }
+  var ov=document.getElementById('ov-mate');
+  if(ov) ov.style.display='none';
+  // garantir posição final de mate
+  try{
+    if(chess && hist && hist.length && !chess.in_checkmate()){
+      var mv=hist[hist.length-1];
+      chess.move({from:mv.from,to:mv.to,promotion:mv.promotion||'q'});
+      last={from:mv.from,to:mv.to};
+      render();
+    }
+  }catch(e){}
+  var fn=mateLoopPending; mateLoopPending=null;
+  if(fn) fn();
+}
+function reviewPlayNext(){
+  if(!reviewMoves) return;
+  var next=reviewCursor+1;
+  if(next>=reviewMoves.length) return;
+  var mv=reviewMoves[next];
+  if(!mv){ reviewGoto(next); return; }
+  var piece=chess?chess.get(mv.from):null;
+  var color=piece?piece.color:(mv.color||'w');
+  var type=piece?piece.type:(mv.piece||mv.promotion||'q');
+  var fromEl=document.querySelector('.cell[data-sq="'+mv.from+'"] .pc-img, .cell[data-sq="'+mv.from+'"] .pc');
+  if(fromEl) fromEl.style.opacity='0';
+  animateSlide(mv.from, mv.to, color, type, function(){
+    reviewGoto(next);
+  });
+}
+
+
+var lastPointsDelta=0, lastPointsTotal=null;
+function paintEndBurst(kind){
+  var box=document.getElementById('end-burst');
+  if(!box) return;
+  box.innerHTML='';
+  var n=kind==='win'?18:(kind==='loss'?10:8);
+  for(var i=0;i<n;i++){
+    var s=document.createElement('i');
+    var ang=(Math.PI*2)*i/n + (i%3)*0.2;
+    var dist=70+Math.random()*90;
+    s.style.setProperty('--x', Math.cos(ang)*dist+'px');
+    s.style.setProperty('--y', Math.sin(ang)*dist+'px');
+    s.style.background = kind==='win' ? (i%2?'#f5c542':'#fff3c4') : (kind==='loss'?(i%2?'#fb7185':'#fecdd3'):'#94a3b8');
+    s.style.animationDelay=(i*0.03)+'s';
+    box.appendChild(s);
+  }
 }
 function showEnd(t,m){
   stopClock();
@@ -4541,9 +4764,30 @@ function showEnd(t,m){
       msg: m||''
     };
   }catch(e){}
-  var modal=document.getElementById('ov-end').querySelector('.modal');
-  if(modal){ modal.classList.add('celebrate'); }
-  document.getElementById('end-t').textContent=t;
+  var ov=document.getElementById('ov-end');
+  var modal=ov.querySelector('.modal');
+  var kind=lastEndResult==='win'?'win':(lastEndResult==='loss'?'loss':'draw');
+  if(modal){
+    modal.classList.add('celebrate','end-modal');
+    modal.classList.remove('win','loss','draw');
+    modal.classList.add(kind);
+  }
+  ov.classList.remove('win-glow','loss-glow');
+  if(kind==='win') ov.classList.add('win-glow');
+  if(kind==='loss') ov.classList.add('loss-glow');
+  var badge=document.getElementById('end-badge');
+  if(badge) badge.textContent = kind==='win'?'♛':(kind==='loss'?'♚':'♔');
+  document.getElementById('end-t').textContent = kind==='win'?'Vitória':(kind==='loss'?'Derrota':(t||'Empate'));
+  var delta=typeof lastPointsDelta==='number'?lastPointsDelta:0;
+  var total=(typeof lastPointsTotal==='number'?lastPointsTotal:(me&&me.points));
+  var dEl=document.getElementById('end-delta');
+  var tEl=document.getElementById('end-total');
+  if(dEl){
+    if(kind==='draw' && !delta) dEl.textContent='0 pts';
+    else dEl.textContent=(delta>0?'+':'')+delta+' pts';
+  }
+  if(tEl) tEl.textContent = (total||total===0) ? ('Total: '+total+' pts') : '';
+  paintEndBurst(kind);
   var lastTxt = lastMovesText(8);
   var endM = document.getElementById('end-m');
   if(endM){
@@ -4559,8 +4803,16 @@ function showEnd(t,m){
   if(brv) brv.style.display = (hist&&hist.length) ? '' : 'none';
   document.getElementById('ov-end').style.display='flex';
 }
+function stopMateLoop(){
+  mateLoopStop=true;
+  if(mateLoopTimer){ clearTimeout(mateLoopTimer); mateLoopTimer=null; }
+  var ov=document.getElementById('ov-mate');
+  if(ov) ov.style.display='none';
+  mateLoopPending=null;
+}
 function toHome(){
   stopClock();
+  try{ stopMateLoop(); }catch(e){}
   document.getElementById('ov-end').style.display='none';
   var op=document.getElementById('ov-profile'); if(op) op.style.display='none';
   document.getElementById('game').style.display='none';
@@ -4677,6 +4929,7 @@ function reviewGoto(i){
 }
 function reviewStep(d){
   if(!reviewMoves) return;
+  if(d===1){ reviewPlayNext(); return; }
   reviewGoto(reviewCursor + d);
 }
 function statusReview(){
