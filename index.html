@@ -2131,7 +2131,7 @@ on conflict (username) do nothing;
 const SUPA_URL='https://inzkuohrnvxbzwrdxekw.supabase.co';
 const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
 /* atualização: XM_BUILD sobe sozinho a cada geração dos arquivos */
-const APP_VERSION = '2026.08.27.2';
+const APP_VERSION = '2026.08.27.3';
 const XM_APP_VERSION = APP_VERSION;
 const XM_BUILD = APP_VERSION;
 const XM_APK_VERSION = APP_VERSION;
@@ -2304,8 +2304,22 @@ function skipAppUpdate(){
   window.__updatePromptShown=ver||true;
   var el=document.getElementById('ov-update'); if(el) el.style.display='none';
 }
+function rememberLoginForUpdate(){
+  var u='';
+  try{ if(me&&me.name) u=me.name; }catch(e){}
+  if(!u){ try{ u=getSession()||''; }catch(e){} }
+  if(!u){
+    try{ u=new URLSearchParams(location.search||'').get('xm_u')||''; }catch(e){}
+  }
+  if(u){
+    try{ setSession(u); }catch(e){}
+    try{ localStorage.setItem('xm_keep_user', u); }catch(e){}
+  }
+  return u;
+}
 async function applyAppUpdate(){
   var ver=window.__remoteVersion||APP_VERSION;
+  var keep=rememberLoginForUpdate();
   try{
     var el0=document.getElementById('ov-update');
     if(el0) el0.style.display='none';
@@ -2329,7 +2343,7 @@ async function applyAppUpdate(){
       await Promise.all(keys.map(function(k){ return caches.delete(k); }));
     }
   }catch(e){}
-  var dest=REMOTE_APP_URL.replace(/\/?$/,'/')+'index.html?v='+encodeURIComponent(ver)+'&t='+Date.now();
+  var dest=REMOTE_APP_URL.replace(/\/?$/,'/')+'index.html?v='+encodeURIComponent(ver)+'&t='+Date.now()+(keep?('&xm_u='+encodeURIComponent(keep)):'');
   try{ toast('Atualizando…'); }catch(e){}
   window.location.replace(dest);
 }
@@ -5699,12 +5713,23 @@ window.addEventListener('DOMContentLoaded',async function(){
   if(sb){try{await ensureMaster()}catch(e){}}
   try{ await checkForAppUpdate(); }catch(e){}
   var u=getSession();
+  try{
+    var q=new URLSearchParams(location.search||'').get('xm_u');
+    if(q) u=q;
+  }catch(e){}
+  try{
+    if(!u) u=localStorage.getItem('xm_keep_user')||'';
+  }catch(e){}
   if(u&&sb){
     try{
       var row=await dbGetPlayer(u);
-      if(row) enter(rowToMe(row));
+      if(row){
+        setSession(u);
+        try{ localStorage.setItem('xm_keep_user', u); }catch(e){}
+        enter(rowToMe(row));
+      }
       else clearSession();
-    }catch(e){clearSession()}
+    }catch(e){ /* não apaga sessão em falha de rede */ }
   }
   setTimeout(maybeShowTutorial, 600);
 });
