@@ -82,6 +82,16 @@ header{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-
 }
 .apk-auth:hover{opacity:1;color:var(--gold)}
 
+.ov-update .modal{max-width:420px;text-align:left}
+.ov-update .ver-pill{
+  display:inline-block;margin:.15rem 0 .7rem;padding:.22rem .6rem;border-radius:999px;
+  background:rgba(245,197,66,.14);border:1px solid rgba(245,197,66,.35);
+  color:var(--gold);font-size:.75rem;font-weight:900;letter-spacing:.04em
+}
+.ov-update .upd-msg{color:var(--muted);line-height:1.55;margin:0 0 1rem}
+.ov-update .upd-note{font-size:.75rem;color:var(--muted);text-align:center;margin-top:.7rem}
+
+
 nav{display:flex;gap:.25rem;padding:.55rem 1.15rem 0;overflow-x:auto;max-width:1180px;margin:0 auto;width:100%}
 nav button{padding:.55rem 1.05rem;border-radius:12px 12px 0 0;color:var(--muted);font-weight:800;font-size:.86rem;border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s, background .15s}
 nav button:hover{color:var(--text)}
@@ -1454,6 +1464,20 @@ body.theme-sunset{--bg:#140a08;--card:rgba(36,20,16,.92);--blue:#fb923c;--violet
 </div></div>
 <div class="toast" id="toast"></div>
 
+
+<div class="overlay ov-update" id="ov-update">
+  <div class="modal">
+    <h2>Nova versão disponível</h2>
+    <div class="ver-pill" id="upd-ver">v—</div>
+    <p class="upd-msg" id="upd-msg">Há uma atualização do Xadrez Mestre.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn-decline" id="upd-later" onclick="skipAppUpdate()">Depois</button>
+      <button type="button" class="btn-accept" id="upd-go" onclick="applyAppUpdate()">Atualizar</button>
+    </div>
+    <div class="upd-note">O Android pede confirmação para instalar o APK novo.</div>
+  </div>
+</div>
+
 <div class="overlay" id="ov-tutorial" style="display:none">
   <div class="modal" style="max-width:440px;text-align:left">
     <h2 style="text-align:center">♛ Bem-vindo ao Xadrez Mestre</h2>
@@ -1523,6 +1547,16 @@ on conflict (username) do nothing;
 <script>
 const SUPA_URL='https://inzkuohrnvxbzwrdxekw.supabase.co';
 const SUPA_KEY='sb_publishable_HwlGk_p2fF0avLvbWXpwBA_iK6MtqnX';
+/* ===== ATUALIZAÇÃO AUTOMÁTICA =====
+   Sempre que atualizar o jogo:
+   1) Aumente XM_APP_VERSION aqui (ex.: 1.1.0 → 1.1.1)
+   2) Atualize os mesmos campos em version.js
+   3) Suba no GitHub: index.html + version.js + xadrez-mestre.apk
+   4) Ajuste XM_UPDATE_REPO para usuario/repositorio do GitHub
+*/
+const XM_APP_VERSION = '1.1.0';
+const XM_UPDATE_REPO = 'fernandolapa/xadrez-mestre';
+const XM_UPDATE_BRANCH = 'main';
 const SESSION='xm_session_v8', GAMEKEY='xm_active_game_v8', MASTER=['fernandolapa'];
 const GL={wk:'♔',wq:'♕',wr:'♖',wb:'♗',wn:'♘',wp:'♙',bk:'♚',bq:'♛',br:'♜',bb:'♝',bn:'♞',bp:'♟'};
 // Peças 3D (set Wikipedia — alta qualidade)
@@ -1586,6 +1620,99 @@ const PST={
 };
 const PTS={win:25,draw:0,loss:-8}; // online: +25 vitória · −8 derrota · 0 empate
 const ELO_K=32, ELO_START=0; // contas novas começam com 0
+
+/* ===== APP UPDATE ===== */
+function xmParseVer(v){
+  var p=String(v||'0').split(/[^\d]+/).map(function(x){return parseInt(x,10)||0});
+  while(p.length<3) p.push(0);
+  return p[0]*1000000+p[1]*1000+p[2];
+}
+function xmIsNewer(remote, local){ return xmParseVer(remote) > xmParseVer(local); }
+function resolveUpdateAsset(file){
+  var L=window.XM_LATEST||{};
+  if(L.apkAbsolute && /\.apk($|\?)/i.test(file)) return L.apkAbsolute;
+  var base=window.XM_UPDATE_BASE||'';
+  if(/^https?:/i.test(file)) return file;
+  if(!base && location.protocol!=='file:'){
+    try{ return new URL(file, location.href).href; }catch(e){}
+  }
+  return (base||'') + String(file||'').replace(/^\.\//,'');
+}
+function skipAppUpdate(){
+  var L=window.XM_LATEST||{};
+  try{ localStorage.setItem('xm_skip_ver', String(L.version||'')); }catch(e){}
+  var ov=document.getElementById('ov-update');
+  if(ov) ov.style.display='none';
+}
+function applyAppUpdate(){
+  var L=window.XM_LATEST||{};
+  var apk=L.apkAbsolute||L.apk||'xadrez-mestre.apk';
+  var url=resolveUpdateAsset(apk);
+  var btn=document.getElementById('upd-go');
+  if(btn){ btn.textContent='Baixando…'; btn.disabled=true; }
+  try{ localStorage.setItem('xm_updating', String(L.version||'')); }catch(e){}
+  // No APK, o WebView abre o link .apk no instalador/download do Android
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='xadrez-mestre.apk';
+  a.rel='noopener';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){
+    try{ window.location.href=url; }catch(e){}
+  }, 200);
+}
+function showAppUpdate(L){
+  window.XM_LATEST=L;
+  var ov=document.getElementById('ov-update');
+  if(!ov) return;
+  var ver=document.getElementById('upd-ver');
+  var msg=document.getElementById('upd-msg');
+  if(ver) ver.textContent='v'+L.version+'  ·  você está na v'+XM_APP_VERSION;
+  if(msg) msg.textContent=L.message||('Nova versão '+L.version+' do Xadrez Mestre. Toque em Atualizar para instalar o APK novo.');
+  var later=document.getElementById('upd-later');
+  if(later) later.style.display=L.force?'none':'';
+  ov.style.display='flex';
+}
+function considerManifest(L, fromUrl){
+  if(!L||!L.version) return;
+  if(fromUrl){
+    window.XM_UPDATE_BASE=String(fromUrl).replace(/version\.js(\?.*)?$/i,'');
+  }
+  if(!xmIsNewer(L.version, XM_APP_VERSION)) return;
+  var skipped='';
+  try{ skipped=localStorage.getItem('xm_skip_ver')||''; }catch(e){}
+  if(!L.force && skipped===String(L.version)) return;
+  showAppUpdate(L);
+}
+function loadUpdateManifest(){
+  var urls=[];
+  try{
+    if(location.protocol!=='file:') urls.push(new URL('version.js', location.href).href);
+  }catch(e){}
+  if(XM_UPDATE_REPO){
+    urls.push('https://cdn.jsdelivr.net/gh/'+XM_UPDATE_REPO+'@'+XM_UPDATE_BRANCH+'/version.js');
+    urls.push('https://raw.githubusercontent.com/'+XM_UPDATE_REPO+'/'+XM_UPDATE_BRANCH+'/version.js');
+    urls.push('https://'+XM_UPDATE_REPO.split('/')[0]+'.github.io/'+XM_UPDATE_REPO.split('/')[1]+'/version.js');
+  }
+  var i=0;
+  function next(){
+    if(window.XM_LATEST && window.XM_LATEST.version){
+      considerManifest(window.XM_LATEST);
+      return;
+    }
+    if(i>=urls.length) return;
+    var url=urls[i++]+(urls[i-1].indexOf('?')>=0?'&':'?')+'t='+Date.now();
+    var s=document.createElement('script');
+    s.src=url;
+    s.async=true;
+    s.onload=function(){ considerManifest(window.XM_LATEST, url.split('?')[0]); };
+    s.onerror=function(){ next(); };
+    document.head.appendChild(s);
+  }
+  next();
+}
+
 
 /* ===== PASSWORD HASHING (Web Crypto) ===== */
 async function hashPassword(password, salt){
@@ -4480,6 +4607,8 @@ function finishTutorial(){
 }
 
 window.addEventListener('DOMContentLoaded',async function(){
+  try{ loadUpdateManifest(); }catch(e){}
+  setInterval(function(){ try{ loadUpdateManifest(); }catch(e){} }, 10*60*1000);
   loadPrefs();
   preloadPieces();
   if(typeof loadEcoBook==='function') loadEcoBook().then(function(){ if(typeof updateOpeningUI==='function') updateOpeningUI(); });
