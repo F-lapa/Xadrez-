@@ -1,13 +1,8 @@
-/* Atualize este arquivo SEMPRE que publicar uma versão nova.
-   version  = número novo (tem que ser maior que o do APK/HTML antigo)
-   apk      = nome do arquivo na mesma pasta do GitHub Pages
-   apkAbsolute = URL completa do APK (recomendado no GitHub Releases ou raw/Pages)
-   force    = true bloqueia o botão "Depois"
-*/
+/* Atualize este arquivo SEMPRE que publicar uma versão nova. */
 window.XM_LATEST = {
-  version: "1.1.0",
+  version: "1.1.1",
   apk: "xadrez-mestre.apk",
   apkAbsolute: "",
-  message: "Nova versão do Xadrez Mestre com atualização automática.",
+  message: "APK assinado com certificado de release (não é mais debug).",
   force: false
 };
